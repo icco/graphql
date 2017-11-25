@@ -5,14 +5,14 @@ import (
 	"net/http"
 
 	"github.com/neelance/graphql-go"
-	"github.com/neelance/graphql-go/example/starwars"
 	"github.com/neelance/graphql-go/relay"
+	"github.com/neelance/icco/writing-be/schema"
 )
 
 var schema *graphql.Schema
 
 func init() {
-	schema = graphql.MustParseSchema(starwars.Schema, &starwars.Resolver{})
+	schema = graphql.MustParseSchema(schema.Schema, &schema.Resolver{})
 }
 
 func main() {
@@ -20,7 +20,7 @@ func main() {
 		w.Write(page)
 	}))
 
-	http.Handle("/query", &relay.Handler{Schema: schema})
+	http.Handle("/graphql", &relay.Handler{Schema: schema})
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
