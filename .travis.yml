@@ -1,0 +1,15 @@
+# https://docs.travis-ci.com/user/languages/go
+language: go
+sudo: false
+
+# https://cloud.google.com/appengine/docs/go/release-notes
+# the golang version should match the version in the pkg
+go:
+- "1.9"
+script:
+- go get -d -v ./...
+- go build .
+notifications:
+  email:
+    on_success: never
+    on_failure: change
