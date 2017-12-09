@@ -4,15 +4,15 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/icco/writing-be/models"
 	"github.com/neelance/graphql-go"
 	"github.com/neelance/graphql-go/relay"
-	"github.com/neelance/icco/writing-be/schema"
 )
 
 var schema *graphql.Schema
 
 func init() {
-	schema = graphql.MustParseSchema(schema.Schema, &schema.Resolver{})
+	schema = graphql.MustParseSchema(models.Schema, &schema.Resolver{})
 }
 
 func main() {
