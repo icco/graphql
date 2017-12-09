@@ -12,7 +12,7 @@ import (
 var schema *graphql.Schema
 
 func init() {
-	schema = graphql.MustParseSchema(models.Schema, &schema.Resolver{})
+	schema = graphql.MustParseSchema(models.Schema, &models.Resolver{})
 }
 
 func main() {

@@ -2,17 +2,19 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 	"html/template"
 	"math"
 	"regexp"
 	"strings"
 	"time"
 
-	"github.com/kennygrant/sanitize"
 	"github.com/lib/pq"
 	graphql "github.com/neelance/graphql-go"
 	"github.com/russross/blackfriday"
 )
+
+type Resolver struct{}
 
 type Post struct {
 	Id       graphql.ID `json:"id"`
@@ -43,21 +45,21 @@ func NewPost(title string, content string, datetime time.Time, tags []string) *P
 	return e
 }
 
-func GetPost(c context.Context, id int64) (*Post, error) {
-	var entry Post
+func GetPost(id int64) (*Post, error) {
+	var post Post
 	row := db.QueryRow("SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE id = ?", id)
-	err := row.Scan(&post.Id, &post.Title, &post.Content, &post.date, &post.Created, &post.Modified, pq.Array(&post.Tags))
+	err := row.Scan(&post.Id, &post.Title, &post.Content, &post.Datetime, &post.Created, &post.Modified, pq.Array(&post.Tags))
 	switch {
 	case err == sql.ErrNoRows:
-		return nil, errors.Errorf("No post with id %d", id)
+		return nil, fmt.Errorf("No post with id %d", id)
 	case err != nil:
 		return nil, err
 	default:
-		return &entry, nil
+		return &post, nil
 	}
 }
 
-func Posts(isDraft bool) (*[]Post, error) {
+func Posts(isDraft bool) ([]*Post, error) {
 	rows, err := db.Query("SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE draft = ? ORDER BY modified_at DESC", isDraft)
 	if err != nil {
 		return nil, err
@@ -67,11 +69,11 @@ func Posts(isDraft bool) (*[]Post, error) {
 	posts := make([]*Post, 0)
 	for rows.Next() {
 		post := new(Post)
-		err := rows.Scan(&post.Id, &post.Title, &post.Content, &post.date, &post.Created, &post.Modified, pq.Array(&post.Tags))
+		err := rows.Scan(&post.Id, &post.Title, &post.Content, &post.Datetime, &post.Created, &post.Modified, pq.Array(&post.Tags))
 		if err != nil {
 			return nil, err
 		}
-		urls = append(urls, url)
+		posts = append(posts, post)
 	}
 
 	if err = rows.Err(); err != nil {
@@ -80,11 +82,11 @@ func Posts(isDraft bool) (*[]Post, error) {
 	return posts, nil
 }
 
-func AllPosts() (*[]Post, error) {
+func AllPosts() ([]*Post, error) {
 	return Posts(true)
 }
 
-func Drafts() (*[]Post, error) {
+func Drafts() ([]*Post, error) {
 	return Posts(false)
 }
 
@@ -103,7 +105,7 @@ func ParseTags(text string) ([]string, error) {
 
 func (e *Post) Save() error {
 
-	return err
+	return nil
 }
 
 var HashtagRegex *regexp.Regexp = regexp.MustCompile(`(\s)#(\w+)`)
@@ -149,4 +151,5 @@ func (e *Post) ReadTime() int {
 }
 
 func (e *Post) Summary() string {
+	return ""
 }
