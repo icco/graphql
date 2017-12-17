@@ -16,3 +16,4 @@
 # Random
 .DS_Store
 writing-be
+.env
