@@ -14,8 +14,6 @@ import (
 	"github.com/russross/blackfriday"
 )
 
-type Resolver struct{}
-
 type Post struct {
 	Id       graphql.ID `json:"id"`
 	Title    string     `json:"title"` // optional
@@ -26,6 +24,10 @@ type Post struct {
 	Tags     []string   `json:"tags"`
 	Longform string     `json:"-"`
 	Draft    bool       `json:"-"`
+}
+
+func (p *Post) Id() graphql.ID {
+	return p.Id
 }
 
 func NewPost(title string, content string, datetime time.Time, tags []string) *Post {
@@ -83,11 +85,11 @@ func Posts(isDraft bool) ([]*Post, error) {
 }
 
 func AllPosts() ([]*Post, error) {
-	return Posts(true)
+	return Posts(false)
 }
 
 func Drafts() ([]*Post, error) {
-	return Posts(false)
+	return Posts(true)
 }
 
 func ParseTags(text string) ([]string, error) {
