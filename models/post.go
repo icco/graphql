@@ -58,7 +58,7 @@ func GetPost(id int64) (*Post, error) {
 }
 
 func Posts(isDraft bool) ([]*Post, error) {
-	rows, err := db.Query("SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE draft = ? ORDER BY modified_at DESC", isDraft)
+	rows, err := db.Query("SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE draft = $1 ORDER BY modified_at DESC", isDraft)
 	if err != nil {
 		return nil, err
 	}
