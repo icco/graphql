@@ -10,20 +10,19 @@ import (
 	"time"
 
 	"github.com/lib/pq"
-	graphql "github.com/neelance/graphql-go"
 	"github.com/russross/blackfriday"
 )
 
 type Post struct {
-	Id       graphql.ID `json:"id"`
-	Title    string     `json:"title"` // optional
-	Content  string     `json:"text"`  // Markdown
-	Datetime time.Time  `json:"date"`
-	Created  time.Time  `json:"created"`
-	Modified time.Time  `json:"modified"`
-	Tags     []string   `json:"tags"`
-	Longform string     `json:"-"`
-	Draft    bool       `json:"-"`
+	Id       int64     `json:"id"`
+	Title    string    `json:"title"` // optional
+	Content  string    `json:"text"`  // Markdown
+	Datetime time.Time `json:"date"`
+	Created  time.Time `json:"created"`
+	Modified time.Time `json:"modified"`
+	Tags     []string  `json:"tags"`
+	Longform string    `json:"-"`
+	Draft    bool      `json:"-"`
 }
 
 func NewPost(title string, content string, datetime time.Time, tags []string) *Post {
@@ -46,7 +45,7 @@ func NewPost(title string, content string, datetime time.Time, tags []string) *P
 func GetPost(id int64) (*Post, error) {
 	var post Post
 	row := db.QueryRow("SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE id = $1", id)
-	err := row.Scan(&post.Id, &post.Title, &post.Content, &post.Datetime, &post.Created, &post.Modified, pq.Array(&post.Tags))
+	err := row.Scan(&post.Id, &post.Title, &post.Content, &post.Datetime, &post.Created, &post.Modified, pq.Array(&post.Tags), &post.Draft)
 	switch {
 	case err == sql.ErrNoRows:
 		return nil, fmt.Errorf("No post with id %d", id)
@@ -58,7 +57,7 @@ func GetPost(id int64) (*Post, error) {
 }
 
 func Posts(isDraft bool) ([]*Post, error) {
-	rows, err := db.Query("SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE draft = $1 ORDER BY modified_at DESC", isDraft)
+	rows, err := db.Query("SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE draft = $1 ORDER BY date DESC", isDraft)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +66,7 @@ func Posts(isDraft bool) ([]*Post, error) {
 	posts := make([]*Post, 0)
 	for rows.Next() {
 		post := new(Post)
-		err := rows.Scan(&post.Id, &post.Title, &post.Content, &post.Datetime, &post.Created, &post.Modified, pq.Array(&post.Tags))
+		err := rows.Scan(&post.Id, &post.Title, &post.Content, &post.Datetime, &post.Created, &post.Modified, pq.Array(&post.Tags), &post.Draft)
 		if err != nil {
 			return nil, err
 		}

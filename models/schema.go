@@ -36,7 +36,7 @@ type postResolver struct {
 }
 
 func (p *postResolver) Id() graphql.ID {
-	return p.p.Id
+	return graphql.ID(strconv.FormatInt(p.p.Id, 10))
 }
 
 func (p *postResolver) Title() string {
