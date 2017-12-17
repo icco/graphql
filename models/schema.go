@@ -31,7 +31,39 @@ var Schema = `
 
 type Resolver struct{}
 
-func (r *Resolver) Post(args struct{ ID graphql.ID }) (*Post, error) {
+type postResolver struct {
+	p *Post
+}
+
+func (p *postResolver) Id() graphql.ID {
+	return p.p.Id
+}
+
+func (p *postResolver) Title() string {
+	return p.p.Title
+}
+
+func (p *postResolver) Content() string {
+	return p.p.Content
+}
+
+func (p *postResolver) Datetime() graphql.Time {
+	return graphql.Time{Time: p.p.Datetime}
+}
+
+func (p *postResolver) Created() graphql.Time {
+	return graphql.Time{Time: p.p.Created}
+}
+
+func (p *postResolver) Modified() graphql.Time {
+	return graphql.Time{Time: p.p.Modified}
+}
+
+func (p *postResolver) Draft() bool {
+	return p.p.Draft
+}
+
+func (r *Resolver) Post(args struct{ ID graphql.ID }) (*postResolver, error) {
 	id, err := strconv.ParseInt(string(args.ID), 10, 64)
 	if err != nil {
 		log.Printf("Got error trying to convert id: %+v: %+v", args.ID, err)
@@ -43,15 +75,19 @@ func (r *Resolver) Post(args struct{ ID graphql.ID }) (*Post, error) {
 		log.Printf("Got error trying to get post %+v: %+v", args.ID, err)
 		return nil, err
 	}
-	return post, nil
+	return &postResolver{post}, nil
 }
 
-func (r *Resolver) Posts() []*Post {
+func (r *Resolver) Posts() ([]*postResolver, error) {
 	posts, err := AllPosts()
 	if err != nil {
 		log.Printf("Got error trying to get posts: %+v", err)
-		return nil
+		return nil, err
 	}
 
-	return posts
+	l := make([]*postResolver, len(posts))
+	for i, p := range posts {
+		l[i] = &postResolver{p}
+	}
+	return l, nil
 }

@@ -26,10 +26,6 @@ type Post struct {
 	Draft    bool       `json:"-"`
 }
 
-func (p *Post) Id() graphql.ID {
-	return p.Id
-}
-
 func NewPost(title string, content string, datetime time.Time, tags []string) *Post {
 	e := new(Post)
 
