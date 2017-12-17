@@ -45,13 +45,13 @@ func NewPost(title string, content string, datetime time.Time, tags []string) *P
 
 func GetPost(id int64) (*Post, error) {
 	var post Post
-	row := db.QueryRow("SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE id = ?", id)
+	row := db.QueryRow("SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE id = $1", id)
 	err := row.Scan(&post.Id, &post.Title, &post.Content, &post.Datetime, &post.Created, &post.Modified, pq.Array(&post.Tags))
 	switch {
 	case err == sql.ErrNoRows:
 		return nil, fmt.Errorf("No post with id %d", id)
 	case err != nil:
-		return nil, err
+		return nil, fmt.Errorf("Error running get query: %+v", err)
 	default:
 		return &post, nil
 	}
