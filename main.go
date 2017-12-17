@@ -1,9 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 
+	"github.com/gorilla/handlers"
 	"github.com/icco/writing-be/models"
 	"github.com/neelance/graphql-go"
 	"github.com/neelance/graphql-go/relay"
@@ -11,18 +14,54 @@ import (
 
 var schema *graphql.Schema
 
-func init() {
-	schema = graphql.MustParseSchema(models.Schema, &models.Resolver{})
-}
-
 func main() {
-	http.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	port := "8080"
+	if fromEnv := os.Getenv("PORT"); fromEnv != "" {
+		port = fromEnv
+	}
+	log.Printf("Starting up on %s", port)
+
+	dbUrl := os.Getenv("DATABASE_URL")
+	if dbUrl == "" {
+		log.Panicf("DATABASE_URL is empty!")
+	}
+	log.Printf("Got DB URL %s", dbUrl)
+
+	models.InitDB(dbUrl)
+	log.Printf("Got passed db line")
+
+	schema = graphql.MustParseSchema(models.Schema, &models.Resolver{})
+
+	server := http.NewServeMux()
+	server.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write(page)
 	}))
+	server.Handle("/graphql", &relay.Handler{Schema: schema})
+	server.HandleFunc("/healthz", healthCheckHandler)
 
-	http.Handle("/graphql", &relay.Handler{Schema: schema})
+	loggedRouter := handlers.LoggingHandler(os.Stdout, server)
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Printf("Server listening on port %s", port)
+	log.Fatal(http.ListenAndServe(":"+port, loggedRouter))
+}
+
+type healthRespJSON struct {
+	Healthy string `json:"healthy"`
+}
+
+func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
+	resp := healthRespJSON{
+		Healthy: "true",
+	}
+
+	js, err := json.Marshal(resp)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(js)
 }
 
 var page = []byte(`
