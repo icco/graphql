@@ -6,24 +6,15 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gorilla/handlers"
+	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 	"github.com/icco/writing-be/models"
 	"github.com/neelance/graphql-go"
 	"github.com/neelance/graphql-go/relay"
+	"gopkg.in/unrolled/secure.v1"
 )
 
 var schema *graphql.Schema
-
-func addDefaultHeaders(h http.Handler) http.Handler {
-	fn := func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		h.ServeHTTP(w, r)
-
-		h.ServeHTTP(w, r)
-	}
-
-	return http.HandlerFunc(fn)
-}
 
 func main() {
 	port := "8080"
@@ -43,18 +34,29 @@ func main() {
 
 	schema = graphql.MustParseSchema(models.Schema, &models.Resolver{})
 
-	server := http.NewServeMux()
+	server := chi.NewRouter()
 	server.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write(page)
 	}))
 	server.Handle("/graphql", &relay.Handler{Schema: schema})
 	server.HandleFunc("/healthz", healthCheckHandler)
 
-	headedRouter := addDefaultHeaders(server)
-	loggedRouter := handlers.LoggingHandler(os.Stdout, headedRouter)
+	// Common suggested middleware
+	server.Use(middleware.RequestID)
+	server.Use(middleware.RealIP)
+	server.Use(middleware.Logger)
+	server.Use(middleware.Recoverer)
+
+	secureMiddleware := secure.New(secure.Options{
+		FrameDeny: true,
+	})
+
+	server.Use(secureMiddleware.Handler)
+
+	http.ListenAndServe("127.0.0.1:3000", server)
 
 	log.Printf("Server listening on port %s", port)
-	log.Fatal(http.ListenAndServe(":"+port, loggedRouter))
+	http.ListenAndServe(":"+port, server)
 }
 
 type healthRespJSON struct {
