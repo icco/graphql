@@ -14,6 +14,17 @@ import (
 
 var schema *graphql.Schema
 
+func addDefaultHeaders(h http.Handler) http.Handler {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		h.ServeHTTP(w, r)
+
+		h.ServeHTTP(w, r)
+	}
+
+	return http.HandlerFunc(fn)
+}
+
 func main() {
 	port := "8080"
 	if fromEnv := os.Getenv("PORT"); fromEnv != "" {
@@ -39,10 +50,12 @@ func main() {
 	server.Handle("/graphql", &relay.Handler{Schema: schema})
 	server.HandleFunc("/healthz", healthCheckHandler)
 
-	loggedRouter := handlers.LoggingHandler(os.Stdout, server)
+	headedRouter := addDefaultHeaders(server)
+	loggedRouter := handlers.LoggingHandler(os.Stdout, headedRouter)
+	logCompressRouter := handlers.CompressHandler(loggedRouter)
 
 	log.Printf("Server listening on port %s", port)
-	log.Fatal(http.ListenAndServe(":"+port, loggedRouter))
+	log.Fatal(http.ListenAndServe(":"+port, logCompressRouter))
 }
 
 type healthRespJSON struct {
