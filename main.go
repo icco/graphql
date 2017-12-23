@@ -52,10 +52,9 @@ func main() {
 
 	headedRouter := addDefaultHeaders(server)
 	loggedRouter := handlers.LoggingHandler(os.Stdout, headedRouter)
-	logCompressRouter := handlers.CompressHandler(loggedRouter)
 
 	log.Printf("Server listening on port %s", port)
-	log.Fatal(http.ListenAndServe(":"+port, logCompressRouter))
+	log.Fatal(http.ListenAndServe(":"+port, loggedRouter))
 }
 
 type healthRespJSON struct {
