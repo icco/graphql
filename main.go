@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/cors"
 	"github.com/icco/writing-be/models"
 	"github.com/neelance/graphql-go"
 	"github.com/neelance/graphql-go/relay"
@@ -42,8 +43,37 @@ func main() {
 	server.Use(middleware.Logger)
 	server.Use(middleware.Recoverer)
 
+	cors := cors.New(cors.Options{
+		// AllowedOrigins: []string{"https://foo.com"}, // Use this to allow specific origin hosts
+		AllowedOrigins: []string{"*"},
+		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: true,
+		MaxAge:           300, // Maximum value not ignored by any of major browsers
+	})
+	server.Use(cors.Handler)
+
 	secureMiddleware := secure.New(secure.Options{
-		FrameDeny: true,
+		AllowedHosts:            []string{},
+		HostsProxyHeaders:       []string{},
+		SSLRedirect:             false,
+		SSLTemporaryRedirect:    false,
+		SSLHost:                 "",
+		SSLProxyHeaders:         map[string]string{},
+		STSSeconds:              0,
+		STSIncludeSubdomains:    false,
+		STSPreload:              false,
+		ForceSTSHeader:          false,
+		FrameDeny:               false,
+		CustomFrameOptionsValue: "",
+		ContentTypeNosniff:      false,
+		BrowserXssFilter:        false,
+		ContentSecurityPolicy:   "",
+		PublicKey:               "",
+		ReferrerPolicy:          "",
+		IsDevelopment:           true,
 	})
 
 	server.Use(secureMiddleware.Handler)
