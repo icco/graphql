@@ -53,9 +53,10 @@ func main() {
 	}))
 	server.Get("/healthz", healthCheckHandler)
 
-	server.Get("/graphql", &relay.Handler{Schema: schema})
-	server.Post("/graphql", &relay.Handler{Schema: schema})
-	server.Options("/graphql", &relay.Handler{Schema: schema})
+	relayHandler := &relay.Handler{Schema: schema}
+	server.Get("/graphql", relayHandler.ServeHTTP)
+	server.Post("/graphql", relayHandler.ServeHTTP)
+	server.Options("/graphql", relayHandler.ServeHTTP)
 
 	log.Printf("Server listening on port %s", port)
 	log.Fatal(http.ListenAndServe(":"+port, server))
