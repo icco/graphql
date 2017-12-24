@@ -48,11 +48,14 @@ func main() {
 
 	server.Use(secureMiddleware.Handler)
 
-	server.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	server.Get("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write(page)
 	}))
-	server.Handle("/graphql", &relay.Handler{Schema: schema})
-	server.HandleFunc("/healthz", healthCheckHandler)
+	server.Get("/healthz", healthCheckHandler)
+
+	server.Get("/graphql", &relay.Handler{Schema: schema})
+	server.Post("/graphql", &relay.Handler{Schema: schema})
+	server.Options("/graphql", &relay.Handler{Schema: schema})
 
 	log.Printf("Server listening on port %s", port)
 	log.Fatal(http.ListenAndServe(":"+port, server))
