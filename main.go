@@ -55,7 +55,7 @@ func main() {
 	server.HandleFunc("/healthz", healthCheckHandler)
 
 	log.Printf("Server listening on port %s", port)
-	http.ListenAndServe(":"+port, server)
+	log.Fatal(http.ListenAndServe(":"+port, server))
 }
 
 type healthRespJSON struct {
