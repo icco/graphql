@@ -56,9 +56,6 @@ func main() {
 	server.Use(cors.Handler)
 
 	secureMiddleware := secure.New(secure.Options{
-		AllowedHosts:         []string{"writing-be.natwelch.com"},
-		SSLRedirect:          true,
-		SSLHost:              "www.onesie.website",
 		SSLProxyHeaders:      map[string]string{"X-Forwarded-Proto": "https"},
 		STSSeconds:           315360000,
 		STSIncludeSubdomains: true,
