@@ -35,11 +35,6 @@ func main() {
 	schema = graphql.MustParseSchema(models.Schema, &models.Resolver{})
 
 	server := chi.NewRouter()
-	server.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write(page)
-	}))
-	server.Handle("/graphql", &relay.Handler{Schema: schema})
-	server.HandleFunc("/healthz", healthCheckHandler)
 
 	// Common suggested middleware
 	server.Use(middleware.RequestID)
@@ -52,6 +47,12 @@ func main() {
 	})
 
 	server.Use(secureMiddleware.Handler)
+
+	server.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write(page)
+	}))
+	server.Handle("/graphql", &relay.Handler{Schema: schema})
+	server.HandleFunc("/healthz", healthCheckHandler)
 
 	http.ListenAndServe("127.0.0.1:3000", server)
 
