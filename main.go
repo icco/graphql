@@ -56,24 +56,17 @@ func main() {
 	server.Use(cors.Handler)
 
 	secureMiddleware := secure.New(secure.Options{
-		AllowedHosts:            []string{},
-		HostsProxyHeaders:       []string{},
-		SSLRedirect:             false,
-		SSLTemporaryRedirect:    false,
-		SSLHost:                 "",
-		SSLProxyHeaders:         map[string]string{},
-		STSSeconds:              0,
-		STSIncludeSubdomains:    false,
-		STSPreload:              false,
-		ForceSTSHeader:          false,
-		FrameDeny:               false,
-		CustomFrameOptionsValue: "",
-		ContentTypeNosniff:      false,
-		BrowserXssFilter:        false,
-		ContentSecurityPolicy:   "",
-		PublicKey:               "",
-		ReferrerPolicy:          "",
-		IsDevelopment:           true,
+		AllowedHosts:         []string{"writing-be.natwelch.com"},
+		SSLRedirect:          true,
+		SSLHost:              "www.onesie.website",
+		SSLProxyHeaders:      map[string]string{"X-Forwarded-Proto": "https"},
+		STSSeconds:           315360000,
+		STSIncludeSubdomains: true,
+		STSPreload:           true,
+		FrameDeny:            true,
+		ContentTypeNosniff:   true,
+		BrowserXssFilter:     true,
+		IsDevelopment:        false,
 	})
 
 	server.Use(secureMiddleware.Handler)
