@@ -54,8 +54,6 @@ func main() {
 	server.Handle("/graphql", &relay.Handler{Schema: schema})
 	server.HandleFunc("/healthz", healthCheckHandler)
 
-	http.ListenAndServe("127.0.0.1:3000", server)
-
 	log.Printf("Server listening on port %s", port)
 	http.ListenAndServe(":"+port, server)
 }
