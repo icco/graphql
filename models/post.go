@@ -107,10 +107,10 @@ func (e *Post) Html() template.HTML {
 	return Markdown(e.Content)
 }
 
-func (e *Post) ReadTime() int {
+func (e *Post) ReadTime() int32 {
 	ReadingSpeed := 265.0
 	words := len(strings.Split(e.Content, " "))
-	seconds := int(math.Ceil(float64(words) / ReadingSpeed * 60.0))
+	seconds := int32(math.Ceil(float64(words) / ReadingSpeed * 60.0))
 
 	return seconds
 }

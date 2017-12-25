@@ -64,7 +64,7 @@ func (p *postResolver) Datetime() graphql.Time {
 	return graphql.Time{Time: p.p.Datetime}
 }
 
-func (p *postResolver) Readtime() int {
+func (p *postResolver) Readtime() int32 {
 	return p.p.ReadTime()
 }
 
