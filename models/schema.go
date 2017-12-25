@@ -20,6 +20,9 @@ var Schema = `
     Id: ID!
     Title: String!
     Content: String!
+    Html: String!
+    SummaryHtml: String!
+    Readtime: Int!
     Datetime: Time!
     Created: Time!
     Modified: Time!
@@ -47,8 +50,22 @@ func (p *postResolver) Content() string {
 	return p.p.Content
 }
 
+// TODO: Make actual html
+func (p *postResolver) Html() string {
+	return string(p.p.Html())
+}
+
+// TODO: Make actual html
+func (p *postResolver) SummaryHtml() string {
+	return SummarizeText(p.p.Content)
+}
+
 func (p *postResolver) Datetime() graphql.Time {
 	return graphql.Time{Time: p.p.Datetime}
+}
+
+func (p *postResolver) Readtime() int {
+	return p.p.ReadTime()
 }
 
 func (p *postResolver) Created() graphql.Time {

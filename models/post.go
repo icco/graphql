@@ -5,12 +5,10 @@ import (
 	"fmt"
 	"html/template"
 	"math"
-	"regexp"
 	"strings"
 	"time"
 
 	"github.com/lib/pq"
-	"github.com/russross/blackfriday"
 )
 
 type Post struct {
@@ -105,36 +103,6 @@ func (e *Post) Save() error {
 	return nil
 }
 
-var HashtagRegex *regexp.Regexp = regexp.MustCompile(`(\s)#(\w+)`)
-var TwitterHandleRegex *regexp.Regexp = regexp.MustCompile(`(\s)@([_A-Za-z0-9]+)`)
-
-// Markdown generator.
-func Markdown(str string) template.HTML {
-	inc := []byte(str)
-	inc = twitterHandleToMarkdown(inc)
-	inc = hashTagsToMarkdown(inc)
-	s := blackfriday.MarkdownCommon(inc)
-	return template.HTML(s)
-}
-
-// Takes a chunk of markdown and just returns the first paragraph.
-func SummarizeText(str string) string {
-	out := strings.Split(str, "\n")
-	return out[0]
-}
-
-func twitterHandleToMarkdown(in []byte) []byte {
-	return TwitterHandleRegex.ReplaceAll(in, []byte("$1[@$2](http://twitter.com/$2)"))
-}
-
-func hashTagsToMarkdown(in []byte) []byte {
-	return HashtagRegex.ReplaceAll(in, []byte("$1[#$2](/tags/$2)"))
-}
-
-type MarkdownHandlerData struct {
-	Text template.HTML
-}
-
 func (e *Post) Html() template.HTML {
 	return Markdown(e.Content)
 }
@@ -145,8 +113,4 @@ func (e *Post) ReadTime() int {
 	seconds := int(math.Ceil(float64(words) / ReadingSpeed * 60.0))
 
 	return seconds
-}
-
-func (e *Post) Summary() string {
-	return ""
 }
