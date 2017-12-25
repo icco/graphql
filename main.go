@@ -31,7 +31,6 @@ func main() {
 	log.Printf("Got DB URL %s", dbUrl)
 
 	models.InitDB(dbUrl)
-	log.Printf("Got passed db line")
 
 	schema = graphql.MustParseSchema(models.Schema, &models.Resolver{})
 
