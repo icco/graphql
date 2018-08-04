@@ -6,43 +6,43 @@ schema {
 The query type, represents all of the entry points into our object graph.
 """
 type Query {
-  Posts(): [Post]!
-  Posts(limit: Int, offset: Int): [Post]!
-  Post(Id: ID!): Post 
-  Links(): [Link]!
-  Links(limit: Int, offset: Int): [Link]!
-  Link(Id: ID!): Link 
+  posts(): [Post]!
+  posts(limit: Int, offset: Int): [Post]!
+  post(id: ID!): Post
+  links(): [Link]!
+  links(limit: Int, offset: Int): [Link]!
+  link(id: ID!): Link
 }
 
 """
 A post is an individual post in the blog.
 """
 type Post {
-  Id: ID!
-  Title: String!
-  Content: String!
-  Html: String!
-  SummaryHtml: String!
-  Readtime: Int!
-  Datetime: Time!
-  Created: Time!
-  Modified: Time!
-  Draft: Boolean!
-  Tags: [String]!
-  Links: [Link]!
+  id: ID!
+  title: String!
+  content: String!
+  html: String!
+  summaryHtml: String!
+  readtime: Int!
+  datetime: Time!
+  created: Time!
+  modified: Time!
+  draft: Boolean!
+  tags: [String]!
+  links: [Link]!
 }
 
 """
 A link is a link I have save on pinboard or a link in a post.
 """
 type Link {
-  Id: ID!
-  Title: String!
-  Uri: URI!
-  Created: Time!
-  Description: String!
-  Screenshot: URI!
-  Tags: [String]!
+  id: ID!
+  title: String!
+  uri: URI!
+  created: Time!
+  description: String!
+  screenshot: URI!
+  tags: [String]!
 }
 
 """
@@ -56,20 +56,20 @@ scalar URI
 Comment is an undefined type reserved for the future.
 """
 type Comment {
-  Id: ID!
+  id: ID!
 }
 
 input NewPost {
-  Content: String!
-  Title: String!
+  content: String!
+  title: String!
 }
 
 input NewLink {
-  Title: String!
-  Uri: URI!
-  Description: String!
-  Tags: [String]!
-  Created: Time!
+  title: String!
+  uri: URI!
+  description: String!
+  tags: [String]!
+  created: Time!
 }
 
 type Mutation {

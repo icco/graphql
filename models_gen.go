@@ -7,39 +7,39 @@ import (
 )
 
 type Comment struct {
-	ID string `json:"Id"`
+	ID string `json:"id"`
 }
 type Link struct {
-	ID          string    `json:"Id"`
-	Title       string    `json:"Title"`
-	URI         string    `json:"Uri"`
-	Created     time.Time `json:"Created"`
-	Description string    `json:"Description"`
-	Screenshot  string    `json:"Screenshot"`
-	Tags        []*string `json:"Tags"`
+	ID          string    `json:"id"`
+	Title       string    `json:"title"`
+	URI         string    `json:"uri"`
+	Created     time.Time `json:"created"`
+	Description string    `json:"description"`
+	Screenshot  string    `json:"screenshot"`
+	Tags        []*string `json:"tags"`
 }
 type NewLink struct {
-	Title       string    `json:"Title"`
-	URI         string    `json:"Uri"`
-	Description string    `json:"Description"`
-	Tags        []*string `json:"Tags"`
-	Created     time.Time `json:"Created"`
+	Title       string    `json:"title"`
+	URI         string    `json:"uri"`
+	Description string    `json:"description"`
+	Tags        []*string `json:"tags"`
+	Created     time.Time `json:"created"`
 }
 type NewPost struct {
-	Content string `json:"Content"`
-	Title   string `json:"Title"`
+	Content string `json:"content"`
+	Title   string `json:"title"`
 }
 type Post struct {
-	ID          string    `json:"Id"`
-	Title       string    `json:"Title"`
-	Content     string    `json:"Content"`
-	HTML        string    `json:"Html"`
-	SummaryHTML string    `json:"SummaryHtml"`
-	Readtime    int       `json:"Readtime"`
-	Datetime    time.Time `json:"Datetime"`
-	Created     time.Time `json:"Created"`
-	Modified    time.Time `json:"Modified"`
-	Draft       bool      `json:"Draft"`
-	Tags        []*string `json:"Tags"`
-	Links       []*Link   `json:"Links"`
+	ID          string    `json:"id"`
+	Title       string    `json:"title"`
+	Content     string    `json:"content"`
+	HTML        string    `json:"html"`
+	SummaryHTML string    `json:"summaryHtml"`
+	Readtime    int       `json:"readtime"`
+	Datetime    time.Time `json:"datetime"`
+	Created     time.Time `json:"created"`
+	Modified    time.Time `json:"modified"`
+	Draft       bool      `json:"draft"`
+	Tags        []*string `json:"tags"`
+	Links       []*Link   `json:"links"`
 }
