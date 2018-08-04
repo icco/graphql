@@ -3,10 +3,18 @@
 package writing
 
 import (
-	context "context"
+	"context"
+	"log"
+
+	"github.com/lib/pq"
 )
 
 type Resolver struct{}
+
+func New() Config {
+	c := Config{}
+	return c
+}
 
 func (r *Resolver) Mutation() MutationResolver {
 	return &mutationResolver{r}
@@ -30,11 +38,52 @@ func (r *mutationResolver) CreateLink(ctx context.Context, input NewLink) (Link,
 type queryResolver struct{ *Resolver }
 
 func (r *queryResolver) AllPosts(ctx context.Context) ([]*Post, error) {
-	panic("not implemented")
+	log.Printf("db: %+v", db)
+	rows, err := db.Query("SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE draft = false ORDER BY date DESC")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	posts := make([]*Post, 0)
+	for rows.Next() {
+		post := new(Post)
+		err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.Datetime, &post.Created, &post.Modified, pq.Array(&post.Tags), &post.Draft)
+		if err != nil {
+			return nil, err
+		}
+		posts = append(posts, post)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return posts, nil
 }
+
 func (r *queryResolver) Posts(ctx context.Context, limit *int, offset *int) ([]*Post, error) {
-	panic("not implemented")
+	rows, err := db.Query("SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE draft = false ORDER BY date DESC LIMIT $1, $2", limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	posts := make([]*Post, 0)
+	for rows.Next() {
+		post := new(Post)
+		err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.Datetime, &post.Created, &post.Modified, pq.Array(&post.Tags), &post.Draft)
+		if err != nil {
+			return nil, err
+		}
+		posts = append(posts, post)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return posts, nil
 }
+
 func (r *queryResolver) Post(ctx context.Context, id string) (*Post, error) {
 	panic("not implemented")
 }
