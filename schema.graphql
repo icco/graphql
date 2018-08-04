@@ -55,3 +55,22 @@ Comment is an undefined type reserved for the future.
 type Comment {
   Id: ID!
 }
+
+input NewPost {
+  Content: String!
+  Title: String!
+}
+
+input NewLink {
+  Title: String!
+  Uri: URI!
+  Description: String!
+  Tags: [String]!
+  Created: Time!
+}
+
+type Mutation {
+  createPost(input: NewPost!): Post!
+  editPost(Id: ID!, input: NewPost!): Post!
+  createLink(input: NewLink!): Link!
+}
