@@ -4,6 +4,8 @@ package writing
 
 import (
 	"context"
+	"database/sql"
+	"fmt"
 
 	"github.com/lib/pq"
 )
@@ -85,8 +87,19 @@ func (r *queryResolver) Posts(ctx context.Context, limit *int, offset *int) ([]*
 }
 
 func (r *queryResolver) Post(ctx context.Context, id string) (*Post, error) {
-	panic("not implemented")
+	var post Post
+	row := db.QueryRow("SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE id = $1", id)
+	err := row.Scan(&post.ID, &post.Title, &post.Content, &post.Datetime, &post.Created, &post.Modified, pq.Array(&post.Tags), &post.Draft)
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, fmt.Errorf("No post with id %d", id)
+	case err != nil:
+		return nil, fmt.Errorf("Error running get query: %+v", err)
+	default:
+		return &post, nil
+	}
 }
+
 func (r *queryResolver) AllLinks(ctx context.Context) ([]*Link, error) {
 	panic("not implemented")
 }
