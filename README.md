@@ -2,9 +2,9 @@
 
 A new backend for writing.natwelch.com.
 
-[![Build Status](https://travis-ci.org/icco/writing-be.svg?branch=master)](https://travis-ci.org/icco/writing-be)
+[![Build Status](https://travis-ci.org/icco/writing.svg?branch=master)](https://travis-ci.org/icco/writing)
 
-Docs: [godoc.org/github.com/icco/writing-be](https://godoc.org/github.com/icco/writing-be)
+Docs: [godoc.org/github.com/icco/writing](https://godoc.org/github.com/icco/writing)
 
 The next iteration in Nat's content management system. Previous versions include:
 
