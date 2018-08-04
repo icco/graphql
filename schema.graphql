@@ -29,6 +29,7 @@ type Post {
   Modified: Time!
   Draft: Boolean!
   Tags: [String]!
+  Links: [Link]!
 }
 
 """
