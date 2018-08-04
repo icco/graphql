@@ -8,28 +8,6 @@ import (
 )
 
 var Schema = `
-	schema {
-		query: Query
-	}
-	# The query type, represents all of the entry points into our object graph
-	type Query {
-		Posts(): [Post]!
-		Post(Id: ID!): Post 
-	}
-	type Post {
-    Id: ID!
-    Title: String!
-    Content: String!
-    Html: String!
-    SummaryHtml: String!
-    Readtime: Int!
-    Datetime: Time!
-    Created: Time!
-    Modified: Time!
-    Draft: Boolean!
-	}
-
-  scalar Time
 `
 
 type Resolver struct{}

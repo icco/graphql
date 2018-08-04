@@ -10,8 +10,6 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
 	"github.com/icco/writing-be/models"
-	"github.com/neelance/graphql-go"
-	"github.com/neelance/graphql-go/relay"
 	"gopkg.in/unrolled/secure.v1"
 )
 
