@@ -6,10 +6,10 @@ schema {
 The query type, represents all of the entry points into our object graph.
 """
 type Query {
-  posts(): [Post]!
+  allPosts(): [Post]!
   posts(limit: Int, offset: Int): [Post]!
   post(id: ID!): Post
-  links(): [Link]!
+  allLinks(): [Link]!
   links(limit: Int, offset: Int): [Link]!
   link(id: ID!): Link
 }

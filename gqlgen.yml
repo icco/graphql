@@ -4,30 +4,10 @@
 # for detailed .gqlgen.yml documentation.
 
 schema: schema.graphql
-
-# Let gqlgen know where to put the generated server
 exec:
-  filename: server/graph/generated.go
-  package: graph
-
-# Let gqlgen know where to the generated models (if any)
+  filename: generated.go
 model:
-  filename: models/generated.go
-  package: models
-
-# Optional, turns on resolver stub generation
+  filename: models_gen.go
 resolver:
-  filename: resolver.go # where to write them
-  type: Resolver  # whats the resolver root implementation type called?
-
-# Tell gqlgen about any existing models you want to reuse for
-# graphql. These normally come from the db or a remote api.
-#models:
-#  User:
-#    model: github.com/my/app/models.User
-#  Todo:
-#    model: github.com/my/app/models.Todo
-#    fields:
-#      id:
-#        resolver: true # force a resolver to be generated
-#        fieldName: todoId # bind to a different go field name
+  filename: resolver.go
+  type: Resolver
