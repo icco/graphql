@@ -7,8 +7,8 @@ schema: schema.graphql
 
 # Let gqlgen know where to put the generated server
 exec:
-  filename: server/generated.go
-  package: server
+  filename: server/graph/generated.go
+  package: graph
 
 # Let gqlgen know where to the generated models (if any)
 model:

@@ -6,15 +6,15 @@ import (
 	context "context"
 
 	models "github.com/icco/writing/models"
-	server "github.com/icco/writing/server"
+	graph "github.com/icco/writing/server/graph"
 )
 
 type Resolver struct{}
 
-func (r *Resolver) Mutation() server.MutationResolver {
+func (r *Resolver) Mutation() graph.MutationResolver {
 	return &mutationResolver{r}
 }
-func (r *Resolver) Query() server.QueryResolver {
+func (r *Resolver) Query() graph.QueryResolver {
 	return &queryResolver{r}
 }
 
