@@ -28,6 +28,7 @@ type Post {
   Created: Time!
   Modified: Time!
   Draft: Boolean!
+  Tags: [String]!
 }
 
 """
@@ -40,6 +41,7 @@ type Link {
   Created: Time!
   Description: String!
   Screenshot: URI!
+  Tags: [String]!
 }
 
 """
