@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/russross/blackfriday"
+	"gopkg.in/russross/blackfriday.v2"
 )
 
 var HashtagRegex *regexp.Regexp = regexp.MustCompile(`(\s)#(\w+)`)
@@ -16,7 +16,7 @@ func Markdown(str string) template.HTML {
 	inc := []byte(str)
 	inc = twitterHandleToMarkdown(inc)
 	inc = hashTagsToMarkdown(inc)
-	s := blackfriday.MarkdownCommon(inc)
+	s := blackfriday.Run(inc)
 	return template.HTML(s)
 }
 

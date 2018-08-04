@@ -4,7 +4,6 @@ package writing
 
 import (
 	"context"
-	"log"
 
 	"github.com/lib/pq"
 )
@@ -12,7 +11,9 @@ import (
 type Resolver struct{}
 
 func New() Config {
-	c := Config{}
+	c := Config{
+		Resolvers: &Resolver{},
+	}
 	return c
 }
 
@@ -38,7 +39,6 @@ func (r *mutationResolver) CreateLink(ctx context.Context, input NewLink) (Link,
 type queryResolver struct{ *Resolver }
 
 func (r *queryResolver) AllPosts(ctx context.Context) ([]*Post, error) {
-	log.Printf("db: %+v", db)
 	rows, err := db.Query("SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE draft = false ORDER BY date DESC")
 	if err != nil {
 		return nil, err
