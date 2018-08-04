@@ -5,9 +5,8 @@ sudo: false
 # https://cloud.google.com/appengine/docs/go/release-notes
 # the golang version should match the version in the pkg
 go:
-- "1.9"
+- "1.10"
 script:
-- go get -d -v ./...
 - go build .
 notifications:
   email:
