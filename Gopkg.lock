@@ -2,11 +2,12 @@
 
 
 [[projects]]
-  digest = "1:09e46052a31c80cbff83d2caac62fc154864e4d7e1b60915670e808d3ed941f6"
+  digest = "1:65aabda3d63a04c5089a0751ce80b89f96aa16c7dd168585a580d3544e3b7a8b"
   name = "github.com/99designs/gqlgen"
   packages = [
     "graphql",
     "graphql/introspection",
+    "handler",
   ]
   pruneopts = "UT"
   revision = "42f10ec9122abaac7b9cf03444f35b6c5cb5f53d"
@@ -19,6 +20,14 @@
   packages = ["."]
   pruneopts = "UT"
   revision = "3d21ba515fe27b856f230847e856431ae1724adc"
+
+[[projects]]
+  digest = "1:43dd08a10854b2056e615d1b1d22ac94559d822e1f8b6fcc92c1a1057e85188e"
+  name = "github.com/gorilla/websocket"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "ea4d1f681babbce9545c9c5f3d5194a789c89f5b"
+  version = "v1.2.0"
 
 [[projects]]
   branch = "master"
@@ -42,6 +51,7 @@
   input-imports = [
     "github.com/99designs/gqlgen/graphql",
     "github.com/99designs/gqlgen/graphql/introspection",
+    "github.com/99designs/gqlgen/handler",
     "github.com/vektah/gqlparser",
     "github.com/vektah/gqlparser/ast",
   ]
