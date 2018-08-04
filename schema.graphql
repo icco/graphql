@@ -49,6 +49,8 @@ Time is a datetime scalar with timezone.
 """
 scalar Time
 
+scalar URI
+
 """
 Comment is an undefined type reserved for the future.
 """
