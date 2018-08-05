@@ -30,6 +30,17 @@
   revision = "3d21ba515fe27b856f230847e856431ae1724adc"
 
 [[projects]]
+  digest = "1:4eda9f7bf70f5145b3b9ed3f18ac93e9b1a0e38906eb69e526380c34861e2b07"
+  name = "github.com/go-chi/chi"
+  packages = [
+    ".",
+    "middleware",
+  ]
+  pruneopts = "UT"
+  revision = "e83ac2304db3c50cf03d96a2fcd39009d458bc35"
+  version = "v3.3.2"
+
+[[projects]]
   digest = "1:43dd08a10854b2056e615d1b1d22ac94559d822e1f8b6fcc92c1a1057e85188e"
   name = "github.com/gorilla/websocket"
   packages = ["."]
@@ -96,6 +107,8 @@
     "github.com/99designs/gqlgen/graphql/introspection",
     "github.com/99designs/gqlgen/handler",
     "github.com/GuiaBolso/darwin",
+    "github.com/go-chi/chi",
+    "github.com/go-chi/chi/middleware",
     "github.com/lib/pq",
     "github.com/vektah/gqlparser",
     "github.com/vektah/gqlparser/ast",

@@ -9,6 +9,8 @@ import (
 	"runtime/debug"
 
 	"github.com/99designs/gqlgen/handler"
+	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 	"github.com/icco/graphql"
 	"gopkg.in/unrolled/render.v1"
 )
@@ -37,10 +39,22 @@ func main() {
 
 	graphql.InitDB(dbUrl)
 
-	// Basic router
-	http.HandleFunc("/healthz", healthCheckHandler)
-	http.Handle("/", handler.Playground("graphql", "/query"))
-	http.Handle("/query", handler.GraphQL(
+	port := "8080"
+	if fromEnv := os.Getenv("PORT"); fromEnv != "" {
+		port = fromEnv
+	}
+	log.Printf("Starting up on %s", port)
+
+	r := chi.NewRouter()
+	r.Use(middleware.RequestID)
+	r.Use(middleware.RealIP)
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+
+	r.Get("/healthz", healthCheckHandler)
+
+	r.Mount("/", handler.Playground("graphql", "/query"))
+	r.Mount("/query", handler.GraphQL(
 		graphql.NewExecutableSchema(graphql.New()),
 		handler.RecoverFunc(func(ctx context.Context, err interface{}) error {
 			log.Print(err)
@@ -48,7 +62,9 @@ func main() {
 			return errors.New("Panic message seen when processing request")
 		}),
 	))
-	log.Fatal(http.ListenAndServe(":8080", nil))
+
+	log.Printf("Server listening on port %s", port)
+	log.Fatal(http.ListenAndServe(":"+port, r))
 }
 
 func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
