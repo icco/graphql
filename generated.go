@@ -2040,6 +2040,18 @@ func UnmarshalNewPost(v interface{}) (NewPost, error) {
 			if err != nil {
 				return it, err
 			}
+		case "datetime":
+			var err error
+			it.Datetime, err = graphql.UnmarshalTime(v)
+			if err != nil {
+				return it, err
+			}
+		case "draft":
+			var err error
+			it.Draft, err = graphql.UnmarshalBoolean(v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -2128,6 +2140,8 @@ type Comment {
 input NewPost {
   content: String!
   title: String!
+  datetime: Time!
+  draft: Boolean!
 }
 
 input NewLink {

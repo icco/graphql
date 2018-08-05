@@ -6,6 +6,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"time"
 
 	"github.com/lib/pq"
 )
@@ -29,11 +30,25 @@ func (r *Resolver) Query() QueryResolver {
 type mutationResolver struct{ *Resolver }
 
 func (r *mutationResolver) CreatePost(ctx context.Context, input NewPost) (Post, error) {
-	panic("not implemented")
+	result, err := db.Exec("INSERT INTO posts(title, content, date, draft, created_at, modified_at) VALUES ($1, $2, $3, $4, $5, $5)",
+		input.Title,
+		input.Content,
+		input.Datetime,
+		input.Draft,
+		time.Now(),
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return r.Post(ctx, result)
 }
+
 func (r *mutationResolver) EditPost(ctx context.Context, id string, input NewPost) (Post, error) {
 	panic("not implemented")
 }
+
 func (r *mutationResolver) CreateLink(ctx context.Context, input NewLink) (Link, error) {
 	panic("not implemented")
 }

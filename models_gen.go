@@ -26,8 +26,10 @@ type NewLink struct {
 	Created     time.Time `json:"created"`
 }
 type NewPost struct {
-	Content string `json:"content"`
-	Title   string `json:"title"`
+	Content  string    `json:"content"`
+	Title    string    `json:"title"`
+	Datetime time.Time `json:"datetime"`
+	Draft    bool      `json:"draft"`
 }
 type Post struct {
 	ID          string    `json:"id"`
