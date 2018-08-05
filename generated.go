@@ -448,10 +448,8 @@ func (ec *executionContext) _Post(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = ec._Post_title(ctx, field, obj)
 		case "content":
 			out.Values[i] = ec._Post_content(ctx, field, obj)
-		case "html":
-			out.Values[i] = ec._Post_html(ctx, field, obj)
-		case "summaryHtml":
-			out.Values[i] = ec._Post_summaryHtml(ctx, field, obj)
+		case "summary":
+			out.Values[i] = ec._Post_summary(ctx, field, obj)
 		case "readtime":
 			out.Values[i] = ec._Post_readtime(ctx, field, obj)
 		case "datetime":
@@ -525,7 +523,7 @@ func (ec *executionContext) _Post_content(ctx context.Context, field graphql.Col
 	return graphql.MarshalString(res)
 }
 
-func (ec *executionContext) _Post_html(ctx context.Context, field graphql.CollectedField, obj *Post) graphql.Marshaler {
+func (ec *executionContext) _Post_summary(ctx context.Context, field graphql.CollectedField, obj *Post) graphql.Marshaler {
 	rctx := graphql.GetResolverContext(ctx)
 	rctx.Object = "Post"
 	rctx.Args = nil
@@ -533,24 +531,7 @@ func (ec *executionContext) _Post_html(ctx context.Context, field graphql.Collec
 	rctx.PushField(field.Alias)
 	defer rctx.Pop()
 	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
-		return obj.Html(), nil
-	})
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(HTML)
-	return graphql.MarshalString(string(res))
-}
-
-func (ec *executionContext) _Post_summaryHtml(ctx context.Context, field graphql.CollectedField, obj *Post) graphql.Marshaler {
-	rctx := graphql.GetResolverContext(ctx)
-	rctx.Object = "Post"
-	rctx.Args = nil
-	rctx.Field = field
-	rctx.PushField(field.Alias)
-	defer rctx.Pop()
-	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
-		return obj.SummaryHTML, nil
+		return obj.Summary(), nil
 	})
 	if resTmp == nil {
 		return graphql.Null
@@ -2093,8 +2074,7 @@ type Post {
   id: ID!
   title: String!
   content: String!
-  html: String!
-  summaryHtml: String!
+  summary: String!
   readtime: Int!
   datetime: Time!
   created: Time!

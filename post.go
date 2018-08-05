@@ -12,18 +12,16 @@ import (
 )
 
 type Post struct {
-	ID          string    `json:"id"`
-	Title       string    `json:"title"`
-	Content     string    `json:"content"`
-	SummaryHTML string    `json:"summaryHtml"`
-	Readtime    int       `json:"readtime"`
-	Datetime    time.Time `json:"datetime"`
-	HTML        string    `json:"html"`
-	Created     time.Time `json:"created"`
-	Modified    time.Time `json:"modified"`
-	Draft       bool      `json:"draft"`
-	Tags        []string  `json:"tags"`
-	Links       []*Link   `json:"links"`
+	ID       string    `json:"id"`
+	Title    string    `json:"title"`
+	Content  string    `json:"content"`
+	Readtime int       `json:"readtime"`
+	Datetime time.Time `json:"datetime"`
+	Created  time.Time `json:"created"`
+	Modified time.Time `json:"modified"`
+	Draft    bool      `json:"draft"`
+	Tags     []string  `json:"tags"`
+	Links    []*Link   `json:"links"`
 }
 
 func GeneratePost(title string, content string, datetime time.Time, tags []string) *Post {
@@ -104,6 +102,10 @@ func ParseTags(text string) ([]string, error) {
 func (e *Post) Save() error {
 
 	return nil
+}
+
+func (p *Post) Summary() string {
+	return SummarizeText(p.Content)
 }
 
 func (e *Post) Html() template.HTML {
