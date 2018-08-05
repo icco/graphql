@@ -1,4 +1,4 @@
-package writing
+package graphql
 
 import (
 	"database/sql"

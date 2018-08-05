@@ -9,7 +9,7 @@ import (
 	"runtime/debug"
 
 	"github.com/99designs/gqlgen/handler"
-	"github.com/icco/writing"
+	"github.com/icco/graphql"
 )
 
 func main() {
@@ -19,12 +19,12 @@ func main() {
 	}
 	log.Printf("Got DB URL %s", dbUrl)
 
-	writing.InitDB(dbUrl)
+	graphql.InitDB(dbUrl)
 
 	// Basic router
-	http.Handle("/", handler.Playground("writing", "/query"))
+	http.Handle("/", handler.Playground("graphql", "/query"))
 	http.Handle("/query", handler.GraphQL(
-		writing.NewExecutableSchema(writing.New()),
+		graphql.NewExecutableSchema(graphql.New()),
 		handler.RecoverFunc(func(ctx context.Context, err interface{}) error {
 			log.Print(err)
 			debug.PrintStack()

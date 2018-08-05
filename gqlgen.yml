@@ -13,4 +13,4 @@ resolver:
   type: Resolver
 models:
   Post:
-    model: github.com/icco/writing.Post
+    model: github.com/icco/graphql.Post

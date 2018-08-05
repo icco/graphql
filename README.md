@@ -1,10 +1,10 @@
-# writing-be
+# graphql.natwelch.com
 
-A new backend for writing.natwelch.com.
+A new backend for graphql.natwelch.com.
 
-[![Build Status](https://travis-ci.org/icco/writing.svg?branch=master)](https://travis-ci.org/icco/writing)
+[![Build Status](https://travis-ci.org/icco/graphql.svg?branch=master)](https://travis-ci.org/icco/graphql)
 
-Docs: [godoc.org/github.com/icco/writing](https://godoc.org/github.com/icco/writing)
+Docs: [godoc.org/github.com/icco/graphql](https://godoc.org/github.com/icco/graphql)
 
 The next iteration in Nat's content management system. Previous versions include:
 
@@ -23,4 +23,4 @@ These directions are for OSX and assume you have [homebrew](http://brew.sh/) ins
 
 ## Design
 
-This site is hosted at <http://writing.natwelch.com>. It runs out of a docker container on Google Kubernetes. It has a postgres backend. This started as a rewrite of a previous project, natnatnat. Its [readme](https://github.com/icco/natnatnat/blob/master/README.md) walks through a lot of the previous inspiration.
+This site is hosted at <https://graphql.natwelch.com>. It runs out of a docker container on Google Kubernetes. It has a postgres backend. This started as a rewrite of a previous project, natnatnat. Its [readme](https://github.com/icco/natnatnat/blob/master/README.md) walks through a lot of the previous inspiration.
