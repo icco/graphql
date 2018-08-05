@@ -16,7 +16,7 @@ type Link struct {
 	Created     time.Time `json:"created"`
 	Description string    `json:"description"`
 	Screenshot  string    `json:"screenshot"`
-	Tags        []*string `json:"tags"`
+	Tags        []string  `json:"tags"`
 }
 type NewLink struct {
 	Title       string    `json:"title"`
@@ -30,18 +30,4 @@ type NewPost struct {
 	Title    string    `json:"title"`
 	Datetime time.Time `json:"datetime"`
 	Draft    bool      `json:"draft"`
-}
-type Post struct {
-	ID          string    `json:"id"`
-	Title       string    `json:"title"`
-	Content     string    `json:"content"`
-	HTML        string    `json:"html"`
-	SummaryHTML string    `json:"summaryHtml"`
-	Readtime    int       `json:"readtime"`
-	Datetime    time.Time `json:"datetime"`
-	Created     time.Time `json:"created"`
-	Modified    time.Time `json:"modified"`
-	Draft       bool      `json:"draft"`
-	Tags        []*string `json:"tags"`
-	Links       []*Link   `json:"links"`
 }

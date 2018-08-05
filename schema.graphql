@@ -28,7 +28,7 @@ type Post {
   created: Time!
   modified: Time!
   draft: Boolean!
-  tags: [String]!
+  tags: [String!]!
   links: [Link]!
 }
 
@@ -42,7 +42,7 @@ type Link {
   created: Time!
   description: String!
   screenshot: URI!
-  tags: [String]!
+  tags: [String!]!
 }
 
 """

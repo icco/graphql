@@ -37,12 +37,21 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input NewPost) (Post,
 		input.Draft,
 		time.Now(),
 	)
-
 	if err != nil {
-		return nil, err
+		return Post{}, err
 	}
 
-	return r.Post(ctx, result)
+	postId, err := result.LastInsertId()
+	if err != nil {
+		return Post{}, err
+	}
+
+	post, err := GetPost(postId)
+	if err != nil {
+		return Post{}, err
+	}
+
+	return *post, nil
 }
 
 func (r *mutationResolver) EditPost(ctx context.Context, id string, input NewPost) (Post, error) {

@@ -11,3 +11,6 @@ model:
 resolver:
   filename: resolver.go
   type: Resolver
+models:
+  Post:
+    model: github.com/icco/writing.Post

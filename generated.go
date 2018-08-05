@@ -288,17 +288,14 @@ func (ec *executionContext) _Link_tags(ctx context.Context, field graphql.Collec
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.([]string)
 	arr1 := graphql.Array{}
 	for idx1 := range res {
 		arr1 = append(arr1, func() graphql.Marshaler {
 			rctx := graphql.GetResolverContext(ctx)
 			rctx.PushIndex(idx1)
 			defer rctx.Pop()
-			if res[idx1] == nil {
-				return graphql.Null
-			}
-			return graphql.MarshalString(*res[idx1])
+			return graphql.MarshalString(res[idx1])
 		}())
 	}
 	return arr1
@@ -536,13 +533,13 @@ func (ec *executionContext) _Post_html(ctx context.Context, field graphql.Collec
 	rctx.PushField(field.Alias)
 	defer rctx.Pop()
 	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
-		return obj.HTML, nil
+		return obj.Html(), nil
 	})
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
-	return graphql.MarshalString(res)
+	res := resTmp.(HTML)
+	return graphql.MarshalString(string(res))
 }
 
 func (ec *executionContext) _Post_summaryHtml(ctx context.Context, field graphql.CollectedField, obj *Post) graphql.Marshaler {
@@ -660,17 +657,14 @@ func (ec *executionContext) _Post_tags(ctx context.Context, field graphql.Collec
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.([]string)
 	arr1 := graphql.Array{}
 	for idx1 := range res {
 		arr1 = append(arr1, func() graphql.Marshaler {
 			rctx := graphql.GetResolverContext(ctx)
 			rctx.PushIndex(idx1)
 			defer rctx.Pop()
-			if res[idx1] == nil {
-				return graphql.Null
-			}
-			return graphql.MarshalString(*res[idx1])
+			return graphql.MarshalString(res[idx1])
 		}())
 	}
 	return arr1
@@ -2106,7 +2100,7 @@ type Post {
   created: Time!
   modified: Time!
   draft: Boolean!
-  tags: [String]!
+  tags: [String!]!
   links: [Link]!
 }
 
@@ -2120,7 +2114,7 @@ type Link {
   created: Time!
   description: String!
   screenshot: URI!
-  tags: [String]!
+  tags: [String!]!
 }
 
 """
