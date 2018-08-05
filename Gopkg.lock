@@ -80,6 +80,14 @@
   revision = "cadec560ec52d93835bf2f15bd794700d3a2473b"
   version = "v2.0.0"
 
+[[projects]]
+  branch = "v1"
+  digest = "1:e833d953c8467158fd0250a053ec390dd899945d4c6b87b07920ad431fc80dfe"
+  name = "gopkg.in/unrolled/render.v1"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "65450fb6b2d3595beca39f969c411db8f8d5c806"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
@@ -92,6 +100,7 @@
     "github.com/vektah/gqlparser",
     "github.com/vektah/gqlparser/ast",
     "gopkg.in/russross/blackfriday.v2",
+    "gopkg.in/unrolled/render.v1",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
