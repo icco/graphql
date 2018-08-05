@@ -60,6 +60,14 @@
   revision = "90697d60dd844d5ef6ff15135d0203f65d2f53b8"
 
 [[projects]]
+  digest = "1:0b8dd7447e420afff0260179dc892711e837edd1d446bc78dab924624a3c3c81"
+  name = "github.com/rs/cors"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "3fb1b69b103a84de38a19c3c6ec073dd6caa4d3f"
+  version = "v1.5.0"
+
+[[projects]]
   branch = "master"
   digest = "1:def689e73e9252f6f7fe66834a76751a41b767e03daab299e607e7226c58a855"
   name = "github.com/shurcooL/sanitized_anchor_name"
@@ -99,6 +107,14 @@
   pruneopts = "UT"
   revision = "65450fb6b2d3595beca39f969c411db8f8d5c806"
 
+[[projects]]
+  branch = "v1"
+  digest = "1:9624432019da6390fc19bd6ef16d110efb7bee291f1d9048273ab229fcb2bea1"
+  name = "gopkg.in/unrolled/secure.v1"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "8287f3899c8e3d490748e18fe7d438629132914e"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
@@ -110,10 +126,12 @@
     "github.com/go-chi/chi",
     "github.com/go-chi/chi/middleware",
     "github.com/lib/pq",
+    "github.com/rs/cors",
     "github.com/vektah/gqlparser",
     "github.com/vektah/gqlparser/ast",
     "gopkg.in/russross/blackfriday.v2",
     "gopkg.in/unrolled/render.v1",
+    "gopkg.in/unrolled/secure.v1",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
