@@ -1,10 +1,9 @@
 FROM golang:1.10
-
-WORKDIR /go/src/app
-COPY . .
-
-RUN go-wrapper download   # "go get -d -v ./..."
-RUN go-wrapper install    # "go install -v ./..."
-
 EXPOSE 8080
-CMD ["go-wrapper", "run", "server"]
+WORKDIR /go/src/
+COPY . /go/src/github.com/icco/writing
+RUN ls -al /go/src/github.com/icco/writing
+
+RUN go build -o ../bin/server ./github.com/icco/writing/server
+
+CMD ["server"]
