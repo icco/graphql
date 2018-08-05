@@ -53,8 +53,8 @@ func main() {
 
 	r.Get("/healthz", healthCheckHandler)
 
-	r.Mount("/", handler.Playground("graphql", "/query"))
-	r.Mount("/query", handler.GraphQL(
+	r.Get("/", handler.Playground("graphql", "/graphql"))
+	r.Post("/graphql", handler.GraphQL(
 		graphql.NewExecutableSchema(graphql.New()),
 		handler.RecoverFunc(func(ctx context.Context, err interface{}) error {
 			log.Print(err)
