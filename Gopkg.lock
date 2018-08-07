@@ -2,6 +2,7 @@
 
 
 [[projects]]
+  branch = "master"
   digest = "1:65aabda3d63a04c5089a0751ce80b89f96aa16c7dd168585a580d3544e3b7a8b"
   name = "github.com/99designs/gqlgen"
   packages = [
@@ -10,8 +11,7 @@
     "handler",
   ]
   pruneopts = "UT"
-  revision = "42f10ec9122abaac7b9cf03444f35b6c5cb5f53d"
-  version = "0.4.1"
+  revision = "e6005f6b9205ea489b453614858488d46eb48672"
 
 [[projects]]
   branch = "master"
