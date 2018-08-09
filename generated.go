@@ -48,6 +48,7 @@ type QueryResolver interface {
 	AllLinks(ctx context.Context) ([]*Link, error)
 	Links(ctx context.Context, limit *int, offset *int) ([]*Link, error)
 	Link(ctx context.Context, id string) (*Link, error)
+	Stats(ctx context.Context, count *int) ([]*Stat, error)
 }
 
 type executableSchema struct {
@@ -715,6 +716,8 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Values[i] = ec._Query_links(ctx, field)
 		case "link":
 			out.Values[i] = ec._Query_link(ctx, field)
+		case "stats":
+			out.Values[i] = ec._Query_stats(ctx, field)
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
@@ -1107,6 +1110,61 @@ func (ec *executionContext) _Query_link(ctx context.Context, field graphql.Colle
 	})
 }
 
+func (ec *executionContext) _Query_stats(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args := map[string]interface{}{}
+	var arg0 *int
+	if tmp, ok := rawArgs["count"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg0 = &ptr1
+		}
+
+		if err != nil {
+			ec.Error(ctx, err)
+			return graphql.Null
+		}
+	}
+	args["count"] = arg0
+	ctx = graphql.WithResolverContext(ctx, &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	})
+	return graphql.Defer(func() (ret graphql.Marshaler) {
+		defer func() {
+			if r := recover(); r != nil {
+				userErr := ec.Recover(ctx, r)
+				ec.Error(ctx, userErr)
+				ret = graphql.Null
+			}
+		}()
+
+		resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
+			return ec.resolvers.Query().Stats(ctx, args["count"].(*int))
+		})
+		if resTmp == nil {
+			return graphql.Null
+		}
+		res := resTmp.([]*Stat)
+		arr1 := graphql.Array{}
+		for idx1 := range res {
+			arr1 = append(arr1, func() graphql.Marshaler {
+				rctx := graphql.GetResolverContext(ctx)
+				rctx.PushIndex(idx1)
+				defer rctx.Pop()
+				if res[idx1] == nil {
+					return graphql.Null
+				}
+				return ec._Stat(ctx, field.Selections, res[idx1])
+			}())
+		}
+		return arr1
+	})
+}
+
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
 	args := map[string]interface{}{}
@@ -1157,6 +1215,65 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 		return graphql.Null
 	}
 	return ec.___Schema(ctx, field.Selections, res)
+}
+
+var statImplementors = []string{"Stat"}
+
+// nolint: gocyclo, errcheck, gas, goconst
+func (ec *executionContext) _Stat(ctx context.Context, sel ast.SelectionSet, obj *Stat) graphql.Marshaler {
+	fields := graphql.CollectFields(ctx, sel, statImplementors)
+
+	out := graphql.NewOrderedMap(len(fields))
+	for i, field := range fields {
+		out.Keys[i] = field.Alias
+
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Stat")
+		case "key":
+			out.Values[i] = ec._Stat_key(ctx, field, obj)
+		case "value":
+			out.Values[i] = ec._Stat_value(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+
+	return out
+}
+
+func (ec *executionContext) _Stat_key(ctx context.Context, field graphql.CollectedField, obj *Stat) graphql.Marshaler {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Stat"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
+		return obj.Key, nil
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	return graphql.MarshalString(res)
+}
+
+func (ec *executionContext) _Stat_value(ctx context.Context, field graphql.CollectedField, obj *Stat) graphql.Marshaler {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Stat"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
+		return obj.Value, nil
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	return graphql.MarshalString(res)
 }
 
 var __DirectiveImplementors = []string{"__Directive"}
@@ -2155,6 +2272,7 @@ type Query {
   allLinks(): [Link]!
   links(limit: Int, offset: Int): [Link]!
   link(id: ID!): Link
+  stats(count: Int): [Stat]!
 }
 
 """
@@ -2185,6 +2303,11 @@ type Link {
   description: String!
   screenshot: URI!
   tags: [String!]!
+}
+
+type Stat {
+  key: String!
+  value: String!
 }
 
 """

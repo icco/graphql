@@ -14,6 +14,7 @@ type Query {
   allLinks(): [Link]!
   links(limit: Int, offset: Int): [Link]!
   link(id: ID!): Link
+  stats(count: Int): [Stat]!
 }
 
 """
@@ -44,6 +45,11 @@ type Link {
   description: String!
   screenshot: URI!
   tags: [String!]!
+}
+
+type Stat {
+  key: String!
+  value: String!
 }
 
 """

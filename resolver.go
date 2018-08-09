@@ -152,6 +152,34 @@ func (r *queryResolver) PrevPost(ctx context.Context, id string) (*string, error
 	}
 }
 
+func (r *queryResolver) Stats(ctx context.Context, count *int) ([]*Stat, error) {
+	limit := *count
+	if limit <= 0 {
+		limit = 6
+	}
+
+	rows, err := db.Query("SELECT key, value FROM stats ORDER BY modified_at DESC LIMIT $1", limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	stats := make([]*Stat, 0)
+	for rows.Next() {
+		stat := new(Stat)
+		err := rows.Scan(&stat.Key, &stat.Value)
+		if err != nil {
+			return nil, err
+		}
+		stats = append(stats, stat)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return stats, nil
+}
+
 func (r *queryResolver) AllLinks(ctx context.Context) ([]*Link, error) {
 	panic("not implemented")
 }
