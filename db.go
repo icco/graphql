@@ -27,6 +27,19 @@ var (
       );
       `,
 		},
+		{
+			Version:     2,
+			Description: "Creating table stats",
+			Script: `
+      CREATE TABLE stats (
+        id serial primary key,
+        key text,
+        value text,
+        created_at timestamp with time zone,
+        modified_at timestamp with time zone
+      );
+      `,
+		},
 	}
 )
 
