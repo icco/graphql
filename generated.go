@@ -43,6 +43,8 @@ type QueryResolver interface {
 	AllPosts(ctx context.Context) ([]*Post, error)
 	Posts(ctx context.Context, limit *int, offset *int) ([]*Post, error)
 	Post(ctx context.Context, id string) (*Post, error)
+	NextPost(ctx context.Context, id string) (*string, error)
+	PrevPost(ctx context.Context, id string) (*string, error)
 	AllLinks(ctx context.Context) ([]*Link, error)
 	Links(ctx context.Context, limit *int, offset *int) ([]*Link, error)
 	Link(ctx context.Context, id string) (*Link, error)
@@ -703,6 +705,10 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Values[i] = ec._Query_posts(ctx, field)
 		case "post":
 			out.Values[i] = ec._Query_post(ctx, field)
+		case "nextPost":
+			out.Values[i] = ec._Query_nextPost(ctx, field)
+		case "prevPost":
+			out.Values[i] = ec._Query_prevPost(ctx, field)
 		case "allLinks":
 			out.Values[i] = ec._Query_allLinks(ctx, field)
 		case "links":
@@ -867,6 +873,88 @@ func (ec *executionContext) _Query_post(ctx context.Context, field graphql.Colle
 			return graphql.Null
 		}
 		return ec._Post(ctx, field.Selections, res)
+	})
+}
+
+func (ec *executionContext) _Query_nextPost(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalID(tmp)
+		if err != nil {
+			ec.Error(ctx, err)
+			return graphql.Null
+		}
+	}
+	args["id"] = arg0
+	ctx = graphql.WithResolverContext(ctx, &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	})
+	return graphql.Defer(func() (ret graphql.Marshaler) {
+		defer func() {
+			if r := recover(); r != nil {
+				userErr := ec.Recover(ctx, r)
+				ec.Error(ctx, userErr)
+				ret = graphql.Null
+			}
+		}()
+
+		resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
+			return ec.resolvers.Query().NextPost(ctx, args["id"].(string))
+		})
+		if resTmp == nil {
+			return graphql.Null
+		}
+		res := resTmp.(*string)
+		if res == nil {
+			return graphql.Null
+		}
+		return graphql.MarshalID(*res)
+	})
+}
+
+func (ec *executionContext) _Query_prevPost(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalID(tmp)
+		if err != nil {
+			ec.Error(ctx, err)
+			return graphql.Null
+		}
+	}
+	args["id"] = arg0
+	ctx = graphql.WithResolverContext(ctx, &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	})
+	return graphql.Defer(func() (ret graphql.Marshaler) {
+		defer func() {
+			if r := recover(); r != nil {
+				userErr := ec.Recover(ctx, r)
+				ec.Error(ctx, userErr)
+				ret = graphql.Null
+			}
+		}()
+
+		resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
+			return ec.resolvers.Query().PrevPost(ctx, args["id"].(string))
+		})
+		if resTmp == nil {
+			return graphql.Null
+		}
+		res := resTmp.(*string)
+		if res == nil {
+			return graphql.Null
+		}
+		return graphql.MarshalID(*res)
 	})
 }
 
@@ -2062,6 +2150,8 @@ type Query {
   allPosts(): [Post]!
   posts(limit: Int, offset: Int): [Post]!
   post(id: ID!): Post
+  nextPost(id: ID!): ID
+  prevPost(id: ID!): ID
   allLinks(): [Link]!
   links(limit: Int, offset: Int): [Link]!
   link(id: ID!): Link

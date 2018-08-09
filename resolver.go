@@ -124,6 +124,34 @@ func (r *queryResolver) Post(ctx context.Context, id string) (*Post, error) {
 	}
 }
 
+func (r *queryResolver) NextPost(ctx context.Context, id string) (*string, error) {
+	var postId string
+	row := db.QueryRow("SELECT id FROM posts WHERE id = $1", id)
+	err := row.Scan(&postId)
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, fmt.Errorf("No post with id %s", id)
+	case err != nil:
+		return nil, fmt.Errorf("Error running get query: %+v", err)
+	default:
+		return &postId, nil
+	}
+}
+
+func (r *queryResolver) PrevPost(ctx context.Context, id string) (*string, error) {
+	var postId string
+	row := db.QueryRow("SELECT id FROM posts WHERE id = $1", id)
+	err := row.Scan(&postId)
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, fmt.Errorf("No post with id %s", id)
+	case err != nil:
+		return nil, fmt.Errorf("Error running get query: %+v", err)
+	default:
+		return &postId, nil
+	}
+}
+
 func (r *queryResolver) AllLinks(ctx context.Context) ([]*Link, error) {
 	panic("not implemented")
 }

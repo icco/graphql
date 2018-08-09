@@ -9,6 +9,8 @@ type Query {
   allPosts(): [Post]!
   posts(limit: Int, offset: Int): [Post]!
   post(id: ID!): Post
+  nextPost(id: ID!): ID
+  prevPost(id: ID!): ID
   allLinks(): [Link]!
   links(limit: Int, offset: Int): [Link]!
   link(id: ID!): Link
