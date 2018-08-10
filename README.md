@@ -24,3 +24,7 @@ These directions are for OSX and assume you have [homebrew](http://brew.sh/) ins
 ## Design
 
 This site is hosted at <https://graphql.natwelch.com>. It runs out of a docker container on Google Kubernetes. It has a postgres backend. This started as a rewrite of a previous project, natnatnat. Its [readme](https://github.com/icco/natnatnat/blob/master/README.md) walks through a lot of the previous inspiration.
+
+## Documentation
+
+You can explore this api by looking at [schema.graphql]() and reading the descriptions. See https://facebook.github.io/graphql/June2018/#sec-Descriptions for an explanation of the description schema.
