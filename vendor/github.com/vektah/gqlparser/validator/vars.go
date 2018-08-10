@@ -42,20 +42,23 @@ func VariableValues(schema *ast.Schema, op *ast.OperationDefinition, variables m
 		}
 
 		if hasValue {
-			rv := reflect.ValueOf(val)
-			if v.Type.NonNull && val == nil {
-				return nil, gqlerror.ErrorPathf(validator.path, "cannot be null")
-			}
+			if val == nil {
+				if v.Type.NonNull {
+					return nil, gqlerror.ErrorPathf(validator.path, "cannot be null")
+				}
+				coercedVars[v.Variable] = nil
+			} else {
+				rv := reflect.ValueOf(val)
+				if rv.Kind() == reflect.Ptr || rv.Kind() == reflect.Interface {
+					rv = rv.Elem()
+				}
 
-			if rv.Kind() == reflect.Ptr || rv.Kind() == reflect.Interface {
-				rv = rv.Elem()
-			}
+				if err := validator.validateVarType(v.Type, rv); err != nil {
+					return nil, err
+				}
 
-			if err := validator.validateVarType(v.Type, rv); err != nil {
-				return nil, err
+				coercedVars[v.Variable] = val
 			}
-
-			coercedVars[v.Variable] = val
 		}
 
 		validator.path = validator.path[0 : len(validator.path)-1]
@@ -167,8 +170,12 @@ func (v *varValidator) validateVarType(typ *ast.Type, val reflect.Value) *gqlerr
 			}
 
 			if field.Kind() == reflect.Ptr || field.Kind() == reflect.Interface {
-				if typ.NonNull && field.IsNil() {
+				if fieldDef.Type.NonNull && field.IsNil() {
 					return gqlerror.ErrorPathf(v.path, "cannot be null")
+				}
+				//allow null object field and skip it
+				if !fieldDef.Type.NonNull && field.IsNil() {
+					continue
 				}
 				field = field.Elem()
 			}

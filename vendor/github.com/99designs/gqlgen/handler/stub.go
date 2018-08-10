@@ -2,7 +2,6 @@ package handler
 
 import (
 	"context"
-	"time"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/vektah/gqlparser"
@@ -10,6 +9,7 @@ import (
 )
 
 type executableSchemaStub struct {
+	NextResp chan struct{}
 }
 
 var _ graphql.ExecutableSchema = &executableSchemaStub{}
@@ -17,7 +17,10 @@ var _ graphql.ExecutableSchema = &executableSchemaStub{}
 func (e *executableSchemaStub) Schema() *ast.Schema {
 	return gqlparser.MustLoadSchema(&ast.Source{Input: `
 		schema { query: Query }
-		type Query { me: User! }
+		type Query {
+			me: User!
+			user(id: Int): User!
+		}
 		type User { name: String! }
 	`})
 }
@@ -32,11 +35,10 @@ func (e *executableSchemaStub) Mutation(ctx context.Context, op *ast.OperationDe
 
 func (e *executableSchemaStub) Subscription(ctx context.Context, op *ast.OperationDefinition) func() *graphql.Response {
 	return func() *graphql.Response {
-		time.Sleep(50 * time.Millisecond)
 		select {
 		case <-ctx.Done():
 			return nil
-		default:
+		case <-e.NextResp:
 			return &graphql.Response{
 				Data: []byte(`{"name":"test"}`),
 			}
