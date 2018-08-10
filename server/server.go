@@ -12,6 +12,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/icco/graphql"
+	"github.com/icco/graphql/auth"
 	"github.com/rs/cors"
 	"gopkg.in/unrolled/render.v1"
 	"gopkg.in/unrolled/secure.v1"
@@ -48,6 +49,7 @@ func main() {
 	log.Printf("Starting up on %s", port)
 
 	r := chi.NewRouter()
+	r.Use(auth.Middleware(db))
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
