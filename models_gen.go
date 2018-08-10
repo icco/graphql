@@ -31,6 +31,10 @@ type NewPost struct {
 	Datetime time.Time `json:"datetime"`
 	Draft    bool      `json:"draft"`
 }
+type NewStat struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
 type Stat struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`

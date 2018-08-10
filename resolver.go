@@ -62,6 +62,10 @@ func (r *mutationResolver) CreateLink(ctx context.Context, input NewLink) (Link,
 	panic("not implemented")
 }
 
+func (r *mutationResolver) UpsertStat(ctx context.Context, input NewStat) (Stat, error) {
+	panic("not implemented")
+}
+
 type queryResolver struct{ *Resolver }
 
 func (r *queryResolver) AllPosts(ctx context.Context) ([]*Post, error) {

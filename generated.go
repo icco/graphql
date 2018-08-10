@@ -38,6 +38,7 @@ type MutationResolver interface {
 	CreatePost(ctx context.Context, input NewPost) (Post, error)
 	EditPost(ctx context.Context, Id string, input NewPost) (Post, error)
 	CreateLink(ctx context.Context, input NewLink) (Link, error)
+	UpsertStat(ctx context.Context, input NewStat) (Stat, error)
 }
 type QueryResolver interface {
 	AllPosts(ctx context.Context) ([]*Post, error)
@@ -327,6 +328,8 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec._Mutation_editPost(ctx, field)
 		case "createLink":
 			out.Values[i] = ec._Mutation_createLink(ctx, field)
+		case "upsertStat":
+			out.Values[i] = ec._Mutation_upsertStat(ctx, field)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -430,6 +433,35 @@ func (ec *executionContext) _Mutation_createLink(ctx context.Context, field grap
 	}
 	res := resTmp.(Link)
 	return ec._Link(ctx, field.Selections, &res)
+}
+
+func (ec *executionContext) _Mutation_upsertStat(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args := map[string]interface{}{}
+	var arg0 NewStat
+	if tmp, ok := rawArgs["input"]; ok {
+		var err error
+		arg0, err = UnmarshalNewStat(tmp)
+		if err != nil {
+			ec.Error(ctx, err)
+			return graphql.Null
+		}
+	}
+	args["input"] = arg0
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Mutation"
+	rctx.Args = args
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
+		return ec.resolvers.Mutation().UpsertStat(ctx, args["input"].(NewStat))
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(Stat)
+	return ec._Stat(ctx, field.Selections, &res)
 }
 
 var postImplementors = []string{"Post"}
@@ -2238,6 +2270,30 @@ func UnmarshalNewPost(v interface{}) (NewPost, error) {
 	return it, nil
 }
 
+func UnmarshalNewStat(v interface{}) (NewStat, error) {
+	var it NewStat
+	var asMap = v.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "key":
+			var err error
+			it.Key, err = graphql.UnmarshalString(v)
+			if err != nil {
+				return it, err
+			}
+		case "value":
+			var err error
+			it.Value, err = graphql.UnmarshalString(v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) FieldMiddleware(ctx context.Context, next graphql.Resolver) interface{} {
 	res, err := ec.ResolverMiddleware(ctx, next)
 	if err != nil {
@@ -2264,14 +2320,31 @@ var parsedSchema = gqlparser.MustLoadSchema(
 The query type, represents all of the entry points into our object graph.
 """
 type Query {
+  "Returns an array of all posts ever, ordered by reverse chronological order."
   allPosts(): [Post]!
+
+  "Returns an array of all posts, ordered by reverse chronological order, using provided limit and offset."
   posts(limit: Int, offset: Int): [Post]!
+
+  "Returns a single post by ID."
   post(id: ID!): Post
+
+  "Returns post id for the next post chronologically."
   nextPost(id: ID!): ID
+
+  "Returns post id for the previous post chronologically."
   prevPost(id: ID!): ID
+
+  "Returns all links ever, in reverse chronological order."
   allLinks(): [Link]!
+
+  "Returns a subset of all links ever, in reverse chronological order, using provided limit and offset."
   links(limit: Int, offset: Int): [Link]!
+
+  "Returns a single link by id."
   link(id: ID!): Link
+
+  "Returns a number of stats, ordered by most recently updated."
   stats(count: Int): [Stat]!
 }
 
@@ -2284,11 +2357,15 @@ type Post {
   content: String!
   summary: String!
   readtime: Int!
+
+  "datetime is the published time of an article."
   datetime: Time!
   created: Time!
   modified: Time!
   draft: Boolean!
   tags: [String!]!
+
+  "links are the links referenced in a post."
   links: [Link]!
 }
 
@@ -2305,6 +2382,9 @@ type Link {
   tags: [String!]!
 }
 
+"""
+A stat is a key value pair of two interesting strings.
+"""
 type Stat {
   key: String!
   value: String!
@@ -2315,6 +2395,9 @@ Time is a datetime scalar with timezone.
 """
 scalar Time
 
+"""
+A URI is a url or url like thing.
+"""
 scalar URI
 
 """
@@ -2339,10 +2422,16 @@ input NewLink {
   created: Time!
 }
 
+input NewStat {
+  key: String!
+  value: String!
+}
+
 type Mutation {
   createPost(input: NewPost!): Post!
   editPost(Id: ID!, input: NewPost!): Post!
   createLink(input: NewLink!): Link!
+  upsertStat(input: NewStat!): Stat!
 }
 `},
 )
