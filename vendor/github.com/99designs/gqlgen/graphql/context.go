@@ -75,46 +75,45 @@ func WithRequestContext(ctx context.Context, rc *RequestContext) context.Context
 }
 
 type ResolverContext struct {
+	Parent *ResolverContext
 	// The name of the type this field belongs to
 	Object string
 	// These are the args after processing, they can be mutated in middleware to change what the resolver will get.
 	Args map[string]interface{}
 	// The raw field
 	Field CollectedField
-	// The path of fields to get to this resolver
-	Path []interface{}
+	// The index of array in path.
+	Index *int
+	// The result object of resolver
+	Result interface{}
 }
 
-func (r *ResolverContext) PushField(alias string) {
-	r.Path = append(r.Path, alias)
-}
+func (r *ResolverContext) Path() []interface{} {
+	var path []interface{}
+	for it := r; it != nil; it = it.Parent {
+		if it.Index != nil {
+			path = append(path, *it.Index)
+		} else if it.Field.Field != nil {
+			path = append(path, it.Field.Alias)
+		}
+	}
 
-func (r *ResolverContext) PushIndex(index int) {
-	r.Path = append(r.Path, index)
-}
+	// because we are walking up the chain, all the elements are backwards, do an inplace flip.
+	for i := len(path)/2 - 1; i >= 0; i-- {
+		opp := len(path) - 1 - i
+		path[i], path[opp] = path[opp], path[i]
+	}
 
-func (r *ResolverContext) Pop() {
-	r.Path = r.Path[0 : len(r.Path)-1]
+	return path
 }
 
 func GetResolverContext(ctx context.Context) *ResolverContext {
-	val := ctx.Value(resolver)
-	if val == nil {
-		return nil
-	}
-
-	return val.(*ResolverContext)
+	val, _ := ctx.Value(resolver).(*ResolverContext)
+	return val
 }
 
 func WithResolverContext(ctx context.Context, rc *ResolverContext) context.Context {
-	parent := GetResolverContext(ctx)
-	rc.Path = nil
-	if parent != nil {
-		rc.Path = append(rc.Path, parent.Path...)
-	}
-	if rc.Field.Field != nil && rc.Field.Alias != "" {
-		rc.PushField(rc.Field.Alias)
-	}
+	rc.Parent = GetResolverContext(ctx)
 	return context.WithValue(ctx, resolver, rc)
 }
 
@@ -138,6 +137,34 @@ func (c *RequestContext) Error(ctx context.Context, err error) {
 	defer c.errorsMu.Unlock()
 
 	c.Errors = append(c.Errors, c.ErrorPresenter(ctx, err))
+}
+
+// HasError returns true if the current field has already errored
+func (c *RequestContext) HasError(rctx *ResolverContext) bool {
+	c.errorsMu.Lock()
+	defer c.errorsMu.Unlock()
+	path := rctx.Path()
+
+	for _, err := range c.Errors {
+		if equalPath(err.Path, path) {
+			return true
+		}
+	}
+	return false
+}
+
+func equalPath(a []interface{}, b []interface{}) bool {
+	if len(a) != len(b) {
+		return false
+	}
+
+	for i := 0; i < len(a); i++ {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+
+	return true
 }
 
 // AddError is a convenience method for adding an error to the current response

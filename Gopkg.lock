@@ -3,7 +3,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:6f74e34a6c6368403b7ee304c41c8f1369c9170909f8320f1062d94a650dc97b"
+  digest = "1:d1fe918bdd77ba0b161c09b1a82b88debe882d849dfe75c112c63cdc61d19de4"
   name = "github.com/99designs/gqlgen"
   packages = [
     "graphql",
@@ -11,7 +11,7 @@
     "handler",
   ]
   pruneopts = "UT"
-  revision = "ebdcf7401de7853e33940a3be357cd7b19b543be"
+  revision = "2dcb2dd8c3aea0d993b19c93660b4579e404c53f"
 
 [[projects]]
   branch = "master"
@@ -22,12 +22,12 @@
   revision = "86919dfcf80873d58ea2e527c15b1e02a5636ead"
 
 [[projects]]
-  branch = "master"
   digest = "1:897d91c431ce469d35a5e6030e60e617dccd9a0e95bdffa6a80594f5c5800d29"
   name = "github.com/agnivade/levenshtein"
   packages = ["."]
   pruneopts = "UT"
   revision = "3d21ba515fe27b856f230847e856431ae1724adc"
+  version = "v1.0.0"
 
 [[projects]]
   digest = "1:4eda9f7bf70f5145b3b9ed3f18ac93e9b1a0e38906eb69e526380c34861e2b07"
@@ -41,23 +41,23 @@
   version = "v3.3.2"
 
 [[projects]]
-  digest = "1:43dd08a10854b2056e615d1b1d22ac94559d822e1f8b6fcc92c1a1057e85188e"
+  digest = "1:cee8e8ac80df6373e7daa11baf1f98c1b6f7242c49ccae7e1ec34a971dc408d9"
   name = "github.com/gorilla/websocket"
   packages = ["."]
   pruneopts = "UT"
-  revision = "ea4d1f681babbce9545c9c5f3d5194a789c89f5b"
-  version = "v1.2.0"
+  revision = "3ff3320c2a1756a3691521efc290b4701575147c"
+  version = "v1.3.0"
 
 [[projects]]
-  branch = "master"
-  digest = "1:37ce7d7d80531b227023331002c0d42b4b4b291a96798c82a049d03a54ba79e4"
+  digest = "1:8ef506fc2bb9ced9b151dafa592d4046063d744c646c1bbe801982ce87e4bc24"
   name = "github.com/lib/pq"
   packages = [
     ".",
     "oid",
   ]
   pruneopts = "UT"
-  revision = "90697d60dd844d5ef6ff15135d0203f65d2f53b8"
+  revision = "4ded0e9383f75c197b3a2aaa6d590ac52df6fd79"
+  version = "v1.0.0"
 
 [[projects]]
   digest = "1:0b8dd7447e420afff0260179dc892711e837edd1d446bc78dab924624a3c3c81"
@@ -77,7 +77,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:a5edbe378a5fdc4d445cdd859c8362037923dabdc49d5e09a210a1f0951271e2"
+  digest = "1:1ae7d9d18f0ea153eeaf8693863ae9ffb48a4801af9b34a266ff97956f2ee1d2"
   name = "github.com/vektah/gqlparser"
   packages = [
     ".",
@@ -89,7 +89,7 @@
     "validator/rules",
   ]
   pruneopts = "UT"
-  revision = "c063da4fdb845f11bd524096452558e8759103b6"
+  revision = "d0fbd67c7fe908a304fbd2e2a625b397d793af41"
 
 [[projects]]
   digest = "1:39c2113f3a89585666e6f973650cff186b2d06deb4aa202c88addb87b0a201db"
