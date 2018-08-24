@@ -8,4 +8,4 @@ services:
       - DATABASE_URL=postgres://nat@docker.for.mac.localhost/writing?sslmode=disable
       - PORT=8080
     ports:
-      - "8080:8080"
+      - "9393:8080"
