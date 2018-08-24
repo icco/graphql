@@ -157,9 +157,12 @@ func (r *queryResolver) PrevPost(ctx context.Context, id string) (*string, error
 }
 
 func (r *queryResolver) Stats(ctx context.Context, count *int) ([]*Stat, error) {
-	limit := *count
-	if limit <= 0 {
-		limit = 6
+	limit := 6
+	if count != nil {
+		limit = *count
+		if limit <= 0 {
+			limit = 6
+		}
 	}
 
 	rows, err := db.Query("SELECT key, value FROM stats ORDER BY modified_at DESC LIMIT $1", limit)
