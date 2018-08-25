@@ -1,4 +1,4 @@
-FROM golang:1.10
+FROM golang:1.11
 EXPOSE 8080
 WORKDIR /go/src/
 COPY . /go/src/github.com/icco/graphql
