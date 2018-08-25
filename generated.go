@@ -6,7 +6,6 @@ import (
 	"bytes"
 	context "context"
 	strconv "strconv"
-	sync "sync"
 	time "time"
 
 	graphql "github.com/99designs/gqlgen/graphql"
@@ -110,7 +109,6 @@ func (ec *executionContext) _Comment(ctx context.Context, sel ast.SelectionSet, 
 	fields := graphql.CollectFields(ctx, sel, commentImplementors)
 
 	out := graphql.NewOrderedMap(len(fields))
-	invalid := false
 	for i, field := range fields {
 		out.Keys[i] = field.Alias
 
@@ -119,39 +117,28 @@ func (ec *executionContext) _Comment(ctx context.Context, sel ast.SelectionSet, 
 			out.Values[i] = graphql.MarshalString("Comment")
 		case "id":
 			out.Values[i] = ec._Comment_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
 
-	if invalid {
-		return graphql.Null
-	}
 	return out
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Comment_id(ctx context.Context, field graphql.CollectedField, obj *Comment) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "Comment",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Comment"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.ID, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
-	rctx.Result = res
 	return graphql.MarshalID(res)
 }
 
@@ -162,7 +149,6 @@ func (ec *executionContext) _Link(ctx context.Context, sel ast.SelectionSet, obj
 	fields := graphql.CollectFields(ctx, sel, linkImplementors)
 
 	out := graphql.NewOrderedMap(len(fields))
-	invalid := false
 	for i, field := range fields {
 		out.Keys[i] = field.Alias
 
@@ -171,204 +157,148 @@ func (ec *executionContext) _Link(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = graphql.MarshalString("Link")
 		case "id":
 			out.Values[i] = ec._Link_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "title":
 			out.Values[i] = ec._Link_title(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "uri":
 			out.Values[i] = ec._Link_uri(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "created":
 			out.Values[i] = ec._Link_created(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "description":
 			out.Values[i] = ec._Link_description(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "screenshot":
 			out.Values[i] = ec._Link_screenshot(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "tags":
 			out.Values[i] = ec._Link_tags(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
 
-	if invalid {
-		return graphql.Null
-	}
 	return out
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Link_id(ctx context.Context, field graphql.CollectedField, obj *Link) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "Link",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Link"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.ID, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
-	rctx.Result = res
 	return graphql.MarshalID(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Link_title(ctx context.Context, field graphql.CollectedField, obj *Link) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "Link",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Link"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Title, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
-	rctx.Result = res
 	return graphql.MarshalString(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Link_uri(ctx context.Context, field graphql.CollectedField, obj *Link) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "Link",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Link"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.URI, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
-	rctx.Result = res
 	return graphql.MarshalString(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Link_created(ctx context.Context, field graphql.CollectedField, obj *Link) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "Link",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Link"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Created, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
-	rctx.Result = res
 	return graphql.MarshalTime(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Link_description(ctx context.Context, field graphql.CollectedField, obj *Link) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "Link",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Link"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Description, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
-	rctx.Result = res
 	return graphql.MarshalString(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Link_screenshot(ctx context.Context, field graphql.CollectedField, obj *Link) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "Link",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Link"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Screenshot, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
-	rctx.Result = res
 	return graphql.MarshalString(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Link_tags(ctx context.Context, field graphql.CollectedField, obj *Link) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "Link",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Link"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Tags, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.([]string)
-	rctx.Result = res
 	arr1 := graphql.Array{}
 	for idx1 := range res {
 		arr1 = append(arr1, func() graphql.Marshaler {
+			rctx := graphql.GetResolverContext(ctx)
+			rctx.PushIndex(idx1)
+			defer rctx.Pop()
 			return graphql.MarshalString(res[idx1])
 		}())
 	}
@@ -386,7 +316,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 	})
 
 	out := graphql.NewOrderedMap(len(fields))
-	invalid := false
 	for i, field := range fields {
 		out.Keys[i] = field.Alias
 
@@ -395,36 +324,20 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = graphql.MarshalString("Mutation")
 		case "createPost":
 			out.Values[i] = ec._Mutation_createPost(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "editPost":
 			out.Values[i] = ec._Mutation_editPost(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "createLink":
 			out.Values[i] = ec._Mutation_createLink(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "upsertStat":
 			out.Values[i] = ec._Mutation_upsertStat(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
 
-	if invalid {
-		return graphql.Null
-	}
 	return out
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Mutation_createPost(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
 	args := map[string]interface{}{}
@@ -438,28 +351,22 @@ func (ec *executionContext) _Mutation_createPost(ctx context.Context, field grap
 		}
 	}
 	args["input"] = arg0
-	rctx := &graphql.ResolverContext{
-		Object: "Mutation",
-		Args:   args,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Mutation"
+	rctx.Args = args
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return ec.resolvers.Mutation().CreatePost(ctx, args["input"].(NewPost))
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(Post)
-	rctx.Result = res
-
 	return ec._Post(ctx, field.Selections, &res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Mutation_editPost(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
 	args := map[string]interface{}{}
@@ -483,28 +390,22 @@ func (ec *executionContext) _Mutation_editPost(ctx context.Context, field graphq
 		}
 	}
 	args["input"] = arg1
-	rctx := &graphql.ResolverContext{
-		Object: "Mutation",
-		Args:   args,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Mutation"
+	rctx.Args = args
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return ec.resolvers.Mutation().EditPost(ctx, args["Id"].(string), args["input"].(NewPost))
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(Post)
-	rctx.Result = res
-
 	return ec._Post(ctx, field.Selections, &res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Mutation_createLink(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
 	args := map[string]interface{}{}
@@ -518,28 +419,22 @@ func (ec *executionContext) _Mutation_createLink(ctx context.Context, field grap
 		}
 	}
 	args["input"] = arg0
-	rctx := &graphql.ResolverContext{
-		Object: "Mutation",
-		Args:   args,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Mutation"
+	rctx.Args = args
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return ec.resolvers.Mutation().CreateLink(ctx, args["input"].(NewLink))
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(Link)
-	rctx.Result = res
-
 	return ec._Link(ctx, field.Selections, &res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Mutation_upsertStat(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
 	args := map[string]interface{}{}
@@ -553,24 +448,19 @@ func (ec *executionContext) _Mutation_upsertStat(ctx context.Context, field grap
 		}
 	}
 	args["input"] = arg0
-	rctx := &graphql.ResolverContext{
-		Object: "Mutation",
-		Args:   args,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Mutation"
+	rctx.Args = args
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return ec.resolvers.Mutation().UpsertStat(ctx, args["input"].(NewStat))
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(Stat)
-	rctx.Result = res
-
 	return ec._Stat(ctx, field.Selections, &res)
 }
 
@@ -581,7 +471,6 @@ func (ec *executionContext) _Post(ctx context.Context, sel ast.SelectionSet, obj
 	fields := graphql.CollectFields(ctx, sel, postImplementors)
 
 	out := graphql.NewOrderedMap(len(fields))
-	invalid := false
 	for i, field := range fields {
 		out.Keys[i] = field.Alias
 
@@ -590,328 +479,236 @@ func (ec *executionContext) _Post(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = graphql.MarshalString("Post")
 		case "id":
 			out.Values[i] = ec._Post_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "title":
 			out.Values[i] = ec._Post_title(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "content":
 			out.Values[i] = ec._Post_content(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "summary":
 			out.Values[i] = ec._Post_summary(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "readtime":
 			out.Values[i] = ec._Post_readtime(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "datetime":
 			out.Values[i] = ec._Post_datetime(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "created":
 			out.Values[i] = ec._Post_created(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "modified":
 			out.Values[i] = ec._Post_modified(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "draft":
 			out.Values[i] = ec._Post_draft(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "tags":
 			out.Values[i] = ec._Post_tags(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "links":
 			out.Values[i] = ec._Post_links(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
 
-	if invalid {
-		return graphql.Null
-	}
 	return out
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Post_id(ctx context.Context, field graphql.CollectedField, obj *Post) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Post"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.ID, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
-	rctx.Result = res
 	return graphql.MarshalID(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Post_title(ctx context.Context, field graphql.CollectedField, obj *Post) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Post"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Title, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
-	rctx.Result = res
 	return graphql.MarshalString(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Post_content(ctx context.Context, field graphql.CollectedField, obj *Post) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Post"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Content, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
-	rctx.Result = res
 	return graphql.MarshalString(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Post_summary(ctx context.Context, field graphql.CollectedField, obj *Post) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Post"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Summary(), nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
-	rctx.Result = res
 	return graphql.MarshalString(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Post_readtime(ctx context.Context, field graphql.CollectedField, obj *Post) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Post"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Readtime, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(int)
-	rctx.Result = res
 	return graphql.MarshalInt(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Post_datetime(ctx context.Context, field graphql.CollectedField, obj *Post) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Post"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Datetime, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
-	rctx.Result = res
 	return graphql.MarshalTime(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Post_created(ctx context.Context, field graphql.CollectedField, obj *Post) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Post"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Created, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
-	rctx.Result = res
 	return graphql.MarshalTime(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Post_modified(ctx context.Context, field graphql.CollectedField, obj *Post) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Post"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Modified, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(time.Time)
-	rctx.Result = res
 	return graphql.MarshalTime(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Post_draft(ctx context.Context, field graphql.CollectedField, obj *Post) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Post"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Draft, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(bool)
-	rctx.Result = res
 	return graphql.MarshalBoolean(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Post_tags(ctx context.Context, field graphql.CollectedField, obj *Post) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Post"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Tags, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.([]string)
-	rctx.Result = res
 	arr1 := graphql.Array{}
 	for idx1 := range res {
 		arr1 = append(arr1, func() graphql.Marshaler {
+			rctx := graphql.GetResolverContext(ctx)
+			rctx.PushIndex(idx1)
+			defer rctx.Pop()
 			return graphql.MarshalString(res[idx1])
 		}())
 	}
 	return arr1
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Post_links(ctx context.Context, field graphql.CollectedField, obj *Post) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Post"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Links, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.([]*Link)
-	rctx.Result = res
 	arr1 := graphql.Array{}
 	for idx1 := range res {
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
 		arr1 = append(arr1, func() graphql.Marshaler {
-
+			rctx := graphql.GetResolverContext(ctx)
+			rctx.PushIndex(idx1)
+			defer rctx.Pop()
 			if res[idx1] == nil {
 				return graphql.Null
 			}
-
 			return ec._Link(ctx, field.Selections, res[idx1])
 		}())
 	}
@@ -928,9 +725,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		Object: "Query",
 	})
 
-	var wg sync.WaitGroup
 	out := graphql.NewOrderedMap(len(fields))
-	invalid := false
 	for i, field := range fields {
 		out.Keys[i] = field.Alias
 
@@ -938,74 +733,23 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
 		case "allPosts":
-			wg.Add(1)
-			go func(i int, field graphql.CollectedField) {
-				out.Values[i] = ec._Query_allPosts(ctx, field)
-				if out.Values[i] == graphql.Null {
-					invalid = true
-				}
-				wg.Done()
-			}(i, field)
+			out.Values[i] = ec._Query_allPosts(ctx, field)
 		case "posts":
-			wg.Add(1)
-			go func(i int, field graphql.CollectedField) {
-				out.Values[i] = ec._Query_posts(ctx, field)
-				if out.Values[i] == graphql.Null {
-					invalid = true
-				}
-				wg.Done()
-			}(i, field)
+			out.Values[i] = ec._Query_posts(ctx, field)
 		case "post":
-			wg.Add(1)
-			go func(i int, field graphql.CollectedField) {
-				out.Values[i] = ec._Query_post(ctx, field)
-				wg.Done()
-			}(i, field)
+			out.Values[i] = ec._Query_post(ctx, field)
 		case "nextPost":
-			wg.Add(1)
-			go func(i int, field graphql.CollectedField) {
-				out.Values[i] = ec._Query_nextPost(ctx, field)
-				wg.Done()
-			}(i, field)
+			out.Values[i] = ec._Query_nextPost(ctx, field)
 		case "prevPost":
-			wg.Add(1)
-			go func(i int, field graphql.CollectedField) {
-				out.Values[i] = ec._Query_prevPost(ctx, field)
-				wg.Done()
-			}(i, field)
+			out.Values[i] = ec._Query_prevPost(ctx, field)
 		case "allLinks":
-			wg.Add(1)
-			go func(i int, field graphql.CollectedField) {
-				out.Values[i] = ec._Query_allLinks(ctx, field)
-				if out.Values[i] == graphql.Null {
-					invalid = true
-				}
-				wg.Done()
-			}(i, field)
+			out.Values[i] = ec._Query_allLinks(ctx, field)
 		case "links":
-			wg.Add(1)
-			go func(i int, field graphql.CollectedField) {
-				out.Values[i] = ec._Query_links(ctx, field)
-				if out.Values[i] == graphql.Null {
-					invalid = true
-				}
-				wg.Done()
-			}(i, field)
+			out.Values[i] = ec._Query_links(ctx, field)
 		case "link":
-			wg.Add(1)
-			go func(i int, field graphql.CollectedField) {
-				out.Values[i] = ec._Query_link(ctx, field)
-				wg.Done()
-			}(i, field)
+			out.Values[i] = ec._Query_link(ctx, field)
 		case "stats":
-			wg.Add(1)
-			go func(i int, field graphql.CollectedField) {
-				out.Values[i] = ec._Query_stats(ctx, field)
-				if out.Values[i] == graphql.Null {
-					invalid = true
-				}
-				wg.Done()
-			}(i, field)
+			out.Values[i] = ec._Query_stats(ctx, field)
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
@@ -1014,52 +758,48 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-	wg.Wait()
-	if invalid {
-		return graphql.Null
-	}
+
 	return out
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Query_allPosts(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
+	ctx = graphql.WithResolverContext(ctx, &graphql.ResolverContext{
 		Object: "Query",
 		Args:   nil,
 		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
-		return ec.resolvers.Query().AllPosts(ctx)
 	})
-	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*Post)
-	rctx.Result = res
-	arr1 := graphql.Array{}
-	for idx1 := range res {
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
-		arr1 = append(arr1, func() graphql.Marshaler {
-
-			if res[idx1] == nil {
-				return graphql.Null
+	return graphql.Defer(func() (ret graphql.Marshaler) {
+		defer func() {
+			if r := recover(); r != nil {
+				userErr := ec.Recover(ctx, r)
+				ec.Error(ctx, userErr)
+				ret = graphql.Null
 			}
+		}()
 
-			return ec._Post(ctx, field.Selections, res[idx1])
-		}())
-	}
-	return arr1
+		resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
+			return ec.resolvers.Query().AllPosts(ctx)
+		})
+		if resTmp == nil {
+			return graphql.Null
+		}
+		res := resTmp.([]*Post)
+		arr1 := graphql.Array{}
+		for idx1 := range res {
+			arr1 = append(arr1, func() graphql.Marshaler {
+				rctx := graphql.GetResolverContext(ctx)
+				rctx.PushIndex(idx1)
+				defer rctx.Pop()
+				if res[idx1] == nil {
+					return graphql.Null
+				}
+				return ec._Post(ctx, field.Selections, res[idx1])
+			}())
+		}
+		return arr1
+	})
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Query_posts(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
 	args := map[string]interface{}{}
@@ -1093,43 +833,43 @@ func (ec *executionContext) _Query_posts(ctx context.Context, field graphql.Coll
 		}
 	}
 	args["offset"] = arg1
-	rctx := &graphql.ResolverContext{
+	ctx = graphql.WithResolverContext(ctx, &graphql.ResolverContext{
 		Object: "Query",
 		Args:   args,
 		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
-		return ec.resolvers.Query().Posts(ctx, args["limit"].(*int), args["offset"].(*int))
 	})
-	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*Post)
-	rctx.Result = res
-	arr1 := graphql.Array{}
-	for idx1 := range res {
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
-		arr1 = append(arr1, func() graphql.Marshaler {
-
-			if res[idx1] == nil {
-				return graphql.Null
+	return graphql.Defer(func() (ret graphql.Marshaler) {
+		defer func() {
+			if r := recover(); r != nil {
+				userErr := ec.Recover(ctx, r)
+				ec.Error(ctx, userErr)
+				ret = graphql.Null
 			}
+		}()
 
-			return ec._Post(ctx, field.Selections, res[idx1])
-		}())
-	}
-	return arr1
+		resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
+			return ec.resolvers.Query().Posts(ctx, args["limit"].(*int), args["offset"].(*int))
+		})
+		if resTmp == nil {
+			return graphql.Null
+		}
+		res := resTmp.([]*Post)
+		arr1 := graphql.Array{}
+		for idx1 := range res {
+			arr1 = append(arr1, func() graphql.Marshaler {
+				rctx := graphql.GetResolverContext(ctx)
+				rctx.PushIndex(idx1)
+				defer rctx.Pop()
+				if res[idx1] == nil {
+					return graphql.Null
+				}
+				return ec._Post(ctx, field.Selections, res[idx1])
+			}())
+		}
+		return arr1
+	})
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Query_post(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
 	args := map[string]interface{}{}
@@ -1143,29 +883,34 @@ func (ec *executionContext) _Query_post(ctx context.Context, field graphql.Colle
 		}
 	}
 	args["id"] = arg0
-	rctx := &graphql.ResolverContext{
+	ctx = graphql.WithResolverContext(ctx, &graphql.ResolverContext{
 		Object: "Query",
 		Args:   args,
 		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
-		return ec.resolvers.Query().Post(ctx, args["id"].(string))
 	})
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*Post)
-	rctx.Result = res
+	return graphql.Defer(func() (ret graphql.Marshaler) {
+		defer func() {
+			if r := recover(); r != nil {
+				userErr := ec.Recover(ctx, r)
+				ec.Error(ctx, userErr)
+				ret = graphql.Null
+			}
+		}()
 
-	if res == nil {
-		return graphql.Null
-	}
-
-	return ec._Post(ctx, field.Selections, res)
+		resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
+			return ec.resolvers.Query().Post(ctx, args["id"].(string))
+		})
+		if resTmp == nil {
+			return graphql.Null
+		}
+		res := resTmp.(*Post)
+		if res == nil {
+			return graphql.Null
+		}
+		return ec._Post(ctx, field.Selections, res)
+	})
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Query_nextPost(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
 	args := map[string]interface{}{}
@@ -1179,28 +924,34 @@ func (ec *executionContext) _Query_nextPost(ctx context.Context, field graphql.C
 		}
 	}
 	args["id"] = arg0
-	rctx := &graphql.ResolverContext{
+	ctx = graphql.WithResolverContext(ctx, &graphql.ResolverContext{
 		Object: "Query",
 		Args:   args,
 		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
-		return ec.resolvers.Query().NextPost(ctx, args["id"].(string))
 	})
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	rctx.Result = res
+	return graphql.Defer(func() (ret graphql.Marshaler) {
+		defer func() {
+			if r := recover(); r != nil {
+				userErr := ec.Recover(ctx, r)
+				ec.Error(ctx, userErr)
+				ret = graphql.Null
+			}
+		}()
 
-	if res == nil {
-		return graphql.Null
-	}
-	return graphql.MarshalID(*res)
+		resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
+			return ec.resolvers.Query().NextPost(ctx, args["id"].(string))
+		})
+		if resTmp == nil {
+			return graphql.Null
+		}
+		res := resTmp.(*string)
+		if res == nil {
+			return graphql.Null
+		}
+		return graphql.MarshalID(*res)
+	})
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Query_prevPost(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
 	args := map[string]interface{}{}
@@ -1214,66 +965,72 @@ func (ec *executionContext) _Query_prevPost(ctx context.Context, field graphql.C
 		}
 	}
 	args["id"] = arg0
-	rctx := &graphql.ResolverContext{
+	ctx = graphql.WithResolverContext(ctx, &graphql.ResolverContext{
 		Object: "Query",
 		Args:   args,
 		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
-		return ec.resolvers.Query().PrevPost(ctx, args["id"].(string))
 	})
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	rctx.Result = res
+	return graphql.Defer(func() (ret graphql.Marshaler) {
+		defer func() {
+			if r := recover(); r != nil {
+				userErr := ec.Recover(ctx, r)
+				ec.Error(ctx, userErr)
+				ret = graphql.Null
+			}
+		}()
 
-	if res == nil {
-		return graphql.Null
-	}
-	return graphql.MarshalID(*res)
+		resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
+			return ec.resolvers.Query().PrevPost(ctx, args["id"].(string))
+		})
+		if resTmp == nil {
+			return graphql.Null
+		}
+		res := resTmp.(*string)
+		if res == nil {
+			return graphql.Null
+		}
+		return graphql.MarshalID(*res)
+	})
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Query_allLinks(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
+	ctx = graphql.WithResolverContext(ctx, &graphql.ResolverContext{
 		Object: "Query",
 		Args:   nil,
 		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
-		return ec.resolvers.Query().AllLinks(ctx)
 	})
-	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*Link)
-	rctx.Result = res
-	arr1 := graphql.Array{}
-	for idx1 := range res {
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
-		arr1 = append(arr1, func() graphql.Marshaler {
-
-			if res[idx1] == nil {
-				return graphql.Null
+	return graphql.Defer(func() (ret graphql.Marshaler) {
+		defer func() {
+			if r := recover(); r != nil {
+				userErr := ec.Recover(ctx, r)
+				ec.Error(ctx, userErr)
+				ret = graphql.Null
 			}
+		}()
 
-			return ec._Link(ctx, field.Selections, res[idx1])
-		}())
-	}
-	return arr1
+		resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
+			return ec.resolvers.Query().AllLinks(ctx)
+		})
+		if resTmp == nil {
+			return graphql.Null
+		}
+		res := resTmp.([]*Link)
+		arr1 := graphql.Array{}
+		for idx1 := range res {
+			arr1 = append(arr1, func() graphql.Marshaler {
+				rctx := graphql.GetResolverContext(ctx)
+				rctx.PushIndex(idx1)
+				defer rctx.Pop()
+				if res[idx1] == nil {
+					return graphql.Null
+				}
+				return ec._Link(ctx, field.Selections, res[idx1])
+			}())
+		}
+		return arr1
+	})
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Query_links(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
 	args := map[string]interface{}{}
@@ -1307,43 +1064,43 @@ func (ec *executionContext) _Query_links(ctx context.Context, field graphql.Coll
 		}
 	}
 	args["offset"] = arg1
-	rctx := &graphql.ResolverContext{
+	ctx = graphql.WithResolverContext(ctx, &graphql.ResolverContext{
 		Object: "Query",
 		Args:   args,
 		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
-		return ec.resolvers.Query().Links(ctx, args["limit"].(*int), args["offset"].(*int))
 	})
-	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*Link)
-	rctx.Result = res
-	arr1 := graphql.Array{}
-	for idx1 := range res {
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
-		arr1 = append(arr1, func() graphql.Marshaler {
-
-			if res[idx1] == nil {
-				return graphql.Null
+	return graphql.Defer(func() (ret graphql.Marshaler) {
+		defer func() {
+			if r := recover(); r != nil {
+				userErr := ec.Recover(ctx, r)
+				ec.Error(ctx, userErr)
+				ret = graphql.Null
 			}
+		}()
 
-			return ec._Link(ctx, field.Selections, res[idx1])
-		}())
-	}
-	return arr1
+		resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
+			return ec.resolvers.Query().Links(ctx, args["limit"].(*int), args["offset"].(*int))
+		})
+		if resTmp == nil {
+			return graphql.Null
+		}
+		res := resTmp.([]*Link)
+		arr1 := graphql.Array{}
+		for idx1 := range res {
+			arr1 = append(arr1, func() graphql.Marshaler {
+				rctx := graphql.GetResolverContext(ctx)
+				rctx.PushIndex(idx1)
+				defer rctx.Pop()
+				if res[idx1] == nil {
+					return graphql.Null
+				}
+				return ec._Link(ctx, field.Selections, res[idx1])
+			}())
+		}
+		return arr1
+	})
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Query_link(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
 	args := map[string]interface{}{}
@@ -1357,29 +1114,34 @@ func (ec *executionContext) _Query_link(ctx context.Context, field graphql.Colle
 		}
 	}
 	args["id"] = arg0
-	rctx := &graphql.ResolverContext{
+	ctx = graphql.WithResolverContext(ctx, &graphql.ResolverContext{
 		Object: "Query",
 		Args:   args,
 		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
-		return ec.resolvers.Query().Link(ctx, args["id"].(string))
 	})
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*Link)
-	rctx.Result = res
+	return graphql.Defer(func() (ret graphql.Marshaler) {
+		defer func() {
+			if r := recover(); r != nil {
+				userErr := ec.Recover(ctx, r)
+				ec.Error(ctx, userErr)
+				ret = graphql.Null
+			}
+		}()
 
-	if res == nil {
-		return graphql.Null
-	}
-
-	return ec._Link(ctx, field.Selections, res)
+		resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
+			return ec.resolvers.Query().Link(ctx, args["id"].(string))
+		})
+		if resTmp == nil {
+			return graphql.Null
+		}
+		res := resTmp.(*Link)
+		if res == nil {
+			return graphql.Null
+		}
+		return ec._Link(ctx, field.Selections, res)
+	})
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Query_stats(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
 	args := map[string]interface{}{}
@@ -1398,43 +1160,43 @@ func (ec *executionContext) _Query_stats(ctx context.Context, field graphql.Coll
 		}
 	}
 	args["count"] = arg0
-	rctx := &graphql.ResolverContext{
+	ctx = graphql.WithResolverContext(ctx, &graphql.ResolverContext{
 		Object: "Query",
 		Args:   args,
 		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
-		return ec.resolvers.Query().Stats(ctx, args["count"].(*int))
 	})
-	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*Stat)
-	rctx.Result = res
-	arr1 := graphql.Array{}
-	for idx1 := range res {
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
-		arr1 = append(arr1, func() graphql.Marshaler {
-
-			if res[idx1] == nil {
-				return graphql.Null
+	return graphql.Defer(func() (ret graphql.Marshaler) {
+		defer func() {
+			if r := recover(); r != nil {
+				userErr := ec.Recover(ctx, r)
+				ec.Error(ctx, userErr)
+				ret = graphql.Null
 			}
+		}()
 
-			return ec._Stat(ctx, field.Selections, res[idx1])
-		}())
-	}
-	return arr1
+		resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
+			return ec.resolvers.Query().Stats(ctx, args["count"].(*int))
+		})
+		if resTmp == nil {
+			return graphql.Null
+		}
+		res := resTmp.([]*Stat)
+		arr1 := graphql.Array{}
+		for idx1 := range res {
+			arr1 = append(arr1, func() graphql.Marshaler {
+				rctx := graphql.GetResolverContext(ctx)
+				rctx.PushIndex(idx1)
+				defer rctx.Pop()
+				if res[idx1] == nil {
+					return graphql.Null
+				}
+				return ec._Stat(ctx, field.Selections, res[idx1])
+			}())
+		}
+		return arr1
+	})
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
 	args := map[string]interface{}{}
@@ -1448,49 +1210,42 @@ func (ec *executionContext) _Query___type(ctx context.Context, field graphql.Col
 		}
 	}
 	args["name"] = arg0
-	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Args:   args,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Query"
+	rctx.Args = args
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return ec.introspectType(args["name"].(string)), nil
 	})
 	if resTmp == nil {
 		return graphql.Null
 	}
 	res := resTmp.(*introspection.Type)
-	rctx.Result = res
-
 	if res == nil {
 		return graphql.Null
 	}
-
 	return ec.___Type(ctx, field.Selections, res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Query"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return ec.introspectSchema(), nil
 	})
 	if resTmp == nil {
 		return graphql.Null
 	}
 	res := resTmp.(*introspection.Schema)
-	rctx.Result = res
-
 	if res == nil {
 		return graphql.Null
 	}
-
 	return ec.___Schema(ctx, field.Selections, res)
 }
 
@@ -1501,7 +1256,6 @@ func (ec *executionContext) _Stat(ctx context.Context, sel ast.SelectionSet, obj
 	fields := graphql.CollectFields(ctx, sel, statImplementors)
 
 	out := graphql.NewOrderedMap(len(fields))
-	invalid := false
 	for i, field := range fields {
 		out.Keys[i] = field.Alias
 
@@ -1510,66 +1264,47 @@ func (ec *executionContext) _Stat(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = graphql.MarshalString("Stat")
 		case "key":
 			out.Values[i] = ec._Stat_key(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "value":
 			out.Values[i] = ec._Stat_value(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
 
-	if invalid {
-		return graphql.Null
-	}
 	return out
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Stat_key(ctx context.Context, field graphql.CollectedField, obj *Stat) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "Stat",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Stat"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Key, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
-	rctx.Result = res
 	return graphql.MarshalString(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) _Stat_value(ctx context.Context, field graphql.CollectedField, obj *Stat) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "Stat",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "Stat"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Value, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
-	rctx.Result = res
 	return graphql.MarshalString(res)
 }
 
@@ -1580,7 +1315,6 @@ func (ec *executionContext) ___Directive(ctx context.Context, sel ast.SelectionS
 	fields := graphql.CollectFields(ctx, sel, __DirectiveImplementors)
 
 	out := graphql.NewOrderedMap(len(fields))
-	invalid := false
 	for i, field := range fields {
 		out.Keys[i] = field.Alias
 
@@ -1589,129 +1323,100 @@ func (ec *executionContext) ___Directive(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = graphql.MarshalString("__Directive")
 		case "name":
 			out.Values[i] = ec.___Directive_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "description":
 			out.Values[i] = ec.___Directive_description(ctx, field, obj)
 		case "locations":
 			out.Values[i] = ec.___Directive_locations(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "args":
 			out.Values[i] = ec.___Directive_args(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
 
-	if invalid {
-		return graphql.Null
-	}
 	return out
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__Directive",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__Directive"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Name, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
-	rctx.Result = res
 	return graphql.MarshalString(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___Directive_description(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__Directive",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__Directive"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Description, nil
 	})
 	if resTmp == nil {
 		return graphql.Null
 	}
 	res := resTmp.(string)
-	rctx.Result = res
 	return graphql.MarshalString(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___Directive_locations(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__Directive",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__Directive"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Locations, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.([]string)
-	rctx.Result = res
 	arr1 := graphql.Array{}
 	for idx1 := range res {
 		arr1 = append(arr1, func() graphql.Marshaler {
+			rctx := graphql.GetResolverContext(ctx)
+			rctx.PushIndex(idx1)
+			defer rctx.Pop()
 			return graphql.MarshalString(res[idx1])
 		}())
 	}
 	return arr1
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___Directive_args(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__Directive",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__Directive"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Args, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.([]introspection.InputValue)
-	rctx.Result = res
 	arr1 := graphql.Array{}
 	for idx1 := range res {
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: &res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
 		arr1 = append(arr1, func() graphql.Marshaler {
-
+			rctx := graphql.GetResolverContext(ctx)
+			rctx.PushIndex(idx1)
+			defer rctx.Pop()
 			return ec.___InputValue(ctx, field.Selections, &res[idx1])
 		}())
 	}
@@ -1725,7 +1430,6 @@ func (ec *executionContext) ___EnumValue(ctx context.Context, sel ast.SelectionS
 	fields := graphql.CollectFields(ctx, sel, __EnumValueImplementors)
 
 	out := graphql.NewOrderedMap(len(fields))
-	invalid := false
 	for i, field := range fields {
 		out.Keys[i] = field.Alias
 
@@ -1734,16 +1438,10 @@ func (ec *executionContext) ___EnumValue(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = graphql.MarshalString("__EnumValue")
 		case "name":
 			out.Values[i] = ec.___EnumValue_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "description":
 			out.Values[i] = ec.___EnumValue_description(ctx, field, obj)
 		case "isDeprecated":
 			out.Values[i] = ec.___EnumValue_isDeprecated(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "deprecationReason":
 			out.Values[i] = ec.___EnumValue_deprecationReason(ctx, field, obj)
 		default:
@@ -1751,91 +1449,74 @@ func (ec *executionContext) ___EnumValue(ctx context.Context, sel ast.SelectionS
 		}
 	}
 
-	if invalid {
-		return graphql.Null
-	}
 	return out
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___EnumValue_name(ctx context.Context, field graphql.CollectedField, obj *introspection.EnumValue) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__EnumValue",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__EnumValue"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Name, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
-	rctx.Result = res
 	return graphql.MarshalString(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___EnumValue_description(ctx context.Context, field graphql.CollectedField, obj *introspection.EnumValue) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__EnumValue",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__EnumValue"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Description, nil
 	})
 	if resTmp == nil {
 		return graphql.Null
 	}
 	res := resTmp.(string)
-	rctx.Result = res
 	return graphql.MarshalString(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___EnumValue_isDeprecated(ctx context.Context, field graphql.CollectedField, obj *introspection.EnumValue) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__EnumValue",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__EnumValue"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.IsDeprecated, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(bool)
-	rctx.Result = res
 	return graphql.MarshalBoolean(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___EnumValue_deprecationReason(ctx context.Context, field graphql.CollectedField, obj *introspection.EnumValue) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__EnumValue",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__EnumValue"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.DeprecationReason, nil
 	})
 	if resTmp == nil {
 		return graphql.Null
 	}
 	res := resTmp.(string)
-	rctx.Result = res
 	return graphql.MarshalString(res)
 }
 
@@ -1846,7 +1527,6 @@ func (ec *executionContext) ___Field(ctx context.Context, sel ast.SelectionSet, 
 	fields := graphql.CollectFields(ctx, sel, __FieldImplementors)
 
 	out := graphql.NewOrderedMap(len(fields))
-	invalid := false
 	for i, field := range fields {
 		out.Keys[i] = field.Alias
 
@@ -1855,26 +1535,14 @@ func (ec *executionContext) ___Field(ctx context.Context, sel ast.SelectionSet, 
 			out.Values[i] = graphql.MarshalString("__Field")
 		case "name":
 			out.Values[i] = ec.___Field_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "description":
 			out.Values[i] = ec.___Field_description(ctx, field, obj)
 		case "args":
 			out.Values[i] = ec.___Field_args(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "type":
 			out.Values[i] = ec.___Field_type(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "isDeprecated":
 			out.Values[i] = ec.___Field_isDeprecated(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "deprecationReason":
 			out.Values[i] = ec.___Field_deprecationReason(ctx, field, obj)
 		default:
@@ -1882,155 +1550,120 @@ func (ec *executionContext) ___Field(ctx context.Context, sel ast.SelectionSet, 
 		}
 	}
 
-	if invalid {
-		return graphql.Null
-	}
 	return out
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___Field_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Field) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__Field",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__Field"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Name, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
-	rctx.Result = res
 	return graphql.MarshalString(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___Field_description(ctx context.Context, field graphql.CollectedField, obj *introspection.Field) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__Field",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__Field"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Description, nil
 	})
 	if resTmp == nil {
 		return graphql.Null
 	}
 	res := resTmp.(string)
-	rctx.Result = res
 	return graphql.MarshalString(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___Field_args(ctx context.Context, field graphql.CollectedField, obj *introspection.Field) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__Field",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__Field"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Args, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.([]introspection.InputValue)
-	rctx.Result = res
 	arr1 := graphql.Array{}
 	for idx1 := range res {
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: &res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
 		arr1 = append(arr1, func() graphql.Marshaler {
-
+			rctx := graphql.GetResolverContext(ctx)
+			rctx.PushIndex(idx1)
+			defer rctx.Pop()
 			return ec.___InputValue(ctx, field.Selections, &res[idx1])
 		}())
 	}
 	return arr1
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___Field_type(ctx context.Context, field graphql.CollectedField, obj *introspection.Field) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__Field",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__Field"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Type, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(*introspection.Type)
-	rctx.Result = res
-
 	if res == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-
 	return ec.___Type(ctx, field.Selections, res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___Field_isDeprecated(ctx context.Context, field graphql.CollectedField, obj *introspection.Field) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__Field",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__Field"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.IsDeprecated, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(bool)
-	rctx.Result = res
 	return graphql.MarshalBoolean(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___Field_deprecationReason(ctx context.Context, field graphql.CollectedField, obj *introspection.Field) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__Field",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__Field"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.DeprecationReason, nil
 	})
 	if resTmp == nil {
 		return graphql.Null
 	}
 	res := resTmp.(string)
-	rctx.Result = res
 	return graphql.MarshalString(res)
 }
 
@@ -2041,7 +1674,6 @@ func (ec *executionContext) ___InputValue(ctx context.Context, sel ast.Selection
 	fields := graphql.CollectFields(ctx, sel, __InputValueImplementors)
 
 	out := graphql.NewOrderedMap(len(fields))
-	invalid := false
 	for i, field := range fields {
 		out.Keys[i] = field.Alias
 
@@ -2050,16 +1682,10 @@ func (ec *executionContext) ___InputValue(ctx context.Context, sel ast.Selection
 			out.Values[i] = graphql.MarshalString("__InputValue")
 		case "name":
 			out.Values[i] = ec.___InputValue_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "description":
 			out.Values[i] = ec.___InputValue_description(ctx, field, obj)
 		case "type":
 			out.Values[i] = ec.___InputValue_type(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "defaultValue":
 			out.Values[i] = ec.___InputValue_defaultValue(ctx, field, obj)
 		default:
@@ -2067,100 +1693,77 @@ func (ec *executionContext) ___InputValue(ctx context.Context, sel ast.Selection
 		}
 	}
 
-	if invalid {
-		return graphql.Null
-	}
 	return out
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___InputValue_name(ctx context.Context, field graphql.CollectedField, obj *introspection.InputValue) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__InputValue",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__InputValue"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Name, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
-	rctx.Result = res
 	return graphql.MarshalString(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___InputValue_description(ctx context.Context, field graphql.CollectedField, obj *introspection.InputValue) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__InputValue",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__InputValue"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Description, nil
 	})
 	if resTmp == nil {
 		return graphql.Null
 	}
 	res := resTmp.(string)
-	rctx.Result = res
 	return graphql.MarshalString(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___InputValue_type(ctx context.Context, field graphql.CollectedField, obj *introspection.InputValue) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__InputValue",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__InputValue"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Type, nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(*introspection.Type)
-	rctx.Result = res
-
 	if res == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-
 	return ec.___Type(ctx, field.Selections, res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___InputValue_defaultValue(ctx context.Context, field graphql.CollectedField, obj *introspection.InputValue) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__InputValue",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__InputValue"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.DefaultValue, nil
 	})
 	if resTmp == nil {
 		return graphql.Null
 	}
 	res := resTmp.(*string)
-	rctx.Result = res
-
 	if res == nil {
 		return graphql.Null
 	}
@@ -2174,7 +1777,6 @@ func (ec *executionContext) ___Schema(ctx context.Context, sel ast.SelectionSet,
 	fields := graphql.CollectFields(ctx, sel, __SchemaImplementors)
 
 	out := graphql.NewOrderedMap(len(fields))
-	invalid := false
 	for i, field := range fields {
 		out.Keys[i] = field.Alias
 
@@ -2183,174 +1785,128 @@ func (ec *executionContext) ___Schema(ctx context.Context, sel ast.SelectionSet,
 			out.Values[i] = graphql.MarshalString("__Schema")
 		case "types":
 			out.Values[i] = ec.___Schema_types(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "queryType":
 			out.Values[i] = ec.___Schema_queryType(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "mutationType":
 			out.Values[i] = ec.___Schema_mutationType(ctx, field, obj)
 		case "subscriptionType":
 			out.Values[i] = ec.___Schema_subscriptionType(ctx, field, obj)
 		case "directives":
 			out.Values[i] = ec.___Schema_directives(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
 
-	if invalid {
-		return graphql.Null
-	}
 	return out
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___Schema_types(ctx context.Context, field graphql.CollectedField, obj *introspection.Schema) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__Schema",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__Schema"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Types(), nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.([]introspection.Type)
-	rctx.Result = res
 	arr1 := graphql.Array{}
 	for idx1 := range res {
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: &res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
 		arr1 = append(arr1, func() graphql.Marshaler {
-
+			rctx := graphql.GetResolverContext(ctx)
+			rctx.PushIndex(idx1)
+			defer rctx.Pop()
 			return ec.___Type(ctx, field.Selections, &res[idx1])
 		}())
 	}
 	return arr1
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___Schema_queryType(ctx context.Context, field graphql.CollectedField, obj *introspection.Schema) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__Schema",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__Schema"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.QueryType(), nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(*introspection.Type)
-	rctx.Result = res
-
 	if res == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-
 	return ec.___Type(ctx, field.Selections, res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___Schema_mutationType(ctx context.Context, field graphql.CollectedField, obj *introspection.Schema) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__Schema",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__Schema"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.MutationType(), nil
 	})
 	if resTmp == nil {
 		return graphql.Null
 	}
 	res := resTmp.(*introspection.Type)
-	rctx.Result = res
-
 	if res == nil {
 		return graphql.Null
 	}
-
 	return ec.___Type(ctx, field.Selections, res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___Schema_subscriptionType(ctx context.Context, field graphql.CollectedField, obj *introspection.Schema) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__Schema",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__Schema"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.SubscriptionType(), nil
 	})
 	if resTmp == nil {
 		return graphql.Null
 	}
 	res := resTmp.(*introspection.Type)
-	rctx.Result = res
-
 	if res == nil {
 		return graphql.Null
 	}
-
 	return ec.___Type(ctx, field.Selections, res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___Schema_directives(ctx context.Context, field graphql.CollectedField, obj *introspection.Schema) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__Schema",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__Schema"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Directives(), nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.([]introspection.Directive)
-	rctx.Result = res
 	arr1 := graphql.Array{}
 	for idx1 := range res {
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: &res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
 		arr1 = append(arr1, func() graphql.Marshaler {
-
+			rctx := graphql.GetResolverContext(ctx)
+			rctx.PushIndex(idx1)
+			defer rctx.Pop()
 			return ec.___Directive(ctx, field.Selections, &res[idx1])
 		}())
 	}
@@ -2364,7 +1920,6 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 	fields := graphql.CollectFields(ctx, sel, __TypeImplementors)
 
 	out := graphql.NewOrderedMap(len(fields))
-	invalid := false
 	for i, field := range fields {
 		out.Keys[i] = field.Alias
 
@@ -2373,9 +1928,6 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 			out.Values[i] = graphql.MarshalString("__Type")
 		case "kind":
 			out.Values[i] = ec.___Type_kind(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "name":
 			out.Values[i] = ec.___Type_name(ctx, field, obj)
 		case "description":
@@ -2397,77 +1949,63 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 		}
 	}
 
-	if invalid {
-		return graphql.Null
-	}
 	return out
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___Type_kind(ctx context.Context, field graphql.CollectedField, obj *introspection.Type) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__Type",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__Type"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Kind(), nil
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
-	rctx.Result = res
 	return graphql.MarshalString(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___Type_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Type) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__Type",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__Type"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Name(), nil
 	})
 	if resTmp == nil {
 		return graphql.Null
 	}
 	res := resTmp.(*string)
-	rctx.Result = res
-
 	if res == nil {
 		return graphql.Null
 	}
 	return graphql.MarshalString(*res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___Type_description(ctx context.Context, field graphql.CollectedField, obj *introspection.Type) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__Type",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__Type"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Description(), nil
 	})
 	if resTmp == nil {
 		return graphql.Null
 	}
 	res := resTmp.(string)
-	rctx.Result = res
 	return graphql.MarshalString(res)
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___Type_fields(ctx context.Context, field graphql.CollectedField, obj *introspection.Type) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
 	args := map[string]interface{}{}
@@ -2481,98 +2019,83 @@ func (ec *executionContext) ___Type_fields(ctx context.Context, field graphql.Co
 		}
 	}
 	args["includeDeprecated"] = arg0
-	rctx := &graphql.ResolverContext{
-		Object: "__Type",
-		Args:   args,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__Type"
+	rctx.Args = args
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Fields(args["includeDeprecated"].(bool)), nil
 	})
 	if resTmp == nil {
 		return graphql.Null
 	}
 	res := resTmp.([]introspection.Field)
-	rctx.Result = res
 	arr1 := graphql.Array{}
 	for idx1 := range res {
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: &res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
 		arr1 = append(arr1, func() graphql.Marshaler {
-
+			rctx := graphql.GetResolverContext(ctx)
+			rctx.PushIndex(idx1)
+			defer rctx.Pop()
 			return ec.___Field(ctx, field.Selections, &res[idx1])
 		}())
 	}
 	return arr1
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___Type_interfaces(ctx context.Context, field graphql.CollectedField, obj *introspection.Type) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__Type",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__Type"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.Interfaces(), nil
 	})
 	if resTmp == nil {
 		return graphql.Null
 	}
 	res := resTmp.([]introspection.Type)
-	rctx.Result = res
 	arr1 := graphql.Array{}
 	for idx1 := range res {
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: &res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
 		arr1 = append(arr1, func() graphql.Marshaler {
-
+			rctx := graphql.GetResolverContext(ctx)
+			rctx.PushIndex(idx1)
+			defer rctx.Pop()
 			return ec.___Type(ctx, field.Selections, &res[idx1])
 		}())
 	}
 	return arr1
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___Type_possibleTypes(ctx context.Context, field graphql.CollectedField, obj *introspection.Type) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__Type",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__Type"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.PossibleTypes(), nil
 	})
 	if resTmp == nil {
 		return graphql.Null
 	}
 	res := resTmp.([]introspection.Type)
-	rctx.Result = res
 	arr1 := graphql.Array{}
 	for idx1 := range res {
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: &res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
 		arr1 = append(arr1, func() graphql.Marshaler {
-
+			rctx := graphql.GetResolverContext(ctx)
+			rctx.PushIndex(idx1)
+			defer rctx.Pop()
 			return ec.___Type(ctx, field.Selections, &res[idx1])
 		}())
 	}
 	return arr1
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___Type_enumValues(ctx context.Context, field graphql.CollectedField, obj *introspection.Type) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
 	args := map[string]interface{}{}
@@ -2586,87 +2109,74 @@ func (ec *executionContext) ___Type_enumValues(ctx context.Context, field graphq
 		}
 	}
 	args["includeDeprecated"] = arg0
-	rctx := &graphql.ResolverContext{
-		Object: "__Type",
-		Args:   args,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__Type"
+	rctx.Args = args
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.EnumValues(args["includeDeprecated"].(bool)), nil
 	})
 	if resTmp == nil {
 		return graphql.Null
 	}
 	res := resTmp.([]introspection.EnumValue)
-	rctx.Result = res
 	arr1 := graphql.Array{}
 	for idx1 := range res {
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: &res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
 		arr1 = append(arr1, func() graphql.Marshaler {
-
+			rctx := graphql.GetResolverContext(ctx)
+			rctx.PushIndex(idx1)
+			defer rctx.Pop()
 			return ec.___EnumValue(ctx, field.Selections, &res[idx1])
 		}())
 	}
 	return arr1
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___Type_inputFields(ctx context.Context, field graphql.CollectedField, obj *introspection.Type) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__Type",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__Type"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.InputFields(), nil
 	})
 	if resTmp == nil {
 		return graphql.Null
 	}
 	res := resTmp.([]introspection.InputValue)
-	rctx.Result = res
 	arr1 := graphql.Array{}
 	for idx1 := range res {
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: &res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
 		arr1 = append(arr1, func() graphql.Marshaler {
-
+			rctx := graphql.GetResolverContext(ctx)
+			rctx.PushIndex(idx1)
+			defer rctx.Pop()
 			return ec.___InputValue(ctx, field.Selections, &res[idx1])
 		}())
 	}
 	return arr1
 }
 
-// nolint: vetshadow
 func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.CollectedField, obj *introspection.Type) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "__Type",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, obj, func(ctx context.Context) (interface{}, error) {
+	rctx := graphql.GetResolverContext(ctx)
+	rctx.Object = "__Type"
+	rctx.Args = nil
+	rctx.Field = field
+	rctx.PushField(field.Alias)
+	defer rctx.Pop()
+	resTmp := ec.FieldMiddleware(ctx, func(ctx context.Context) (interface{}, error) {
 		return obj.OfType(), nil
 	})
 	if resTmp == nil {
 		return graphql.Null
 	}
 	res := resTmp.(*introspection.Type)
-	rctx.Result = res
-
 	if res == nil {
 		return graphql.Null
 	}
-
 	return ec.___Type(ctx, field.Selections, res)
 }
 
@@ -2787,13 +2297,7 @@ func UnmarshalNewStat(v interface{}) (NewStat, error) {
 	return it, nil
 }
 
-func (ec *executionContext) FieldMiddleware(ctx context.Context, obj interface{}, next graphql.Resolver) (ret interface{}) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = nil
-		}
-	}()
+func (ec *executionContext) FieldMiddleware(ctx context.Context, next graphql.Resolver) interface{} {
 	res, err := ec.ResolverMiddleware(ctx, next)
 	if err != nil {
 		ec.Error(ctx, err)
