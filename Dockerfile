@@ -1,9 +1,9 @@
-FROM golang:1.11
+FROM golang:1.11-rc
+ENV GO111MODULE=on
 EXPOSE 8080
-WORKDIR /go/src/
-COPY . /go/src/github.com/icco/graphql
-RUN ls -al /go/src/github.com/icco/graphql
+WORKDIR /go/src/github.com/icco/graphql
+COPY . .
 
-RUN go build -o ../bin/server ./github.com/icco/graphql/server
+RUN go build -o /go/bin/server ./server
 
-CMD ["server"]
+CMD ["/go/bin/server"]
