@@ -29,8 +29,30 @@ func (r *Resolver) Query() QueryResolver {
 
 type mutationResolver struct{ *Resolver }
 
+func GetMaxId() (int, error) {
+	row, err := db.QueryRow("SELECT MAX(id) from posts")
+	if err != nil {
+		return err
+	}
+
+	var id int
+	if err := row.Scan(&id); err != nil {
+		return err
+	}
+
+	return id
+}
+
 func (r *mutationResolver) CreatePost(ctx context.Context, input NewPost) (Post, error) {
-	result, err := db.Exec("INSERT INTO posts(title, content, date, draft, created_at, modified_at) VALUES ($1, $2, $3, $4, $5, $5)",
+
+	maxId, err := GetMaxId()
+	if err != nil {
+		return Post{}, err
+	}
+	id := maxId + 1
+
+	result, err := db.Exec("INSERT INTO posts(id, title, content, date, draft, created_at, modified_at) VALUES ($1, $2, $3, $4, $5, $6, $6)",
+		id,
 		input.Title,
 		input.Content,
 		input.Datetime,
@@ -41,12 +63,7 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input NewPost) (Post,
 		return Post{}, err
 	}
 
-	postId, err := result.LastInsertId()
-	if err != nil {
-		return Post{}, err
-	}
-
-	post, err := GetPost(postId)
+	post, err := GetPost(id)
 	if err != nil {
 		return Post{}, err
 	}
