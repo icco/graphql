@@ -1,4 +1,4 @@
-FROM golang:1.11-rc
+FROM golang:1.11
 ENV GO111MODULE=on
 EXPOSE 8080
 WORKDIR /go/src/github.com/icco/graphql
