@@ -2,10 +2,7 @@ package graphql
 
 import (
 	"context"
-	"database/sql"
 	"time"
-
-	"github.com/lib/pq"
 )
 
 func GetMaxId() (int64, error) {
