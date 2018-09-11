@@ -18,23 +18,6 @@ type Link struct {
 	Screenshot  string    `json:"screenshot"`
 	Tags        []string  `json:"tags"`
 }
-type NewLink struct {
-	Title       string    `json:"title"`
-	URI         string    `json:"uri"`
-	Description string    `json:"description"`
-	Tags        []*string `json:"tags"`
-	Created     time.Time `json:"created"`
-}
-type NewPost struct {
-	Content  string    `json:"content"`
-	Title    string    `json:"title"`
-	Datetime time.Time `json:"datetime"`
-	Draft    bool      `json:"draft"`
-}
-type NewStat struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
-}
 type Stat struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`

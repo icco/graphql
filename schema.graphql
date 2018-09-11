@@ -92,30 +92,3 @@ Comment is an undefined type reserved for the future.
 type Comment {
   id: ID!
 }
-
-input NewPost {
-  content: String!
-  title: String!
-  datetime: Time!
-  draft: Boolean!
-}
-
-input NewLink {
-  title: String!
-  uri: URI!
-  description: String!
-  tags: [String]!
-  created: Time!
-}
-
-input NewStat {
-  key: String!
-  value: String!
-}
-
-type Mutation {
-  createPost(input: NewPost!): Post!
-  editPost(Id: ID!, input: NewPost!): Post!
-  createLink(input: NewLink!): Link!
-  upsertStat(input: NewStat!): Stat!
-}

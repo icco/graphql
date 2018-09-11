@@ -6,7 +6,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"time"
 
 	"github.com/lib/pq"
 )
@@ -20,63 +19,8 @@ func New() Config {
 	return c
 }
 
-func (r *Resolver) Mutation() MutationResolver {
-	return &mutationResolver{r}
-}
 func (r *Resolver) Query() QueryResolver {
 	return &queryResolver{r}
-}
-
-type mutationResolver struct{ *Resolver }
-
-func GetMaxId() (int64, error) {
-	row := db.QueryRow("SELECT MAX(id) from posts")
-	var id int64
-	if err := row.Scan(&id); err != nil {
-		return -1, err
-	}
-
-	return id, nil
-}
-
-func (r *mutationResolver) CreatePost(ctx context.Context, input NewPost) (Post, error) {
-
-	maxId, err := GetMaxId()
-	if err != nil {
-		return Post{}, err
-	}
-	id := maxId + 1
-
-	_, err = db.Exec("INSERT INTO posts(id, title, content, date, draft, created_at, modified_at) VALUES ($1, $2, $3, $4, $5, $6, $6)",
-		id,
-		input.Title,
-		input.Content,
-		input.Datetime,
-		input.Draft,
-		time.Now(),
-	)
-	if err != nil {
-		return Post{}, err
-	}
-
-	post, err := GetPost(id)
-	if err != nil {
-		return Post{}, err
-	}
-
-	return *post, nil
-}
-
-func (r *mutationResolver) EditPost(ctx context.Context, id string, input NewPost) (Post, error) {
-	panic("not implemented")
-}
-
-func (r *mutationResolver) CreateLink(ctx context.Context, input NewLink) (Link, error) {
-	panic("not implemented")
-}
-
-func (r *mutationResolver) UpsertStat(ctx context.Context, input NewStat) (Stat, error) {
-	panic("not implemented")
 }
 
 type queryResolver struct{ *Resolver }
