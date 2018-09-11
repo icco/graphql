@@ -6,9 +6,12 @@ import (
 	time "time"
 )
 
+// Comment is an undefined type reserved for the future.
 type Comment struct {
 	ID string `json:"id"`
 }
+
+// A link is a link I have save on pinboard or a link in a post.
 type Link struct {
 	ID          string    `json:"id"`
 	Title       string    `json:"title"`
@@ -18,6 +21,8 @@ type Link struct {
 	Screenshot  string    `json:"screenshot"`
 	Tags        []string  `json:"tags"`
 }
+
+// A stat is a key value pair of two interesting strings.
 type Stat struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
