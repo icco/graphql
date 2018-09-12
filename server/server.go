@@ -71,6 +71,7 @@ func main() {
 	r.Handle("/", handler.Playground("graphql", "/graphql"))
 	r.Handle("/graphql", handler.GraphQL(
 		graphql.NewExecutableSchema(graphql.New()),
+		handler.ComplexityLimit(5),
 		handler.RecoverFunc(func(ctx context.Context, err interface{}) error {
 			log.Print(err)
 			debug.PrintStack()
