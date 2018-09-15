@@ -8,11 +8,16 @@ import (
 	"os"
 	"runtime/debug"
 
+	"contrib.go.opencensus.io/exporter/stackdriver"
 	"github.com/99designs/gqlgen/handler"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/icco/graphql"
 	"github.com/rs/cors"
+	"go.opencensus.io/exporter/prometheus"
+	"go.opencensus.io/stats/view"
+	"go.opencensus.io/trace"
+	"go.opencensus.io/zpages"
 	"gopkg.in/unrolled/render.v1"
 	"gopkg.in/unrolled/secure.v1"
 )
@@ -45,7 +50,28 @@ func main() {
 	if fromEnv := os.Getenv("PORT"); fromEnv != "" {
 		port = fromEnv
 	}
-	log.Printf("Starting up on %s", port)
+	log.Printf("Starting up on http://localhost:%s", port)
+
+	pe, err := prometheus.NewExporter(prometheus.Options{
+		Namespace: "graphql",
+	})
+	if err != nil {
+		log.Fatalf("Failed to create the Prometheus exporter: %v", err)
+	}
+
+	sd, err := stackdriver.NewExporter(stackdriver.Options{
+		ProjectID:    "icco-cloud",
+		MetricPrefix: "graphql",
+	})
+	if err != nil {
+		log.Fatalf("Failed to create the Stackdriver exporter: %v", err)
+	}
+	defer sd.Flush()
+
+	// Register it as a metrics exporter
+	view.RegisterExporter(sd)
+	view.SetReportingPeriod(60 * time.Second)
+	trace.RegisterExporter(sd)
 
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
@@ -78,8 +104,9 @@ func main() {
 			return errors.New("Panic message seen when processing request")
 		}),
 	))
+	r.Handle("/metrics", pe)
+	zpages.Handle(r, "/debug")
 
-	log.Printf("Server listening on port %s", port)
 	log.Fatal(http.ListenAndServe(":"+port, r))
 }
 
