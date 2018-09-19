@@ -16,6 +16,7 @@ import (
 	"github.com/icco/graphql"
 	"github.com/rs/cors"
 	"go.opencensus.io/exporter/prometheus"
+	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
 	"gopkg.in/unrolled/render.v1"
@@ -68,12 +69,15 @@ func main() {
 	}
 	defer sd.Flush()
 
-	// Register it as a metrics exporter
+	// Register metrics exporters
+	view.RegisterExporter(pe)
 	view.RegisterExporter(sd)
 	view.SetReportingPeriod(60 * time.Second)
 	trace.RegisterExporter(sd)
+	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 
 	r := chi.NewRouter()
+
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
@@ -106,7 +110,12 @@ func main() {
 	))
 	r.Handle("/metrics", pe)
 
-	log.Fatal(http.ListenAndServe(":"+port, r))
+	h := &ochttp.Handler{Handler: r}
+	if err := view.Register(ochttp.DefaultServerViews...); err != nil {
+		log.Fatal("Failed to register ochttp.DefaultServerViews")
+	}
+
+	log.Fatal(http.ListenAndServe(":"+port, h))
 }
 
 func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
