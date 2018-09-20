@@ -99,6 +99,199 @@ type QueryResolver interface {
 	Stats(ctx context.Context, count *int) ([]*Stat, error)
 }
 
+func field_Query_posts_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 *int
+	if tmp, ok := rawArgs["limit"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg0 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["limit"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["offset"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg1 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["offset"] = arg1
+	return args, nil
+
+}
+
+func field_Query_post_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalID(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+
+}
+
+func field_Query_nextPost_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalID(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+
+}
+
+func field_Query_prevPost_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalID(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+
+}
+
+func field_Query_links_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 *int
+	if tmp, ok := rawArgs["limit"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg0 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["limit"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["offset"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg1 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["offset"] = arg1
+	return args, nil
+
+}
+
+func field_Query_link_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalID(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+
+}
+
+func field_Query_stats_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 *int
+	if tmp, ok := rawArgs["count"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg0 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["count"] = arg0
+	return args, nil
+
+}
+
+func field_Query___type_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["name"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalString(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["name"] = arg0
+	return args, nil
+
+}
+
+func field___Type_fields_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 bool
+	if tmp, ok := rawArgs["includeDeprecated"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalBoolean(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["includeDeprecated"] = arg0
+	return args, nil
+
+}
+
+func field___Type_enumValues_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 bool
+	if tmp, ok := rawArgs["includeDeprecated"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalBoolean(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["includeDeprecated"] = arg0
+	return args, nil
+
+}
+
 type executableSchema struct {
 	resolvers  ResolverRoot
 	directives DirectiveRoot
@@ -256,37 +449,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		if e.complexity.Query.Posts == nil {
 			break
 		}
-		args := map[string]interface{}{}
 
-		var arg0 *int
-		if tmp, ok := rawArgs["limit"]; ok {
-			var err error
-			var ptr1 int
-			if tmp != nil {
-				ptr1, err = graphql.UnmarshalInt(tmp)
-				arg0 = &ptr1
-			}
-
-			if err != nil {
-				return 0, false
-			}
+		args, err := field_Query_posts_args(rawArgs)
+		if err != nil {
+			return 0, false
 		}
-		args["limit"] = arg0
-
-		var arg1 *int
-		if tmp, ok := rawArgs["offset"]; ok {
-			var err error
-			var ptr1 int
-			if tmp != nil {
-				ptr1, err = graphql.UnmarshalInt(tmp)
-				arg1 = &ptr1
-			}
-
-			if err != nil {
-				return 0, false
-			}
-		}
-		args["offset"] = arg1
 
 		return e.complexity.Query.Posts(childComplexity, args["limit"].(*int), args["offset"].(*int)), true
 
@@ -294,17 +461,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		if e.complexity.Query.Post == nil {
 			break
 		}
-		args := map[string]interface{}{}
 
-		var arg0 string
-		if tmp, ok := rawArgs["id"]; ok {
-			var err error
-			arg0, err = graphql.UnmarshalID(tmp)
-			if err != nil {
-				return 0, false
-			}
+		args, err := field_Query_post_args(rawArgs)
+		if err != nil {
+			return 0, false
 		}
-		args["id"] = arg0
 
 		return e.complexity.Query.Post(childComplexity, args["id"].(string)), true
 
@@ -312,17 +473,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		if e.complexity.Query.NextPost == nil {
 			break
 		}
-		args := map[string]interface{}{}
 
-		var arg0 string
-		if tmp, ok := rawArgs["id"]; ok {
-			var err error
-			arg0, err = graphql.UnmarshalID(tmp)
-			if err != nil {
-				return 0, false
-			}
+		args, err := field_Query_nextPost_args(rawArgs)
+		if err != nil {
+			return 0, false
 		}
-		args["id"] = arg0
 
 		return e.complexity.Query.NextPost(childComplexity, args["id"].(string)), true
 
@@ -330,17 +485,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		if e.complexity.Query.PrevPost == nil {
 			break
 		}
-		args := map[string]interface{}{}
 
-		var arg0 string
-		if tmp, ok := rawArgs["id"]; ok {
-			var err error
-			arg0, err = graphql.UnmarshalID(tmp)
-			if err != nil {
-				return 0, false
-			}
+		args, err := field_Query_prevPost_args(rawArgs)
+		if err != nil {
+			return 0, false
 		}
-		args["id"] = arg0
 
 		return e.complexity.Query.PrevPost(childComplexity, args["id"].(string)), true
 
@@ -355,37 +504,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		if e.complexity.Query.Links == nil {
 			break
 		}
-		args := map[string]interface{}{}
 
-		var arg0 *int
-		if tmp, ok := rawArgs["limit"]; ok {
-			var err error
-			var ptr1 int
-			if tmp != nil {
-				ptr1, err = graphql.UnmarshalInt(tmp)
-				arg0 = &ptr1
-			}
-
-			if err != nil {
-				return 0, false
-			}
+		args, err := field_Query_links_args(rawArgs)
+		if err != nil {
+			return 0, false
 		}
-		args["limit"] = arg0
-
-		var arg1 *int
-		if tmp, ok := rawArgs["offset"]; ok {
-			var err error
-			var ptr1 int
-			if tmp != nil {
-				ptr1, err = graphql.UnmarshalInt(tmp)
-				arg1 = &ptr1
-			}
-
-			if err != nil {
-				return 0, false
-			}
-		}
-		args["offset"] = arg1
 
 		return e.complexity.Query.Links(childComplexity, args["limit"].(*int), args["offset"].(*int)), true
 
@@ -393,17 +516,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		if e.complexity.Query.Link == nil {
 			break
 		}
-		args := map[string]interface{}{}
 
-		var arg0 string
-		if tmp, ok := rawArgs["id"]; ok {
-			var err error
-			arg0, err = graphql.UnmarshalID(tmp)
-			if err != nil {
-				return 0, false
-			}
+		args, err := field_Query_link_args(rawArgs)
+		if err != nil {
+			return 0, false
 		}
-		args["id"] = arg0
 
 		return e.complexity.Query.Link(childComplexity, args["id"].(string)), true
 
@@ -411,22 +528,11 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		if e.complexity.Query.Stats == nil {
 			break
 		}
-		args := map[string]interface{}{}
 
-		var arg0 *int
-		if tmp, ok := rawArgs["count"]; ok {
-			var err error
-			var ptr1 int
-			if tmp != nil {
-				ptr1, err = graphql.UnmarshalInt(tmp)
-				arg0 = &ptr1
-			}
-
-			if err != nil {
-				return 0, false
-			}
+		args, err := field_Query_stats_args(rawArgs)
+		if err != nil {
+			return 0, false
 		}
-		args["count"] = arg0
 
 		return e.complexity.Query.Stats(childComplexity, args["count"].(*int)), true
 
@@ -1326,37 +1432,11 @@ func (ec *executionContext) _Query_allPosts(ctx context.Context, field graphql.C
 // nolint: vetshadow
 func (ec *executionContext) _Query_posts(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args := map[string]interface{}{}
-	var arg0 *int
-	if tmp, ok := rawArgs["limit"]; ok {
-		var err error
-		var ptr1 int
-		if tmp != nil {
-			ptr1, err = graphql.UnmarshalInt(tmp)
-			arg0 = &ptr1
-		}
-
-		if err != nil {
-			ec.Error(ctx, err)
-			return graphql.Null
-		}
+	args, err := field_Query_posts_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
 	}
-	args["limit"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["offset"]; ok {
-		var err error
-		var ptr1 int
-		if tmp != nil {
-			ptr1, err = graphql.UnmarshalInt(tmp)
-			arg1 = &ptr1
-		}
-
-		if err != nil {
-			ec.Error(ctx, err)
-			return graphql.Null
-		}
-	}
-	args["offset"] = arg1
 	rctx := &graphql.ResolverContext{
 		Object: "Query",
 		Args:   args,
@@ -1417,17 +1497,11 @@ func (ec *executionContext) _Query_posts(ctx context.Context, field graphql.Coll
 // nolint: vetshadow
 func (ec *executionContext) _Query_post(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		var err error
-		arg0, err = graphql.UnmarshalID(tmp)
-		if err != nil {
-			ec.Error(ctx, err)
-			return graphql.Null
-		}
+	args, err := field_Query_post_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
 	}
-	args["id"] = arg0
 	rctx := &graphql.ResolverContext{
 		Object: "Query",
 		Args:   args,
@@ -1453,17 +1527,11 @@ func (ec *executionContext) _Query_post(ctx context.Context, field graphql.Colle
 // nolint: vetshadow
 func (ec *executionContext) _Query_nextPost(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		var err error
-		arg0, err = graphql.UnmarshalID(tmp)
-		if err != nil {
-			ec.Error(ctx, err)
-			return graphql.Null
-		}
+	args, err := field_Query_nextPost_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
 	}
-	args["id"] = arg0
 	rctx := &graphql.ResolverContext{
 		Object: "Query",
 		Args:   args,
@@ -1488,17 +1556,11 @@ func (ec *executionContext) _Query_nextPost(ctx context.Context, field graphql.C
 // nolint: vetshadow
 func (ec *executionContext) _Query_prevPost(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		var err error
-		arg0, err = graphql.UnmarshalID(tmp)
-		if err != nil {
-			ec.Error(ctx, err)
-			return graphql.Null
-		}
+	args, err := field_Query_prevPost_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
 	}
-	args["id"] = arg0
 	rctx := &graphql.ResolverContext{
 		Object: "Query",
 		Args:   args,
@@ -1582,37 +1644,11 @@ func (ec *executionContext) _Query_allLinks(ctx context.Context, field graphql.C
 // nolint: vetshadow
 func (ec *executionContext) _Query_links(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args := map[string]interface{}{}
-	var arg0 *int
-	if tmp, ok := rawArgs["limit"]; ok {
-		var err error
-		var ptr1 int
-		if tmp != nil {
-			ptr1, err = graphql.UnmarshalInt(tmp)
-			arg0 = &ptr1
-		}
-
-		if err != nil {
-			ec.Error(ctx, err)
-			return graphql.Null
-		}
+	args, err := field_Query_links_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
 	}
-	args["limit"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["offset"]; ok {
-		var err error
-		var ptr1 int
-		if tmp != nil {
-			ptr1, err = graphql.UnmarshalInt(tmp)
-			arg1 = &ptr1
-		}
-
-		if err != nil {
-			ec.Error(ctx, err)
-			return graphql.Null
-		}
-	}
-	args["offset"] = arg1
 	rctx := &graphql.ResolverContext{
 		Object: "Query",
 		Args:   args,
@@ -1673,17 +1709,11 @@ func (ec *executionContext) _Query_links(ctx context.Context, field graphql.Coll
 // nolint: vetshadow
 func (ec *executionContext) _Query_link(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		var err error
-		arg0, err = graphql.UnmarshalID(tmp)
-		if err != nil {
-			ec.Error(ctx, err)
-			return graphql.Null
-		}
+	args, err := field_Query_link_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
 	}
-	args["id"] = arg0
 	rctx := &graphql.ResolverContext{
 		Object: "Query",
 		Args:   args,
@@ -1709,22 +1739,11 @@ func (ec *executionContext) _Query_link(ctx context.Context, field graphql.Colle
 // nolint: vetshadow
 func (ec *executionContext) _Query_stats(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args := map[string]interface{}{}
-	var arg0 *int
-	if tmp, ok := rawArgs["count"]; ok {
-		var err error
-		var ptr1 int
-		if tmp != nil {
-			ptr1, err = graphql.UnmarshalInt(tmp)
-			arg0 = &ptr1
-		}
-
-		if err != nil {
-			ec.Error(ctx, err)
-			return graphql.Null
-		}
+	args, err := field_Query_stats_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
 	}
-	args["count"] = arg0
 	rctx := &graphql.ResolverContext{
 		Object: "Query",
 		Args:   args,
@@ -1785,17 +1804,11 @@ func (ec *executionContext) _Query_stats(ctx context.Context, field graphql.Coll
 // nolint: vetshadow
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["name"]; ok {
-		var err error
-		arg0, err = graphql.UnmarshalString(tmp)
-		if err != nil {
-			ec.Error(ctx, err)
-			return graphql.Null
-		}
+	args, err := field_Query___type_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
 	}
-	args["name"] = arg0
 	rctx := &graphql.ResolverContext{
 		Object: "Query",
 		Args:   args,
@@ -2905,17 +2918,11 @@ func (ec *executionContext) ___Type_description(ctx context.Context, field graph
 // nolint: vetshadow
 func (ec *executionContext) ___Type_fields(ctx context.Context, field graphql.CollectedField, obj *introspection.Type) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args := map[string]interface{}{}
-	var arg0 bool
-	if tmp, ok := rawArgs["includeDeprecated"]; ok {
-		var err error
-		arg0, err = graphql.UnmarshalBoolean(tmp)
-		if err != nil {
-			ec.Error(ctx, err)
-			return graphql.Null
-		}
+	args, err := field___Type_fields_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
 	}
-	args["includeDeprecated"] = arg0
 	rctx := &graphql.ResolverContext{
 		Object: "__Type",
 		Args:   args,
@@ -3073,17 +3080,11 @@ func (ec *executionContext) ___Type_possibleTypes(ctx context.Context, field gra
 // nolint: vetshadow
 func (ec *executionContext) ___Type_enumValues(ctx context.Context, field graphql.CollectedField, obj *introspection.Type) graphql.Marshaler {
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args := map[string]interface{}{}
-	var arg0 bool
-	if tmp, ok := rawArgs["includeDeprecated"]; ok {
-		var err error
-		arg0, err = graphql.UnmarshalBoolean(tmp)
-		if err != nil {
-			ec.Error(ctx, err)
-			return graphql.Null
-		}
+	args, err := field___Type_enumValues_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
 	}
-	args["includeDeprecated"] = arg0
 	rctx := &graphql.ResolverContext{
 		Object: "__Type",
 		Args:   args,

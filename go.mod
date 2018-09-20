@@ -3,7 +3,7 @@ module github.com/icco/graphql
 require (
 	cloud.google.com/go v0.28.0 // indirect
 	contrib.go.opencensus.io/exporter/stackdriver v0.6.0
-	github.com/99designs/gqlgen v0.5.0
+	github.com/99designs/gqlgen v0.5.1
 	github.com/GuiaBolso/darwin v0.0.0-20170210191649-86919dfcf808
 	github.com/agnivade/levenshtein v1.0.0 // indirect
 	github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883 // indirect
@@ -21,7 +21,6 @@ require (
 	github.com/hashicorp/golang-lru v0.5.0 // indirect
 	github.com/jtolds/gls v4.2.1+incompatible // indirect
 	github.com/lib/pq v1.0.0
-	github.com/pkg/errors v0.8.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rs/cors v1.5.0
 	github.com/sergi/go-diff v1.0.0 // indirect
@@ -29,11 +28,9 @@ require (
 	github.com/smartystreets/assertions v0.0.0-20180820201707-7c9eb446e3cf // indirect
 	github.com/smartystreets/goconvey v0.0.0-20180222194500-ef6db91d284a // indirect
 	github.com/stretchr/testify v1.2.2 // indirect
-	github.com/urfave/cli v1.20.0 // indirect
 	github.com/vektah/gqlparser v0.0.0-20180823070515-d0fbd67c7fe9
 	go.opencensus.io v0.17.0
 	golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be // indirect
-	golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e // indirect
 	google.golang.org/appengine v1.2.0 // indirect
 	gopkg.in/DATA-DOG/go-sqlmock.v1 v1.3.0 // indirect
 	gopkg.in/russross/blackfriday.v2 v2.0.0
