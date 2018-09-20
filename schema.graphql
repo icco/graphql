@@ -2,6 +2,8 @@ schema {
   query: Query
 }
 
+type Mutation { }
+
 """
 The query type, represents all of the entry points into our object graph.
 """
