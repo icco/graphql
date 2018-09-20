@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"runtime/debug"
-	"time"
 
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	"github.com/99designs/gqlgen/handler"
@@ -59,21 +58,22 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to create the Prometheus exporter: %v", err)
 	}
+	view.RegisterExporter(pe)
 
-	sd, err := stackdriver.NewExporter(stackdriver.Options{
-		ProjectID:    "icco-cloud",
-		MetricPrefix: "graphql",
-	})
-	if err != nil {
-		log.Fatalf("Failed to create the Stackdriver exporter: %v", err)
+	if os.Getenv("ENABLE_STACKDRIVER") != "" {
+		sd, err := stackdriver.NewExporter(stackdriver.Options{
+			ProjectID:    "icco-cloud",
+			MetricPrefix: "graphql",
+		})
+		if err != nil {
+			log.Fatalf("Failed to create the Stackdriver exporter: %v", err)
+		}
+		defer sd.Flush()
+		view.RegisterExporter(sd)
+		trace.RegisterExporter(sd)
 	}
-	defer sd.Flush()
 
 	// Register metrics exporters
-	view.RegisterExporter(pe)
-	view.RegisterExporter(sd)
-	view.SetReportingPeriod(60 * time.Second)
-	trace.RegisterExporter(sd)
 	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 
 	r := chi.NewRouter()
