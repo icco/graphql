@@ -109,7 +109,10 @@ func main() {
 	))
 	r.Handle("/metrics", pe)
 
-	h := &ochttp.Handler{Handler: r}
+	h := &ochttp.Handler{
+		Handler:          r,
+		IsPublicEndpoint: true,
+	}
 	if err := view.Register(ochttp.DefaultServerViews...); err != nil {
 		log.Fatal("Failed to register ochttp.DefaultServerViews")
 	}

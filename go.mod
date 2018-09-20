@@ -8,6 +8,7 @@ require (
 	github.com/agnivade/levenshtein v1.0.0 // indirect
 	github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883 // indirect
 	github.com/aws/aws-sdk-go v1.15.38 // indirect
+	github.com/basvanbeek/ocsql v0.0.0-20180917020447-2347323f92d5
 	github.com/codegangsta/negroni v1.0.0 // indirect
 	github.com/cznic/ql v1.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect

@@ -5,11 +5,13 @@ import (
 	"log"
 
 	"github.com/GuiaBolso/darwin"
+	"github.com/basvanbeek/ocsql"
 	_ "github.com/lib/pq"
 )
 
 var (
 	db         *sql.DB
+	driver     = "postgres"
 	migrations = []darwin.Migration{
 		{
 			Version:     1,
@@ -47,7 +49,12 @@ func InitDB(dataSourceName string) {
 	var err error
 
 	// Connect to Database
-	db, err = sql.Open("postgres", dataSourceName)
+	wrappedDriver, err := ocsql.Register(driver, ocsql.WithAllTraceOptions())
+	if err != nil {
+		log.Fatalf("Failed to register the ocsql driver: %v", err)
+	}
+
+	db, _ = sql.Open(wrappedDriver, dataSourceName)
 	if err = db.Ping(); err != nil {
 		log.Panic(err)
 	}
