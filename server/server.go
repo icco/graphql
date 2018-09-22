@@ -18,6 +18,7 @@ import (
 	"github.com/qor/auth"
 	"github.com/qor/auth/auth_identity"
 	"github.com/qor/auth/providers/password"
+	"github.com/qor/auth_themes/clean"
 	"github.com/qor/session/manager"
 	"github.com/rs/cors"
 	"go.opencensus.io/exporter/prometheus"
@@ -48,7 +49,7 @@ var (
 	gormDB, _ = gorm.Open("postgres", dbUrl)
 
 	// Auth contains auth config for middleware
-	Auth = auth.New(&auth.Config{
+	Auth = clean.New(&auth.Config{
 		DB: gormDB,
 	})
 )
@@ -118,7 +119,8 @@ func main() {
 
 	r.Get("/healthz", healthCheckHandler)
 
-	r.Handle("/auth/", Auth.NewServeMux())
+	r.Mount("/auth", Auth.NewServeMux())
+
 	r.Handle("/", handler.Playground("graphql", "/graphql"))
 	r.Handle("/graphql", handler.GraphQL(
 		graphql.NewExecutableSchema(graphql.New()),
