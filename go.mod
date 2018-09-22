@@ -55,7 +55,7 @@ require (
 	github.com/qor/oss v0.0.0-20180613011527-e3d52e4600e3 // indirect
 	github.com/qor/qor v0.0.0-20180607095400-a9b667cbbf18 // indirect
 	github.com/qor/redirect_back v0.0.0-20170907030740-b4161ed6f848 // indirect
-	github.com/qor/render v0.0.0-20171201033449-63566e46f01b // indirect
+	github.com/qor/render v0.0.0-20171201033449-63566e46f01b
 	github.com/qor/responder v0.0.0-20171031032654-b6def473574f // indirect
 	github.com/qor/roles v0.0.0-20171127035124-d6375609fe3e // indirect
 	github.com/qor/serializable_meta v0.0.0-20180510060738-5fd8542db417 // indirect

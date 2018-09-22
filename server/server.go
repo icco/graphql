@@ -17,8 +17,9 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/qor/auth"
 	"github.com/qor/auth/auth_identity"
-	"github.com/qor/auth/providers/password"
+	//"github.com/qor/auth/providers/password"
 	"github.com/qor/auth_themes/clean"
+	qr "github.com/qor/render"
 	"github.com/qor/session/manager"
 	"github.com/rs/cors"
 	"go.opencensus.io/exporter/prometheus"
@@ -51,12 +52,15 @@ var (
 	// Auth contains auth config for middleware
 	Auth = clean.New(&auth.Config{
 		DB: gormDB,
+		Render: qr.New(&qr.Config{
+			ViewPaths: []string{"./views"},
+		}),
 	})
 )
 
 func init() {
 	gormDB.AutoMigrate(&auth_identity.AuthIdentity{})
-	Auth.RegisterProvider(password.New(&password.Config{}))
+	//Auth.RegisterProvider(password.New(&password.Config{}))
 }
 
 func main() {
