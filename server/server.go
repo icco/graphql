@@ -66,8 +66,9 @@ var (
 				}
 			},
 			ViewPaths: []string{
-				"./views",
-				"/go/src/github.com/icco/graphql/server/views",
+				"./auth_views",
+				"./server/auth_views",
+				"/go/src/github.com/icco/graphql/server/auth_views",
 			},
 		}),
 	})
