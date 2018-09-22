@@ -137,6 +137,7 @@ func main() {
 	r.Get("/healthz", healthCheckHandler)
 
 	r.Mount("/auth", Auth.NewServeMux())
+	r.Mount("/admin", adminRouter())
 
 	r.Handle("/", handler.Playground("graphql", "/graphql"))
 	r.Handle("/graphql", handler.GraphQL(
@@ -157,6 +158,28 @@ func main() {
 	}
 
 	log.Fatal(http.ListenAndServe(":"+port, h))
+}
+
+func adminRouter() http.Handler {
+	r := chi.NewRouter()
+	r.Use(AdminOnly)
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		Renderer.HTML(w, http.StatusOK, "admin", nil)
+	})
+	return r
+
+}
+
+func AdminOnly(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		//ctx := r.Context()
+		//perm, ok := ctx.Value("acl.permission").(YourPermissionType)
+		//if !ok || !perm.IsAdmin() {
+		//	http.Error(w, http.StatusText(403), 403)
+		//	return
+		//}
+		next.ServeHTTP(w, r)
+	})
 }
 
 func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
