@@ -13,6 +13,12 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/icco/graphql"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/qor/auth"
+	"github.com/qor/auth/auth_identity"
+	"github.com/qor/auth/providers/password"
+	"github.com/qor/session/manager"
 	"github.com/rs/cors"
 	"go.opencensus.io/exporter/prometheus"
 	"go.opencensus.io/plugin/ochttp"
@@ -22,23 +28,37 @@ import (
 	"gopkg.in/unrolled/secure.v1"
 )
 
-// Renderer is a renderer for all occasions. These are our preferred default options.
-// See:
-//  - https://github.com/unrolled/render/blob/v1/README.md
-//  - https://godoc.org/gopkg.in/unrolled/render.v1
-var Renderer = render.New(render.Options{
-	Charset:                   "UTF-8",
-	Directory:                 "views",
-	DisableHTTPErrorRendering: false,
-	Extensions:                []string{".tmpl", ".html"},
-	IndentJSON:                false,
-	IndentXML:                 true,
-	Layout:                    "layout",
-	RequirePartials:           true,
-})
+var (
+	// Renderer is a renderer for all occasions. These are our preferred default options.
+	// See:
+	//  - https://github.com/unrolled/render/blob/v1/README.md
+	//  - https://godoc.org/gopkg.in/unrolled/render.v1
+	Renderer = render.New(render.Options{
+		Charset:                   "UTF-8",
+		Directory:                 "views",
+		DisableHTTPErrorRendering: false,
+		Extensions:                []string{".tmpl", ".html"},
+		IndentJSON:                false,
+		IndentXML:                 true,
+		Layout:                    "layout",
+		RequirePartials:           true,
+	})
+
+	dbUrl     = os.Getenv("DATABASE_URL")
+	gormDB, _ = gorm.Open("postgres", dbUrl)
+
+	// Auth contains auth config for middleware
+	Auth = auth.New(&auth.Config{
+		DB: gormDB,
+	})
+)
+
+func init() {
+	gormDB.AutoMigrate(&auth_identity.AuthIdentity{})
+	Auth.RegisterProvider(password.New(&password.Config{}))
+}
 
 func main() {
-	dbUrl := os.Getenv("DATABASE_URL")
 	if dbUrl == "" {
 		log.Panicf("DATABASE_URL is empty!")
 	}
@@ -71,10 +91,8 @@ func main() {
 		defer sd.Flush()
 		view.RegisterExporter(sd)
 		trace.RegisterExporter(sd)
+		trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 	}
-
-	// Register metrics exporters
-	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 
 	r := chi.NewRouter()
 
@@ -82,6 +100,8 @@ func main() {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+
+	r.Use(manager.SessionManager.Middleware)
 
 	r.Use(cors.New(cors.Options{
 		AllowCredentials:   true,
@@ -98,6 +118,7 @@ func main() {
 
 	r.Get("/healthz", healthCheckHandler)
 
+	r.Handle("/auth/", Auth.NewServeMux())
 	r.Handle("/", handler.Playground("graphql", "/graphql"))
 	r.Handle("/graphql", handler.GraphQL(
 		graphql.NewExecutableSchema(graphql.New()),

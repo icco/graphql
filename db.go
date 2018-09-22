@@ -45,7 +45,7 @@ var (
 	}
 )
 
-func InitDB(dataSourceName string) {
+func InitDB(dataSourceName string) *sql.DB {
 	var err error
 
 	// Connect to Database
@@ -68,4 +68,5 @@ func InitDB(dataSourceName string) {
 	}
 
 	log.Printf("Connected to %+v", dataSourceName)
+	return db
 }
