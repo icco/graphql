@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -17,8 +18,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/qor/auth"
 	"github.com/qor/auth/auth_identity"
-	//"github.com/qor/auth/providers/password"
-	"github.com/qor/auth_themes/clean"
+	"github.com/qor/auth/providers/password"
 	qr "github.com/qor/render"
 	"github.com/qor/session/manager"
 	"github.com/rs/cors"
@@ -44,23 +44,38 @@ var (
 		IndentXML:                 true,
 		Layout:                    "layout",
 		RequirePartials:           true,
+		Funcs: []template.FuncMap{template.FuncMap{
+			"t": func(key string, args ...interface{}) template.HTML {
+				return template.HTML(key)
+			},
+		}},
 	})
 
 	dbUrl     = os.Getenv("DATABASE_URL")
 	gormDB, _ = gorm.Open("postgres", dbUrl)
 
 	// Auth contains auth config for middleware
-	Auth = clean.New(&auth.Config{
+	Auth = auth.New(&auth.Config{
 		DB: gormDB,
 		Render: qr.New(&qr.Config{
-			ViewPaths: []string{"./views"},
+			FuncMapMaker: func(r *qr.Render, req *http.Request, w http.ResponseWriter) template.FuncMap {
+				return template.FuncMap{
+					"t": func(key string, args ...interface{}) template.HTML {
+						return template.HTML(key)
+					},
+				}
+			},
+			ViewPaths: []string{
+				"./views",
+				"/go/src/github.com/icco/graphql/server/views",
+			},
 		}),
 	})
 )
 
 func init() {
 	gormDB.AutoMigrate(&auth_identity.AuthIdentity{})
-	//Auth.RegisterProvider(password.New(&password.Config{}))
+	Auth.RegisterProvider(password.New(&password.Config{}))
 }
 
 func main() {
