@@ -44,11 +44,7 @@ var (
 		IndentXML:                 true,
 		Layout:                    "layout",
 		RequirePartials:           true,
-		Funcs: []template.FuncMap{template.FuncMap{
-			"t": func(key string, args ...interface{}) template.HTML {
-				return template.HTML(key)
-			},
-		}},
+		Funcs:                     []template.FuncMap{template.FuncMap{}},
 	})
 
 	dbUrl     = os.Getenv("DATABASE_URL")
@@ -61,6 +57,7 @@ var (
 			FuncMapMaker: func(r *qr.Render, req *http.Request, w http.ResponseWriter) template.FuncMap {
 				return template.FuncMap{
 					"t": func(key string, args ...interface{}) template.HTML {
+						// TODO: pull in from some sort of i18n thing
 						return template.HTML(key)
 					},
 				}
