@@ -147,13 +147,16 @@ func main() {
 	// Everything that does SSL only
 	r.Group(func(r chi.Router) {
 		r.Use(secure.New(secure.Options{
-			HostsProxyHeaders:  []string{"X-Forwarded-Host"},
-			FrameDeny:          true,
-			ContentTypeNosniff: true,
-			BrowserXssFilter:   true,
-			STSSeconds:         86400,
-			SSLRedirect:        true,
-			IsDevelopment:      isDev,
+			BrowserXssFilter:     true,
+			ContentTypeNosniff:   true,
+			FrameDeny:            true,
+			HostsProxyHeaders:    []string{"X-Forwarded-Host"},
+			IsDevelopment:        isDev,
+			SSLProxyHeaders:      map[string]string{"X-Forwarded-Proto": "https"},
+			SSLRedirect:          true,
+			STSIncludeSubdomains: true,
+			STSPreload:           true,
+			STSSeconds:           315360000,
 		}).Handler)
 
 		r.Mount("/auth", Auth.NewServeMux())
