@@ -3,7 +3,6 @@ module github.com/icco/graphql
 require (
 	cloud.google.com/go v0.28.0 // indirect
 	contrib.go.opencensus.io/exporter/stackdriver v0.6.0
-	git.apache.org/thrift.git v0.0.0-20180921172715-ce70ba20c925 // indirect
 	github.com/99designs/gqlgen v0.5.1
 	github.com/GuiaBolso/darwin v0.0.0-20170210191649-86919dfcf808
 	github.com/agnivade/levenshtein v1.0.1 // indirect
@@ -33,6 +32,7 @@ require (
 	github.com/jinzhu/now v0.0.0-20180511015916-ed742868f2ae // indirect
 	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af // indirect
 	github.com/jtolds/gls v4.2.1+incompatible // indirect
+	github.com/kr/pretty v0.1.0 // indirect
 	github.com/lib/pq v1.0.0
 	github.com/mattn/go-sqlite3 v1.9.0 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.1 // indirect
@@ -59,16 +59,15 @@ require (
 	golang.org/x/crypto v0.0.0-20180910181607-0e37d006457b // indirect
 	golang.org/x/net v0.0.0-20180921000356-2f5d2388922f // indirect
 	golang.org/x/sys v0.0.0-20180921163948-d47a0f339242 // indirect
-	golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e // indirect
 	google.golang.org/api v0.0.0-20180921000521-920bb1beccf7 // indirect
 	google.golang.org/appengine v1.2.0 // indirect
 	google.golang.org/genproto v0.0.0-20180918203901-c3f76f3b92d1 // indirect
 	google.golang.org/grpc v1.15.0 // indirect
 	gopkg.in/DATA-DOG/go-sqlmock.v1 v1.3.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
+	gopkg.in/ini.v1 v1.38.2 // indirect
 	gopkg.in/russross/blackfriday.v2 v2.0.0
 	gopkg.in/unrolled/render.v1 v1.0.0-20180914162206-b9786414de4d
 	gopkg.in/unrolled/secure.v1 v1.0.0-20180918153822-f340ee86eb8b
 	gopkg.in/yaml.v2 v2.2.1 // indirect
-	honnef.co/go/tools v0.0.0-20180920025451-e3ad64cb4ed3 // indirect
 )
