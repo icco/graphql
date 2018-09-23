@@ -134,6 +134,8 @@ func main() {
 		IsDevelopment:      false,
 	}).Handler)
 
+	r.NotFound(NotFoundHandler)
+
 	r.Get("/healthz", healthCheckHandler)
 
 	r.Mount("/auth", Auth.NewServeMux())
@@ -166,8 +168,8 @@ func adminRouter() http.Handler {
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		Renderer.HTML(w, http.StatusOK, "admin", nil)
 	})
-	return r
 
+	return r
 }
 
 func AdminOnly(next http.Handler) http.Handler {
@@ -189,4 +191,8 @@ func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 		"tag":      os.Getenv("GIT_TAG"),
 		"branch":   os.Getenv("GIT_BRANCH"),
 	})
+}
+
+func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
+	Renderer.HTML(w, http.StatusNotFound, "404", struct{ Title string }{Title: "404: This page could not be found"})
 }
