@@ -13,6 +13,7 @@ import (
 	"github.com/99designs/gqlgen/handler"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/cors"
 	"github.com/icco/graphql"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
@@ -21,7 +22,6 @@ import (
 	"github.com/qor/auth/providers/password"
 	qr "github.com/qor/render"
 	"github.com/qor/session/manager"
-	"github.com/rs/cors"
 	"go.opencensus.io/exporter/prometheus"
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/stats/view"
@@ -126,6 +126,11 @@ func main() {
 	r.Use(cors.New(cors.Options{
 		AllowCredentials:   true,
 		OptionsPassthrough: true,
+		AllowedOrigins:     []string{"*"},
+		AllowedMethods:     []string{"GET", "POST", "OPTIONS"},
+		AllowedHeaders:     []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:     []string{"Link"},
+		MaxAge:             300, // Maximum value not ignored by any of major browsers
 	}).Handler)
 
 	r.NotFound(NotFoundHandler)
