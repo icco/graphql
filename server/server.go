@@ -37,7 +37,7 @@ var (
 	//  - https://godoc.org/gopkg.in/unrolled/render.v1
 	Renderer = render.New(render.Options{
 		Charset:                   "UTF-8",
-		Directory:                 "views",
+		Directory:                 "./server/views",
 		DisableHTTPErrorRendering: false,
 		Extensions:                []string{".tmpl", ".html"},
 		IndentJSON:                false,
@@ -112,6 +112,8 @@ func main() {
 		trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 	}
 
+	isDev := os.Getenv("NAT_ENV") != "production"
+
 	r := chi.NewRouter()
 
 	r.Use(middleware.RequestID)
@@ -126,31 +128,47 @@ func main() {
 		OptionsPassthrough: true,
 	}).Handler)
 
-	r.Use(secure.New(secure.Options{
-		HostsProxyHeaders:  []string{"X-Forwarded-Host"},
-		FrameDeny:          true,
-		ContentTypeNosniff: true,
-		BrowserXssFilter:   true,
-		IsDevelopment:      false,
-	}).Handler)
-
 	r.NotFound(NotFoundHandler)
 
-	r.Get("/healthz", healthCheckHandler)
+	// Stuff that does not ssl redirect
+	r.Group(func(r chi.Router) {
+		r.Use(secure.New(secure.Options{
+			HostsProxyHeaders:  []string{"X-Forwarded-Host"},
+			FrameDeny:          true,
+			ContentTypeNosniff: true,
+			BrowserXssFilter:   true,
+			IsDevelopment:      isDev,
+		}).Handler)
 
-	r.Mount("/auth", Auth.NewServeMux())
-	r.Mount("/admin", adminRouter())
+		r.Get("/healthz", healthCheckHandler)
+		r.Handle("/metrics", pe)
+	})
 
-	r.Handle("/", handler.Playground("graphql", "/graphql"))
-	r.Handle("/graphql", handler.GraphQL(
-		graphql.NewExecutableSchema(graphql.New()),
-		handler.RecoverFunc(func(ctx context.Context, err interface{}) error {
-			log.Print(err)
-			debug.PrintStack()
-			return errors.New("Panic message seen when processing request")
-		}),
-	))
-	r.Handle("/metrics", pe)
+	// Everything that does SSL only
+	r.Group(func(r chi.Router) {
+		r.Use(secure.New(secure.Options{
+			HostsProxyHeaders:  []string{"X-Forwarded-Host"},
+			FrameDeny:          true,
+			ContentTypeNosniff: true,
+			BrowserXssFilter:   true,
+			STSSeconds:         86400,
+			SSLRedirect:        true,
+			IsDevelopment:      isDev,
+		}).Handler)
+
+		r.Mount("/auth", Auth.NewServeMux())
+		r.Mount("/admin", adminRouter())
+
+		r.Handle("/", handler.Playground("graphql", "/graphql"))
+		r.Handle("/graphql", handler.GraphQL(
+			graphql.NewExecutableSchema(graphql.New()),
+			handler.RecoverFunc(func(ctx context.Context, err interface{}) error {
+				log.Print(err)
+				debug.PrintStack()
+				return errors.New("Panic message seen when processing request")
+			}),
+		))
+	})
 
 	h := &ochttp.Handler{
 		Handler: r,
