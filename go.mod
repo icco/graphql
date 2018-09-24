@@ -50,7 +50,7 @@ require (
 	github.com/qor/roles v0.0.0-20171127035124-d6375609fe3e
 	github.com/qor/session v0.0.0-20170907035918-8206b0adab70
 	github.com/rainycape/unidecode v0.0.0-20150907023854-cb7f23ec59be // indirect
-	github.com/rs/cors v1.5.0
+	github.com/rs/cors v1.5.0 // indirect
 	github.com/sergi/go-diff v1.0.0 // indirect
 	github.com/shurcooL/sanitized_anchor_name v0.0.0-20170918181015-86672fcb3f95 // indirect
 	github.com/smartystreets/assertions v0.0.0-20180820201707-7c9eb446e3cf // indirect

@@ -88,7 +88,6 @@ func init() {
 	gormDB.AutoMigrate(&auth_identity.AuthIdentity{})
 	Auth.RegisterProvider(password.New(&password.Config{}))
 	roles.Register("admin", func(req *http.Request, currentUser interface{}) bool {
-		log.Printf("%+v", currentUser)
 		return (currentUser != nil && currentUser.(*User).Role == "admin")
 	})
 }
@@ -215,7 +214,6 @@ func adminRouter() http.Handler {
 
 func AdminOnly(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("%+v", Auth.GetCurrentUser(r))
 		if !Authority.Allow("admin", r) {
 			http.Error(w, http.StatusText(403), 403)
 			return
