@@ -146,6 +146,8 @@ github.com/qor/render v0.0.0-20171201033449-63566e46f01b h1:4aq245m+d7ulq2cMQitf
 github.com/qor/render v0.0.0-20171201033449-63566e46f01b/go.mod h1:0cGVpTjSVSjjyrhLiLTMgbMeblLQba7vcKkZHMLlYJw=
 github.com/qor/responder v0.0.0-20171031032654-b6def473574f h1:sKELSAyL+z5BRHFe97Bx71z197cBEobVJ6rASKTMSqU=
 github.com/qor/responder v0.0.0-20171031032654-b6def473574f/go.mod h1:0TL2G+qGDYhHJ6XIJ6UcqkZVN+jp8AGqGU2wDnv2qas=
+github.com/qor/roles v0.0.0-20171127035124-d6375609fe3e h1:F0BNcPJKfubM/+IIILu/GbrH9v2vPZWQ5/StSRKUfK4=
+github.com/qor/roles v0.0.0-20171127035124-d6375609fe3e/go.mod h1:++RicL9Ia/BrQHppwAsMc5CA7mAjnBLNniB46MzUteA=
 github.com/qor/session v0.0.0-20170907035918-8206b0adab70 h1:8l21EEdlZ9R0AA3FbeUAANc5NAx8Y3tn1VKbyAgjYlI=
 github.com/qor/session v0.0.0-20170907035918-8206b0adab70/go.mod h1:ldgcaca0ZGx6tFtd/w0ELq5jHD/KLJ1Lbdn8qhr/pQ0=
 github.com/rainycape/unidecode v0.0.0-20150907023854-cb7f23ec59be h1:ta7tUOvsPHVHGom5hKW5VXNc2xZIkfCKP8iaqOyYtUQ=

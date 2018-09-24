@@ -19,8 +19,10 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/qor/auth"
 	"github.com/qor/auth/auth_identity"
+	"github.com/qor/auth/authority"
 	"github.com/qor/auth/providers/password"
 	qr "github.com/qor/render"
+	"github.com/qor/roles"
 	"github.com/qor/session/manager"
 	"go.opencensus.io/exporter/prometheus"
 	"go.opencensus.io/plugin/ochttp"
@@ -52,7 +54,8 @@ var (
 
 	// Auth contains auth config for middleware
 	Auth = auth.New(&auth.Config{
-		DB: gormDB,
+		DB:        gormDB,
+		UserModel: User{},
 		Render: qr.New(&qr.Config{
 			FuncMapMaker: func(r *qr.Render, req *http.Request, w http.ResponseWriter) template.FuncMap {
 				return template.FuncMap{
@@ -69,11 +72,25 @@ var (
 			},
 		}),
 	})
+
+	// Authority is a global authorization tool.
+	Authority = authority.New(&authority.Config{
+		Auth: Auth,
+		Role: roles.Global, // default configuration
+		AccessDeniedHandler: func(w http.ResponseWriter, req *http.Request) { // redirect to home page by default
+			http.Redirect(w, req, "/", http.StatusSeeOther)
+		},
+	})
 )
 
 func init() {
+	// Sets up authentication and authorization
 	gormDB.AutoMigrate(&auth_identity.AuthIdentity{})
 	Auth.RegisterProvider(password.New(&password.Config{}))
+	roles.Register("admin", func(req *http.Request, currentUser interface{}) bool {
+		log.Printf("%+v", currentUser)
+		return (currentUser != nil && currentUser.(*User).Role == "admin")
+	})
 }
 
 func main() {
@@ -178,9 +195,7 @@ func main() {
 		))
 	})
 
-	h := &ochttp.Handler{
-		Handler: r,
-	}
+	h := &ochttp.Handler{Handler: r}
 	if err := view.Register(ochttp.DefaultServerViews...); err != nil {
 		log.Fatal("Failed to register ochttp.DefaultServerViews")
 	}
@@ -200,12 +215,12 @@ func adminRouter() http.Handler {
 
 func AdminOnly(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		//ctx := r.Context()
-		//perm, ok := ctx.Value("acl.permission").(YourPermissionType)
-		//if !ok || !perm.IsAdmin() {
-		//	http.Error(w, http.StatusText(403), 403)
-		//	return
-		//}
+		log.Printf("%+v", Auth.GetCurrentUser(r))
+		if !Authority.Allow("admin", r) {
+			http.Error(w, http.StatusText(403), 403)
+			return
+		}
+
 		next.ServeHTTP(w, r)
 	})
 }

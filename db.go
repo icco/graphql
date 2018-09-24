@@ -42,6 +42,18 @@ var (
       );
       `,
 		},
+		{
+			Version:     3,
+			Description: "Creating table users",
+			Script: `
+      CREATE TABLE users(
+        id serial primary key,
+        role text,
+        created_at timestamp with time zone,
+        modified_at timestamp with time zone
+      );
+      `,
+		},
 	}
 )
 
