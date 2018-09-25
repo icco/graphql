@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/gob"
 	"fmt"
 	"log"
 	"net/http"
@@ -13,10 +14,11 @@ import (
 	"github.com/gorilla/sessions"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
+	"google.golang.org/api/plus/v1"
 )
 
 const (
-	defaultSessionID        = "default"
+	defaultSessionID        = "graphql.natwelch"
 	googleProfileSessionKey = "google_profile"
 	oauthTokenSessionKey    = "oauth_token"
 	oauthFlowRedirectKey    = "redirect"
@@ -26,6 +28,11 @@ var (
 	SessionStore = sessions.NewCookieStore([]byte(os.Getenv("SESSION_SECRET")))
 	OAuthConfig  *oauth2.Config
 )
+
+func init() {
+	// Gob encoding for gorilla/sessions
+	gob.Register(&oauth2.Token{})
+}
 
 func appErrorf(w http.ResponseWriter, err error, msg string, args ...interface{}) {
 	message := fmt.Sprintf(msg, args)
@@ -58,12 +65,13 @@ func configureOAuthClient(clientID, clientSecret, redirectURL string) *oauth2.Co
 		ClientID:     strings.TrimSpace(clientID),
 		ClientSecret: strings.TrimSpace(clientSecret),
 		RedirectURL:  strings.TrimSpace(redirectURL),
-		Scopes:       []string{"email"},
+		Scopes:       []string{"email", "profile"},
 		Endpoint:     google.Endpoint,
 	}
 }
 
 func logoutHandler(w http.ResponseWriter, r *http.Request) {
+	// TODO: Nuke session
 }
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
@@ -93,8 +101,26 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: do something here with session and tok
-	log.Printf("%+v %+v", tok, session)
+	client := oauth2.NewClient(r.Context(), OAuthConfig.TokenSource(r.Context(), tok))
+	plusService, err := plus.New(client)
+	if err != nil {
+		appErrorf(w, err, "could not get plus api: %v", err)
+		return
+	}
+	profile, err := plusService.People.Get("me").Do()
+	if err != nil {
+		appErrorf(w, err, "could not fetch Google profile: %v", err)
+		return
+	}
+	log.Printf("profile.id: %+v", profile.Id)
+
+	// Actually save something to session
+	session.Values[oauthTokenSessionKey] = tok
+	session.Values[googleProfileSessionKey] = profile.Id
+	if err := session.Save(r, w); err != nil {
+		appErrorf(w, err, "could not save session: %v", err)
+		return
+	}
 
 	http.Redirect(w, r, redirectURL, http.StatusFound)
 }
