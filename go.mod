@@ -60,6 +60,7 @@ require (
 	go.opencensus.io v0.17.0
 	golang.org/x/crypto v0.0.0-20180910181607-0e37d006457b // indirect
 	golang.org/x/net v0.0.0-20180921000356-2f5d2388922f // indirect
+	golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be
 	golang.org/x/sys v0.0.0-20180921163948-d47a0f339242 // indirect
 	google.golang.org/api v0.0.0-20180921000521-920bb1beccf7 // indirect
 	google.golang.org/appengine v1.2.0 // indirect
