@@ -12,45 +12,23 @@ require (
 	github.com/codegangsta/negroni v1.0.0 // indirect
 	github.com/cznic/ql v1.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/denisenkom/go-mssqldb v0.0.0-20180901172138-1eb28afdf9b6 // indirect
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/eknkc/amber v0.0.0-20171010120322-cdade1c07385 // indirect
-	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5 // indirect
 	github.com/go-chi/chi v3.3.3+incompatible
 	github.com/go-chi/cors v1.0.0
 	github.com/go-ini/ini v1.38.2 // indirect
-	github.com/go-sql-driver/mysql v1.4.0 // indirect
+	github.com/gofrs/uuid v3.1.0+incompatible
 	github.com/google/go-cmp v0.2.0 // indirect
 	github.com/googleapis/gax-go v2.0.0+incompatible // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20180825215210-0210a2f0f73c // indirect
-	github.com/gorilla/sessions v1.1.2 // indirect
+	github.com/gorilla/sessions v1.1.2
 	github.com/gorilla/websocket v1.4.0 // indirect
-	github.com/gosimple/slug v1.2.0 // indirect
 	github.com/hashicorp/golang-lru v0.5.0 // indirect
-	github.com/jinzhu/copier v0.0.0-20180308034124-7e38e58719c3 // indirect
-	github.com/jinzhu/gorm v1.9.1
-	github.com/jinzhu/inflection v0.0.0-20180308033659-04140366298a // indirect
-	github.com/jinzhu/now v0.0.0-20180511015916-ed742868f2ae // indirect
 	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af // indirect
 	github.com/jtolds/gls v4.2.1+incompatible // indirect
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/lib/pq v1.0.0
-	github.com/mattn/go-sqlite3 v1.9.0 // indirect
-	github.com/microcosm-cc/bluemonday v1.0.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/procfs v0.0.0-20180920065004-418d78d0b9a7 // indirect
-	github.com/qor/assetfs v0.0.0-20170713023933-ff57fdc13a14 // indirect
-	github.com/qor/auth v0.0.0-20180620080635-2bfb79d96185
-	github.com/qor/mailer v0.0.0-20180329083248-0555e49f99ac // indirect
-	github.com/qor/middlewares v0.0.0-20170822143614-781378b69454 // indirect
-	github.com/qor/qor v0.0.0-20180607095400-a9b667cbbf18 // indirect
-	github.com/qor/redirect_back v0.0.0-20170907030740-b4161ed6f848 // indirect
-	github.com/qor/render v0.0.0-20171201033449-63566e46f01b
-	github.com/qor/responder v0.0.0-20171031032654-b6def473574f // indirect
-	github.com/qor/roles v0.0.0-20171127035124-d6375609fe3e
-	github.com/qor/session v0.0.0-20170907035918-8206b0adab70
-	github.com/rainycape/unidecode v0.0.0-20150907023854-cb7f23ec59be // indirect
-	github.com/rs/cors v1.5.0 // indirect
 	github.com/sergi/go-diff v1.0.0 // indirect
 	github.com/shurcooL/sanitized_anchor_name v0.0.0-20170918181015-86672fcb3f95 // indirect
 	github.com/smartystreets/assertions v0.0.0-20180820201707-7c9eb446e3cf // indirect
@@ -58,7 +36,6 @@ require (
 	github.com/stretchr/testify v1.2.2 // indirect
 	github.com/vektah/gqlparser v0.0.0-20180919003821-90edd96486c6
 	go.opencensus.io v0.17.0
-	golang.org/x/crypto v0.0.0-20180910181607-0e37d006457b // indirect
 	golang.org/x/net v0.0.0-20180921000356-2f5d2388922f // indirect
 	golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be
 	golang.org/x/sys v0.0.0-20180921163948-d47a0f339242 // indirect

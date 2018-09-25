@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"errors"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -20,8 +19,6 @@ import (
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
-	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
 	"gopkg.in/unrolled/render.v1"
 	"gopkg.in/unrolled/secure.v1"
 )
@@ -53,6 +50,7 @@ func main() {
 	log.Printf("Got DB URL %s", dbUrl)
 
 	graphql.InitDB(dbUrl)
+	OAuthConfig = configureOAuthClient(os.Getenv("OAUTH2_CLIENTID"), os.Getenv("OAUTH2_SECRET"))
 
 	port := "8080"
 	if fromEnv := os.Getenv("PORT"); fromEnv != "" {
@@ -187,37 +185,4 @@ func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 
 func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
 	Renderer.HTML(w, http.StatusNotFound, "404", struct{ Title string }{Title: "404: This page could not be found"})
-}
-
-func logoutHandler(w http.ResponseWriter, r *http.Request) {
-}
-
-func callbackHandler(w http.ResponseWriter, r *http.Request) {
-}
-
-func loginHandler(w http.ResponseWriter, r *http.Request) {
-
-	// Your credentials should be obtained from the Google
-	// Developer Console (https://console.developers.google.com).
-	conf := &oauth2.Config{
-		ClientID:     "YOUR_CLIENT_ID",
-		ClientSecret: "YOUR_CLIENT_SECRET",
-		RedirectURL:  "YOUR_REDIRECT_URL",
-		Scopes: []string{
-			"https://www.googleapis.com/auth/bigquery",
-			"https://www.googleapis.com/auth/blogger",
-		},
-		Endpoint: google.Endpoint,
-	}
-	// Redirect user to Google's consent page to ask for permission
-	// for the scopes specified above.
-	url := conf.AuthCodeURL("state")
-	fmt.Printf("Visit the URL for the auth dialog: %v", url)
-
-	// Handle the exchange code to initiate a transport.
-	tok, err := conf.Exchange(oauth2.NoContext, "authorization-code")
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Printf("tok: %+v", tok)
 }
