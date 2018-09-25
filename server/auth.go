@@ -65,8 +65,12 @@ func configureOAuthClient(clientID, clientSecret, redirectURL string) *oauth2.Co
 		ClientID:     strings.TrimSpace(clientID),
 		ClientSecret: strings.TrimSpace(clientSecret),
 		RedirectURL:  strings.TrimSpace(redirectURL),
-		Scopes:       []string{"email", "profile"},
-		Endpoint:     google.Endpoint,
+		Scopes: []string{
+			plus.PlusMeScope,
+			plus.UserinfoEmailScope,
+			plus.UserinfoProfileScope,
+		},
+		Endpoint: google.Endpoint,
 	}
 }
 

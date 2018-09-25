@@ -54,6 +54,20 @@ var (
       );
       `,
 		},
+		{
+			Version:     4,
+			Description: "Cleanup users",
+			Script: `
+      DROP TABLE IF EXISTS users;
+      DROP TABLE IF EXISTS auth_identities;
+      CREATE TABLE users(
+        id text primary key,
+        role text,
+        created_at timestamp with time zone,
+        modified_at timestamp with time zone
+      );
+      `,
+		},
 	}
 )
 
