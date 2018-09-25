@@ -47,10 +47,12 @@ func main() {
 	if dbUrl == "" {
 		log.Panicf("DATABASE_URL is empty!")
 	}
-	log.Printf("Got DB URL %s", dbUrl)
 
 	graphql.InitDB(dbUrl)
-	OAuthConfig = configureOAuthClient(os.Getenv("OAUTH2_CLIENTID"), os.Getenv("OAUTH2_SECRET"))
+	OAuthConfig = configureOAuthClient(
+		os.Getenv("OAUTH2_CLIENTID"),
+		os.Getenv("OAUTH2_SECRET"),
+		os.Getenv("OAUTH2_REDIRECT"))
 
 	port := "8080"
 	if fromEnv := os.Getenv("PORT"); fromEnv != "" {

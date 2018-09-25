@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/sessions"
@@ -22,7 +23,7 @@ const (
 )
 
 var (
-	SessionStore = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
+	SessionStore = sessions.NewCookieStore([]byte(os.Getenv("SESSION_SECRET")))
 	OAuthConfig  *oauth2.Config
 )
 
@@ -49,15 +50,14 @@ func validateRedirectURL(path string) (string, error) {
 	return path, nil
 }
 
-func configureOAuthClient(clientID, clientSecret string) *oauth2.Config {
-	redirectURL := os.Getenv("OAUTH2_CALLBACK")
+func configureOAuthClient(clientID, clientSecret, redirectURL string) *oauth2.Config {
 	if redirectURL == "" {
 		redirectURL = "http://localhost:8080/oauth2callback"
 	}
 	return &oauth2.Config{
-		ClientID:     clientID,
-		ClientSecret: clientSecret,
-		RedirectURL:  redirectURL,
+		ClientID:     strings.TrimSpace(clientID),
+		ClientSecret: strings.TrimSpace(clientSecret),
+		RedirectURL:  strings.TrimSpace(redirectURL),
 		Scopes:       []string{"email"},
 		Endpoint:     google.Endpoint,
 	}
