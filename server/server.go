@@ -15,15 +15,6 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
 	"github.com/icco/graphql"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"github.com/qor/auth"
-	"github.com/qor/auth/auth_identity"
-	"github.com/qor/auth/authority"
-	"github.com/qor/auth/providers/password"
-	qr "github.com/qor/render"
-	"github.com/qor/roles"
-	"github.com/qor/session/manager"
 	"go.opencensus.io/exporter/prometheus"
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/stats/view"
@@ -49,48 +40,8 @@ var (
 		Funcs:                     []template.FuncMap{template.FuncMap{}},
 	})
 
-	dbUrl     = os.Getenv("DATABASE_URL")
-	gormDB, _ = gorm.Open("postgres", dbUrl)
-
-	// Auth contains auth config for middleware
-	Auth = auth.New(&auth.Config{
-		DB:        gormDB,
-		UserModel: User{},
-		Render: qr.New(&qr.Config{
-			FuncMapMaker: func(r *qr.Render, req *http.Request, w http.ResponseWriter) template.FuncMap {
-				return template.FuncMap{
-					"t": func(key string, args ...interface{}) template.HTML {
-						// TODO: pull in from some sort of i18n thing
-						return template.HTML(key)
-					},
-				}
-			},
-			ViewPaths: []string{
-				"./auth_views",
-				"./server/auth_views",
-				"/go/src/github.com/icco/graphql/server/auth_views",
-			},
-		}),
-	})
-
-	// Authority is a global authorization tool.
-	Authority = authority.New(&authority.Config{
-		Auth: Auth,
-		Role: roles.Global, // default configuration
-		AccessDeniedHandler: func(w http.ResponseWriter, req *http.Request) { // redirect to home page by default
-			http.Redirect(w, req, "/", http.StatusSeeOther)
-		},
-	})
+	dbUrl = os.Getenv("DATABASE_URL")
 )
-
-func init() {
-	// Sets up authentication and authorization
-	gormDB.AutoMigrate(&auth_identity.AuthIdentity{})
-	Auth.RegisterProvider(password.New(&password.Config{}))
-	roles.Register("admin", func(req *http.Request, currentUser interface{}) bool {
-		return (currentUser != nil && currentUser.(*User).Role == "admin")
-	})
-}
 
 func main() {
 	if dbUrl == "" {
@@ -137,8 +88,6 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	r.Use(manager.SessionManager.Middleware)
-
 	r.Use(cors.New(cors.Options{
 		AllowCredentials:   true,
 		OptionsPassthrough: true,
@@ -180,7 +129,6 @@ func main() {
 			STSSeconds:           315360000,
 		}).Handler)
 
-		r.Mount("/auth", Auth.NewServeMux())
 		r.Mount("/admin", adminRouter())
 
 		r.Handle("/", handler.Playground("graphql", "/graphql"))
@@ -214,10 +162,7 @@ func adminRouter() http.Handler {
 
 func AdminOnly(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if !Authority.Allow("admin", r) {
-			http.Error(w, http.StatusText(403), 403)
-			return
-		}
+		// TODO
 
 		next.ServeHTTP(w, r)
 	})
