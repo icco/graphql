@@ -30,31 +30,20 @@ func (u *User) Save() error {
 }
 
 func GetUser(id string) (*User, error) {
-	user := GenerateUser(id)
+	var user User
 	row := db.QueryRow("SELECT id, role, created_at, modified_at FROM users WHERE id = $1", id)
-	err := row.Scan(user.ID, user.Role, user.Created, user.Modified)
+	err := row.Scan(&user.ID, &user.Role, &user.Created, &user.Modified)
 
 	switch {
 	case err == sql.ErrNoRows:
+		user.ID = id
 		user.Role = "normal"
 		user.Created = time.Now()
 		user.Modified = time.Now()
-		return user, user.Save()
+		return &user, (&user).Save()
 	case err != nil:
 		return nil, fmt.Errorf("Error running get query: %+v", err)
 	default:
-		return user, nil
+		return &user, (&user).Save()
 	}
-}
-
-func GenerateUser(id string) *User {
-	e := new(User)
-
-	e.ID = id
-
-	// Computer generated content
-	e.Created = time.Now()
-	e.Modified = time.Now()
-
-	return e
 }
