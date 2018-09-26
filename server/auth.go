@@ -12,6 +12,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/sessions"
+	"github.com/icco/graphql"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/plus/v1"
@@ -32,6 +33,7 @@ var (
 func init() {
 	// Gob encoding for gorilla/sessions
 	gob.Register(&oauth2.Token{})
+	gob.Register(&graphql.User{})
 }
 
 func appErrorf(w http.ResponseWriter, err error, msg string, args ...interface{}) {
@@ -116,11 +118,17 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 		appErrorf(w, err, "could not fetch Google profile: %v", err)
 		return
 	}
-	log.Printf("profile.id: %+v", profile.Id)
+
+	user, err := graphql.GetUser(profile.Id)
+	if err != nil {
+		appErrorf(w, err, "could not upsert user: %v", err)
+		return
+	}
+	log.Printf("user: %+v", user)
 
 	// Actually save something to session
 	session.Values[oauthTokenSessionKey] = tok
-	session.Values[googleProfileSessionKey] = profile.Id
+	session.Values[googleProfileSessionKey] = user
 	if err := session.Save(r, w); err != nil {
 		appErrorf(w, err, "could not save session: %v", err)
 		return
