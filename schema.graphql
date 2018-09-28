@@ -9,6 +9,9 @@ type Query {
   "Returns an array of all posts ever, ordered by reverse chronological order."
   allPosts(): [Post]!
 
+  "Returns an array of inprogress posts."
+  drafts(): [Post]! @hasRole(role: ADMIN)
+
   "Returns an array of all posts, ordered by reverse chronological order, using provided limit and offset."
   posts(limit: Int, offset: Int): [Post]!
 
@@ -114,8 +117,15 @@ input NewStat {
 }
 
 type Mutation {
-  createPost(input: NewPost!): Post!
-  editPost(Id: ID!, input: NewPost!): Post!
-  createLink(input: NewLink!): Link!
-  upsertStat(input: NewStat!): Stat!
+  createPost(input: NewPost!): Post! @hasRole(role: admin)
+  editPost(Id: ID!, input: NewPost!): Post! @hasRole(role: admin)
+  createLink(input: NewLink!): Link! @hasRole(role: admin)
+  upsertStat(input: NewStat!): Stat! @hasRole(role: admin)
+}
+
+directive @hasRole(role: Role!) on FIELD_DEFINITION
+
+enum Role {
+  admin
+  normal
 }
