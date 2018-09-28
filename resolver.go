@@ -10,6 +10,18 @@ import (
 	"github.com/lib/pq"
 )
 
+const (
+	// UserCtxKey is a constant context key
+	UserCtxKey = "graphql.natwelch.user"
+)
+
+// ForContext finds the user from the context. Requires
+// server.ContextMiddleware to have run.
+func ForContext(ctx context.Context) *User {
+	raw, _ := ctx.Value(UserCtxKey).(*User)
+	return raw
+}
+
 type Resolver struct{}
 
 func New() Config {

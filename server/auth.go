@@ -28,12 +28,7 @@ const (
 var (
 	SessionStore = sessions.NewCookieStore([]byte(os.Getenv("SESSION_SECRET")))
 	OAuthConfig  *oauth2.Config
-	userCtxKey   = &contextKey{"user"}
 )
-
-type contextKey struct {
-	name string
-}
 
 func init() {
 	// Gob encoding for gorilla/sessions
@@ -231,16 +226,10 @@ func ContextMiddleware(next http.Handler) http.Handler {
 			}
 
 			// put it in context
-			ctx := context.WithValue(r.Context(), userCtxKey, user)
+			ctx := context.WithValue(r.Context(), graphql.UserCtxKey, user)
 			r = r.WithContext(ctx)
 		}
 
 		next.ServeHTTP(w, r)
 	})
-}
-
-// ForContext finds the user from the context. REQUIRES ContextMiddleware to have run.
-func ForContext(ctx context.Context) *graphql.User {
-	raw, _ := ctx.Value(userCtxKey).(*graphql.User)
-	return raw
 }
