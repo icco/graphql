@@ -3739,7 +3739,7 @@ type Query {
   allPosts(): [Post]!
 
   "Returns an array of inprogress posts."
-  drafts(): [Post]! @hasRole(role: ADMIN)
+  drafts(): [Post]! @hasRole(role: admin)
 
   "Returns an array of all posts, ordered by reverse chronological order, using provided limit and offset."
   posts(limit: Int, offset: Int): [Post]!
