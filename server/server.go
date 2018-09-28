@@ -168,14 +168,6 @@ func adminRouter() http.Handler {
 	return r
 }
 
-func AdminOnly(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// TODO
-
-		next.ServeHTTP(w, r)
-	})
-}
-
 func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	Renderer.JSON(w, http.StatusOK, map[string]string{
 		"healthy":  "true",

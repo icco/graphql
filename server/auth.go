@@ -77,7 +77,16 @@ func configureOAuthClient(clientID, clientSecret, redirectURL string) *oauth2.Co
 }
 
 func logoutHandler(w http.ResponseWriter, r *http.Request) {
-	// TODO: Nuke session
+	// Nuke session
+	session, _ := SessionStore.Get(r, defaultSessionID)
+	session.Values[oauthTokenSessionKey] = nil
+	session.Values[googleProfileSessionKey] = nil
+	if err := session.Save(r, w); err != nil {
+		appErrorf(w, err, "could not save session: %v", err)
+		return
+	}
+
+	http.Redirect(w, r, "/", http.StatusFound)
 }
 
 func callbackHandler(w http.ResponseWriter, r *http.Request) {
@@ -161,4 +170,38 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 	url := OAuthConfig.AuthCodeURL(sessionID, oauth2.ApprovalForce, oauth2.AccessTypeOnline)
 	http.Redirect(w, r, url, http.StatusFound)
+}
+
+// AdminOnly is a middleware that makes sure the logged in user is an admin, or
+// 403.
+func AdminOnly(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		session, err := SessionStore.Get(r, defaultSessionID)
+
+		// If error, we couldn't parse session.
+		allowed := false
+		if err != nil {
+			log.Printf("session parsing error: %+v", err)
+		}
+
+		if session.Values[googleProfileSessionKey] != nil {
+			profile := session.Values[googleProfileSessionKey].(*graphql.User)
+			if profile.ID != "" {
+				user, err := graphql.GetUser(profile.ID)
+				if err != nil {
+					appErrorf(w, err, "could not upsert user: %v", err)
+					return
+				}
+
+				allowed = user.Role == "admin"
+			}
+		}
+
+		if !allowed {
+			http.Error(w, http.StatusText(403), 403)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
 }
