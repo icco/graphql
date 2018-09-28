@@ -207,6 +207,10 @@ func (r *queryResolver) PrevPost(ctx context.Context, id string) (*string, error
 	}
 }
 
+func (r *queryResolver) Drafts(ctx context.Context) ([]*Post, error) {
+	panic("not implemented")
+}
+
 func (r *queryResolver) Stats(ctx context.Context, count *int) ([]*Stat, error) {
 	limit := 6
 	if count != nil {
@@ -241,9 +245,11 @@ func (r *queryResolver) Stats(ctx context.Context, count *int) ([]*Stat, error) 
 func (r *queryResolver) AllLinks(ctx context.Context) ([]*Link, error) {
 	panic("not implemented")
 }
+
 func (r *queryResolver) Links(ctx context.Context, limit *int, offset *int) ([]*Link, error) {
 	panic("not implemented")
 }
+
 func (r *queryResolver) Link(ctx context.Context, id string) (*Link, error) {
 	panic("not implemented")
 }
