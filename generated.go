@@ -31,6 +31,7 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	Mutation() MutationResolver
 	Query() QueryResolver
 }
 
@@ -50,6 +51,13 @@ type ComplexityRoot struct {
 		Description func(childComplexity int) int
 		Screenshot  func(childComplexity int) int
 		Tags        func(childComplexity int) int
+	}
+
+	Mutation struct {
+		CreatePost func(childComplexity int, input NewPost) int
+		EditPost   func(childComplexity int, Id string, input NewPost) int
+		CreateLink func(childComplexity int, input NewLink) int
+		UpsertStat func(childComplexity int, input NewStat) int
 	}
 
 	Post struct {
@@ -84,6 +92,12 @@ type ComplexityRoot struct {
 	}
 }
 
+type MutationResolver interface {
+	CreatePost(ctx context.Context, input NewPost) (Post, error)
+	EditPost(ctx context.Context, Id string, input NewPost) (Post, error)
+	CreateLink(ctx context.Context, input NewLink) (Link, error)
+	UpsertStat(ctx context.Context, input NewStat) (Stat, error)
+}
 type QueryResolver interface {
 	AllPosts(ctx context.Context) ([]*Post, error)
 	Posts(ctx context.Context, limit *int, offset *int) ([]*Post, error)
@@ -94,6 +108,75 @@ type QueryResolver interface {
 	Links(ctx context.Context, limit *int, offset *int) ([]*Link, error)
 	Link(ctx context.Context, id string) (*Link, error)
 	Stats(ctx context.Context, count *int) ([]*Stat, error)
+}
+
+func field_Mutation_createPost_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 NewPost
+	if tmp, ok := rawArgs["input"]; ok {
+		var err error
+		arg0, err = UnmarshalNewPost(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+
+}
+
+func field_Mutation_editPost_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["Id"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalID(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["Id"] = arg0
+	var arg1 NewPost
+	if tmp, ok := rawArgs["input"]; ok {
+		var err error
+		arg1, err = UnmarshalNewPost(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
+	return args, nil
+
+}
+
+func field_Mutation_createLink_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 NewLink
+	if tmp, ok := rawArgs["input"]; ok {
+		var err error
+		arg0, err = UnmarshalNewLink(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+
+}
+
+func field_Mutation_upsertStat_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 NewStat
+	if tmp, ok := rawArgs["input"]; ok {
+		var err error
+		arg0, err = UnmarshalNewStat(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+
 }
 
 func field_Query_posts_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
@@ -358,6 +441,54 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Link.Tags(childComplexity), true
 
+	case "Mutation.createPost":
+		if e.complexity.Mutation.CreatePost == nil {
+			break
+		}
+
+		args, err := field_Mutation_createPost_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreatePost(childComplexity, args["input"].(NewPost)), true
+
+	case "Mutation.editPost":
+		if e.complexity.Mutation.EditPost == nil {
+			break
+		}
+
+		args, err := field_Mutation_editPost_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditPost(childComplexity, args["Id"].(string), args["input"].(NewPost)), true
+
+	case "Mutation.createLink":
+		if e.complexity.Mutation.CreateLink == nil {
+			break
+		}
+
+		args, err := field_Mutation_createLink_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateLink(childComplexity, args["input"].(NewLink)), true
+
+	case "Mutation.upsertStat":
+		if e.complexity.Mutation.UpsertStat == nil {
+			break
+		}
+
+		args, err := field_Mutation_upsertStat_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpsertStat(childComplexity, args["input"].(NewStat)), true
+
 	case "Post.id":
 		if e.complexity.Post.Id == nil {
 			break
@@ -568,7 +699,19 @@ func (e *executableSchema) Query(ctx context.Context, op *ast.OperationDefinitio
 }
 
 func (e *executableSchema) Mutation(ctx context.Context, op *ast.OperationDefinition) *graphql.Response {
-	return graphql.ErrorResponse(ctx, "mutations are not supported")
+	ec := executionContext{graphql.GetRequestContext(ctx), e}
+
+	buf := ec.RequestMiddleware(ctx, func(ctx context.Context) []byte {
+		data := ec._Mutation(ctx, op.SelectionSet)
+		var buf bytes.Buffer
+		data.MarshalGQL(&buf)
+		return buf.Bytes()
+	})
+
+	return &graphql.Response{
+		Data:   buf,
+		Errors: ec.Errors,
+	}
 }
 
 func (e *executableSchema) Subscription(ctx context.Context, op *ast.OperationDefinition) func() *graphql.Response {
@@ -853,6 +996,171 @@ func (ec *executionContext) _Link_tags(ctx context.Context, field graphql.Collec
 	}
 
 	return arr1
+}
+
+var mutationImplementors = []string{"Mutation"}
+
+// nolint: gocyclo, errcheck, gas, goconst
+func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
+	fields := graphql.CollectFields(ctx, sel, mutationImplementors)
+
+	ctx = graphql.WithResolverContext(ctx, &graphql.ResolverContext{
+		Object: "Mutation",
+	})
+
+	out := graphql.NewOrderedMap(len(fields))
+	invalid := false
+	for i, field := range fields {
+		out.Keys[i] = field.Alias
+
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Mutation")
+		case "createPost":
+			out.Values[i] = ec._Mutation_createPost(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "editPost":
+			out.Values[i] = ec._Mutation_editPost(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "createLink":
+			out.Values[i] = ec._Mutation_createLink(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "upsertStat":
+			out.Values[i] = ec._Mutation_upsertStat(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+
+	if invalid {
+		return graphql.Null
+	}
+	return out
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Mutation_createPost(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Mutation_createPost_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Mutation",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
+		return ec.resolvers.Mutation().CreatePost(ctx, args["input"].(NewPost))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(Post)
+	rctx.Result = res
+
+	return ec._Post(ctx, field.Selections, &res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Mutation_editPost(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Mutation_editPost_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Mutation",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
+		return ec.resolvers.Mutation().EditPost(ctx, args["Id"].(string), args["input"].(NewPost))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(Post)
+	rctx.Result = res
+
+	return ec._Post(ctx, field.Selections, &res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Mutation_createLink(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Mutation_createLink_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Mutation",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
+		return ec.resolvers.Mutation().CreateLink(ctx, args["input"].(NewLink))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(Link)
+	rctx.Result = res
+
+	return ec._Link(ctx, field.Selections, &res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Mutation_upsertStat(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Mutation_upsertStat_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Mutation",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
+		return ec.resolvers.Mutation().UpsertStat(ctx, args["input"].(NewStat))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(Stat)
+	rctx.Result = res
+
+	return ec._Stat(ctx, field.Selections, &res)
 }
 
 var postImplementors = []string{"Post"}
@@ -3167,6 +3475,123 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 	return ec.___Type(ctx, field.Selections, res)
 }
 
+func UnmarshalNewLink(v interface{}) (NewLink, error) {
+	var it NewLink
+	var asMap = v.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "title":
+			var err error
+			it.Title, err = graphql.UnmarshalString(v)
+			if err != nil {
+				return it, err
+			}
+		case "uri":
+			var err error
+			it.URI, err = graphql.UnmarshalString(v)
+			if err != nil {
+				return it, err
+			}
+		case "description":
+			var err error
+			it.Description, err = graphql.UnmarshalString(v)
+			if err != nil {
+				return it, err
+			}
+		case "tags":
+			var err error
+			var rawIf1 []interface{}
+			if v != nil {
+				if tmp1, ok := v.([]interface{}); ok {
+					rawIf1 = tmp1
+				} else {
+					rawIf1 = []interface{}{v}
+				}
+			}
+			it.Tags = make([]*string, len(rawIf1))
+			for idx1 := range rawIf1 {
+				var ptr2 string
+				if rawIf1[idx1] != nil {
+					ptr2, err = graphql.UnmarshalString(rawIf1[idx1])
+					it.Tags[idx1] = &ptr2
+				}
+			}
+			if err != nil {
+				return it, err
+			}
+		case "created":
+			var err error
+			it.Created, err = graphql.UnmarshalTime(v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func UnmarshalNewPost(v interface{}) (NewPost, error) {
+	var it NewPost
+	var asMap = v.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "content":
+			var err error
+			it.Content, err = graphql.UnmarshalString(v)
+			if err != nil {
+				return it, err
+			}
+		case "title":
+			var err error
+			it.Title, err = graphql.UnmarshalString(v)
+			if err != nil {
+				return it, err
+			}
+		case "datetime":
+			var err error
+			it.Datetime, err = graphql.UnmarshalTime(v)
+			if err != nil {
+				return it, err
+			}
+		case "draft":
+			var err error
+			it.Draft, err = graphql.UnmarshalBoolean(v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func UnmarshalNewStat(v interface{}) (NewStat, error) {
+	var it NewStat
+	var asMap = v.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "key":
+			var err error
+			it.Key, err = graphql.UnmarshalString(v)
+			if err != nil {
+				return it, err
+			}
+		case "value":
+			var err error
+			it.Value, err = graphql.UnmarshalString(v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) FieldMiddleware(ctx context.Context, obj interface{}, next graphql.Resolver) (ret interface{}) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -3284,6 +3709,33 @@ Comment is an undefined type reserved for the future.
 """
 type Comment {
   id: ID!
+}
+
+input NewPost {
+  content: String!
+  title: String!
+  datetime: Time!
+  draft: Boolean!
+}
+
+input NewLink {
+  title: String!
+  uri: URI!
+  description: String!
+  tags: [String]!
+  created: Time!
+}
+
+input NewStat {
+  key: String!
+  value: String!
+}
+
+type Mutation {
+  createPost(input: NewPost!): Post!
+  editPost(Id: ID!, input: NewPost!): Post!
+  createLink(input: NewLink!): Link!
+  upsertStat(input: NewStat!): Stat!
 }
 `},
 )

@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"gopkg.in/russross/blackfriday.v2"
+	"github.com/russross/blackfriday"
 )
 
 var HashtagRegex *regexp.Regexp = regexp.MustCompile(`(\s)#(\w+)`)
