@@ -35,6 +35,7 @@ func New() Config {
 func (r *Resolver) Mutation() MutationResolver {
 	return &mutationResolver{r}
 }
+
 func (r *Resolver) Query() QueryResolver {
 	return &queryResolver{r}
 }
@@ -42,6 +43,14 @@ func (r *Resolver) Query() QueryResolver {
 type mutationResolver struct{ *Resolver }
 
 func (r *mutationResolver) CreatePost(ctx context.Context, input NewPost) (Post, error) {
+	u := ForContext(ctx)
+	if u == nil {
+		return Post{}, fmt.Errorf("Forbidden.")
+	} else {
+		if u.Role != "admin" {
+			return Post{}, fmt.Errorf("Forbidden.")
+		}
+	}
 
 	maxId, err := GetMaxId(ctx)
 	if err != nil {
@@ -70,14 +79,41 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input NewPost) (Post,
 }
 
 func (r *mutationResolver) EditPost(ctx context.Context, id string, input NewPost) (Post, error) {
+	u := ForContext(ctx)
+	if u == nil {
+		return Post{}, fmt.Errorf("Forbidden.")
+	} else {
+		if u.Role != "admin" {
+			return Post{}, fmt.Errorf("Forbidden.")
+		}
+	}
+
 	panic("not implemented")
 }
 
 func (r *mutationResolver) CreateLink(ctx context.Context, input NewLink) (Link, error) {
+	u := ForContext(ctx)
+	if u == nil {
+		return Link{}, fmt.Errorf("Forbidden.")
+	} else {
+		if u.Role != "admin" {
+			return Link{}, fmt.Errorf("Forbidden.")
+		}
+	}
+
 	panic("not implemented")
 }
 
 func (r *mutationResolver) UpsertStat(ctx context.Context, input NewStat) (Stat, error) {
+	u := ForContext(ctx)
+	if u == nil {
+		return Stat{}, fmt.Errorf("Forbidden.")
+	} else {
+		if u.Role != "admin" {
+			return Stat{}, fmt.Errorf("Forbidden.")
+		}
+	}
+
 	panic("not implemented")
 }
 
