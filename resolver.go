@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/lib/pq"
 )
 
@@ -29,6 +30,18 @@ func New() Config {
 	c := Config{
 		Resolvers: &Resolver{},
 	}
+
+	c.Directives.HasRole = func(ctx context.Context, _ interface{}, next graphql.Resolver, role Role) (interface{}, error) {
+		u := ForContext(ctx)
+		if u == nil || Role(u.Role) != role {
+			// block calling the next resolver
+			return nil, fmt.Errorf("Forbidden")
+		}
+
+		// or let it pass through
+		return next(ctx)
+	}
+
 	return c
 }
 
@@ -43,15 +56,6 @@ func (r *Resolver) Query() QueryResolver {
 type mutationResolver struct{ *Resolver }
 
 func (r *mutationResolver) CreatePost(ctx context.Context, input NewPost) (Post, error) {
-	u := ForContext(ctx)
-	if u == nil {
-		return Post{}, fmt.Errorf("Forbidden.")
-	} else {
-		if u.Role != "admin" {
-			return Post{}, fmt.Errorf("Forbidden.")
-		}
-	}
-
 	maxId, err := GetMaxId(ctx)
 	if err != nil {
 		return Post{}, err
@@ -79,42 +83,15 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input NewPost) (Post,
 }
 
 func (r *mutationResolver) EditPost(ctx context.Context, id string, input NewPost) (Post, error) {
-	u := ForContext(ctx)
-	if u == nil {
-		return Post{}, fmt.Errorf("Forbidden.")
-	} else {
-		if u.Role != "admin" {
-			return Post{}, fmt.Errorf("Forbidden.")
-		}
-	}
-
-	panic("not implemented")
+	return Post{}, fmt.Errorf("not implemented")
 }
 
 func (r *mutationResolver) CreateLink(ctx context.Context, input NewLink) (Link, error) {
-	u := ForContext(ctx)
-	if u == nil {
-		return Link{}, fmt.Errorf("Forbidden.")
-	} else {
-		if u.Role != "admin" {
-			return Link{}, fmt.Errorf("Forbidden.")
-		}
-	}
-
-	panic("not implemented")
+	return Link{}, fmt.Errorf("not implemented")
 }
 
 func (r *mutationResolver) UpsertStat(ctx context.Context, input NewStat) (Stat, error) {
-	u := ForContext(ctx)
-	if u == nil {
-		return Stat{}, fmt.Errorf("Forbidden.")
-	} else {
-		if u.Role != "admin" {
-			return Stat{}, fmt.Errorf("Forbidden.")
-		}
-	}
-
-	panic("not implemented")
+	return Stat{}, fmt.Errorf("not implemented")
 }
 
 type queryResolver struct{ *Resolver }
@@ -243,13 +220,13 @@ func (r *queryResolver) Stats(ctx context.Context, count *int) ([]*Stat, error) 
 }
 
 func (r *queryResolver) AllLinks(ctx context.Context) ([]*Link, error) {
-	panic("not implemented")
+	return nil, fmt.Errorf("not implemented")
 }
 
 func (r *queryResolver) Links(ctx context.Context, limit *int, offset *int) ([]*Link, error) {
-	panic("not implemented")
+	return nil, fmt.Errorf("not implemented")
 }
 
 func (r *queryResolver) Link(ctx context.Context, id string) (*Link, error) {
-	panic("not implemented")
+	return nil, fmt.Errorf("not implemented")
 }
