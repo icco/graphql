@@ -158,11 +158,20 @@ func main() {
 	log.Fatal(http.ListenAndServe(":"+port, h))
 }
 
+type adminPageData struct {
+	Title string
+	Posts []*graphql.Post
+	Post  *graphql.Post
+}
+
 func adminRouter() http.Handler {
 	r := chi.NewRouter()
 	r.Use(AdminOnly)
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		Renderer.HTML(w, http.StatusOK, "admin", nil)
+		Renderer.HTML(w, http.StatusOK, "admin", &adminPageData{Title: "Admin"})
+	})
+	r.Get("/post/new", func(w http.ResponseWriter, r *http.Request) {
+		Renderer.HTML(w, http.StatusOK, "new_post", &adminPageData{Title: "New Post"})
 	})
 
 	return r
