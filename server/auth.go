@@ -128,7 +128,7 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := graphql.GetUser(profile.Id)
+	user, err := graphql.GetUser(r.Context(), profile.Id)
 	if err != nil {
 		appErrorf(w, err, "could not upsert user: %v", err)
 		return
@@ -187,7 +187,7 @@ func AdminOnly(next http.Handler) http.Handler {
 		if session.Values[googleProfileSessionKey] != nil {
 			profile := session.Values[googleProfileSessionKey].(*graphql.User)
 			if profile.ID != "" {
-				user, err := graphql.GetUser(profile.ID)
+				user, err := graphql.GetUser(r.Context(), profile.ID)
 				if err != nil {
 					appErrorf(w, err, "could not upsert user: %v", err)
 					return
@@ -219,7 +219,7 @@ func ContextMiddleware(next http.Handler) http.Handler {
 		// get the user from the database
 		profile := session.Values[googleProfileSessionKey].(*graphql.User)
 		if profile.ID != "" {
-			user, err := graphql.GetUser(profile.ID)
+			user, err := graphql.GetUser(r.Context(), profile.ID)
 			if err != nil {
 				appErrorf(w, err, "could not upsert user: %v", err)
 				return

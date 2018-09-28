@@ -1,6 +1,7 @@
 package graphql
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"time"
@@ -13,8 +14,8 @@ type User struct {
 	Modified time.Time
 }
 
-func (u *User) Save() error {
-	_, err := db.Exec(
+func (u *User) Save(ctx context.Context) error {
+	_, err := db.ExecContext(ctx,
 		`
     INSERT INTO users (id, role, created_at, modified_at)
     VALUES ($1, $2, $3, $4)
@@ -29,9 +30,9 @@ func (u *User) Save() error {
 	return err
 }
 
-func GetUser(id string) (*User, error) {
+func GetUser(ctx context.Context, id string) (*User, error) {
 	var user User
-	row := db.QueryRow("SELECT id, role, created_at, modified_at FROM users WHERE id = $1", id)
+	row := db.QueryRowContext(ctx, "SELECT id, role, created_at, modified_at FROM users WHERE id = $1", id)
 	err := row.Scan(&user.ID, &user.Role, &user.Created, &user.Modified)
 
 	switch {
@@ -40,10 +41,10 @@ func GetUser(id string) (*User, error) {
 		user.Role = "normal"
 		user.Created = time.Now()
 		user.Modified = time.Now()
-		return &user, (&user).Save()
+		return &user, (&user).Save(ctx)
 	case err != nil:
 		return nil, fmt.Errorf("Error running get query: %+v", err)
 	default:
-		return &user, (&user).Save()
+		return &user, (&user).Save(ctx)
 	}
 }

@@ -1,6 +1,7 @@
 package graphql
 
 import (
+	"context"
 	"database/sql"
 	"log"
 
@@ -81,7 +82,7 @@ func InitDB(dataSourceName string) *sql.DB {
 	}
 
 	db, _ = sql.Open(wrappedDriver, dataSourceName)
-	if err = db.Ping(); err != nil {
+	if err = db.PingContext(context.Background()); err != nil {
 		log.Panic(err)
 	}
 
