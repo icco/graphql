@@ -107,11 +107,12 @@ func main() {
 	// Stuff that does not ssl redirect
 	r.Group(func(r chi.Router) {
 		r.Use(secure.New(secure.Options{
-			HostsProxyHeaders:  []string{"X-Forwarded-Host"},
-			FrameDeny:          true,
-			ContentTypeNosniff: true,
 			BrowserXssFilter:   true,
+			ContentTypeNosniff: true,
+			FrameDeny:          true,
+			HostsProxyHeaders:  []string{"X-Forwarded-Host"},
 			IsDevelopment:      isDev,
+			SSLProxyHeaders:    map[string]string{"X-Forwarded-Proto": "https"},
 		}).Handler)
 
 		r.Get("/healthz", healthCheckHandler)
@@ -151,7 +152,10 @@ func main() {
 		r.HandleFunc("/callback", callbackHandler)
 	})
 
-	h := &ochttp.Handler{Handler: r}
+	h := &ochttp.Handler{
+		Handler:          r,
+		IsPublicEndpoint: true,
+	}
 	if err := view.Register(ochttp.DefaultServerViews...); err != nil {
 		log.Fatal("Failed to register ochttp.DefaultServerViews")
 	}
