@@ -36,6 +36,7 @@ type ResolverRoot interface {
 }
 
 type DirectiveRoot struct {
+	HasRole func(ctx context.Context, obj interface{}, next graphql.Resolver, role Role) (res interface{}, err error)
 }
 
 type ComplexityRoot struct {
@@ -76,6 +77,7 @@ type ComplexityRoot struct {
 
 	Query struct {
 		AllPosts func(childComplexity int) int
+		Drafts   func(childComplexity int) int
 		Posts    func(childComplexity int, limit *int, offset *int) int
 		Post     func(childComplexity int, id string) int
 		NextPost func(childComplexity int, id string) int
@@ -100,6 +102,7 @@ type MutationResolver interface {
 }
 type QueryResolver interface {
 	AllPosts(ctx context.Context) ([]*Post, error)
+	Drafts(ctx context.Context) ([]*Post, error)
 	Posts(ctx context.Context, limit *int, offset *int) ([]*Post, error)
 	Post(ctx context.Context, id string) (*Post, error)
 	NextPost(ctx context.Context, id string) (*string, error)
@@ -372,6 +375,21 @@ func field___Type_enumValues_args(rawArgs map[string]interface{}) (map[string]in
 
 }
 
+func dir_hasRole_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 Role
+	if tmp, ok := rawArgs["role"]; ok {
+		var err error
+		err = (&arg0).UnmarshalGQL(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["role"] = arg0
+	return args, nil
+
+}
+
 type executableSchema struct {
 	resolvers  ResolverRoot
 	directives DirectiveRoot
@@ -572,6 +590,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.AllPosts(childComplexity), true
+
+	case "Query.drafts":
+		if e.complexity.Query.Drafts == nil {
+			break
+		}
+
+		return e.complexity.Query.Drafts(childComplexity), true
 
 	case "Query.posts":
 		if e.complexity.Query.Posts == nil {
@@ -1559,6 +1584,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				wg.Done()
 			}(i, field)
+		case "drafts":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_drafts(ctx, field)
+				if out.Values[i] == graphql.Null {
+					invalid = true
+				}
+				wg.Done()
+			}(i, field)
 		case "posts":
 			wg.Add(1)
 			go func(i int, field graphql.CollectedField) {
@@ -1644,6 +1678,65 @@ func (ec *executionContext) _Query_allPosts(ctx context.Context, field graphql.C
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
 		return ec.resolvers.Query().AllPosts(ctx)
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*Post)
+	rctx.Result = res
+
+	arr1 := make(graphql.Array, len(res))
+	var wg sync.WaitGroup
+
+	isLen1 := len(res) == 1
+	if !isLen1 {
+		wg.Add(len(res))
+	}
+
+	for idx1 := range res {
+		idx1 := idx1
+		rctx := &graphql.ResolverContext{
+			Index:  &idx1,
+			Result: res[idx1],
+		}
+		ctx := graphql.WithResolverContext(ctx, rctx)
+		f := func(idx1 int) {
+			if !isLen1 {
+				defer wg.Done()
+			}
+			arr1[idx1] = func() graphql.Marshaler {
+
+				if res[idx1] == nil {
+					return graphql.Null
+				}
+
+				return ec._Post(ctx, field.Selections, res[idx1])
+			}()
+		}
+		if isLen1 {
+			f(idx1)
+		} else {
+			go f(idx1)
+		}
+
+	}
+	wg.Wait()
+	return arr1
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Query_drafts(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(ctx context.Context) (interface{}, error) {
+		return ec.resolvers.Query().Drafts(ctx)
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -3599,6 +3692,24 @@ func (ec *executionContext) FieldMiddleware(ctx context.Context, obj interface{}
 			ret = nil
 		}
 	}()
+	rctx := graphql.GetResolverContext(ctx)
+	for _, d := range rctx.Field.Definition.Directives {
+		switch d.Name {
+		case "hasRole":
+			if ec.directives.HasRole != nil {
+				rawArgs := d.ArgumentMap(ec.Variables)
+				args, err := dir_hasRole_args(rawArgs)
+				if err != nil {
+					ec.Error(ctx, err)
+					return nil
+				}
+				n := next
+				next = func(ctx context.Context) (interface{}, error) {
+					return ec.directives.HasRole(ctx, obj, n, args["role"].(Role))
+				}
+			}
+		}
+	}
 	res, err := ec.ResolverMiddleware(ctx, next)
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3626,6 +3737,9 @@ The query type, represents all of the entry points into our object graph.
 type Query {
   "Returns an array of all posts ever, ordered by reverse chronological order."
   allPosts(): [Post]!
+
+  "Returns an array of inprogress posts."
+  drafts(): [Post]! @hasRole(role: ADMIN)
 
   "Returns an array of all posts, ordered by reverse chronological order, using provided limit and offset."
   posts(limit: Int, offset: Int): [Post]!
@@ -3732,10 +3846,17 @@ input NewStat {
 }
 
 type Mutation {
-  createPost(input: NewPost!): Post!
-  editPost(Id: ID!, input: NewPost!): Post!
-  createLink(input: NewLink!): Link!
-  upsertStat(input: NewStat!): Stat!
+  createPost(input: NewPost!): Post! @hasRole(role: admin)
+  editPost(Id: ID!, input: NewPost!): Post! @hasRole(role: admin)
+  createLink(input: NewLink!): Link! @hasRole(role: admin)
+  upsertStat(input: NewStat!): Stat! @hasRole(role: admin)
+}
+
+directive @hasRole(role: Role!) on FIELD_DEFINITION
+
+enum Role {
+  admin
+  normal
 }
 `},
 )
