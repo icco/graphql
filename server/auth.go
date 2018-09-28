@@ -28,7 +28,12 @@ const (
 var (
 	SessionStore = sessions.NewCookieStore([]byte(os.Getenv("SESSION_SECRET")))
 	OAuthConfig  *oauth2.Config
+	userCtxKey   = &contextKey{"user"}
 )
+
+type contextKey struct {
+	name string
+}
 
 func init() {
 	// Gob encoding for gorilla/sessions
@@ -204,4 +209,38 @@ func AdminOnly(next http.Handler) http.Handler {
 
 		next.ServeHTTP(w, r)
 	})
+}
+
+func ContextMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		session, err := SessionStore.Get(r, defaultSessionID)
+
+		// Allow unauthenticated users in
+		if err != nil || session == nil || session.Values[googleProfileSessionKey] == nil {
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		// get the user from the database
+		profile := session.Values[googleProfileSessionKey].(*graphql.User)
+		if profile.ID != "" {
+			user, err := graphql.GetUser(profile.ID)
+			if err != nil {
+				appErrorf(w, err, "could not upsert user: %v", err)
+				return
+			}
+
+			// put it in context
+			ctx := context.WithValue(r.Context(), userCtxKey, user)
+			r = r.WithContext(ctx)
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+// ForContext finds the user from the context. REQUIRES ContextMiddleware to have run.
+func ForContext(ctx context.Context) *graphql.User {
+	raw, _ := ctx.Value(userCtxKey).(*graphql.User)
+	return raw
 }

@@ -90,6 +90,7 @@ func main() {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	r.Use(ContextMiddleware)
 
 	r.Use(cors.New(cors.Options{
 		AllowCredentials:   true,
