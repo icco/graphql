@@ -100,9 +100,17 @@ func ParseTags(text string) ([]string, error) {
 	return ret, nil
 }
 
-func (e *Post) Save() error {
+func (p *Post) Save(ctx context.Context) error {
+	_, err := db.ExecContext(ctx, "INSERT INTO posts(id, title, content, date, draft, created_at, modified_at) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+		p.ID,
+		p.Title,
+		p.Content,
+		p.Datetime,
+		p.Draft,
+		p.Created,
+		time.Now())
 
-	return nil
+	return err
 }
 
 func (p *Post) Summary() string {

@@ -6,6 +6,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -56,20 +57,21 @@ func (r *Resolver) Query() QueryResolver {
 type mutationResolver struct{ *Resolver }
 
 func (r *mutationResolver) CreatePost(ctx context.Context, input NewPost) (Post, error) {
+	p := &Post{}
 	maxId, err := GetMaxId(ctx)
 	if err != nil {
 		return Post{}, err
 	}
 	id := maxId + 1
 
-	_, err = db.ExecContext(ctx, "INSERT INTO posts(id, title, content, date, draft, created_at, modified_at) VALUES ($1, $2, $3, $4, $5, $6, $6)",
-		id,
-		input.Title,
-		input.Content,
-		input.Datetime,
-		input.Draft,
-		time.Now(),
-	)
+	p.ID = strconv.FormatInt(id, 10)
+	p.Title = input.Title
+	p.Content = input.Content
+	p.Datetime = input.Datetime
+	p.Draft = input.Draft
+	p.Created = time.Now()
+
+	err = p.Save(ctx)
 	if err != nil {
 		return Post{}, err
 	}
