@@ -14,3 +14,5 @@ resolver:
 models:
   Post:
     model: github.com/icco/graphql.Post
+  User:
+    model: github.com/icco/graphql.User

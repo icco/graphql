@@ -37,6 +37,7 @@ require (
 	github.com/smartystreets/goconvey v0.0.0-20180222194500-ef6db91d284a // indirect
 	github.com/stretchr/testify v1.2.2 // indirect
 	github.com/urfave/cli v1.20.0 // indirect
+	github.com/vektah/gorunpkg v0.0.0-20180221021944-c4ab2c9cf7b9 // indirect
 	github.com/vektah/gqlparser v0.0.0-20180919003821-90edd96486c6
 	go.opencensus.io v0.17.0
 	golang.org/x/net v0.0.0-20180926154720-4dfa2610cdf3 // indirect

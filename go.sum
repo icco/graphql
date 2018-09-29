@@ -126,6 +126,8 @@ github.com/stretchr/testify v1.2.2 h1:bSDNvY7ZPG5RlJ8otE/7V6gMiyenm9RtJ7IUVIAoJ1
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 github.com/urfave/cli v1.20.0 h1:fDqGv3UG/4jbVl/QkFwEdddtEDjh/5Ov6X+0B/3bPaw=
 github.com/urfave/cli v1.20.0/go.mod h1:70zkFmudgCuE/ngEzBv17Jvp/497gISqfk5gWijbERA=
+github.com/vektah/gorunpkg v0.0.0-20180221021944-c4ab2c9cf7b9 h1:3VS2oEihDetI6rB+/8SjBSBArD1K9bHvbYtNISbH8Ag=
+github.com/vektah/gorunpkg v0.0.0-20180221021944-c4ab2c9cf7b9/go.mod h1:MZ9IjObqALnFhMpmWFj2XIY6l9B02Ah54Q4ZUkq/nx0=
 github.com/vektah/gqlparser v0.0.0-20180919003821-90edd96486c6 h1:0+bK5s5mQIhPElSejgpTh/NiA11fdwQc5PMROLT+zdM=
 github.com/vektah/gqlparser v0.0.0-20180919003821-90edd96486c6/go.mod h1:K4QdSSpS2XiHHwzb18kWh3iBljB8rLC8okGXsnQy3Nc=
 go.opencensus.io v0.17.0 h1:2Cu88MYg+1LU+WVD+NWwYhyP0kKgRlN9QjWGaX0jKTE=
