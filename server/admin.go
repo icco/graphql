@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -28,6 +27,8 @@ func adminRouter() http.Handler {
 	r.Post("/post/new", func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 
+		log.Printf("form: %+v", r.Form)
+
 		title := ""
 		if len(r.Form["title"]) == 1 {
 			title = r.Form["title"][0]
@@ -45,10 +46,13 @@ func adminRouter() http.Handler {
 		datetime := time.Now()
 
 		post := graphql.GeneratePost(title, text, datetime, []string{})
-		p, err := graphql.CreatePost(r.Context(), *post)
-		log.Printf("err: %+v", err)
+		_, err := graphql.CreatePost(r.Context(), *post)
 
-		http.Redirect(w, r, fmt.Sprintf("/post/%s", p.ID), http.StatusFound)
+		if err != nil {
+			log.Printf("err: %+v", err)
+		}
+
+		http.Redirect(w, r, "/", http.StatusFound)
 	})
 
 	return r
