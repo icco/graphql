@@ -17,6 +17,11 @@
       <small id="text-desc" class="f6 black-60">This should be in <a href="https://spec.commonmark.org/0.28/" class="link underline black-80 hover-blue">Markdown</a>.</small>
     </div>
 
+    <div class="mt2">
+      <label for="datetime" class="f6 b db mb2">Post Time</label>
+      <input id="datetime" type="datetime-local" name="datetime" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}" value="{{.Datetime}}">
+    </div>
+
     <div class="pv3 cf">
       <input type="submit" class="fr pointer dim br3 ph3 pv2 mb2 dib white bg-navy" />
     </div>
