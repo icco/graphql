@@ -27,8 +27,6 @@ func adminRouter() http.Handler {
 	r.Post("/post/new", func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 
-		log.Printf("form: %+v", r.Form)
-
 		title := ""
 		if len(r.Form["title"]) == 1 {
 			title = r.Form["title"][0]
