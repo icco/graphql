@@ -9,11 +9,15 @@ import (
 	"github.com/icco/graphql"
 )
 
+const (
+	timeFormat = "2006-01-02T15:04"
+)
+
 type adminPageData struct {
 	Title    string
 	Posts    []*graphql.Post
 	Post     *graphql.Post
-	Datetime time.Time
+	Datetime string
 }
 
 func adminRouter() http.Handler {
@@ -26,7 +30,7 @@ func adminRouter() http.Handler {
 	r.Get("/post/new", func(w http.ResponseWriter, r *http.Request) {
 		Renderer.HTML(w, http.StatusOK, "new_post", &adminPageData{
 			Title:    "New Post",
-			Datetime: time.Now(),
+			Datetime: time.Now().Format(timeFormat),
 		})
 	})
 
