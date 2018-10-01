@@ -23,7 +23,7 @@ func Markdown(str string) template.HTML {
 // Takes a chunk of markdown and just returns the first paragraph.
 func SummarizeText(str string) string {
 	out := strings.Split(str, "\n")
-	return out[0]
+	return strings.TrimSpace(out[0])
 }
 
 func twitterHandleToMarkdown(in []byte) []byte {
