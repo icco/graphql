@@ -69,7 +69,7 @@ func adminRouter() http.Handler {
 			log.Printf("err: %+v", err)
 		}
 
-		http.Redirect(w, r, "/", http.StatusFound)
+		http.Redirect(w, r, "/admin/", http.StatusFound)
 	})
 
 	return r
