@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html/template"
 	"math"
+	"strconv"
 	"strings"
 	"time"
 
@@ -25,19 +26,31 @@ type Post struct {
 	Links    []*Link   `json:"links"`
 }
 
-func GeneratePost(title string, content string, datetime time.Time, tags []string) *Post {
+func GeneratePost(ctx context.Context, title string, content string, datetime time.Time, tags []string, draft bool) *Post {
 	e := new(Post)
+
+	// Set ID
+	maxId, err := GetMaxId(ctx)
+	if err != nil {
+		return e
+	}
+	id := maxId + 1
+	e.ID = fmt.Sprintf("%d", id)
+
+	if title == "" {
+		title = fmt.Sprintf("Untitled #%d", id)
+	}
 
 	// User supplied content
 	e.Title = title
 	e.Content = content
 	e.Datetime = datetime
 	e.Tags = tags
+	e.Draft = draft
 
 	// Computer generated content
 	e.Created = time.Now()
 	e.Modified = time.Now()
-	e.Draft = false
 
 	return e
 }
@@ -52,15 +65,18 @@ func GetMaxId(ctx context.Context) (int64, error) {
 	return id, nil
 }
 
-func CreatePost(ctx context.Context, input Post) (Post, error) {
-	maxId, err := GetMaxId(ctx)
-	if err != nil {
-		return Post{}, err
+func CreatePost(ctx context.Context, input *Post) (*Post, error) {
+	if input.ID == "" {
+		maxId, err := GetMaxId(ctx)
+		if err != nil {
+			return &Post{}, err
+		}
+		id := maxId + 1
+		input.ID = fmt.Sprintf("%d", id)
 	}
-	id := maxId + 1
 
-	_, err = db.ExecContext(ctx, "INSERT INTO posts(id, title, content, date, draft, created_at, modified_at) VALUES ($1, $2, $3, $4, $5, $6, $6)",
-		id,
+	_, err := db.ExecContext(ctx, "INSERT INTO posts(id, title, content, date, draft, created_at, modified_at) VALUES ($1, $2, $3, $4, $5, $6, $6)",
+		input.ID,
 		input.Title,
 		input.Content,
 		input.Datetime,
@@ -68,15 +84,20 @@ func CreatePost(ctx context.Context, input Post) (Post, error) {
 		time.Now(),
 	)
 	if err != nil {
-		return Post{}, err
+		return &Post{}, err
+	}
+
+	id, err := strconv.ParseInt(input.ID, 10, 64)
+	if err != nil {
+		return &Post{}, err
 	}
 
 	post, err := GetPost(ctx, id)
 	if err != nil {
-		return Post{}, err
+		return &Post{}, err
 	}
 
-	return *post, nil
+	return post, nil
 }
 
 func GetPost(ctx context.Context, id int64) (*Post, error) {

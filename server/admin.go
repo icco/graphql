@@ -35,13 +35,12 @@ func adminRouter() http.Handler {
 	})
 
 	r.Post("/post/new", func(w http.ResponseWriter, r *http.Request) {
+		var err error
 		r.ParseForm()
 
 		title := ""
 		if len(r.Form["title"]) == 1 {
 			title = r.Form["title"][0]
-		} else {
-			// TODO: raise an error
 		}
 
 		text := ""
@@ -53,14 +52,18 @@ func adminRouter() http.Handler {
 
 		datetime := time.Now()
 		if len(r.Form["datetime"]) == 1 {
-			// TODO: Parse datetime
-			log.Printf("dt: %+v", r.Form["datetime"])
-		} else {
-			// TODO: raise an error
+			datetime, err = time.Parse(timeFormat, r.Form["datetime"][0])
+			if err != nil {
+				log.Printf("Error parsing time: %+v", err)
+				http.Error(w, "Error parsing time.", http.StatusInternalServerError)
+				return
+			}
 		}
 
-		post := graphql.GeneratePost(title, text, datetime, []string{})
-		_, err := graphql.CreatePost(r.Context(), *post)
+		draft := len(r.Form["draft"]) == 1 && r.Form["draft"][0] == "on"
+
+		post := graphql.GeneratePost(r.Context(), title, text, datetime, []string{}, draft)
+		_, err = graphql.CreatePost(r.Context(), post)
 
 		if err != nil {
 			log.Printf("err: %+v", err)
