@@ -13,6 +13,7 @@ import (
 	"github.com/lib/pq"
 )
 
+// Post is our representation of a post in the database.
 type Post struct {
 	ID       string    `json:"id"`
 	Title    string    `json:"title"`
@@ -26,15 +27,17 @@ type Post struct {
 	Links    []*Link   `json:"links"`
 }
 
+// GeneratePost returns a fresh post that has not yet been saved to the
+// database.
 func GeneratePost(ctx context.Context, title string, content string, datetime time.Time, tags []string, draft bool) *Post {
 	e := new(Post)
 
 	// Set ID
-	maxId, err := GetMaxId(ctx)
+	maxID, err := GetMaxID(ctx)
 	if err != nil {
 		return e
 	}
-	id := maxId + 1
+	id := maxID + 1
 	e.ID = fmt.Sprintf("%d", id)
 
 	if title == "" {
@@ -55,7 +58,8 @@ func GeneratePost(ctx context.Context, title string, content string, datetime ti
 	return e
 }
 
-func GetMaxId(ctx context.Context) (int64, error) {
+// GetMaxID returns the greatest post ID in the database.
+func GetMaxID(ctx context.Context) (int64, error) {
 	row := db.QueryRowContext(ctx, "SELECT MAX(id) from posts")
 	var id int64
 	if err := row.Scan(&id); err != nil {
@@ -65,13 +69,14 @@ func GetMaxId(ctx context.Context) (int64, error) {
 	return id, nil
 }
 
+// CreatePost creates a new post in the database.
 func CreatePost(ctx context.Context, input *Post) (*Post, error) {
 	if input.ID == "" {
-		maxId, err := GetMaxId(ctx)
+		maxID, err := GetMaxID(ctx)
 		if err != nil {
 			return &Post{}, err
 		}
-		id := maxId + 1
+		id := maxID + 1
 		input.ID = fmt.Sprintf("%d", id)
 	}
 
@@ -100,6 +105,7 @@ func CreatePost(ctx context.Context, input *Post) (*Post, error) {
 	return post, nil
 }
 
+// GetPost gets a post by ID from the database.
 func GetPost(ctx context.Context, id int64) (*Post, error) {
 	var post Post
 	row := db.QueryRowContext(ctx, "SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE id = $1", id)
@@ -114,6 +120,7 @@ func GetPost(ctx context.Context, id int64) (*Post, error) {
 	}
 }
 
+// Posts returns all posts from the database.
 func Posts(ctx context.Context, isDraft bool) ([]*Post, error) {
 	rows, err := db.QueryContext(ctx, "SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE draft = $1 ORDER BY date DESC", isDraft)
 	if err != nil {
@@ -137,14 +144,17 @@ func Posts(ctx context.Context, isDraft bool) ([]*Post, error) {
 	return posts, nil
 }
 
+// AllPosts is a simple wrapper around Posts that does not return drafts.
 func AllPosts(ctx context.Context) ([]*Post, error) {
 	return Posts(ctx, false)
 }
 
+// Drafts is a simple wrapper around Posts that does return drafts.
 func Drafts(ctx context.Context) ([]*Post, error) {
 	return Posts(ctx, true)
 }
 
+// ParseTags returns a list of all hashtags currently in a post.
 func ParseTags(text string) ([]string, error) {
 	// http://golang.org/pkg/regexp/#Regexp.FindAllStringSubmatch
 	finds := HashtagRegex.FindAllStringSubmatch(text, -1)
@@ -158,6 +168,7 @@ func ParseTags(text string) ([]string, error) {
 	return ret, nil
 }
 
+// Save insterts a post into the database.
 func (p *Post) Save(ctx context.Context) error {
 	_, err := db.ExecContext(ctx, "INSERT INTO posts(id, title, content, date, draft, created_at, modified_at) VALUES ($1, $2, $3, $4, $5, $6, $7)",
 		p.ID,
@@ -171,17 +182,20 @@ func (p *Post) Save(ctx context.Context) error {
 	return err
 }
 
+// Summary returns the first sentence of a post.
 func (p *Post) Summary() string {
 	return SummarizeText(p.Content)
 }
 
-func (e *Post) Html() template.HTML {
-	return Markdown(e.Content)
+// HTML returns the post as rendered HTML.
+func (p *Post) HTML() template.HTML {
+	return Markdown(p.Content)
 }
 
-func (e *Post) ReadTime() int32 {
+// ReadTime calculates the number of seconds it should take to read the post.
+func (p *Post) ReadTime() int32 {
 	ReadingSpeed := 265.0
-	words := len(strings.Split(e.Content, " "))
+	words := len(strings.Split(p.Content, " "))
 	seconds := int32(math.Ceil(float64(words) / ReadingSpeed * 60.0))
 
 	return seconds
