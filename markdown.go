@@ -10,10 +10,10 @@ import (
 
 var (
 	// HashtagRegex is a regex for finding hashtags in Markdown.
-	HashtagRegex *regexp.Regexp = regexp.MustCompile(`(\s)#(\w+)`)
+	HashtagRegex = regexp.MustCompile(`(\s)#(\w+)`)
 
 	// TwitterHandleRegex is a regex for finding @username in Markdown.
-	TwitterHandleRegex *regexp.Regexp = regexp.MustCompile(`(\s)@([_A-Za-z0-9]+)`)
+	TwitterHandleRegex = regexp.MustCompile(`(\s)@([_A-Za-z0-9]+)`)
 )
 
 // Markdown generator.
