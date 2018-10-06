@@ -15,11 +15,12 @@ The next iteration in Nat's content management system. Previous versions include
 
 ## Install
 
-These directions are for OSX and assume you have [homebrew](http://brew.sh/) installed.
+This repo requires Go 1.11 to be installed.
 
- 1. Run `brew bundle`
- 2. Run `make update`
- 3. Run `make` to run locally
+ 1. Start postgres on your local machine with a database called writing.
+ 2. Copy `local.env` to `.env`
+ 3. If you're going to be playing with auth, Follow https://support.google.com/googleapi/answer/6158849?hl=en and create a "Web Application" OAuth2.0 config
+ 4. `env $(cat .env) go run -v ./server` to start the server.
 
 ## Design
 
