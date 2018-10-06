@@ -198,6 +198,7 @@ func AdminOnly(next http.Handler) http.Handler {
 		}
 
 		if !allowed {
+			log.Printf("User could not login: %+v", user)
 			http.Error(w, http.StatusText(403), 403)
 			return
 		}
