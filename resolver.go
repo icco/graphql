@@ -25,8 +25,11 @@ func ForContext(ctx context.Context) *User {
 	return raw
 }
 
+// Resolver is the type that gqlgen expects to exist
 type Resolver struct{}
 
+// New returns a Config that has all of the proper settings for this graphql
+// server.
 func New() Config {
 	c := Config{
 		Resolvers: &Resolver{},
@@ -46,10 +49,12 @@ func New() Config {
 	return c
 }
 
+// Mutation returns the resolver for Mutations.
 func (r *Resolver) Mutation() MutationResolver {
 	return &mutationResolver{r}
 }
 
+// Query returns the resolver for Queries.
 func (r *Resolver) Query() QueryResolver {
 	return &queryResolver{r}
 }
@@ -58,11 +63,11 @@ type mutationResolver struct{ *Resolver }
 
 func (r *mutationResolver) CreatePost(ctx context.Context, input NewPost) (Post, error) {
 	p := &Post{}
-	maxId, err := GetMaxId(ctx)
+	maxID, err := GetMaxID(ctx)
 	if err != nil {
 		return Post{}, err
 	}
-	id := maxId + 1
+	id := maxID + 1
 
 	p.ID = strconv.FormatInt(id, 10)
 	p.Title = input.Title
@@ -159,30 +164,30 @@ func (r *queryResolver) Post(ctx context.Context, id string) (*Post, error) {
 }
 
 func (r *queryResolver) NextPost(ctx context.Context, id string) (*string, error) {
-	var postId string
+	var postID string
 	row := db.QueryRowContext(ctx, "SELECT id FROM posts WHERE id = $1", id)
-	err := row.Scan(&postId)
+	err := row.Scan(&postID)
 	switch {
 	case err == sql.ErrNoRows:
 		return nil, fmt.Errorf("No post with id %s", id)
 	case err != nil:
 		return nil, fmt.Errorf("Error running get query: %+v", err)
 	default:
-		return &postId, nil
+		return &postID, nil
 	}
 }
 
 func (r *queryResolver) PrevPost(ctx context.Context, id string) (*string, error) {
-	var postId string
+	var postID string
 	row := db.QueryRowContext(ctx, "SELECT id FROM posts WHERE id = $1", id)
-	err := row.Scan(&postId)
+	err := row.Scan(&postID)
 	switch {
 	case err == sql.ErrNoRows:
 		return nil, fmt.Errorf("No post with id %s", id)
 	case err != nil:
 		return nil, fmt.Errorf("Error running get query: %+v", err)
 	default:
-		return &postId, nil
+		return &postID, nil
 	}
 }
 
