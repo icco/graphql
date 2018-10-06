@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+// User is a database object based off of what we get back from Google OAuth.
 type User struct {
 	ID       string
 	Role     string
@@ -14,6 +15,7 @@ type User struct {
 	Modified time.Time
 }
 
+// Save is an upsert based operation for User.
 func (u *User) Save(ctx context.Context) error {
 	_, err := db.ExecContext(ctx,
 		`
@@ -30,6 +32,8 @@ func (u *User) Save(ctx context.Context) error {
 	return err
 }
 
+// GetUser returns a user from the database. If the User does not exist, we
+// create it.
 func GetUser(ctx context.Context, id string) (*User, error) {
 	var user User
 	row := db.QueryRowContext(ctx, "SELECT id, role, created_at, modified_at FROM users WHERE id = $1", id)

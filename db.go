@@ -7,6 +7,8 @@ import (
 
 	"github.com/GuiaBolso/darwin"
 	"github.com/basvanbeek/ocsql"
+
+	// Needed to talk to postgres
 	_ "github.com/lib/pq"
 )
 
@@ -72,6 +74,7 @@ var (
 	}
 )
 
+// InitDB creates a package global db connection from a database string.
 func InitDB(dataSourceName string) *sql.DB {
 	var err error
 

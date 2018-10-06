@@ -8,8 +8,13 @@ import (
 	"github.com/russross/blackfriday"
 )
 
-var HashtagRegex *regexp.Regexp = regexp.MustCompile(`(\s)#(\w+)`)
-var TwitterHandleRegex *regexp.Regexp = regexp.MustCompile(`(\s)@([_A-Za-z0-9]+)`)
+var (
+	// HashtagRegex is a regex for finding hashtags in Markdown.
+	HashtagRegex = regexp.MustCompile(`(\s)#(\w+)`)
+
+	// TwitterHandleRegex is a regex for finding @username in Markdown.
+	TwitterHandleRegex = regexp.MustCompile(`(\s)@([_A-Za-z0-9]+)`)
+)
 
 // Markdown generator.
 func Markdown(str string) template.HTML {
@@ -20,7 +25,7 @@ func Markdown(str string) template.HTML {
 	return template.HTML(s)
 }
 
-// Takes a chunk of markdown and just returns the first paragraph.
+// SummarizeText takes a chunk of markdown and just returns the first paragraph.
 func SummarizeText(str string) string {
 	out := strings.Split(str, "\n")
 	return strings.TrimSpace(out[0])
