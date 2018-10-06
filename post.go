@@ -30,11 +30,11 @@ func GeneratePost(ctx context.Context, title string, content string, datetime ti
 	e := new(Post)
 
 	// Set ID
-	maxId, err := GetMaxId(ctx)
+	maxID, err := GetMaxID(ctx)
 	if err != nil {
 		return e
 	}
-	id := maxId + 1
+	id := maxID + 1
 	e.ID = fmt.Sprintf("%d", id)
 
 	if title == "" {
@@ -55,7 +55,7 @@ func GeneratePost(ctx context.Context, title string, content string, datetime ti
 	return e
 }
 
-func GetMaxId(ctx context.Context) (int64, error) {
+func GetMaxID(ctx context.Context) (int64, error) {
 	row := db.QueryRowContext(ctx, "SELECT MAX(id) from posts")
 	var id int64
 	if err := row.Scan(&id); err != nil {
@@ -67,11 +67,11 @@ func GetMaxId(ctx context.Context) (int64, error) {
 
 func CreatePost(ctx context.Context, input *Post) (*Post, error) {
 	if input.ID == "" {
-		maxId, err := GetMaxId(ctx)
+		maxID, err := GetMaxID(ctx)
 		if err != nil {
 			return &Post{}, err
 		}
-		id := maxId + 1
+		id := maxID + 1
 		input.ID = fmt.Sprintf("%d", id)
 	}
 
