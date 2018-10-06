@@ -37,7 +37,7 @@ func init() {
 }
 
 func appErrorf(w http.ResponseWriter, err error, msg string, args ...interface{}) {
-	message := fmt.Sprintf(msg, args)
+	message := fmt.Sprintf(msg, args...)
 	log.Printf("%s: %+v", message, err)
 	http.Error(w, message, http.StatusInternalServerError)
 	return
