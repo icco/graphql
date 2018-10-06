@@ -177,6 +177,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 func AdminOnly(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		session, err := SessionStore.Get(r, defaultSessionID)
+		var user *graphql.User
 
 		// If error, we couldn't parse session.
 		allowed := false
@@ -187,7 +188,7 @@ func AdminOnly(next http.Handler) http.Handler {
 		if session.Values[googleProfileSessionKey] != nil {
 			profile := session.Values[googleProfileSessionKey].(*graphql.User)
 			if profile.ID != "" {
-				user, err := graphql.GetUser(r.Context(), profile.ID)
+				user, err = graphql.GetUser(r.Context(), profile.ID)
 				if err != nil {
 					appErrorf(w, err, "could not upsert user: %v", err)
 					return
