@@ -5,11 +5,8 @@ go:
   - "1.11"
 env:
   - GO111MODULE=on
-before_script:
-  - go get github.com/golang/lint/golint
 script:
   - go vet ./...
-  - golint
   - go build .
 notifications:
   email:
