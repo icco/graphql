@@ -40,15 +40,15 @@ var (
 		Funcs:                     []template.FuncMap{template.FuncMap{}},
 	})
 
-	dbUrl = os.Getenv("DATABASE_URL")
+	dbURL = os.Getenv("DATABASE_URL")
 )
 
 func main() {
-	if dbUrl == "" {
+	if dbURL == "" {
 		log.Panicf("DATABASE_URL is empty!")
 	}
 
-	graphql.InitDB(dbUrl)
+	graphql.InitDB(dbURL)
 	OAuthConfig = configureOAuthClient(
 		os.Getenv("OAUTH2_CLIENTID"),
 		os.Getenv("OAUTH2_SECRET"),
@@ -102,7 +102,7 @@ func main() {
 		MaxAge:             300, // Maximum value not ignored by any of major browsers
 	}).Handler)
 
-	r.NotFound(NotFoundHandler)
+	r.NotFound(notFoundHandler)
 
 	// Stuff that does not ssl redirect
 	r.Group(func(r chi.Router) {
@@ -172,6 +172,6 @@ func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
+func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 	Renderer.HTML(w, http.StatusNotFound, "404", struct{ Title string }{Title: "404: This page could not be found"})
 }
