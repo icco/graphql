@@ -21,10 +21,13 @@ This repo requires Go 1.11 to be installed.
  2. Copy `local.env` to `.env`
  3. If you're going to be playing with auth, Follow https://support.google.com/googleapi/answer/6158849?hl=en and create a "Web Application" OAuth2.0 config
  4. `env $(cat .env) go run -v ./server` to start the server.
+ 5. Visit http://localhost:8080/ which has a default graphql client.
 
 ## Design
 
 This site is hosted at <https://graphql.natwelch.com>. It runs out of a docker container on Google Kubernetes. It has a postgres backend. This started as a rewrite of a previous project, natnatnat. Its [readme](https://github.com/icco/natnatnat/blob/master/README.md) walks through a lot of the previous inspiration.
+
+We use https://github.com/99designs/gqlgen to generate a lot of the files. If you modify [schema.graphql](), please run `go generate ./...` to update things.
 
 ## Documentation
 
