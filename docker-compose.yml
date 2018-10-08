@@ -6,6 +6,10 @@ services:
       dockerfile: Dockerfile
     environment:
       - DATABASE_URL=postgres://nat@docker.for.mac.localhost/writing?sslmode=disable
+      - OAUTH2_CLIENTID
+      - OAUTH2_REDIRECT=http://localhost:9393/callback
+      - OAUTH2_SECRET
       - PORT=8080
+      - NAT_ENV="development"
     ports:
       - "9393:8080"

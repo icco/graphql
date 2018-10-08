@@ -128,7 +128,7 @@ func main() {
 			HostsProxyHeaders:    []string{"X-Forwarded-Host"},
 			IsDevelopment:        isDev,
 			SSLProxyHeaders:      map[string]string{"X-Forwarded-Proto": "https"},
-			SSLRedirect:          true,
+			SSLRedirect:          !isDev,
 			STSIncludeSubdomains: true,
 			STSPreload:           true,
 			STSSeconds:           315360000,
