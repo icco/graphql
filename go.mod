@@ -3,7 +3,6 @@ module github.com/icco/graphql
 require (
 	cloud.google.com/go v0.29.0 // indirect
 	contrib.go.opencensus.io/exporter/stackdriver v0.6.0
-	git.apache.org/thrift.git v0.0.0-20181005210540-d566da7739c9 // indirect
 	github.com/99designs/gqlgen v0.6.0
 	github.com/GuiaBolso/darwin v0.0.0-20170210191649-86919dfcf808
 	github.com/agnivade/levenshtein v1.0.1 // indirect
@@ -27,10 +26,7 @@ require (
 	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af // indirect
 	github.com/jtolds/gls v4.2.1+incompatible // indirect
 	github.com/kr/pretty v0.1.0 // indirect
-	github.com/kr/pty v1.1.3 // indirect
 	github.com/lib/pq v1.0.0
-	github.com/openzipkin/zipkin-go v0.1.2 // indirect
-	github.com/pkg/errors v0.8.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/procfs v0.0.0-20181005140218-185b4288413d // indirect
 	github.com/russross/blackfriday v2.0.0+incompatible
@@ -39,14 +35,11 @@ require (
 	github.com/smartystreets/assertions v0.0.0-20180927180507-b2de0cb4f26d // indirect
 	github.com/smartystreets/goconvey v0.0.0-20180222194500-ef6db91d284a // indirect
 	github.com/stretchr/testify v1.2.2 // indirect
-	github.com/urfave/cli v1.20.0 // indirect
-	github.com/vektah/gorunpkg v0.0.0-20180221021944-c4ab2c9cf7b9 // indirect
 	github.com/vektah/gqlparser v0.0.0-20181002002754-f119686bf1d4
 	go.opencensus.io v0.17.0
 	golang.org/x/net v0.0.0-20181005035420-146acd28ed58 // indirect
 	golang.org/x/oauth2 v0.0.0-20181003184128-c57b0facaced
 	golang.org/x/sys v0.0.0-20181005133103-4497e2df6f9e // indirect
-	golang.org/x/tools v0.0.0-20181006002542-f60d9635b16a // indirect
 	google.golang.org/api v0.0.0-20181003000758-f5c49d98d21c
 	google.golang.org/appengine v1.2.0 // indirect
 	google.golang.org/genproto v0.0.0-20181004005441-af9cb2a35e7f // indirect
@@ -57,5 +50,4 @@ require (
 	gopkg.in/unrolled/render.v1 v1.0.0-20180914162206-b9786414de4d
 	gopkg.in/unrolled/secure.v1 v1.0.0-20181005190816-ff9db2ff917f
 	gopkg.in/yaml.v2 v2.2.1 // indirect
-	honnef.co/go/tools v0.0.0-20180920025451-e3ad64cb4ed3 // indirect
 )
