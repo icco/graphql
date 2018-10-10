@@ -165,7 +165,7 @@ func (r *queryResolver) Post(ctx context.Context, id string) (*Post, error) {
 
 func (r *queryResolver) NextPost(ctx context.Context, id string) (*Post, error) {
 	var postID string
-	row := db.QueryRowContext(ctx, "SELECT id FROM posts WHERE date > (SELECT date FROM posts WHERE id = $1) ORDER BY date DESC LIMIT 1", id)
+	row := db.QueryRowContext(ctx, "SELECT id FROM posts WHERE draft = false AND date > (SELECT date FROM posts WHERE id = $1) ORDER BY date DESC LIMIT 1", id)
 	err := row.Scan(&postID)
 	switch {
 	case err == sql.ErrNoRows:
@@ -183,7 +183,7 @@ func (r *queryResolver) NextPost(ctx context.Context, id string) (*Post, error) 
 
 func (r *queryResolver) PrevPost(ctx context.Context, id string) (*Post, error) {
 	var postID string
-	row := db.QueryRowContext(ctx, "SELECT id FROM posts WHERE date < (SELECT date FROM posts WHERE id = $1) ORDER BY date ASC LIMIT 1", id)
+	row := db.QueryRowContext(ctx, "SELECT id FROM posts WHERE draft = false AND date < (SELECT date FROM posts WHERE id = $1) ORDER BY date ASC LIMIT 1", id)
 	err := row.Scan(&postID)
 	switch {
 	case err == sql.ErrNoRows:
