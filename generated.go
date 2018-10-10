@@ -105,8 +105,8 @@ type QueryResolver interface {
 	Drafts(ctx context.Context) ([]*Post, error)
 	Posts(ctx context.Context, limit *int, offset *int) ([]*Post, error)
 	Post(ctx context.Context, id string) (*Post, error)
-	NextPost(ctx context.Context, id string) (*string, error)
-	PrevPost(ctx context.Context, id string) (*string, error)
+	NextPost(ctx context.Context, id string) (*Post, error)
+	PrevPost(ctx context.Context, id string) (*Post, error)
 	AllLinks(ctx context.Context) ([]*Link, error)
 	Links(ctx context.Context, limit *int, offset *int) ([]*Link, error)
 	Link(ctx context.Context, id string) (*Link, error)
@@ -1930,13 +1930,14 @@ func (ec *executionContext) _Query_nextPost(ctx context.Context, field graphql.C
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(*Post)
 	rctx.Result = res
 
 	if res == nil {
 		return graphql.Null
 	}
-	return graphql.MarshalID(*res)
+
+	return ec._Post(ctx, field.Selections, res)
 }
 
 // nolint: vetshadow
@@ -1960,13 +1961,14 @@ func (ec *executionContext) _Query_prevPost(ctx context.Context, field graphql.C
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(*Post)
 	rctx.Result = res
 
 	if res == nil {
 		return graphql.Null
 	}
-	return graphql.MarshalID(*res)
+
+	return ec._Post(ctx, field.Selections, res)
 }
 
 // nolint: vetshadow
@@ -3818,10 +3820,10 @@ type Query {
   post(id: ID!): Post
 
   "Returns post id for the next post chronologically."
-  nextPost(id: ID!): ID
+  nextPost(id: ID!): Post
 
   "Returns post id for the previous post chronologically."
-  prevPost(id: ID!): ID
+  prevPost(id: ID!): Post
 
   "Returns all links ever, in reverse chronological order."
   allLinks(): [Link]!

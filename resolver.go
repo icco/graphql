@@ -163,7 +163,7 @@ func (r *queryResolver) Post(ctx context.Context, id string) (*Post, error) {
 	}
 }
 
-func (r *queryResolver) NextPost(ctx context.Context, id string) (*string, error) {
+func (r *queryResolver) NextPost(ctx context.Context, id string) (*Post, error) {
 	var postID string
 	row := db.QueryRowContext(ctx, "SELECT id FROM posts WHERE id = $1", id)
 	err := row.Scan(&postID)
@@ -173,11 +173,15 @@ func (r *queryResolver) NextPost(ctx context.Context, id string) (*string, error
 	case err != nil:
 		return nil, fmt.Errorf("Error running get query: %+v", err)
 	default:
-		return &postID, nil
+		i, err := strconv.ParseInt(postID, 10, 64)
+		if err != nil {
+			return nil, err
+		}
+		return GetPost(ctx, i)
 	}
 }
 
-func (r *queryResolver) PrevPost(ctx context.Context, id string) (*string, error) {
+func (r *queryResolver) PrevPost(ctx context.Context, id string) (*Post, error) {
 	var postID string
 	row := db.QueryRowContext(ctx, "SELECT id FROM posts WHERE id = $1", id)
 	err := row.Scan(&postID)
@@ -187,7 +191,11 @@ func (r *queryResolver) PrevPost(ctx context.Context, id string) (*string, error
 	case err != nil:
 		return nil, fmt.Errorf("Error running get query: %+v", err)
 	default:
-		return &postID, nil
+		i, err := strconv.ParseInt(postID, 10, 64)
+		if err != nil {
+			return nil, err
+		}
+		return GetPost(ctx, i)
 	}
 }
 

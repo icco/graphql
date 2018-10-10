@@ -19,10 +19,10 @@ type Query {
   post(id: ID!): Post
 
   "Returns post id for the next post chronologically."
-  nextPost(id: ID!): ID
+  nextPost(id: ID!): Post
 
   "Returns post id for the previous post chronologically."
-  prevPost(id: ID!): ID
+  prevPost(id: ID!): Post
 
   "Returns all links ever, in reverse chronological order."
   allLinks(): [Link]!
