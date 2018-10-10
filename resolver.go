@@ -165,11 +165,11 @@ func (r *queryResolver) Post(ctx context.Context, id string) (*Post, error) {
 
 func (r *queryResolver) NextPost(ctx context.Context, id string) (*Post, error) {
 	var postID string
-	row := db.QueryRowContext(ctx, "SELECT id FROM posts WHERE id = $1", id)
+	row := db.QueryRowContext(ctx, "SELECT id FROM posts WHERE datetime > (SELECT datetime FROM posts WHERE id = $1) ORDER BY datetime DESC LIMIT 1", id)
 	err := row.Scan(&postID)
 	switch {
 	case err == sql.ErrNoRows:
-		return nil, fmt.Errorf("No post with id %s", id)
+		return nil, sql.ErrNoRows
 	case err != nil:
 		return nil, fmt.Errorf("Error running get query: %+v", err)
 	default:
@@ -183,11 +183,11 @@ func (r *queryResolver) NextPost(ctx context.Context, id string) (*Post, error) 
 
 func (r *queryResolver) PrevPost(ctx context.Context, id string) (*Post, error) {
 	var postID string
-	row := db.QueryRowContext(ctx, "SELECT id FROM posts WHERE id = $1", id)
+	row := db.QueryRowContext(ctx, "SELECT id FROM posts WHERE datetime < (SELECT datetime FROM posts WHERE id = $1) ORDER BY datetime DESC LIMIT 1", id)
 	err := row.Scan(&postID)
 	switch {
 	case err == sql.ErrNoRows:
-		return nil, fmt.Errorf("No post with id %s", id)
+		return nil, sql.ErrNoRows
 	case err != nil:
 		return nil, fmt.Errorf("Error running get query: %+v", err)
 	default:
