@@ -2,7 +2,7 @@
 
 A new backend for graphql.natwelch.com.
 
-[![Build Status](https://travis-ci.org/icco/graphql.svg?branch=master)](https://travis-ci.org/icco/graphql)
+[![Build Status](https://travis-ci.org/icco/graphql.svg?branch=master)](https://travis-ci.org/icco/graphql) [![Go Report Card](https://goreportcard.com/badge/github.com/icco/graphql)](https://goreportcard.com/report/github.com/icco/graphql)
 
 Docs: [godoc.org/github.com/icco/graphql](https://godoc.org/github.com/icco/graphql)
 
