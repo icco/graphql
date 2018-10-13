@@ -37,7 +37,7 @@ var (
 		IndentXML:                 true,
 		Layout:                    "layout",
 		RequirePartials:           true,
-		Funcs:                     []template.FuncMap{template.FuncMap{}},
+		Funcs:                     []template.FuncMap{{}},
 	})
 
 	dbURL = os.Getenv("DATABASE_URL")
