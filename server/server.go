@@ -165,10 +165,7 @@ func main() {
 
 func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	Renderer.JSON(w, http.StatusOK, map[string]string{
-		"healthy":  "true",
-		"revision": os.Getenv("GIT_REVISION"),
-		"tag":      os.Getenv("GIT_TAG"),
-		"branch":   os.Getenv("GIT_BRANCH"),
+		"healthy": "true",
 	})
 }
 
