@@ -69,42 +69,6 @@ func GetMaxID(ctx context.Context) (int64, error) {
 	return id, nil
 }
 
-// CreatePost creates a new post in the database.
-func CreatePost(ctx context.Context, input *Post) (*Post, error) {
-	if input.ID == "" {
-		maxID, err := GetMaxID(ctx)
-		if err != nil {
-			return &Post{}, err
-		}
-		id := maxID + 1
-		input.ID = fmt.Sprintf("%d", id)
-	}
-
-	_, err := db.ExecContext(ctx, "INSERT INTO posts(id, title, content, date, draft, created_at, modified_at) VALUES ($1, $2, $3, $4, $5, $6, $6)",
-		input.ID,
-		input.Title,
-		input.Content,
-		input.Datetime,
-		input.Draft,
-		time.Now(),
-	)
-	if err != nil {
-		return &Post{}, err
-	}
-
-	id, err := strconv.ParseInt(input.ID, 10, 64)
-	if err != nil {
-		return &Post{}, err
-	}
-
-	post, err := GetPost(ctx, id)
-	if err != nil {
-		return &Post{}, err
-	}
-
-	return post, nil
-}
-
 // GetPost gets a post by ID from the database.
 func GetPost(ctx context.Context, id int64) (*Post, error) {
 	var post Post
@@ -170,16 +134,34 @@ func ParseTags(text string) ([]string, error) {
 
 // Save insterts a post into the database.
 func (p *Post) Save(ctx context.Context) error {
-	_, err := db.ExecContext(ctx, "INSERT INTO posts(id, title, content, date, draft, created_at, modified_at) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+	if p.ID == "" {
+		maxID, err := GetMaxID(ctx)
+		if err != nil {
+			return err
+		}
+
+		p.ID = fmt.Sprintf("%d", maxID+1)
+	}
+
+	if _, err := db.ExecContext(ctx, "UPSERT INTO posts(id, title, content, date, draft, created_at, modified_at) VALUES ($1, $2, $3, $4, $5, $6, $7)",
 		p.ID,
 		p.Title,
 		p.Content,
 		p.Datetime,
 		p.Draft,
 		p.Created,
-		time.Now())
+		time.Now()); err != nil {
+		return err
+	}
 
-	return err
+	id, err := strconv.ParseInt(p.ID, 10, 64)
+	if err != nil {
+		return err
+	} else if _, err := GetPost(ctx, id); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Summary returns the first sentence of a post.

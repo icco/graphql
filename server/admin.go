@@ -63,7 +63,7 @@ func adminRouter() http.Handler {
 		draft := len(r.Form["draft"]) == 1 && r.Form["draft"][0] == "on"
 
 		post := graphql.GeneratePost(r.Context(), title, text, datetime, []string{}, draft)
-		_, err = graphql.CreatePost(r.Context(), post)
+		err = post.Save(r.Context())
 
 		if err != nil {
 			log.Printf("err: %+v", err)
