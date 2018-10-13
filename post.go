@@ -154,10 +154,8 @@ func (p *Post) Save(ctx context.Context) error {
 		return err
 	}
 
-	id, err := strconv.ParseInt(p.ID, 10, 64)
+	_, err := strconv.ParseInt(p.ID, 10, 64)
 	if err != nil {
-		return err
-	} else if _, err := GetPost(ctx, id); err != nil {
 		return err
 	}
 
