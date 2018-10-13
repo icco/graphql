@@ -143,7 +143,15 @@ func (p *Post) Save(ctx context.Context) error {
 		p.ID = fmt.Sprintf("%d", maxID+1)
 	}
 
-	if _, err := db.ExecContext(ctx, "UPSERT INTO posts(id, title, content, date, draft, created_at, modified_at) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+	if _, err := db.ExecContext(
+		ctx,
+		`
+INSERT INTO posts(id, title, content, date, draft, created_at, modified_at)
+VALUES ($1, $2, $3, $4, $5, $6, $7)
+ON CONFLICT (id) DO UPDATE
+SET (title, content, date, draft, modified_at) = ($2, $3, $4, $5, $7)
+WHERE posts.id = $1;
+`,
 		p.ID,
 		p.Title,
 		p.Content,
