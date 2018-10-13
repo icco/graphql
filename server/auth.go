@@ -26,8 +26,11 @@ const (
 )
 
 var (
+	// SessionStore is a configured session cookie store.
 	SessionStore = sessions.NewCookieStore([]byte(os.Getenv("SESSION_SECRET")))
-	OAuthConfig  *oauth2.Config
+
+	// OAuthConfig is used to store and share the Oauth2 Config.
+	OAuthConfig *oauth2.Config
 )
 
 func init() {
@@ -208,6 +211,8 @@ func AdminOnly(next http.Handler) http.Handler {
 	})
 }
 
+// ContextMiddleware gets the current user in the session and stores in the
+// current context.
 func ContextMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		session, err := SessionStore.Get(r, defaultSessionID)

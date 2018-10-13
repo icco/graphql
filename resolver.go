@@ -13,9 +13,11 @@ import (
 	"github.com/lib/pq"
 )
 
+type key int
+
 const (
 	// UserCtxKey is a constant context key
-	UserCtxKey = "graphql.natwelch.user"
+	UserCtxKey = iota
 )
 
 // ForContext finds the user from the context. Requires
