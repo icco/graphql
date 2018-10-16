@@ -88,6 +88,20 @@ func main() {
 
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
+
+	// Set Host header for tracing
+	r.Use(func(h http.Handler) http.Handler {
+		fn := func(w http.ResponseWriter, r *http.Request) {
+			rh := r.Header.Get(http.CanonicalHeaderKey("X-Forwarded-Host"))
+			if r.Host == "" && rh != "" {
+				r.Host = rh
+			}
+			h.ServeHTTP(w, r)
+		}
+
+		return http.HandlerFunc(fn)
+	})
+
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(ContextMiddleware)
