@@ -92,6 +92,7 @@ func main() {
 	// Set Host header for tracing
 	r.Use(func(h http.Handler) http.Handler {
 		fn := func(w http.ResponseWriter, r *http.Request) {
+			log.Printf("headers: %+v", r.Header)
 			rh := r.Header.Get(http.CanonicalHeaderKey("X-Forwarded-Host"))
 			if r.Host == "" && rh != "" {
 				r.Host = rh
