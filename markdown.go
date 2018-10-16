@@ -22,6 +22,7 @@ func Markdown(str string) template.HTML {
 	inc = twitterHandleToMarkdown(inc)
 	inc = hashTagsToMarkdown(inc)
 	s := blackfriday.Run(inc)
+	// TODO: https://github.com/microcosm-cc/bluemonday
 	return template.HTML(s)
 }
 
