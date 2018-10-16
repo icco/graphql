@@ -1,7 +1,7 @@
 module github.com/icco/graphql
 
 require (
-	cloud.google.com/go v0.29.0 // indirect
+	cloud.google.com/go v0.29.0
 	contrib.go.opencensus.io/exporter/stackdriver v0.6.0
 	github.com/99designs/gqlgen v0.6.0
 	github.com/GuiaBolso/darwin v0.0.0-20170210191649-86919dfcf808

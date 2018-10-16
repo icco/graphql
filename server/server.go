@@ -10,6 +10,7 @@ import (
 	"runtime/debug"
 
 	"contrib.go.opencensus.io/exporter/stackdriver"
+	"contrib.go.opencensus.io/exporter/stackdriver/monitoredresource"
 	"github.com/99designs/gqlgen/handler"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -70,13 +71,18 @@ func main() {
 
 	if os.Getenv("ENABLE_STACKDRIVER") != "" {
 		sd, err := stackdriver.NewExporter(stackdriver.Options{
-			ProjectID:    "icco-cloud",
-			MetricPrefix: "graphql",
+			ProjectID:               "icco-cloud",
+			MetricPrefix:            "graphql",
+			MonitoredResource:       monitoredresource.Autodetect(),
+			DefaultMonitoringLabels: &stackdriver.Labels{},
+			DefaultTraceAttributes:  map[string]interface{}{"/http/host": "graphql.natwelch.com"},
 		})
+
 		if err != nil {
 			log.Fatalf("Failed to create the Stackdriver exporter: %v", err)
 		}
 		defer sd.Flush()
+
 		view.RegisterExporter(sd)
 		trace.RegisterExporter(sd)
 		trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
@@ -88,20 +94,6 @@ func main() {
 
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
-
-	// Set Host header for tracing
-	r.Use(func(h http.Handler) http.Handler {
-		fn := func(w http.ResponseWriter, r *http.Request) {
-			rh := r.Header.Get(http.CanonicalHeaderKey("X-Forwarded-Host"))
-			if r.Host == "" && rh != "" {
-				r.Host = rh
-			}
-			h.ServeHTTP(w, r)
-		}
-
-		return http.HandlerFunc(fn)
-	})
-
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(ContextMiddleware)
