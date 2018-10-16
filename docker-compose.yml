@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      - DATABASE_URL=postgres://nat@docker.for.mac.localhost/writing?sslmode=disable
+      - DATABASE_URL=postgres://$USER@docker.for.mac.localhost/writing?sslmode=disable
       - OAUTH2_CLIENTID
       - OAUTH2_REDIRECT=http://localhost:9393/callback
       - OAUTH2_SECRET

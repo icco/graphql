@@ -10,6 +10,7 @@ import (
 	"runtime/debug"
 
 	"contrib.go.opencensus.io/exporter/stackdriver"
+	"contrib.go.opencensus.io/exporter/stackdriver/monitoredresource"
 	"github.com/99designs/gqlgen/handler"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -70,13 +71,18 @@ func main() {
 
 	if os.Getenv("ENABLE_STACKDRIVER") != "" {
 		sd, err := stackdriver.NewExporter(stackdriver.Options{
-			ProjectID:    "icco-cloud",
-			MetricPrefix: "graphql",
+			ProjectID:               "icco-cloud",
+			MetricPrefix:            "graphql",
+			MonitoredResource:       monitoredresource.Autodetect(),
+			DefaultMonitoringLabels: &stackdriver.Labels{},
+			DefaultTraceAttributes:  map[string]interface{}{"/http/host": "graphql.natwelch.com"},
 		})
+
 		if err != nil {
 			log.Fatalf("Failed to create the Stackdriver exporter: %v", err)
 		}
 		defer sd.Flush()
+
 		view.RegisterExporter(sd)
 		trace.RegisterExporter(sd)
 		trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
