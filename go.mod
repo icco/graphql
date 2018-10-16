@@ -6,26 +6,38 @@ require (
 	github.com/99designs/gqlgen v0.6.0
 	github.com/GuiaBolso/darwin v0.0.0-20170210191649-86919dfcf808
 	github.com/agnivade/levenshtein v1.0.1 // indirect
+	github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883 // indirect
 	github.com/aws/aws-sdk-go v1.15.55 // indirect
 	github.com/basvanbeek/ocsql v0.1.0
+	github.com/codegangsta/negroni v1.0.0 // indirect
+	github.com/cznic/ql v1.2.0 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/eknkc/amber v0.0.0-20171010120322-cdade1c07385 // indirect
 	github.com/go-chi/chi v3.3.3+incompatible
 	github.com/go-chi/cors v1.0.0
 	github.com/gofrs/uuid v3.1.0+incompatible
+	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b // indirect
+	github.com/google/go-cmp v0.2.0 // indirect
 	github.com/googleapis/gax-go v2.0.0+incompatible // indirect
+	github.com/gopherjs/gopherjs v0.0.0-20181004151105-1babbf986f6f // indirect
 	github.com/gorilla/sessions v1.1.3
 	github.com/gorilla/websocket v1.4.0 // indirect
 	github.com/hashicorp/golang-lru v0.5.0 // indirect
+	github.com/jtolds/gls v4.2.1+incompatible // indirect
 	github.com/lib/pq v1.0.0
-	github.com/pkg/errors v0.8.0 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/russross/blackfriday v2.0.0+incompatible
+	github.com/sergi/go-diff v1.0.0 // indirect
 	github.com/shurcooL/sanitized_anchor_name v0.0.0-20170918181015-86672fcb3f95 // indirect
-	github.com/urfave/cli v1.20.0 // indirect
-	github.com/vektah/gorunpkg v0.0.0-20180221021944-c4ab2c9cf7b9 // indirect
+	github.com/smartystreets/assertions v0.0.0-20180927180507-b2de0cb4f26d // indirect
+	github.com/smartystreets/goconvey v0.0.0-20180222194500-ef6db91d284a // indirect
+	github.com/stretchr/testify v1.2.2 // indirect
 	github.com/vektah/gqlparser v0.0.0-20181002002754-f119686bf1d4
 	go.opencensus.io v0.17.0
 	golang.org/x/oauth2 v0.0.0-20181003184128-c57b0facaced
-	golang.org/x/tools v0.0.0-20181016152912-4fd33079060a // indirect
 	google.golang.org/api v0.0.0-20181003000758-f5c49d98d21c
+	google.golang.org/appengine v1.2.0 // indirect
+	gopkg.in/DATA-DOG/go-sqlmock.v1 v1.3.0 // indirect
 	gopkg.in/unrolled/render.v1 v1.0.0-20180914162206-b9786414de4d
 	gopkg.in/unrolled/secure.v1 v1.0.0-20181005190816-ff9db2ff917f
 	gopkg.in/yaml.v2 v2.2.1 // indirect
