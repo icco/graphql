@@ -75,12 +75,14 @@ func main() {
 			MetricPrefix:            "graphql",
 			MonitoredResource:       monitoredresource.Autodetect(),
 			DefaultMonitoringLabels: &stackdriver.Labels{},
-			DefaultTraceAttributes:  map[string]interface{}{"http.host": "graphql.natwelch.com"},
+			DefaultTraceAttributes:  map[string]interface{}{"/http/host": "graphql.natwelch.com"},
 		})
+
 		if err != nil {
 			log.Fatalf("Failed to create the Stackdriver exporter: %v", err)
 		}
 		defer sd.Flush()
+
 		view.RegisterExporter(sd)
 		trace.RegisterExporter(sd)
 		trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
@@ -92,21 +94,6 @@ func main() {
 
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
-
-	// Set Host header for tracing
-	r.Use(func(h http.Handler) http.Handler {
-		fn := func(w http.ResponseWriter, r *http.Request) {
-			log.Printf("headers: %+v", r.Header)
-			rh := r.Header.Get(http.CanonicalHeaderKey("X-Forwarded-Host"))
-			if r.Host == "" && rh != "" {
-				r.Host = rh
-			}
-			h.ServeHTTP(w, r)
-		}
-
-		return http.HandlerFunc(fn)
-	})
-
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(ContextMiddleware)
