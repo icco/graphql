@@ -28,7 +28,6 @@ require (
 	github.com/jtolds/gls v4.2.1+incompatible // indirect
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/lib/pq v1.0.0
-	github.com/pkg/errors v0.8.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_golang v0.9.0 // indirect
 	github.com/prometheus/common v0.0.0-20181015124227-bcb74de08d37 // indirect
@@ -39,7 +38,6 @@ require (
 	github.com/smartystreets/assertions v0.0.0-20180927180507-b2de0cb4f26d // indirect
 	github.com/smartystreets/goconvey v0.0.0-20180222194500-ef6db91d284a // indirect
 	github.com/stretchr/testify v1.2.2 // indirect
-	github.com/urfave/cli v1.20.0 // indirect
 	github.com/vektah/gqlparser v0.0.0-20181002002754-f119686bf1d4
 	go.opencensus.io v0.17.0
 	golang.org/x/net v0.0.0-20181011144130-49bb7cea24b1 // indirect
