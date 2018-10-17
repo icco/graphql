@@ -76,13 +76,11 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		AllPosts func(childComplexity int) int
-		Drafts   func(childComplexity int) int
+		Drafts   func(childComplexity int, limit *int, offset *int) int
 		Posts    func(childComplexity int, limit *int, offset *int) int
 		Post     func(childComplexity int, id string) int
 		NextPost func(childComplexity int, id string) int
 		PrevPost func(childComplexity int, id string) int
-		AllLinks func(childComplexity int) int
 		Links    func(childComplexity int, limit *int, offset *int) int
 		Link     func(childComplexity int, id string) int
 		Stats    func(childComplexity int, count *int) int
@@ -101,13 +99,11 @@ type MutationResolver interface {
 	UpsertStat(ctx context.Context, input NewStat) (Stat, error)
 }
 type QueryResolver interface {
-	AllPosts(ctx context.Context) ([]*Post, error)
-	Drafts(ctx context.Context) ([]*Post, error)
+	Drafts(ctx context.Context, limit *int, offset *int) ([]*Post, error)
 	Posts(ctx context.Context, limit *int, offset *int) ([]*Post, error)
 	Post(ctx context.Context, id string) (*Post, error)
 	NextPost(ctx context.Context, id string) (*Post, error)
 	PrevPost(ctx context.Context, id string) (*Post, error)
-	AllLinks(ctx context.Context) ([]*Link, error)
 	Links(ctx context.Context, limit *int, offset *int) ([]*Link, error)
 	Link(ctx context.Context, id string) (*Link, error)
 	Stats(ctx context.Context, count *int) ([]*Stat, error)
@@ -178,6 +174,40 @@ func field_Mutation_upsertStat_args(rawArgs map[string]interface{}) (map[string]
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+
+}
+
+func field_Query_drafts_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 *int
+	if tmp, ok := rawArgs["limit"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg0 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["limit"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["offset"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg1 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["offset"] = arg1
 	return args, nil
 
 }
@@ -584,19 +614,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Post.Links(childComplexity), true
 
-	case "Query.allPosts":
-		if e.complexity.Query.AllPosts == nil {
-			break
-		}
-
-		return e.complexity.Query.AllPosts(childComplexity), true
-
 	case "Query.drafts":
 		if e.complexity.Query.Drafts == nil {
 			break
 		}
 
-		return e.complexity.Query.Drafts(childComplexity), true
+		args, err := field_Query_drafts_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Drafts(childComplexity, args["limit"].(*int), args["offset"].(*int)), true
 
 	case "Query.posts":
 		if e.complexity.Query.Posts == nil {
@@ -645,13 +673,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.PrevPost(childComplexity, args["id"].(string)), true
-
-	case "Query.allLinks":
-		if e.complexity.Query.AllLinks == nil {
-			break
-		}
-
-		return e.complexity.Query.AllLinks(childComplexity), true
 
 	case "Query.links":
 		if e.complexity.Query.Links == nil {
@@ -1599,15 +1620,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
-		case "allPosts":
-			wg.Add(1)
-			go func(i int, field graphql.CollectedField) {
-				out.Values[i] = ec._Query_allPosts(ctx, field)
-				if out.Values[i] == graphql.Null {
-					invalid = true
-				}
-				wg.Done()
-			}(i, field)
 		case "drafts":
 			wg.Add(1)
 			go func(i int, field graphql.CollectedField) {
@@ -1642,15 +1654,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			wg.Add(1)
 			go func(i int, field graphql.CollectedField) {
 				out.Values[i] = ec._Query_prevPost(ctx, field)
-				wg.Done()
-			}(i, field)
-		case "allLinks":
-			wg.Add(1)
-			go func(i int, field graphql.CollectedField) {
-				out.Values[i] = ec._Query_allLinks(ctx, field)
-				if out.Values[i] == graphql.Null {
-					invalid = true
-				}
 				wg.Done()
 			}(i, field)
 		case "links":
@@ -1693,76 +1696,22 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 }
 
 // nolint: vetshadow
-func (ec *executionContext) _Query_allPosts(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().AllPosts(rctx)
-	})
-	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
+func (ec *executionContext) _Query_drafts(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_drafts_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
 		return graphql.Null
 	}
-	res := resTmp.([]*Post)
-	rctx.Result = res
-
-	arr1 := make(graphql.Array, len(res))
-	var wg sync.WaitGroup
-
-	isLen1 := len(res) == 1
-	if !isLen1 {
-		wg.Add(len(res))
-	}
-
-	for idx1 := range res {
-		idx1 := idx1
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
-		f := func(idx1 int) {
-			if !isLen1 {
-				defer wg.Done()
-			}
-			arr1[idx1] = func() graphql.Marshaler {
-
-				if res[idx1] == nil {
-					return graphql.Null
-				}
-
-				return ec._Post(ctx, field.Selections, res[idx1])
-			}()
-		}
-		if isLen1 {
-			f(idx1)
-		} else {
-			go f(idx1)
-		}
-
-	}
-	wg.Wait()
-	return arr1
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _Query_drafts(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	rctx := &graphql.ResolverContext{
 		Object: "Query",
-		Args:   nil,
+		Args:   args,
 		Field:  field,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Drafts(rctx)
+		return ec.resolvers.Query().Drafts(rctx, args["limit"].(*int), args["offset"].(*int))
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -1969,66 +1918,6 @@ func (ec *executionContext) _Query_prevPost(ctx context.Context, field graphql.C
 	}
 
 	return ec._Post(ctx, field.Selections, res)
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _Query_allLinks(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
-	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Args:   nil,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().AllLinks(rctx)
-	})
-	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*Link)
-	rctx.Result = res
-
-	arr1 := make(graphql.Array, len(res))
-	var wg sync.WaitGroup
-
-	isLen1 := len(res) == 1
-	if !isLen1 {
-		wg.Add(len(res))
-	}
-
-	for idx1 := range res {
-		idx1 := idx1
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
-		f := func(idx1 int) {
-			if !isLen1 {
-				defer wg.Done()
-			}
-			arr1[idx1] = func() graphql.Marshaler {
-
-				if res[idx1] == nil {
-					return graphql.Null
-				}
-
-				return ec._Link(ctx, field.Selections, res[idx1])
-			}()
-		}
-		if isLen1 {
-			f(idx1)
-		} else {
-			go f(idx1)
-		}
-
-	}
-	wg.Wait()
-	return arr1
 }
 
 // nolint: vetshadow
@@ -3807,11 +3696,8 @@ var parsedSchema = gqlparser.MustLoadSchema(
 The query type, represents all of the entry points into our object graph.
 """
 type Query {
-  "Returns an array of all posts ever, ordered by reverse chronological order."
-  allPosts(): [Post]!
-
   "Returns an array of inprogress posts."
-  drafts(): [Post]! @hasRole(role: admin)
+  drafts(limit: Int, offset: Int): [Post]! @hasRole(role: admin)
 
   "Returns an array of all posts, ordered by reverse chronological order, using provided limit and offset."
   posts(limit: Int, offset: Int): [Post]!
@@ -3824,9 +3710,6 @@ type Query {
 
   "Returns post id for the previous post chronologically."
   prevPost(id: ID!): Post
-
-  "Returns all links ever, in reverse chronological order."
-  allLinks(): [Link]!
 
   "Returns a subset of all links ever, in reverse chronological order, using provided limit and offset."
   links(limit: Int, offset: Int): [Link]!
