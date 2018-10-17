@@ -16,7 +16,6 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
 	"github.com/icco/graphql"
-	"go.opencensus.io/exporter/prometheus"
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
@@ -60,14 +59,6 @@ func main() {
 		port = fromEnv
 	}
 	log.Printf("Starting up on http://localhost:%s", port)
-
-	pe, err := prometheus.NewExporter(prometheus.Options{
-		Namespace: "graphql",
-	})
-	if err != nil {
-		log.Fatalf("Failed to create the Prometheus exporter: %v", err)
-	}
-	view.RegisterExporter(pe)
 
 	if os.Getenv("ENABLE_STACKDRIVER") != "" {
 		sd, err := stackdriver.NewExporter(stackdriver.Options{
@@ -122,7 +113,6 @@ func main() {
 		}).Handler)
 
 		r.Get("/healthz", healthCheckHandler)
-		r.Handle("/metrics", pe)
 	})
 
 	// Everything that does SSL only
