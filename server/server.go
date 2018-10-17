@@ -6,7 +6,6 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	_ "net/http/pprof"
 	"os"
 	"runtime/debug"
 
@@ -140,6 +139,8 @@ func main() {
 			STSPreload:           true,
 			STSSeconds:           315360000,
 		}).Handler)
+
+		r.Mount("/debug", middleware.Profiler())
 
 		r.Mount("/admin", adminRouter())
 
