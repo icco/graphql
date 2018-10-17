@@ -17,7 +17,6 @@ require (
 	github.com/go-chi/cors v1.0.0
 	github.com/go-ini/ini v1.39.0 // indirect
 	github.com/gofrs/uuid v3.1.0+incompatible
-	github.com/gogo/protobuf v1.1.1 // indirect
 	github.com/google/go-cmp v0.2.0 // indirect
 	github.com/googleapis/gax-go v2.0.0+incompatible // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20181004151105-1babbf986f6f // indirect
@@ -29,9 +28,6 @@ require (
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/lib/pq v1.0.0
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/prometheus/client_golang v0.9.0 // indirect
-	github.com/prometheus/common v0.0.0-20181015124227-bcb74de08d37 // indirect
-	github.com/prometheus/procfs v0.0.0-20181005140218-185b4288413d // indirect
 	github.com/russross/blackfriday v2.0.0+incompatible
 	github.com/sergi/go-diff v1.0.0 // indirect
 	github.com/shurcooL/sanitized_anchor_name v0.0.0-20170918181015-86672fcb3f95 // indirect
