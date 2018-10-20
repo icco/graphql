@@ -152,9 +152,9 @@ ON CONFLICT (id) DO UPDATE
 SET (title, content, date, draft, modified_at) = ($2, $3, $4, $5, $7)
 WHERE posts.id = $1;
 `,
-		p.ID,
-		p.Title,
-		p.Content,
+		sanitize(p.ID),
+		sanitize(p.Title),
+		sanitize(p.Content),
 		p.Datetime,
 		p.Draft,
 		p.Created,
