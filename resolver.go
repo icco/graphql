@@ -130,7 +130,7 @@ func (r *queryResolver) Posts(ctx context.Context, limit *int, offset *int) ([]*
 
 func (r *queryResolver) Post(ctx context.Context, id string) (*Post, error) {
 	var post Post
-	row := db.QueryRowContext(ctx, "SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE id = $1", sanitize(id))
+	row := db.QueryRowContext(ctx, "SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE id = $1", id)
 	err := row.Scan(&post.ID, &post.Title, &post.Content, &post.Datetime, &post.Created, &post.Modified, pq.Array(&post.Tags), &post.Draft)
 	switch {
 	case err == sql.ErrNoRows:

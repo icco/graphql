@@ -24,8 +24,8 @@ func (u *User) Save(ctx context.Context) error {
     ON CONFLICT (id) DO UPDATE
     SET (role, modified_at) = ($2, $4)
     WHERE users.id = $1;`,
-		sanitize(u.ID),
-		sanitize(u.Role),
+		u.ID,
+		u.Role,
 		u.Created,
 		time.Now())
 
@@ -36,7 +36,6 @@ func (u *User) Save(ctx context.Context) error {
 // create it.
 func GetUser(ctx context.Context, id string) (*User, error) {
 	var user User
-	id = sanitize(id);
 	row := db.QueryRowContext(ctx, "SELECT id, role, created_at, modified_at FROM users WHERE id = $1", id)
 	err := row.Scan(&user.ID, &user.Role, &user.Created, &user.Modified)
 
