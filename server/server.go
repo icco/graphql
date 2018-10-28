@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"html/template"
 	"log"
@@ -11,6 +12,7 @@ import (
 
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	"contrib.go.opencensus.io/exporter/stackdriver/monitoredresource"
+	gql "github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/handler"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -141,6 +143,28 @@ func main() {
 				log.Print(err)
 				debug.PrintStack()
 				return errors.New("Panic message seen when processing request")
+			}),
+			handler.CacheSize(512),
+			handler.RequestMiddleware(func(ctx context.Context, next func(ctx context.Context) []byte) []byte {
+				rctx := gql.GetRequestContext(ctx)
+
+				// We do this because RequestContext has fields that can't be easily
+				// serialized in json, and we don't care about them.
+				subsetContext := map[string]interface{}{
+					"query":      rctx.RawQuery,
+					"variables":  rctx.Variables,
+					"extensions": rctx.Extensions,
+				}
+
+				// We log in JSON to keep log in a single line.
+				data, err := json.Marshal(subsetContext)
+				if err != nil {
+					log.Printf("json logging error: %+v", err)
+				} else {
+					log.Printf("request gql: %s", data)
+				}
+
+				return next(ctx)
 			}),
 		))
 
