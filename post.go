@@ -146,10 +146,10 @@ func (p *Post) Save(ctx context.Context) error {
 	if _, err := db.ExecContext(
 		ctx,
 		`
-INSERT INTO posts(id, title, content, date, draft, created_at, modified_at)
-VALUES ($1, $2, $3, $4, $5, $6, $7)
+INSERT INTO posts(id, title, content, date, draft, created_at, modified_at, tags)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 ON CONFLICT (id) DO UPDATE
-SET (title, content, date, draft, modified_at) = ($2, $3, $4, $5, $7)
+SET (title, content, date, draft, modified_at, tags) = ($2, $3, $4, $5, $7, $8)
 WHERE posts.id = $1;
 `,
 		p.ID,
@@ -158,7 +158,8 @@ WHERE posts.id = $1;
 		p.Datetime,
 		p.Draft,
 		p.Created,
-		time.Now()); err != nil {
+		time.Now(),
+		p.Tags); err != nil {
 		return err
 	}
 
