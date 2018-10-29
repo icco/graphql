@@ -84,8 +84,8 @@ func GetPost(ctx context.Context, id int64) (*Post, error) {
 	}
 }
 
-// Posts returns all posts from the database.
-func Posts(ctx context.Context, isDraft bool) ([]*Post, error) {
+// AllPosts returns all posts from the database.
+func AllPosts(ctx context.Context, isDraft bool) ([]*Post, error) {
 	rows, err := db.QueryContext(ctx, "SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE draft = $1 ORDER BY date DESC", isDraft)
 	if err != nil {
 		return nil, err
@@ -108,14 +108,9 @@ func Posts(ctx context.Context, isDraft bool) ([]*Post, error) {
 	return posts, nil
 }
 
-// AllPosts is a simple wrapper around Posts that does not return drafts.
-func AllPosts(ctx context.Context) ([]*Post, error) {
-	return Posts(ctx, false)
-}
-
 // Drafts is a simple wrapper around Posts that does return drafts.
 func Drafts(ctx context.Context) ([]*Post, error) {
-	return Posts(ctx, true)
+	return AllPosts(ctx, true)
 }
 
 // ParseTags returns a list of all hashtags currently in a post.
@@ -169,7 +164,7 @@ WHERE posts.id = $1;
 		return err
 	}
 
-	_, err := strconv.ParseInt(p.ID, 10, 64)
+	_, err = strconv.ParseInt(p.ID, 10, 64)
 	if err != nil {
 		return err
 	}
@@ -194,4 +189,28 @@ func (p *Post) ReadTime() int32 {
 	seconds := int32(math.Ceil(float64(words) / ReadingSpeed * 60.0))
 
 	return seconds
+}
+
+// Posts returns some posts.
+func Posts(ctx context.Context, limit *int, offset *int) ([]*Post, error) {
+	rows, err := db.QueryContext(ctx, "SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE draft = false ORDER BY date DESC LIMIT $1 OFFSET $2", limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	posts := make([]*Post, 0)
+	for rows.Next() {
+		post := new(Post)
+		err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.Datetime, &post.Created, &post.Modified, pq.Array(&post.Tags), &post.Draft)
+		if err != nil {
+			return nil, err
+		}
+		posts = append(posts, post)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return posts, nil
 }

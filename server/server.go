@@ -132,6 +132,8 @@ func main() {
 			STSSeconds:           315360000,
 		}).Handler)
 
+		r.Get("/cron", cronHandler)
+
 		r.Mount("/debug", middleware.Profiler())
 
 		r.Mount("/admin", adminRouter())
@@ -188,6 +190,30 @@ func main() {
 func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	Renderer.JSON(w, http.StatusOK, map[string]string{
 		"healthy": "true",
+	})
+}
+
+func cronHandler(w http.ResponseWriter, r *http.Request) {
+	go func(ctx context.Context) {
+		var posts []*graphql.Post
+		var err error
+		perPage := 10
+
+		for i = 0; err == nil || len(posts) > 0; i += perPage {
+			posts, err = graphql.Posts(ctx, &perPage, &i)
+			if err == nil {
+				for _, p := range posts {
+					err = p.Save(ctx)
+					if err != nil {
+						log.Printf("Error saving: %+v", err)
+					}
+				}
+			}
+		}
+	}(r.Context())
+
+	Renderer.JSON(w, http.StatusOK, map[string]string{
+		"cron": "ok",
 	})
 }
 

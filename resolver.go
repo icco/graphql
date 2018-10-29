@@ -106,26 +106,7 @@ func (r *mutationResolver) UpsertStat(ctx context.Context, input NewStat) (Stat,
 type queryResolver struct{ *Resolver }
 
 func (r *queryResolver) Posts(ctx context.Context, limit *int, offset *int) ([]*Post, error) {
-	rows, err := db.QueryContext(ctx, "SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE draft = false ORDER BY date DESC LIMIT $1 OFFSET $2", limit, offset)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	posts := make([]*Post, 0)
-	for rows.Next() {
-		post := new(Post)
-		err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.Datetime, &post.Created, &post.Modified, pq.Array(&post.Tags), &post.Draft)
-		if err != nil {
-			return nil, err
-		}
-		posts = append(posts, post)
-	}
-
-	if err = rows.Err(); err != nil {
-		return nil, err
-	}
-	return posts, nil
+	return Posts(ctx, limit, offset)
 }
 
 func (r *queryResolver) Post(ctx context.Context, id string) (*Post, error) {
