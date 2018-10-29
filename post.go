@@ -143,6 +143,12 @@ func (p *Post) Save(ctx context.Context) error {
 		p.ID = fmt.Sprintf("%d", maxID+1)
 	}
 
+	tags, err := ParseTags(p.Content)
+	if err != nil {
+		return err
+	}
+	p.Tags = tags
+
 	if _, err := db.ExecContext(
 		ctx,
 		`
