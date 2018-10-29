@@ -217,7 +217,7 @@ func Posts(ctx context.Context, limit *int, offset *int) ([]*Post, error) {
 
 // PostsByTag returns all posts with a tag.
 func PostsByTag(ctx context.Context, tag string) ([]*Post, error) {
-	query := "SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE ? = ANY(tags);"
+	query := "SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE $1 = ANY(tags);"
 	rows, err := db.QueryContext(ctx, query, tag)
 	if err != nil {
 		return nil, err
