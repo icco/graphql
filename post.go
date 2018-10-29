@@ -160,7 +160,7 @@ WHERE posts.id = $1;
 		p.Draft,
 		p.Created,
 		time.Now(),
-		p.Tags); err != nil {
+		pq.Array(p.Tags)); err != nil {
 		return err
 	}
 
