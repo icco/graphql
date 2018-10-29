@@ -23,12 +23,15 @@ require (
 	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af // indirect
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/lib/pq v1.0.0
+	github.com/pkg/errors v0.8.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20170806203942-52369c62f446 // indirect
 	github.com/russross/blackfriday v2.0.0+incompatible
 	github.com/sergi/go-diff v1.0.0 // indirect
 	github.com/shurcooL/sanitized_anchor_name v0.0.0-20170918181015-86672fcb3f95 // indirect
 	github.com/stretchr/testify v1.2.2 // indirect
+	github.com/urfave/cli v1.20.0 // indirect
+	github.com/vektah/gorunpkg v0.0.0-20181021090735-2c603e7a186c // indirect
 	github.com/vektah/gqlparser v0.0.0-20181002002754-f119686bf1d4
 	go.opencensus.io v0.18.0
 	golang.org/x/net v0.0.0-20181023162649-9b4f9f5ad519 // indirect

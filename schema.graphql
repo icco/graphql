@@ -29,6 +29,9 @@ type Query {
 
   "Returns a number of stats, ordered by most recently updated."
   stats(count: Int): [Stat]!
+
+  "Returns all posts that contain a tag."
+  postsByTag(id: String!): [Post]!
 }
 
 """

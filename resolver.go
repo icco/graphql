@@ -109,6 +109,10 @@ func (r *queryResolver) Posts(ctx context.Context, limit *int, offset *int) ([]*
 	return Posts(ctx, limit, offset)
 }
 
+func (r *queryResolver) PostsByTag(ctx context.Context, tag string) ([]*Post, error) {
+	return PostsByTag(ctx, tag)
+}
+
 func (r *queryResolver) Post(ctx context.Context, id string) (*Post, error) {
 	var post Post
 	row := db.QueryRowContext(ctx, "SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE id = $1", id)
