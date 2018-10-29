@@ -199,7 +199,7 @@ func cronHandler(w http.ResponseWriter, r *http.Request) {
 		var err error
 		perPage := 10
 
-		for i = 0; err == nil || len(posts) > 0; i += perPage {
+		for i := 0; err == nil || len(posts) > 0; i += perPage {
 			posts, err = graphql.Posts(ctx, &perPage, &i)
 			if err == nil {
 				for _, p := range posts {
@@ -210,7 +210,7 @@ func cronHandler(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
-	}(r.Context())
+	}(context.Background())
 
 	Renderer.JSON(w, http.StatusOK, map[string]string{
 		"cron": "ok",
