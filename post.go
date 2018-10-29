@@ -84,8 +84,8 @@ func GetPost(ctx context.Context, id int64) (*Post, error) {
 	}
 }
 
-// Posts returns all posts from the database.
-func Posts(ctx context.Context, isDraft bool) ([]*Post, error) {
+// AllPosts returns all posts from the database.
+func AllPosts(ctx context.Context, isDraft bool) ([]*Post, error) {
 	rows, err := db.QueryContext(ctx, "SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE draft = $1 ORDER BY date DESC", isDraft)
 	if err != nil {
 		return nil, err
@@ -108,14 +108,9 @@ func Posts(ctx context.Context, isDraft bool) ([]*Post, error) {
 	return posts, nil
 }
 
-// AllPosts is a simple wrapper around Posts that does not return drafts.
-func AllPosts(ctx context.Context) ([]*Post, error) {
-	return Posts(ctx, false)
-}
-
 // Drafts is a simple wrapper around Posts that does return drafts.
 func Drafts(ctx context.Context) ([]*Post, error) {
-	return Posts(ctx, true)
+	return AllPosts(ctx, true)
 }
 
 // ParseTags returns a list of all hashtags currently in a post.
@@ -143,13 +138,19 @@ func (p *Post) Save(ctx context.Context) error {
 		p.ID = fmt.Sprintf("%d", maxID+1)
 	}
 
+	tags, err := ParseTags(p.Content)
+	if err != nil {
+		return err
+	}
+	p.Tags = tags
+
 	if _, err := db.ExecContext(
 		ctx,
 		`
-INSERT INTO posts(id, title, content, date, draft, created_at, modified_at)
-VALUES ($1, $2, $3, $4, $5, $6, $7)
+INSERT INTO posts(id, title, content, date, draft, created_at, modified_at, tags)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 ON CONFLICT (id) DO UPDATE
-SET (title, content, date, draft, modified_at) = ($2, $3, $4, $5, $7)
+SET (title, content, date, draft, modified_at, tags) = ($2, $3, $4, $5, $7, $8)
 WHERE posts.id = $1;
 `,
 		p.ID,
@@ -158,11 +159,12 @@ WHERE posts.id = $1;
 		p.Datetime,
 		p.Draft,
 		p.Created,
-		time.Now()); err != nil {
+		time.Now(),
+		pq.Array(p.Tags)); err != nil {
 		return err
 	}
 
-	_, err := strconv.ParseInt(p.ID, 10, 64)
+	_, err = strconv.ParseInt(p.ID, 10, 64)
 	if err != nil {
 		return err
 	}
@@ -187,4 +189,28 @@ func (p *Post) ReadTime() int32 {
 	seconds := int32(math.Ceil(float64(words) / ReadingSpeed * 60.0))
 
 	return seconds
+}
+
+// Posts returns some posts.
+func Posts(ctx context.Context, limit *int, offset *int) ([]*Post, error) {
+	rows, err := db.QueryContext(ctx, "SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE draft = false ORDER BY date DESC LIMIT $1 OFFSET $2", limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	posts := make([]*Post, 0)
+	for rows.Next() {
+		post := new(Post)
+		err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.Datetime, &post.Created, &post.Modified, pq.Array(&post.Tags), &post.Draft)
+		if err != nil {
+			return nil, err
+		}
+		posts = append(posts, post)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return posts, nil
 }
