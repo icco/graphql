@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html/template"
 	"math"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -117,12 +118,20 @@ func Drafts(ctx context.Context) ([]*Post, error) {
 func ParseTags(text string) ([]string, error) {
 	// http://golang.org/pkg/regexp/#Regexp.FindAllStringSubmatch
 	finds := HashtagRegex.FindAllStringSubmatch(text, -1)
-	ret := make([]string, 0)
+	tagMap := map[string]int{}
 	for _, v := range finds {
 		if len(v) > 2 {
-			ret = append(ret, strings.ToLower(v[2]))
+			tag := strings.ToLower(v[2])
+			tagMap[tag] += 1
 		}
 	}
+
+	ret := make([]string, len(tagMap))
+	for k := range tagMap {
+		ret = append(ret, k)
+	}
+
+	sort.Strings(ret)
 
 	return ret, nil
 }
