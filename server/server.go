@@ -12,6 +12,7 @@ import (
 
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	"contrib.go.opencensus.io/exporter/stackdriver/monitoredresource"
+	"github.com/99designs/gqlgen-contrib/gqlopencensus"
 	gql "github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/handler"
 	"github.com/go-chi/chi"
@@ -168,6 +169,7 @@ func main() {
 
 				return next(ctx)
 			}),
+			handler.Tracer(gqlopencensus.New()),
 		))
 
 		// Auth stuff
