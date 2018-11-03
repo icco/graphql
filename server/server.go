@@ -12,6 +12,7 @@ import (
 
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	"contrib.go.opencensus.io/exporter/stackdriver/monitoredresource"
+	"contrib.go.opencensus.io/exporter/stackdriver/propagation"
 	"github.com/99designs/gqlgen-contrib/gqlopencensus"
 	gql "github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/handler"
@@ -79,7 +80,9 @@ func main() {
 
 		view.RegisterExporter(sd)
 		trace.RegisterExporter(sd)
-		trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
+		trace.ApplyConfig(trace.Config{
+			DefaultSampler: trace.AlwaysSample(),
+		})
 	}
 
 	isDev := os.Getenv("NAT_ENV") != "production"
@@ -181,6 +184,7 @@ func main() {
 	h := &ochttp.Handler{
 		Handler:          r,
 		IsPublicEndpoint: true,
+		Propagation:      &propagation.HTTPFormat{},
 	}
 	if err := view.Register(ochttp.DefaultServerViews...); err != nil {
 		log.Fatal("Failed to register ochttp.DefaultServerViews")
