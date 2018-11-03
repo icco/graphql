@@ -182,9 +182,8 @@ func main() {
 	})
 
 	h := &ochttp.Handler{
-		Handler:          r,
-		IsPublicEndpoint: true,
-		Propagation:      &propagation.HTTPFormat{},
+		Handler:     r,
+		Propagation: &propagation.HTTPFormat{},
 	}
 	if err := view.Register(ochttp.DefaultServerViews...); err != nil {
 		log.Fatal("Failed to register ochttp.DefaultServerViews")
