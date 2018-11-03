@@ -6,7 +6,7 @@ import (
 	"log"
 
 	"github.com/GuiaBolso/darwin"
-	"github.com/basvanbeek/ocsql"
+	"github.com/opencensus-integrations/ocsql"
 
 	// Needed to talk to postgres
 	_ "github.com/lib/pq"
