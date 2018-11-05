@@ -114,6 +114,10 @@ func Drafts(ctx context.Context) ([]*Post, error) {
 	return AllPosts(ctx, true)
 }
 
+var tagAliases = map[string]string{
+	"hackerschool": "recursecenter",
+}
+
 // ParseTags returns a list of all hashtags currently in a post.
 func ParseTags(text string) ([]string, error) {
 	// http://golang.org/pkg/regexp/#Regexp.FindAllStringSubmatch
@@ -122,6 +126,10 @@ func ParseTags(text string) ([]string, error) {
 	for _, v := range finds {
 		if len(v) > 2 {
 			tag := strings.ToLower(v[2])
+
+			if alias, ok := tagAliases[tag]; ok {
+				tagMap[alias] += 1
+			}
 			tagMap[tag] += 1
 		}
 	}
