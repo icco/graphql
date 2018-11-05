@@ -134,7 +134,7 @@ func ParseTags(text string) ([]string, error) {
 		}
 	}
 
-	ret := make([]string, len(tagMap))
+	ret := []string{}
 	for k := range tagMap {
 		ret = append(ret, k)
 	}
