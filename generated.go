@@ -3905,6 +3905,42 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 	return ec.___Type(ctx, field.Selections, res)
 }
 
+func UnmarshalEditedPost(v interface{}) (EditedPost, error) {
+	var it EditedPost
+	var asMap = v.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "content":
+			var err error
+			it.Content, err = graphql.UnmarshalString(v)
+			if err != nil {
+				return it, err
+			}
+		case "title":
+			var err error
+			it.Title, err = graphql.UnmarshalString(v)
+			if err != nil {
+				return it, err
+			}
+		case "datetime":
+			var err error
+			it.Datetime, err = graphql.UnmarshalTime(v)
+			if err != nil {
+				return it, err
+			}
+		case "draft":
+			var err error
+			it.Draft, err = graphql.UnmarshalBoolean(v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func UnmarshalNewLink(v interface{}) (NewLink, error) {
 	var it NewLink
 	var asMap = v.(map[string]interface{})
@@ -4165,6 +4201,13 @@ type Comment {
 }
 
 input NewPost {
+  content: String!
+  title: String!
+  datetime: Time!
+  draft: Boolean!
+}
+
+input EditedPost {
   content: String!
   title: String!
   datetime: Time!

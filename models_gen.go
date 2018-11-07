@@ -14,6 +14,13 @@ type Comment struct {
 	ID string `json:"id"`
 }
 
+type EditedPost struct {
+	Content  string    `json:"content"`
+	Title    string    `json:"title"`
+	Datetime time.Time `json:"datetime"`
+	Draft    bool      `json:"draft"`
+}
+
 type NewLink struct {
 	Title       string     `json:"title"`
 	URI         string     `json:"uri"`

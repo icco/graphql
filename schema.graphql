@@ -100,6 +100,13 @@ input NewPost {
   draft: Boolean!
 }
 
+input EditedPost {
+  content: String!
+  title: String!
+  datetime: Time!
+  draft: Boolean!
+}
+
 input NewLink {
   title: String!
   uri: URI!

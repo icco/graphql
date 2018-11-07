@@ -91,12 +91,34 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input NewPost) (Post,
 	return *post, nil
 }
 
-func (r *mutationResolver) EditPost(ctx context.Context, id string, input NewPost) (Post, error) {
-	return Post{}, fmt.Errorf("not implemented")
+func (r *mutationResolver) EditPost(ctx context.Context, id string, input EditedPost) (Post, error) {
+	p := &Post{}
+	p.ID = id
+	p.Title = input.Title
+	p.Content = input.Content
+	p.Datetime = input.Datetime
+	p.Draft = input.Draft
+
+	err := p.Save(ctx)
+	if err != nil {
+		return Post{}, err
+	}
+
+	i, err := strconv.ParseInt(p.ID, 10, 64)
+	if err != nil {
+		return *p, err
+	}
+
+	post, err := GetPost(ctx, i)
+	if err != nil {
+		return Post{}, err
+	}
+
+	return *post, nil
 }
 
 func (r *mutationResolver) UpsertLink(ctx context.Context, input NewLink) (Link, error) {
-	return Link{}, fmt.Errorf("not implemented")
+	return Link{}, nil
 }
 
 func (r *mutationResolver) UpsertStat(ctx context.Context, input NewStat) (Stat, error) {
