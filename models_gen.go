@@ -14,17 +14,6 @@ type Comment struct {
 	ID string `json:"id"`
 }
 
-// A link is a link I have save on pinboard or a link in a post.
-type Link struct {
-	ID          string    `json:"id"`
-	Title       string    `json:"title"`
-	URI         string    `json:"uri"`
-	Created     time.Time `json:"created"`
-	Description string    `json:"description"`
-	Screenshot  string    `json:"screenshot"`
-	Tags        []string  `json:"tags"`
-}
-
 type NewLink struct {
 	Title       string     `json:"title"`
 	URI         string     `json:"uri"`

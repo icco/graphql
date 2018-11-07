@@ -71,6 +71,24 @@ var (
       );
       `,
 		},
+		{
+			Version:     5,
+			Description: "Add links table",
+			Script: `
+      CREATE EXTENSION pgcrypto;
+      CREATE TABLE links(
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        title text,
+        uri text,
+        created timestamp with time zone,
+        description text,
+        screenshot text,
+        tags text[],
+        created_at timestamp with time zone,
+        modified_at timestamp with time zone
+      );
+      `,
+		},
 	}
 )
 

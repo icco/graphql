@@ -16,3 +16,5 @@ models:
     model: github.com/icco/graphql.Post
   User:
     model: github.com/icco/graphql.User
+  Link:
+    model: github.com/icco/graphql.Link

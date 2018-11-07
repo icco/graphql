@@ -144,7 +144,7 @@ func ParseTags(text string) ([]string, error) {
 	return ret, nil
 }
 
-// Save insterts a post into the database.
+// Save inserts or updates a post into the database.
 func (p *Post) Save(ctx context.Context) error {
 	if p.ID == "" {
 		maxID, err := GetMaxID(ctx)
