@@ -26,11 +26,11 @@ type Link struct {
 }
 
 type NewLink struct {
-	Title       string    `json:"title"`
-	URI         string    `json:"uri"`
-	Description string    `json:"description"`
-	Tags        []*string `json:"tags"`
-	Created     time.Time `json:"created"`
+	Title       string     `json:"title"`
+	URI         string     `json:"uri"`
+	Description string     `json:"description"`
+	Tags        []*string  `json:"tags"`
+	Created     *time.Time `json:"created"`
 }
 
 type NewPost struct {

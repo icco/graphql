@@ -95,7 +95,7 @@ func (r *mutationResolver) EditPost(ctx context.Context, id string, input NewPos
 	return Post{}, fmt.Errorf("not implemented")
 }
 
-func (r *mutationResolver) CreateLink(ctx context.Context, input NewLink) (Link, error) {
+func (r *mutationResolver) UpsertLink(ctx context.Context, input NewLink) (Link, error) {
 	return Link{}, fmt.Errorf("not implemented")
 }
 

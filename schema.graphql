@@ -105,7 +105,7 @@ input NewLink {
   uri: URI!
   description: String!
   tags: [String]!
-  created: Time!
+  created: Time
 }
 
 input NewStat {
@@ -116,7 +116,7 @@ input NewStat {
 type Mutation {
   createPost(input: NewPost!): Post! @hasRole(role: admin)
   editPost(Id: ID!, input: NewPost!): Post! @hasRole(role: admin)
-  createLink(input: NewLink!): Link! @hasRole(role: admin)
+  upsertLink(input: NewLink!): Link! @hasRole(role: admin)
   upsertStat(input: NewStat!): Stat! @hasRole(role: admin)
 }
 
