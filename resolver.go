@@ -242,7 +242,7 @@ func (r *queryResolver) Stats(ctx context.Context, count *int) ([]*Stat, error) 
 }
 
 func (r *queryResolver) Links(ctx context.Context, limit *int, offset *int) ([]*Link, error) {
-	return nil, fmt.Errorf("not implemented")
+	return GetLinks(ctx, limit, offset)
 }
 
 func (r *queryResolver) Link(ctx context.Context, id string) (*Link, error) {

@@ -58,3 +58,30 @@ func GetLink(ctx context.Context, uri string) (*Link, error) {
 		return &link, nil
 	}
 }
+
+// GetLinks returns all links from the database.
+func GetLinks(ctx context.Context, limit *int, offset *int) ([]*Link, error) {
+	rows, err := db.QueryContext(ctx, "SELECT id, title, uri, description, created, tags FROM links ORDER BY date DESC LIMIT $1 OFFSET $2", limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	links := make([]*Link, *limit)
+	i := 0
+	for rows.Next() {
+		i++
+		link := new(Link)
+		err := rows.Scan(&link.ID, &link.Title, &link.URI, &link.Description, &link.Created, pq.Array(&link.Tags))
+		if err != nil {
+			return nil, err
+		}
+
+		links[i] = link
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return links, nil
+}
