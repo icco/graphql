@@ -89,6 +89,14 @@ var (
       );
       `,
 		},
+		{
+			Version:     6,
+			Description: "Make things unique",
+			Script: `
+      ALTER TABLE links ADD CONSTRAINT links_uri_key UNIQUE (uri);
+      ALTER TABLE stats ADD CONSTRAINT stats_key_key UNIQUE (key);
+      `,
+		},
 	}
 )
 
