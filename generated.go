@@ -3975,13 +3975,9 @@ func UnmarshalNewLink(v interface{}) (NewLink, error) {
 					rawIf1 = []interface{}{v}
 				}
 			}
-			it.Tags = make([]*string, len(rawIf1))
+			it.Tags = make([]string, len(rawIf1))
 			for idx1 := range rawIf1 {
-				var ptr2 string
-				if rawIf1[idx1] != nil {
-					ptr2, err = graphql.UnmarshalString(rawIf1[idx1])
-					it.Tags[idx1] = &ptr2
-				}
+				it.Tags[idx1], err = graphql.UnmarshalString(rawIf1[idx1])
 			}
 			if err != nil {
 				return it, err
@@ -4218,7 +4214,7 @@ input NewLink {
   title: String!
   uri: URI!
   description: String!
-  tags: [String]!
+  tags: [String!]!
   created: Time
 }
 

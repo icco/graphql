@@ -111,7 +111,7 @@ input NewLink {
   title: String!
   uri: URI!
   description: String!
-  tags: [String]!
+  tags: [String!]!
   created: Time
 }
 

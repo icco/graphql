@@ -121,6 +121,8 @@ func (r *mutationResolver) UpsertLink(ctx context.Context, input NewLink) (Link,
 	l := &Link{}
 	l.Title = input.Title
 	l.Description = input.Description
+	l.URI = input.URI
+	l.Tags = input.Tags
 
 	if input.Created != nil {
 		l.Created = *input.Created

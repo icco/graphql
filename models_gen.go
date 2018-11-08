@@ -25,7 +25,7 @@ type NewLink struct {
 	Title       string     `json:"title"`
 	URI         string     `json:"uri"`
 	Description string     `json:"description"`
-	Tags        []*string  `json:"tags"`
+	Tags        []string   `json:"tags"`
 	Created     *time.Time `json:"created"`
 }
 
