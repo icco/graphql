@@ -97,6 +97,13 @@ var (
       ALTER TABLE stats ADD CONSTRAINT stats_key_key UNIQUE (key);
       `,
 		},
+		{
+			Version:     7,
+			Description: "Add API keys",
+			Script: `
+      ALTER TABLE users ADD COLUMN apikey UUID DEFAULT gen_random_uuid();
+      `,
+		},
 	}
 )
 
