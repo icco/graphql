@@ -71,6 +71,39 @@ var (
       );
       `,
 		},
+		{
+			Version:     5,
+			Description: "Add links table",
+			Script: `
+      CREATE EXTENSION pgcrypto;
+      CREATE TABLE links(
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        title text,
+        uri text,
+        created timestamp with time zone,
+        description text,
+        screenshot text,
+        tags text[],
+        created_at timestamp with time zone,
+        modified_at timestamp with time zone
+      );
+      `,
+		},
+		{
+			Version:     6,
+			Description: "Make things unique",
+			Script: `
+      ALTER TABLE links ADD CONSTRAINT links_uri_key UNIQUE (uri);
+      ALTER TABLE stats ADD CONSTRAINT stats_key_key UNIQUE (key);
+      `,
+		},
+		{
+			Version:     7,
+			Description: "Add API keys",
+			Script: `
+      ALTER TABLE users ADD COLUMN apikey UUID DEFAULT gen_random_uuid();
+      `,
+		},
 	}
 )
 

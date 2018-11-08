@@ -10,6 +10,8 @@ require (
 	github.com/go-chi/cors v1.0.0
 	github.com/gofrs/uuid v3.1.0+incompatible
 	github.com/gorilla/sessions v1.1.3
+	github.com/gorilla/websocket v1.4.0 // indirect
+	github.com/hashicorp/golang-lru v0.5.0 // indirect
 	github.com/lib/pq v1.0.0
 	github.com/opencensus-integrations/ocsql v0.1.1
 	github.com/russross/blackfriday v2.0.0+incompatible

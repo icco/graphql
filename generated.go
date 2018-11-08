@@ -56,7 +56,7 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		CreatePost func(childComplexity int, input NewPost) int
-		EditPost   func(childComplexity int, Id string, input NewPost) int
+		EditPost   func(childComplexity int, Id string, input EditedPost) int
 		UpsertLink func(childComplexity int, input NewLink) int
 		UpsertStat func(childComplexity int, input NewStat) int
 	}
@@ -95,7 +95,7 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	CreatePost(ctx context.Context, input NewPost) (Post, error)
-	EditPost(ctx context.Context, Id string, input NewPost) (Post, error)
+	EditPost(ctx context.Context, Id string, input EditedPost) (Post, error)
 	UpsertLink(ctx context.Context, input NewLink) (Link, error)
 	UpsertStat(ctx context.Context, input NewStat) (Stat, error)
 }
@@ -137,10 +137,10 @@ func field_Mutation_editPost_args(rawArgs map[string]interface{}) (map[string]in
 		}
 	}
 	args["Id"] = arg0
-	var arg1 NewPost
+	var arg1 EditedPost
 	if tmp, ok := rawArgs["input"]; ok {
 		var err error
-		arg1, err = UnmarshalNewPost(tmp)
+		arg1, err = UnmarshalEditedPost(tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -528,7 +528,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.EditPost(childComplexity, args["Id"].(string), args["input"].(NewPost)), true
+		return e.complexity.Mutation.EditPost(childComplexity, args["Id"].(string), args["input"].(EditedPost)), true
 
 	case "Mutation.upsertLink":
 		if e.complexity.Mutation.UpsertLink == nil {
@@ -1216,7 +1216,7 @@ func (ec *executionContext) _Mutation_editPost(ctx context.Context, field graphq
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().EditPost(rctx, args["Id"].(string), args["input"].(NewPost))
+		return ec.resolvers.Mutation().EditPost(rctx, args["Id"].(string), args["input"].(EditedPost))
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -3905,6 +3905,42 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 	return ec.___Type(ctx, field.Selections, res)
 }
 
+func UnmarshalEditedPost(v interface{}) (EditedPost, error) {
+	var it EditedPost
+	var asMap = v.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "content":
+			var err error
+			it.Content, err = graphql.UnmarshalString(v)
+			if err != nil {
+				return it, err
+			}
+		case "title":
+			var err error
+			it.Title, err = graphql.UnmarshalString(v)
+			if err != nil {
+				return it, err
+			}
+		case "datetime":
+			var err error
+			it.Datetime, err = graphql.UnmarshalTime(v)
+			if err != nil {
+				return it, err
+			}
+		case "draft":
+			var err error
+			it.Draft, err = graphql.UnmarshalBoolean(v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func UnmarshalNewLink(v interface{}) (NewLink, error) {
 	var it NewLink
 	var asMap = v.(map[string]interface{})
@@ -3939,13 +3975,9 @@ func UnmarshalNewLink(v interface{}) (NewLink, error) {
 					rawIf1 = []interface{}{v}
 				}
 			}
-			it.Tags = make([]*string, len(rawIf1))
+			it.Tags = make([]string, len(rawIf1))
 			for idx1 := range rawIf1 {
-				var ptr2 string
-				if rawIf1[idx1] != nil {
-					ptr2, err = graphql.UnmarshalString(rawIf1[idx1])
-					it.Tags[idx1] = &ptr2
-				}
+				it.Tags[idx1], err = graphql.UnmarshalString(rawIf1[idx1])
 			}
 			if err != nil {
 				return it, err
@@ -4171,11 +4203,18 @@ input NewPost {
   draft: Boolean!
 }
 
+input EditedPost {
+  content: String!
+  title: String!
+  datetime: Time!
+  draft: Boolean!
+}
+
 input NewLink {
   title: String!
   uri: URI!
   description: String!
-  tags: [String]!
+  tags: [String!]!
   created: Time
 }
 
@@ -4186,7 +4225,7 @@ input NewStat {
 
 type Mutation {
   createPost(input: NewPost!): Post! @hasRole(role: admin)
-  editPost(Id: ID!, input: NewPost!): Post! @hasRole(role: admin)
+  editPost(Id: ID!, input: EditedPost!): Post! @hasRole(role: admin)
   upsertLink(input: NewLink!): Link! @hasRole(role: admin)
   upsertStat(input: NewStat!): Stat! @hasRole(role: admin)
 }
