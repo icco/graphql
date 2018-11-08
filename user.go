@@ -11,6 +11,7 @@ import (
 type User struct {
 	ID       string
 	Role     string
+	APIKey   string
 	Created  time.Time
 	Modified time.Time
 }
@@ -36,8 +37,8 @@ func (u *User) Save(ctx context.Context) error {
 // create it.
 func GetUser(ctx context.Context, id string) (*User, error) {
 	var user User
-	row := db.QueryRowContext(ctx, "SELECT id, role, created_at, modified_at FROM users WHERE id = $1", id)
-	err := row.Scan(&user.ID, &user.Role, &user.Created, &user.Modified)
+	row := db.QueryRowContext(ctx, "SELECT id, role, apikey, created_at, modified_at FROM users WHERE id = $1", id)
+	err := row.Scan(&user.ID, &user.Role, &user.APIKey, &user.Created, &user.Modified)
 
 	switch {
 	case err == sql.ErrNoRows:
@@ -51,4 +52,16 @@ func GetUser(ctx context.Context, id string) (*User, error) {
 	default:
 		return &user, (&user).Save(ctx)
 	}
+}
+
+// GetUserByAPIKey returns a user from the database.
+func GetUserByAPIKey(ctx context.Context, apikey string) (*User, error) {
+	var user User
+	row := db.QueryRowContext(ctx, "SELECT id, role, apikey, created_at, modified_at FROM users WHERE apikey = $1", apikey)
+	err := row.Scan(&user.ID, &user.Role, &user.APIKey, &user.Created, &user.Modified)
+	if err != nil {
+		return nil, fmt.Errorf("Error running get query: %+v", err)
+	}
+
+	return &user, (&user).Save(ctx)
 }

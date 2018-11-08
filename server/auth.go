@@ -217,24 +217,41 @@ func ContextMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		session, err := SessionStore.Get(r, defaultSessionID)
 
+		apikey := ""
+		if len(r.Header["Authorization"]) > 0 {
+			apikey = r.Header["Authorization"][0]
+		}
+
 		// Allow unauthenticated users in
-		if err != nil || session == nil || session.Values[googleProfileSessionKey] == nil {
+		if err != nil || session == nil || (session.Values[googleProfileSessionKey] == nil && apikey == "") {
 			next.ServeHTTP(w, r)
 			return
 		}
 
-		// get the user from the database
-		profile := session.Values[googleProfileSessionKey].(*graphql.User)
-		if profile.ID != "" {
-			user, err := graphql.GetUser(r.Context(), profile.ID)
+		if apikey != "" {
+			user, err := graphql.GetUserByAPIKey(r.Context(), apikey)
 			if err != nil {
-				appErrorf(w, err, "could not upsert user: %v", err)
+				appErrorf(w, err, "could not get user by apikey: %v", err)
 				return
 			}
 
 			// put it in context
 			ctx := context.WithValue(r.Context(), graphql.UserCtxKey, user)
 			r = r.WithContext(ctx)
+		} else {
+			// get the user from the database
+			profile := session.Values[googleProfileSessionKey].(*graphql.User)
+			if profile.ID != "" {
+				user, err := graphql.GetUser(r.Context(), profile.ID)
+				if err != nil {
+					appErrorf(w, err, "could not upsert user: %v", err)
+					return
+				}
+
+				// put it in context
+				ctx := context.WithValue(r.Context(), graphql.UserCtxKey, user)
+				r = r.WithContext(ctx)
+			}
 		}
 
 		next.ServeHTTP(w, r)
