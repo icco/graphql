@@ -134,7 +134,12 @@ func (r *mutationResolver) UpsertLink(ctx context.Context, input NewLink) (Link,
 		return Link{}, err
 	}
 
-	return *l, nil
+	link, err := GetLink(ctx, l.URI)
+	if err != nil {
+		return Link{}, err
+	}
+
+	return *link, nil
 }
 
 func (r *mutationResolver) UpsertStat(ctx context.Context, input NewStat) (Stat, error) {
