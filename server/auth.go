@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/gob"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -42,7 +43,8 @@ func init() {
 func appErrorf(w http.ResponseWriter, err error, msg string, args ...interface{}) {
 	message := fmt.Sprintf(msg, args...)
 	log.Printf("%s: %+v", message, err)
-	http.Error(w, message, http.StatusInternalServerError)
+	j, _ := json.Marshal(map[string]string{"error": message})
+	http.Error(w, string(j), http.StatusInternalServerError)
 	return
 }
 
