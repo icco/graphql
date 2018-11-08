@@ -122,7 +122,7 @@ input NewStat {
 
 type Mutation {
   createPost(input: NewPost!): Post! @hasRole(role: admin)
-  editPost(Id: ID!, input: NewPost!): Post! @hasRole(role: admin)
+  editPost(Id: ID!, input: EditedPost!): Post! @hasRole(role: admin)
   upsertLink(input: NewLink!): Link! @hasRole(role: admin)
   upsertStat(input: NewStat!): Stat! @hasRole(role: admin)
 }
