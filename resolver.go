@@ -118,7 +118,23 @@ func (r *mutationResolver) EditPost(ctx context.Context, id string, input Edited
 }
 
 func (r *mutationResolver) UpsertLink(ctx context.Context, input NewLink) (Link, error) {
-	return Link{}, nil
+	l := &Link{}
+	l.Title = input.Title
+	l.Description = input.Description
+
+	if input.Created != nil {
+		l.Created = *input.Created
+	} else {
+		now := time.Now()
+		input.Created = &now
+	}
+
+	err := l.Save(ctx)
+	if err != nil {
+		return Link{}, err
+	}
+
+	return *l, nil
 }
 
 func (r *mutationResolver) UpsertStat(ctx context.Context, input NewStat) (Stat, error) {
