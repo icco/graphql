@@ -85,6 +85,7 @@ type ComplexityRoot struct {
 		Link       func(childComplexity int, id string) int
 		Stats      func(childComplexity int, count *int) int
 		PostsByTag func(childComplexity int, id string) int
+		Counts     func(childComplexity int) int
 	}
 
 	Stat struct {
@@ -109,6 +110,7 @@ type QueryResolver interface {
 	Link(ctx context.Context, id string) (*Link, error)
 	Stats(ctx context.Context, count *int) ([]*Stat, error)
 	PostsByTag(ctx context.Context, id string) ([]*Post, error)
+	Counts(ctx context.Context) ([]*Stat, error)
 }
 
 func field_Mutation_createPost_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
@@ -738,6 +740,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.PostsByTag(childComplexity, args["id"].(string)), true
+
+	case "Query.counts":
+		if e.complexity.Query.Counts == nil {
+			break
+		}
+
+		return e.complexity.Query.Counts(childComplexity), true
 
 	case "Stat.key":
 		if e.complexity.Stat.Key == nil {
@@ -1810,6 +1819,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				wg.Done()
 			}(i, field)
+		case "counts":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_counts(ctx, field)
+				if out.Values[i] == graphql.Null {
+					invalid = true
+				}
+				wg.Done()
+			}(i, field)
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
@@ -2302,6 +2320,70 @@ func (ec *executionContext) _Query_postsByTag(ctx context.Context, field graphql
 				}
 
 				return ec._Post(ctx, field.Selections, res[idx1])
+			}()
+		}
+		if isLen1 {
+			f(idx1)
+		} else {
+			go f(idx1)
+		}
+
+	}
+	wg.Wait()
+	return arr1
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Query_counts(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer ec.Tracer.EndFieldExecution(ctx)
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Counts(rctx)
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*Stat)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	arr1 := make(graphql.Array, len(res))
+	var wg sync.WaitGroup
+
+	isLen1 := len(res) == 1
+	if !isLen1 {
+		wg.Add(len(res))
+	}
+
+	for idx1 := range res {
+		idx1 := idx1
+		rctx := &graphql.ResolverContext{
+			Index:  &idx1,
+			Result: res[idx1],
+		}
+		ctx := graphql.WithResolverContext(ctx, rctx)
+		f := func(idx1 int) {
+			if !isLen1 {
+				defer wg.Done()
+			}
+			arr1[idx1] = func() graphql.Marshaler {
+
+				if res[idx1] == nil {
+					return graphql.Null
+				}
+
+				return ec._Stat(ctx, field.Selections, res[idx1])
 			}()
 		}
 		if isLen1 {
@@ -4135,6 +4217,9 @@ type Query {
 
   "Returns all posts that contain a tag."
   postsByTag(id: String!): [Post]!
+
+  "Returns counts of entries in the database."
+  counts(): [Stat]!
 }
 
 """

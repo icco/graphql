@@ -32,6 +32,9 @@ type Query {
 
   "Returns all posts that contain a tag."
   postsByTag(id: String!): [Post]!
+
+  "Returns counts of entries in the database."
+  counts(): [Stat]!
 }
 
 """

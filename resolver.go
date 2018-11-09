@@ -243,6 +243,26 @@ func (r *queryResolver) Stats(ctx context.Context, count *int) ([]*Stat, error) 
 	return stats, nil
 }
 
+func (r *queryResolver) Counts(ctx context.Context) ([]*Stat, error) {
+	stats := make([]*Stat, 0)
+	for _, table := range []string{
+		"stats",
+		"links",
+		"posts",
+	} {
+		stat := new(Stat)
+		stat.Key = table
+		err := db.QueryRowContext(ctx, fmt.Sprintf("SELECT count(*) FROM %s", table)).Scan(&stat.Value)
+		if err != nil {
+			return stats, err
+		}
+
+		stats = append(stats, stat)
+	}
+
+	return stats, nil
+}
+
 func (r *queryResolver) Links(ctx context.Context, limit *int, offset *int) ([]*Link, error) {
 	return GetLinks(ctx, limit, offset)
 }
