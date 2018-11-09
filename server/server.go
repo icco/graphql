@@ -2,13 +2,10 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"html/template"
-	"log"
 	"net/http"
 	"os"
-	"runtime/debug"
 
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	"contrib.go.opencensus.io/exporter/stackdriver/monitoredresource"
@@ -20,6 +17,7 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
 	"github.com/icco/graphql"
+	"github.com/sirupsen/logrus"
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
@@ -45,14 +43,25 @@ var (
 	})
 
 	dbURL = os.Getenv("DATABASE_URL")
+
+	log = &logrus.Logger{
+		Out:       os.Stderr,
+		Formatter: new(logrus.JSONFormatter),
+		Hooks:     make(logrus.LevelHooks),
+		Level:     logrus.DebugLevel,
+	}
 )
 
 func main() {
 	if dbURL == "" {
-		log.Panicf("DATABASE_URL is empty!")
+		log.Fatalf("DATABASE_URL is empty!")
 	}
 
-	graphql.InitDB(dbURL)
+	_, err := graphql.InitDB(dbURL)
+	if err != nil {
+		log.Fatalf("Init DB: %+v", err)
+	}
+
 	OAuthConfig = configureOAuthClient(
 		os.Getenv("OAUTH2_CLIENTID"),
 		os.Getenv("OAUTH2_SECRET"),
@@ -89,9 +98,30 @@ func main() {
 
 	r := chi.NewRouter()
 
+	// TODO: Add status code info
+	r.Use(func(next http.Handler) http.Handler {
+		fn := func(w http.ResponseWriter, r *http.Request) {
+
+			scheme := "http"
+			if r.TLS != nil {
+				scheme = "https"
+			}
+
+			reqData := map[string]interface{}{
+				"host":   r.Host,
+				"path":   r.RequestURI,
+				"proto":  r.Proto,
+				"ip":     r.RemoteAddr,
+				"scheme": scheme,
+			}
+			log.WithField("req", reqData).Info()
+
+			next.ServeHTTP(w, r)
+		}
+		return http.HandlerFunc(fn)
+	})
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
-	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(ContextMiddleware)
 
@@ -145,10 +175,12 @@ func main() {
 		r.Handle("/", handler.Playground("graphql", "/graphql"))
 		r.Handle("/graphql", handler.GraphQL(
 			graphql.NewExecutableSchema(graphql.New()),
-			handler.RecoverFunc(func(ctx context.Context, err interface{}) error {
-				log.Print(err)
-				debug.PrintStack()
-				return errors.New("Panic message seen when processing request")
+			handler.RecoverFunc(func(ctx context.Context, intErr interface{}) error {
+				err, ok := intErr.(error)
+				if ok {
+					log.WithError(err).Error("Error seen during graphql")
+				}
+				return errors.New("Fatal message seen when processing request")
 			}),
 			handler.CacheSize(512),
 			handler.RequestMiddleware(func(ctx context.Context, next func(ctx context.Context) []byte) []byte {
@@ -162,13 +194,7 @@ func main() {
 					"extensions": rctx.Extensions,
 				}
 
-				// We log in JSON to keep log in a single line.
-				data, err := json.Marshal(subsetContext)
-				if err != nil {
-					log.Printf("json logging error: %+v", err)
-				} else {
-					log.Printf("request gql: %s", data)
-				}
+				log.WithField("gql", subsetContext).Printf("request gql")
 
 				return next(ctx)
 			}),
@@ -210,7 +236,7 @@ func cronHandler(w http.ResponseWriter, r *http.Request) {
 				for _, p := range posts {
 					err = p.Save(ctx)
 					if err != nil {
-						log.Printf("Error saving: %+v", err)
+						log.WithError(err).Printf("Error saving post")
 					}
 				}
 			}

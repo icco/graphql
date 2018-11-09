@@ -3,7 +3,7 @@ package graphql
 import (
 	"context"
 	"database/sql"
-	"log"
+	"fmt"
 
 	"github.com/GuiaBolso/darwin"
 	"github.com/opencensus-integrations/ocsql"
@@ -108,18 +108,18 @@ var (
 )
 
 // InitDB creates a package global db connection from a database string.
-func InitDB(dataSourceName string) *sql.DB {
+func InitDB(dataSourceName string) (*sql.DB, error) {
 	var err error
 
 	// Connect to Database
 	wrappedDriver, err := ocsql.Register(driver, ocsql.WithAllTraceOptions())
 	if err != nil {
-		log.Fatalf("Failed to register the ocsql driver: %v", err)
+		return nil, fmt.Errorf("Failed to register the ocsql driver: %v", err)
 	}
 
 	db, _ = sql.Open(wrappedDriver, dataSourceName)
 	if err = db.PingContext(context.Background()); err != nil {
-		log.Panic(err)
+		return nil, err
 	}
 
 	// Migrate
@@ -127,9 +127,8 @@ func InitDB(dataSourceName string) *sql.DB {
 	d := darwin.New(driver, migrations, nil)
 	err = d.Migrate()
 	if err != nil {
-		log.Panic(err)
+		return nil, err
 	}
 
-	log.Printf("Connected to %+v", dataSourceName)
-	return db
+	return db, err
 }

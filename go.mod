@@ -16,6 +16,7 @@ require (
 	github.com/opencensus-integrations/ocsql v0.1.1
 	github.com/russross/blackfriday v2.0.0+incompatible
 	github.com/shurcooL/sanitized_anchor_name v0.0.0-20170918181015-86672fcb3f95 // indirect
+	github.com/sirupsen/logrus v1.2.0
 	github.com/vektah/gqlparser v0.0.0-20181002002754-f119686bf1d4
 	go.opencensus.io v0.18.0
 	golang.org/x/oauth2 v0.0.0-20181102170140-232e45548389
