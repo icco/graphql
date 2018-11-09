@@ -98,31 +98,10 @@ func main() {
 
 	r := chi.NewRouter()
 
-	// TODO: Add status code info
-	r.Use(func(next http.Handler) http.Handler {
-		fn := func(w http.ResponseWriter, r *http.Request) {
-
-			scheme := "http"
-			if r.TLS != nil {
-				scheme = "https"
-			}
-
-			reqData := map[string]interface{}{
-				"host":   r.Host,
-				"path":   r.RequestURI,
-				"proto":  r.Proto,
-				"ip":     r.RemoteAddr,
-				"scheme": scheme,
-			}
-			log.WithField("req", reqData).Info()
-
-			next.ServeHTTP(w, r)
-		}
-		return http.HandlerFunc(fn)
-	})
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Recoverer)
+	r.Use(NewStructuredLogger(log))
 	r.Use(ContextMiddleware)
 
 	r.Use(cors.New(cors.Options{
