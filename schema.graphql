@@ -35,6 +35,9 @@ type Query {
 
   "Returns counts of entries in the database."
   counts(): [Stat]!
+
+  "If logged in, returns a user."
+  whoami(): User
 }
 
 """
@@ -77,6 +80,18 @@ A stat is a key value pair of two interesting strings.
 type Stat {
   key: String!
   value: String!
+}
+
+
+"""
+A user is a logged in user.
+"""
+type User {
+	id: ID!
+	role: String!
+	apikey: String!
+	created: Time!
+	modified: Time!
 }
 
 """

@@ -263,6 +263,10 @@ func (r *queryResolver) Counts(ctx context.Context) ([]*Stat, error) {
 	return stats, nil
 }
 
+func (r *queryResolver) Whoami(ctx context.Context) (*User, error) {
+	return ForContext(ctx), nil
+}
+
 func (r *queryResolver) Links(ctx context.Context, limit *int, offset *int) ([]*Link, error) {
 	return GetLinks(ctx, limit, offset)
 }
