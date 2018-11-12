@@ -41,6 +41,9 @@ func (l *StructuredLogger) NewLogEntry(r *http.Request) middleware.LogEntry {
 	logFields["uri"] = fmt.Sprintf("%s://%s%s", scheme, r.Host, r.RequestURI)
 	logFields["ts"] = ts
 
+	// TODO: Get span id?
+	// https://github.com/census-instrumentation/opencensus-go/blob/master/trace/trace.go#L98
+
 	entry.Logger = entry.Logger.WithField("req", logFields)
 
 	entry.Logger.Infoln("request started")
