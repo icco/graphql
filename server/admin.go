@@ -33,6 +33,23 @@ func adminRouter() http.Handler {
 		})
 	})
 
+	r.Get("/edit/{post_id}", func(w http.ResponseWriter, r *http.Request) {
+		postID := chi.URLParam(r, "post_id")
+
+		post, err := graphql.GetPost(r.Context(), postID)
+		if err != nil {
+			log.Printf("Error editing post: %+v", err)
+			http.Error(w, err, http.StatusInternalServerError)
+			return
+		}
+
+		Renderer.HTML(w, http.StatusOK, "edit_post", &adminPageData{
+			Title:    fmt.Sprintf("Edit Post #%v", post.ID),
+			Post:     post,
+			Datetime: post.Datetime.Format(timeFormat),
+		})
+	})
+
 	r.Post("/post/new", func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		r.ParseForm()
