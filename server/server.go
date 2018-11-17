@@ -228,5 +228,7 @@ func cronHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func notFoundHandler(w http.ResponseWriter, r *http.Request) {
-	Renderer.HTML(w, http.StatusNotFound, "404", struct{ Title string }{Title: "404: This page could not be found"})
+	Renderer.JSON(w, http.StatusNotFound, map[string]string{
+		"error": "404: This page could not be found",
+	})
 }
