@@ -8,6 +8,12 @@
   <ul>
     <li><a href="/admin/post/new">New Post</a></li>
 
-    <li> TODO Add edit posts</li>
+    {{range .Drafts}}
+    <li>#{{.ID}} <a href="/post/{{.ID}}">{{.Title}}</a> - <a href="/admin/edit/{{.ID}}">edit</a></li>
+    {{end}}
+
+    {{range .Posts}}
+    <li>#{{.ID}} <a href="/post/{{.ID}}">{{.Title}}</a> - <a href="/admin/edit/{{.ID}}">edit</a></li>
+    {{end}}
   </ul>
 </div>

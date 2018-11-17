@@ -17,6 +17,7 @@ const (
 type adminPageData struct {
 	Title    string
 	Posts    []*graphql.Post
+	Drafts   []*graphql.Post
 	Post     *graphql.Post
 	Datetime string
 }
@@ -25,7 +26,24 @@ func adminRouter() http.Handler {
 	r := chi.NewRouter()
 	r.Use(AdminOnly)
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		Renderer.HTML(w, http.StatusOK, "admin", &adminPageData{Title: "Admin"})
+		posts, err := graphql.AllPosts(r.Context(), false)
+		if err != nil {
+			log.Printf("Error getting posts: %+v", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		drafts, err := graphql.AllPosts(r.Context(), true)
+		if err != nil {
+			log.Printf("Error getting drafts: %+v", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		Renderer.HTML(w, http.StatusOK, "admin", &adminPageData{
+			Title:  "Admin",
+			Posts:  posts,
+			Drafts: drafts,
+		})
 	})
 
 	r.Get("/post/new", func(w http.ResponseWriter, r *http.Request) {
