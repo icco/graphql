@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/go-chi/chi"
@@ -30,23 +32,6 @@ func adminRouter() http.Handler {
 		Renderer.HTML(w, http.StatusOK, "new_post", &adminPageData{
 			Title:    "New Post",
 			Datetime: time.Now().Format(timeFormat),
-		})
-	})
-
-	r.Get("/edit/{post_id}", func(w http.ResponseWriter, r *http.Request) {
-		postID := chi.URLParam(r, "post_id")
-
-		post, err := graphql.GetPost(r.Context(), postID)
-		if err != nil {
-			log.Printf("Error editing post: %+v", err)
-			http.Error(w, err, http.StatusInternalServerError)
-			return
-		}
-
-		Renderer.HTML(w, http.StatusOK, "edit_post", &adminPageData{
-			Title:    fmt.Sprintf("Edit Post #%v", post.ID),
-			Post:     post,
-			Datetime: post.Datetime.Format(timeFormat),
 		})
 	})
 
@@ -81,6 +66,74 @@ func adminRouter() http.Handler {
 		post := graphql.GeneratePost(r.Context(), title, text, datetime, []string{}, draft)
 		err = post.Save(r.Context())
 
+		if err != nil {
+			log.Printf("err: %+v", err)
+		}
+
+		http.Redirect(w, r, "/admin/", http.StatusFound)
+	})
+
+	r.Get("/edit/{post_id}", func(w http.ResponseWriter, r *http.Request) {
+		postID, err := strconv.ParseInt(chi.URLParam(r, "post_id"), 10, 64)
+		if err != nil {
+			log.Printf("Error parsing int: %+v", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		post, err := graphql.GetPost(r.Context(), postID)
+		if err != nil {
+			log.Printf("Error editing post: %+v", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		Renderer.HTML(w, http.StatusOK, "edit_post", &adminPageData{
+			Title:    fmt.Sprintf("Edit Post #%v", post.ID),
+			Post:     post,
+			Datetime: post.Datetime.Format(timeFormat),
+		})
+	})
+
+	r.Post("/edit/{post_id}", func(w http.ResponseWriter, r *http.Request) {
+		var err error
+		r.ParseForm()
+
+		postID, err := strconv.ParseInt(chi.URLParam(r, "post_id"), 10, 64)
+		if err != nil {
+			log.Printf("Error parsing int: %+v", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		post, err := graphql.GetPost(r.Context(), postID)
+		if err != nil {
+			log.Printf("Error editing post: %+v", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if len(r.Form["title"]) == 1 {
+			post.Title = r.Form["title"][0]
+		}
+
+		if len(r.Form["text"]) == 1 {
+			post.Content = r.Form["text"][0]
+		}
+
+		if len(r.Form["datetime"]) == 1 {
+			datetime, err := time.Parse(timeFormat, r.Form["datetime"][0])
+			if err != nil {
+				log.Printf("Error parsing time: %+v", err)
+				http.Error(w, "Error parsing time.", http.StatusInternalServerError)
+				return
+			}
+			post.Datetime = datetime
+		}
+
+		post.Draft = len(r.Form["draft"]) == 1 && r.Form["draft"][0] == "on"
+
+		err = post.Save(r.Context())
 		if err != nil {
 			log.Printf("err: %+v", err)
 		}
