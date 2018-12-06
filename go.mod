@@ -2,7 +2,7 @@ module github.com/icco/graphql
 
 require (
 	contrib.go.opencensus.io/exporter/stackdriver v0.8.0
-	github.com/99designs/gqlgen v0.4.5-0.20181116233900-d25e3b4b2ba6
+	github.com/99designs/gqlgen v0.7.1
 	github.com/99designs/gqlgen-contrib v0.0.0-20181109092810-8e77b02b5048
 	github.com/GuiaBolso/darwin v0.0.0-20170210191649-86919dfcf808
 	github.com/agnivade/levenshtein v1.0.1 // indirect
