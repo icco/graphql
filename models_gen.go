@@ -3,10 +3,10 @@
 package graphql
 
 import (
-	fmt "fmt"
-	io "io"
-	strconv "strconv"
-	time "time"
+	"fmt"
+	"io"
+	"strconv"
+	"time"
 )
 
 // Comment is an undefined type reserved for the future.
