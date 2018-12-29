@@ -17,7 +17,6 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
 	"github.com/icco/graphql"
-	"github.com/sirupsen/logrus"
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
@@ -44,12 +43,7 @@ var (
 
 	dbURL = os.Getenv("DATABASE_URL")
 
-	log = &logrus.Logger{
-		Out:       os.Stderr,
-		Formatter: new(logrus.JSONFormatter),
-		Hooks:     make(logrus.LevelHooks),
-		Level:     logrus.DebugLevel,
-	}
+	log = graphql.InitLogging()
 )
 
 func main() {
@@ -101,7 +95,7 @@ func main() {
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Recoverer)
-	r.Use(NewStructuredLogger(log))
+	r.Use(graphql.LoggingMiddleware())
 	r.Use(ContextMiddleware)
 
 	r.Use(cors.New(cors.Options{
