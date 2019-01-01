@@ -5,13 +5,18 @@
 
   <h2>Admin</h2>
 
+  <p>Welcome! Create content every day! Never stop iterating.</p>
+
   <ul>
+    <h3>Create!</h3>
     <li><a href="/admin/post/new">New Post</a></li>
 
+    <h3>Edit Drafts!</h3>
     {{range .Drafts}}
     <li>#{{.ID}} <a href="/post/{{.ID}}">{{.Title}}</a> - <a href="/admin/edit/{{.ID}}">edit</a></li>
     {{end}}
 
+    <h3>Published Posts</h3>
     {{range .Posts}}
     <li>#{{.ID}} <a href="/post/{{.ID}}">{{.Title}}</a> - <a href="/admin/edit/{{.ID}}">edit</a></li>
     {{end}}
