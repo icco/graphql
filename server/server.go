@@ -68,10 +68,12 @@ func main() {
 	log.Printf("Starting up on http://localhost:%s", port)
 
 	if os.Getenv("ENABLE_STACKDRIVER") != "" {
+		labels := &stackdriver.Labels{}
+		labels.Set("app", "graphql", "The name of the current app.")
 		sd, err := stackdriver.NewExporter(stackdriver.Options{
 			ProjectID:               "icco-cloud",
 			MonitoredResource:       monitoredresource.Autodetect(),
-			DefaultMonitoringLabels: &stackdriver.Labels{"app": "graphql"},
+			DefaultMonitoringLabels: labels,
 			DefaultTraceAttributes:  map[string]interface{}{"/http/host": "graphql.natwelch.com"},
 		})
 
