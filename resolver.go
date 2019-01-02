@@ -178,7 +178,7 @@ func (r *queryResolver) NextPost(ctx context.Context, id string) (*Post, error) 
 	err := row.Scan(&postID)
 	switch {
 	case err == sql.ErrNoRows:
-		return nil, sql.ErrNoRows
+		return nil, nil
 	case err != nil:
 		return nil, fmt.Errorf("Error running get query: %+v", err)
 	default:
@@ -196,7 +196,7 @@ func (r *queryResolver) PrevPost(ctx context.Context, id string) (*Post, error) 
 	err := row.Scan(&postID)
 	switch {
 	case err == sql.ErrNoRows:
-		return nil, sql.ErrNoRows
+		return nil, nil
 	case err != nil:
 		return nil, fmt.Errorf("Error running get query: %+v", err)
 	default:
