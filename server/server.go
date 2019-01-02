@@ -70,9 +70,8 @@ func main() {
 	if os.Getenv("ENABLE_STACKDRIVER") != "" {
 		sd, err := stackdriver.NewExporter(stackdriver.Options{
 			ProjectID:               "icco-cloud",
-			MetricPrefix:            "graphql",
 			MonitoredResource:       monitoredresource.Autodetect(),
-			DefaultMonitoringLabels: &stackdriver.Labels{},
+			DefaultMonitoringLabels: &stackdriver.Labels{"app": "graphql"},
 			DefaultTraceAttributes:  map[string]interface{}{"/http/host": "graphql.natwelch.com"},
 		})
 
