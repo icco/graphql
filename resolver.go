@@ -310,3 +310,7 @@ func (r *queryResolver) Tweets(ctx context.Context, limit *int, offset *int) ([]
 func (r *queryResolver) Tweet(ctx context.Context, id string) (*Tweet, error) {
 	return GetTweet(ctx, id)
 }
+
+func (r *queryResolver) TweetsByScreenName(ctx context.Context, screenName string, limit *int, offset *int) ([]*Tweet, error) {
+	return GetTweetsByScreenName(ctx, screenName, limit, offset)
+}

@@ -46,7 +46,7 @@ type Query {
   tweet(id: ID!): Tweet
 
   "Returns a user's tweets by screen name."
-  tweetsByScreenName(screen_name: String, limit: Int, offset: Int): [Tweet]!
+  tweetsByScreenName(screen_name: String!, limit: Int, offset: Int): [Tweet]!
 }
 
 """
