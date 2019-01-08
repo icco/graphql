@@ -103,7 +103,7 @@ func GetTweets(ctx context.Context, limitIn *int, offsetIn *int) ([]*Tweet, erro
 	return tweets, nil
 }
 
-// GetTweets returns an array of tweets from the database.
+// GetTweetsByScreenName returns an array of tweets from the database filtered by screenname.
 func GetTweetsByScreenName(ctx context.Context, screenName string, limitIn *int, offsetIn *int) ([]*Tweet, error) {
 	limit := 10
 	if limitIn != nil {
