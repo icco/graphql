@@ -148,7 +148,25 @@ func (r *mutationResolver) UpsertStat(ctx context.Context, input NewStat) (Stat,
 }
 
 func (r *mutationResolver) UpsertTweet(ctx context.Context, input NewTweet) (Tweet, error) {
-	return Tweet{}, fmt.Errorf("not implemented")
+	t := &Tweet{
+		FavoriteCount: input.FavoriteCount,
+		Hashtags:      input.Hashtags,
+		ID:            input.ID,
+		Posted:        input.Posted,
+		RetweetCount:  input.RetweetCount,
+		Symbols:       input.Symbols,
+		Text:          input.Text,
+		Urls:          input.Urls,
+		ScreenName:    input.ScreenName,
+		UserMentions:  input.UserMentions,
+	}
+
+	err := t.Save(ctx)
+	if err != nil {
+		return Tweet{}, err
+	}
+
+	return *t, nil
 }
 
 type queryResolver struct{ *Resolver }

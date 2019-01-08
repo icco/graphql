@@ -5218,12 +5218,7 @@ func UnmarshalNewTweet(v interface{}) (NewTweet, error) {
 		switch k {
 		case "favorite_count":
 			var err error
-			var ptr1 int
-			if v != nil {
-				ptr1, err = graphql.UnmarshalInt(v)
-				it.FavoriteCount = &ptr1
-			}
-
+			it.FavoriteCount, err = graphql.UnmarshalInt(v)
 			if err != nil {
 				return it, err
 			}
@@ -5258,12 +5253,7 @@ func UnmarshalNewTweet(v interface{}) (NewTweet, error) {
 			}
 		case "retweet_count":
 			var err error
-			var ptr1 int
-			if v != nil {
-				ptr1, err = graphql.UnmarshalInt(v)
-				it.RetweetCount = &ptr1
-			}
-
+			it.RetweetCount, err = graphql.UnmarshalInt(v)
 			if err != nil {
 				return it, err
 			}
@@ -5548,11 +5538,11 @@ input NewStat {
 }
 
 input NewTweet {
-  favorite_count: Int
+  favorite_count: Int!
   hashtags: [String!]
   id: ID!
   posted: Time!
-  retweet_count: Int
+  retweet_count: Int!
   symbols: [String!]
   text: String!
   urls: [URI!]

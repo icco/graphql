@@ -42,11 +42,11 @@ type NewStat struct {
 }
 
 type NewTweet struct {
-	FavoriteCount *int      `json:"favorite_count"`
+	FavoriteCount int       `json:"favorite_count"`
 	Hashtags      []string  `json:"hashtags"`
 	ID            string    `json:"id"`
 	Posted        time.Time `json:"posted"`
-	RetweetCount  *int      `json:"retweet_count"`
+	RetweetCount  int       `json:"retweet_count"`
 	Symbols       []string  `json:"symbols"`
 	Text          string    `json:"text"`
 	Urls          []string  `json:"urls"`

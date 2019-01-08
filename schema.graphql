@@ -162,11 +162,11 @@ input NewStat {
 }
 
 input NewTweet {
-  favorite_count: Int
+  favorite_count: Int!
   hashtags: [String!]
   id: ID!
   posted: Time!
-  retweet_count: Int
+  retweet_count: Int!
   symbols: [String!]
   text: String!
   urls: [URI!]
