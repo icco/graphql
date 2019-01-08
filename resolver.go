@@ -155,7 +155,7 @@ func (r *mutationResolver) UpsertTweet(ctx context.Context, input NewTweet) (Twe
 type queryResolver struct{ *Resolver }
 
 func (r *queryResolver) Drafts(ctx context.Context, limit *int, offset *int) ([]*Post, error) {
-	panic("not implemented")
+	return Drafts(ctx)
 }
 
 func (r *queryResolver) Posts(ctx context.Context, limit *int, offset *int) ([]*Post, error) {
