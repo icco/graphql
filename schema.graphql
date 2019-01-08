@@ -111,7 +111,7 @@ type Tweet {
   symbols: [String!]!
   user_mentions: [String!]!
   urls: [URI!]!
-  user: String!
+  screen_name: String!
   favorite_count: Int!
   retweet_count: Int!
   posted: Time!
@@ -170,7 +170,7 @@ input NewTweet {
   symbols: [String!]
   text: String!
   urls: [URI!]
-  user: String!
+  screen_name: String!
   user_mentions: [String!]
 }
 

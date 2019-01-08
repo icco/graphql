@@ -106,7 +106,7 @@ type ComplexityRoot struct {
 		Symbols       func(childComplexity int) int
 		UserMentions  func(childComplexity int) int
 		Urls          func(childComplexity int) int
-		User          func(childComplexity int) int
+		ScreenName    func(childComplexity int) int
 		FavoriteCount func(childComplexity int) int
 		RetweetCount  func(childComplexity int) int
 		Posted        func(childComplexity int) int
@@ -968,12 +968,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Tweet.Urls(childComplexity), true
 
-	case "Tweet.user":
-		if e.complexity.Tweet.User == nil {
+	case "Tweet.screen_name":
+		if e.complexity.Tweet.ScreenName == nil {
 			break
 		}
 
-		return e.complexity.Tweet.User(childComplexity), true
+		return e.complexity.Tweet.ScreenName(childComplexity), true
 
 	case "Tweet.favorite_count":
 		if e.complexity.Tweet.FavoriteCount == nil {
@@ -3089,8 +3089,8 @@ func (ec *executionContext) _Tweet(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				invalid = true
 			}
-		case "user":
-			out.Values[i] = ec._Tweet_user(ctx, field, obj)
+		case "screen_name":
+			out.Values[i] = ec._Tweet_screen_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalid = true
 			}
@@ -3319,7 +3319,7 @@ func (ec *executionContext) _Tweet_urls(ctx context.Context, field graphql.Colle
 }
 
 // nolint: vetshadow
-func (ec *executionContext) _Tweet_user(ctx context.Context, field graphql.CollectedField, obj *Tweet) graphql.Marshaler {
+func (ec *executionContext) _Tweet_screen_name(ctx context.Context, field graphql.CollectedField, obj *Tweet) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
@@ -3331,7 +3331,7 @@ func (ec *executionContext) _Tweet_user(ctx context.Context, field graphql.Colle
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.User, nil
+		return obj.ScreenName, nil
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -5307,9 +5307,9 @@ func UnmarshalNewTweet(v interface{}) (NewTweet, error) {
 			if err != nil {
 				return it, err
 			}
-		case "user":
+		case "screen_name":
 			var err error
-			it.User, err = graphql.UnmarshalString(v)
+			it.ScreenName, err = graphql.UnmarshalString(v)
 			if err != nil {
 				return it, err
 			}
@@ -5497,7 +5497,7 @@ type Tweet {
   symbols: [String!]!
   user_mentions: [String!]!
   urls: [URI!]!
-  user: String!
+  screen_name: String!
   favorite_count: Int!
   retweet_count: Int!
   posted: Time!
@@ -5556,7 +5556,7 @@ input NewTweet {
   symbols: [String!]
   text: String!
   urls: [URI!]
-  user: String!
+  screen_name: String!
   user_mentions: [String!]
 }
 

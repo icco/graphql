@@ -50,7 +50,7 @@ type NewTweet struct {
 	Symbols       []string  `json:"symbols"`
 	Text          string    `json:"text"`
 	Urls          []string  `json:"urls"`
-	User          string    `json:"user"`
+	ScreenName    string    `json:"screen_name"`
 	UserMentions  []string  `json:"user_mentions"`
 }
 

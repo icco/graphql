@@ -115,7 +115,7 @@ var (
         symbols text[],
         user_mentions text[],
         urls text[],
-        user text,
+        screen_name text,
         favorites bigint,
         retweets bigint,
         posted timestamp with time zone,

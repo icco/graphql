@@ -17,7 +17,7 @@ type Tweet struct {
 	Symbols       []string  `json:"symbols"`
 	UserMentions  []string  `json:"user_mentions"`
 	Urls          []string  `json:"urls"`
-	User          string    `json:"user"`
+	ScreenName    string    `json:"screen_name"`
 	FavoriteCount int       `json:"favorite_count"`
 	RetweetCount  int       `json:"retweet_count"`
 	Posted        time.Time `json:"posted"`
@@ -28,10 +28,10 @@ func (t *Tweet) Save(ctx context.Context) error {
 	if _, err := db.ExecContext(
 		ctx,
 		`
-INSERT INTO tweets(id, text, hashtags, symbols, user_mentions, urls, user, favorites, retweets, posted, created_at, modified_at)
+INSERT INTO tweets(id, text, hashtags, symbols, user_mentions, urls, screen_name, favorites, retweets, posted, created_at, modified_at)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $10)
 ON CONFLICT (id) DO UPDATE
-SET (text, hashtags, symbols, user_mentions, urls, user, favorites, retweets, posted, modified_at) = ($2, $3, $4, $5, $6, $7, $8, $9, $10)
+SET (text, hashtags, symbols, user_mentions, urls, screen_name, favorites, retweets, posted, modified_at) = ($2, $3, $4, $5, $6, $7, $8, $9, $10)
 WHERE tweets.id = $1;
 `,
 		t.ID,
@@ -40,7 +40,7 @@ WHERE tweets.id = $1;
 		pq.Array(t.Symbols),
 		pq.Array(t.UserMentions),
 		pq.Array(t.Urls),
-		t.User,
+		t.ScreenName,
 		t.FavoriteCount,
 		t.RetweetCount,
 		t.Posted,
@@ -54,8 +54,8 @@ WHERE tweets.id = $1;
 
 func GetTweet(ctx context.Context, id string) (*Tweet, error) {
 	var tweet Tweet
-	row := db.QueryRowContext(ctx, "SELECT id, text, hashtags, symbols, user_mentions, urls, user, favorites, retweets, posted FROM tweets WHERE id = $1", id)
-	err := row.Scan(&tweet.ID, &tweet.Text, pq.Array(&tweet.Hashtags), pq.Array(&tweet.Symbols), pq.Array(&tweet.UserMentions), pq.Array(&tweet.Urls), tweet.User, tweet.FavoriteCount, tweet.RetweetCount, tweet.Posted)
+	row := db.QueryRowContext(ctx, "SELECT id, text, hashtags, symbols, user_mentions, urls, screen_name, favorites, retweets, posted FROM tweets WHERE id = $1", id)
+	err := row.Scan(&tweet.ID, &tweet.Text, pq.Array(&tweet.Hashtags), pq.Array(&tweet.Symbols), pq.Array(&tweet.UserMentions), pq.Array(&tweet.Urls), tweet.ScreenName, tweet.FavoriteCount, tweet.RetweetCount, tweet.Posted)
 	switch {
 	case err == sql.ErrNoRows:
 		return nil, fmt.Errorf("No tweet %s", id)
@@ -77,7 +77,7 @@ func GetTweets(ctx context.Context, limitIn *int, offsetIn *int) ([]*Tweet, erro
 		offset = *offsetIn
 	}
 
-	rows, err := db.QueryContext(ctx, "SELECT id, text, hashtags, symbols, user_mentions, urls, user, favorites, retweets, posted FROM tweets ORDER BY modified_at DESC LIMIT $1 OFFSET $2", limit, offset)
+	rows, err := db.QueryContext(ctx, "SELECT id, text, hashtags, symbols, user_mentions, urls, screen_name, favorites, retweets, posted FROM tweets ORDER BY modified_at DESC LIMIT $1 OFFSET $2", limit, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +86,7 @@ func GetTweets(ctx context.Context, limitIn *int, offsetIn *int) ([]*Tweet, erro
 	tweets := make([]*Tweet, 0)
 	for rows.Next() {
 		tweet := new(Tweet)
-		err := rows.Scan(&tweet.ID, &tweet.Text, pq.Array(&tweet.Hashtags), pq.Array(&tweet.Symbols), pq.Array(&tweet.UserMentions), pq.Array(&tweet.Urls), tweet.User, tweet.FavoriteCount, tweet.RetweetCount, tweet.Posted)
+		err := rows.Scan(&tweet.ID, &tweet.Text, pq.Array(&tweet.Hashtags), pq.Array(&tweet.Symbols), pq.Array(&tweet.UserMentions), pq.Array(&tweet.Urls), tweet.ScreenName, tweet.FavoriteCount, tweet.RetweetCount, tweet.Posted)
 		if err != nil {
 			return nil, err
 		}
