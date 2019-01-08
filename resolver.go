@@ -149,7 +149,7 @@ func (r *mutationResolver) UpsertStat(ctx context.Context, input NewStat) (Stat,
 }
 
 func (r *mutationResolver) UpsertTweet(ctx context.Context, input NewTweet) (Tweet, error) {
-	panic("not implemented")
+	return Tweet{}, fmt.Errorf("not implemented")
 }
 
 type queryResolver struct{ *Resolver }
@@ -163,17 +163,7 @@ func (r *queryResolver) Posts(ctx context.Context, limit *int, offset *int) ([]*
 }
 
 func (r *queryResolver) Post(ctx context.Context, id string) (*Post, error) {
-	var post Post
-	row := db.QueryRowContext(ctx, "SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE id = $1", id)
-	err := row.Scan(&post.ID, &post.Title, &post.Content, &post.Datetime, &post.Created, &post.Modified, pq.Array(&post.Tags), &post.Draft)
-	switch {
-	case err == sql.ErrNoRows:
-		return nil, fmt.Errorf("No post with id %s", id)
-	case err != nil:
-		return nil, fmt.Errorf("Error running get query: %+v", err)
-	default:
-		return &post, nil
-	}
+	return GetPost(ctx, id)
 }
 
 func (r *queryResolver) NextPost(ctx context.Context, id string) (*Post, error) {
