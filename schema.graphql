@@ -38,6 +38,9 @@ type Query {
 
   "If logged in, returns a user."
   whoami: User
+
+  "Returns tweets in database."
+  tweets(limit: Int, offset: Int): [Tweet]!
 }
 
 """

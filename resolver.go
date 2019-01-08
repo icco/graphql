@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/lib/pq"
 )
 
 type key int
@@ -163,7 +162,12 @@ func (r *queryResolver) Posts(ctx context.Context, limit *int, offset *int) ([]*
 }
 
 func (r *queryResolver) Post(ctx context.Context, id string) (*Post, error) {
-	return GetPost(ctx, id)
+	i, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	return GetPost(ctx, i)
 }
 
 func (r *queryResolver) NextPost(ctx context.Context, id string) (*Post, error) {
@@ -279,4 +283,8 @@ func (r *queryResolver) Counts(ctx context.Context) ([]*Stat, error) {
 
 func (r *queryResolver) Whoami(ctx context.Context) (*User, error) {
 	return ForContext(ctx), nil
+}
+
+func (r *queryResolver) Tweets(ctx context.Context, limit *int, offset *int) ([]*Tweet, error) {
+	return GetTweets(ctx, limit, offset)
 }

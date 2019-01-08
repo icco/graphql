@@ -1,6 +1,7 @@
 package graphql
 
 import (
+	"context"
 	"time"
 )
 
@@ -16,4 +17,8 @@ type Tweet struct {
 	FavoriteCount int       `json:"favorite_count"`
 	RetweetCount  int       `json:"retweet_count"`
 	Posted        time.Time `json:"posted"`
+}
+
+func GetTweets(ctx context.Context, limit *int, offset *int) ([]*Tweet, error) {
+	return []*Tweet{}, nil
 }
