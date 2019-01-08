@@ -91,6 +91,7 @@ type ComplexityRoot struct {
 		Counts     func(childComplexity int) int
 		Whoami     func(childComplexity int) int
 		Tweets     func(childComplexity int, limit *int, offset *int) int
+		Tweet      func(childComplexity int, id string) int
 	}
 
 	Stat struct {
@@ -140,6 +141,7 @@ type QueryResolver interface {
 	Counts(ctx context.Context) ([]*Stat, error)
 	Whoami(ctx context.Context) (*User, error)
 	Tweets(ctx context.Context, limit *int, offset *int) ([]*Tweet, error)
+	Tweet(ctx context.Context, id string) (*Tweet, error)
 }
 
 func field_Mutation_createPost_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
@@ -472,6 +474,21 @@ func field_Query_tweets_args(rawArgs map[string]interface{}) (map[string]interfa
 		}
 	}
 	args["offset"] = arg1
+	return args, nil
+
+}
+
+func field_Query_tweet_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalID(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
 	return args, nil
 
 }
@@ -882,6 +899,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Tweets(childComplexity, args["limit"].(*int), args["offset"].(*int)), true
+
+	case "Query.tweet":
+		if e.complexity.Query.Tweet == nil {
+			break
+		}
+
+		args, err := field_Query_tweet_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Tweet(childComplexity, args["id"].(string)), true
 
 	case "Stat.key":
 		if e.complexity.Stat.Key == nil {
@@ -2154,6 +2183,12 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				wg.Done()
 			}(i, field)
+		case "tweet":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_tweet(ctx, field)
+				wg.Done()
+			}(i, field)
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
@@ -2820,6 +2855,41 @@ func (ec *executionContext) _Query_tweets(ctx context.Context, field graphql.Col
 	}
 	wg.Wait()
 	return arr1
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Query_tweet(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_tweet_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Tweet(rctx, args["id"].(string))
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*Tweet)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._Tweet(ctx, field.Selections, res)
 }
 
 // nolint: vetshadow
@@ -5357,6 +5427,9 @@ type Query {
 
   "Returns tweets in database."
   tweets(limit: Int, offset: Int): [Tweet]!
+
+  "Returns just one tweet."
+  tweet(id: ID!): Tweet
 }
 
 """

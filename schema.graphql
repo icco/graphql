@@ -41,6 +41,9 @@ type Query {
 
   "Returns tweets in database."
   tweets(limit: Int, offset: Int): [Tweet]!
+
+  "Returns just one tweet."
+  tweet(id: ID!): Tweet
 }
 
 """

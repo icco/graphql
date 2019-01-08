@@ -288,3 +288,7 @@ func (r *queryResolver) Whoami(ctx context.Context) (*User, error) {
 func (r *queryResolver) Tweets(ctx context.Context, limit *int, offset *int) ([]*Tweet, error) {
 	return GetTweets(ctx, limit, offset)
 }
+
+func (r *queryResolver) Tweet(ctx context.Context, id string) (*Tweet, error) {
+	return GetTweet(ctx, id)
+}

@@ -97,5 +97,6 @@ func GetLinks(ctx context.Context, limit *int, offset *int) ([]*Link, error) {
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
+
 	return links, nil
 }
