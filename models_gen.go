@@ -41,10 +41,37 @@ type NewStat struct {
 	Value string `json:"value"`
 }
 
+type NewTweet struct {
+	FavoriteCount *int      `json:"favorite_count"`
+	Hashtags      []string  `json:"hashtags"`
+	ID            string    `json:"id"`
+	Posted        time.Time `json:"posted"`
+	RetweetCount  *int      `json:"retweet_count"`
+	Symbols       []string  `json:"symbols"`
+	Text          string    `json:"text"`
+	Urls          []string  `json:"urls"`
+	User          string    `json:"user"`
+	UserMentions  []string  `json:"user_mentions"`
+}
+
 // A stat is a key value pair of two interesting strings.
 type Stat struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
+}
+
+// A Tweet is an archived tweet.
+type Tweet struct {
+	ID            string    `json:"id"`
+	Text          string    `json:"text"`
+	Hashtags      []string  `json:"hashtags"`
+	Symbols       []string  `json:"symbols"`
+	UserMentions  []string  `json:"user_mentions"`
+	Urls          []string  `json:"urls"`
+	User          string    `json:"user"`
+	FavoriteCount int       `json:"favorite_count"`
+	RetweetCount  int       `json:"retweet_count"`
+	Posted        time.Time `json:"posted"`
 }
 
 type Role string

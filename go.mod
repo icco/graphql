@@ -50,6 +50,7 @@ require (
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.3.0
 	github.com/stretchr/testify v1.3.0 // indirect
+	github.com/urfave/cli v1.20.0 // indirect
 	github.com/vektah/gqlparser v1.0.0
 	go.opencensus.io v0.18.0
 	golang.org/x/crypto v0.0.0-20190103213133-ff983b9c42bc // indirect
