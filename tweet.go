@@ -52,6 +52,7 @@ WHERE tweets.id = $1;
 	return nil
 }
 
+// GetTweet returns a single tweet by id.
 func GetTweet(ctx context.Context, id string) (*Tweet, error) {
 	var tweet Tweet
 	row := db.QueryRowContext(ctx, "SELECT id, text, hashtags, symbols, user_mentions, urls, screen_name, favorites, retweets, posted FROM tweets WHERE id = $1", id)
@@ -66,6 +67,7 @@ func GetTweet(ctx context.Context, id string) (*Tweet, error) {
 	}
 }
 
+// GetTweets returns an array of tweets from the database.
 func GetTweets(ctx context.Context, limitIn *int, offsetIn *int) ([]*Tweet, error) {
 	limit := 10
 	if limitIn != nil {

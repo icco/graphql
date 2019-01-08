@@ -128,9 +128,9 @@ func ParseTags(text string) ([]string, error) {
 			tag := strings.ToLower(v[2])
 
 			if alias, ok := tagAliases[tag]; ok {
-				tagMap[alias] += 1
+				tagMap[alias]++
 			}
-			tagMap[tag] += 1
+			tagMap[tag]++
 		}
 	}
 
