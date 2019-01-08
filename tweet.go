@@ -29,9 +29,9 @@ func (t *Tweet) Save(ctx context.Context) error {
 		ctx,
 		`
 INSERT INTO tweets(id, text, hashtags, symbols, user_mentions, urls, screen_name, favorites, retweets, posted, created_at, modified_at)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $10)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $11)
 ON CONFLICT (id) DO UPDATE
-SET (text, hashtags, symbols, user_mentions, urls, screen_name, favorites, retweets, posted, modified_at) = ($2, $3, $4, $5, $6, $7, $8, $9, $10)
+SET (text, hashtags, symbols, user_mentions, urls, screen_name, favorites, retweets, posted, modified_at) = ($2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 WHERE tweets.id = $1;
 `,
 		t.ID,
