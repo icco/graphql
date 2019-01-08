@@ -77,7 +77,7 @@ func GetTweets(ctx context.Context, limitIn *int, offsetIn *int) ([]*Tweet, erro
 		offset = *offsetIn
 	}
 
-	rows, err := db.QueryContext(ctx, "SELECT id, text, hashtags, symbols, user_mentions, urls, screen_name, favorites, retweets, posted FROM tweets ORDER BY modified_at DESC LIMIT $1 OFFSET $2", limit, offset)
+	rows, err := db.QueryContext(ctx, "SELECT id, text, hashtags, symbols, user_mentions, urls, screen_name, favorites, retweets, posted FROM tweets ORDER BY posted DESC LIMIT $1 OFFSET $2", limit, offset)
 	if err != nil {
 		return nil, err
 	}
