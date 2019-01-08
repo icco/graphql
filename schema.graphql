@@ -24,8 +24,8 @@ type Query {
   "Returns a subset of all links ever, in reverse chronological order, using provided limit and offset."
   links(limit: Int, offset: Int): [Link]!
 
-  "Returns a single link by id."
-  link(id: ID!): Link
+  "Returns a single link by id or url."
+  link(id: ID, url: URI): Link
 
   "Returns a number of stats, ordered by most recently updated."
   stats(count: Int): [Stat]!
@@ -38,6 +38,12 @@ type Query {
 
   "If logged in, returns a user."
   whoami: User
+
+  "Returns tweets in database."
+  tweets(limit: Int, offset: Int): [Tweet]!
+
+  "Returns just one tweet."
+  tweet(id: ID!): Tweet
 }
 
 """
@@ -72,6 +78,7 @@ type Link {
   description: String!
   screenshot: URI!
   tags: [String!]!
+	modified: Time!
 }
 
 """
@@ -92,6 +99,22 @@ type User {
 	apikey: String!
 	created: Time!
 	modified: Time!
+}
+
+"""
+A Tweet is an archived tweet.
+"""
+type Tweet {
+  id: ID!
+  text: String!
+  hashtags: [String!]!
+  symbols: [String!]!
+  user_mentions: [String!]!
+  urls: [URI!]!
+  screen_name: String!
+  favorite_count: Int!
+  retweet_count: Int!
+  posted: Time!
 }
 
 """
@@ -138,11 +161,25 @@ input NewStat {
   value: String!
 }
 
+input NewTweet {
+  favorite_count: Int!
+  hashtags: [String!]
+  id: ID!
+  posted: Time!
+  retweet_count: Int!
+  symbols: [String!]
+  text: String!
+  urls: [URI!]
+  screen_name: String!
+  user_mentions: [String!]
+}
+
 type Mutation {
   createPost(input: NewPost!): Post! @hasRole(role: admin)
   editPost(Id: ID!, input: EditedPost!): Post! @hasRole(role: admin)
   upsertLink(input: NewLink!): Link! @hasRole(role: admin)
   upsertStat(input: NewStat!): Stat! @hasRole(role: admin)
+  upsertTweet(input: NewTweet!): Tweet! @hasRole(role: admin)
 }
 
 directive @hasRole(role: Role!) on FIELD_DEFINITION

@@ -17,6 +17,7 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
 	"github.com/icco/graphql"
+	sdLogging "github.com/icco/logrus-stackdriver-formatter"
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
@@ -96,7 +97,7 @@ func main() {
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Recoverer)
-	r.Use(graphql.LoggingMiddleware())
+	r.Use(sdLogging.LoggingMiddleware(log))
 	r.Use(ContextMiddleware)
 
 	r.Use(cors.New(cors.Options{

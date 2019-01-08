@@ -1,4 +1,4 @@
-//go:generate gorunpkg github.com/99designs/gqlgen
+//go:generate go run ./scripts/gqlgen.go
 
 package graphql
 
@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/lib/pq"
 )
 
 type key int
@@ -41,7 +40,7 @@ func New() Config {
 		u := ForContext(ctx)
 		if u == nil || Role(u.Role) != role {
 			// block calling the next resolver
-			return nil, fmt.Errorf("Forbidden")
+			return nil, fmt.Errorf("forbidden")
 		}
 
 		// or let it pass through
@@ -136,7 +135,7 @@ func (r *mutationResolver) UpsertLink(ctx context.Context, input NewLink) (Link,
 		return Link{}, err
 	}
 
-	link, err := GetLink(ctx, l.URI)
+	link, err := GetLinkByURI(ctx, l.URI)
 	if err != nil {
 		return Link{}, err
 	}
@@ -148,28 +147,45 @@ func (r *mutationResolver) UpsertStat(ctx context.Context, input NewStat) (Stat,
 	return Stat{}, fmt.Errorf("not implemented")
 }
 
+func (r *mutationResolver) UpsertTweet(ctx context.Context, input NewTweet) (Tweet, error) {
+	t := &Tweet{
+		FavoriteCount: input.FavoriteCount,
+		Hashtags:      input.Hashtags,
+		ID:            input.ID,
+		Posted:        input.Posted,
+		RetweetCount:  input.RetweetCount,
+		Symbols:       input.Symbols,
+		Text:          input.Text,
+		Urls:          input.Urls,
+		ScreenName:    input.ScreenName,
+		UserMentions:  input.UserMentions,
+	}
+
+	err := t.Save(ctx)
+	if err != nil {
+		return Tweet{}, err
+	}
+
+	return *t, nil
+}
+
 type queryResolver struct{ *Resolver }
+
+func (r *queryResolver) Drafts(ctx context.Context, limit *int, offset *int) ([]*Post, error) {
+	return Drafts(ctx)
+}
 
 func (r *queryResolver) Posts(ctx context.Context, limit *int, offset *int) ([]*Post, error) {
 	return Posts(ctx, limit, offset)
 }
 
-func (r *queryResolver) PostsByTag(ctx context.Context, tag string) ([]*Post, error) {
-	return PostsByTag(ctx, tag)
-}
-
 func (r *queryResolver) Post(ctx context.Context, id string) (*Post, error) {
-	var post Post
-	row := db.QueryRowContext(ctx, "SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE id = $1", id)
-	err := row.Scan(&post.ID, &post.Title, &post.Content, &post.Datetime, &post.Created, &post.Modified, pq.Array(&post.Tags), &post.Draft)
-	switch {
-	case err == sql.ErrNoRows:
-		return nil, fmt.Errorf("No post with id %s", id)
-	case err != nil:
-		return nil, fmt.Errorf("Error running get query: %+v", err)
-	default:
-		return &post, nil
+	i, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return nil, err
 	}
+
+	return GetPost(ctx, i)
 }
 
 func (r *queryResolver) NextPost(ctx context.Context, id string) (*Post, error) {
@@ -180,7 +196,7 @@ func (r *queryResolver) NextPost(ctx context.Context, id string) (*Post, error) 
 	case err == sql.ErrNoRows:
 		return nil, nil
 	case err != nil:
-		return nil, fmt.Errorf("Error running get query: %+v", err)
+		return nil, err
 	default:
 		i, err := strconv.ParseInt(postID, 10, 64)
 		if err != nil {
@@ -198,7 +214,7 @@ func (r *queryResolver) PrevPost(ctx context.Context, id string) (*Post, error) 
 	case err == sql.ErrNoRows:
 		return nil, nil
 	case err != nil:
-		return nil, fmt.Errorf("Error running get query: %+v", err)
+		return nil, err
 	default:
 		i, err := strconv.ParseInt(postID, 10, 64)
 		if err != nil {
@@ -208,8 +224,24 @@ func (r *queryResolver) PrevPost(ctx context.Context, id string) (*Post, error) 
 	}
 }
 
-func (r *queryResolver) Drafts(ctx context.Context, limit *int, offset *int) ([]*Post, error) {
-	panic("not implemented")
+func (r *queryResolver) Links(ctx context.Context, limit *int, offset *int) ([]*Link, error) {
+	return GetLinks(ctx, limit, offset)
+}
+
+func (r *queryResolver) Link(ctx context.Context, id *string, url *string) (*Link, error) {
+	if id != nil && url != nil {
+		return nil, fmt.Errorf("do not specify an ID and a URI in input")
+	}
+
+	if id != nil {
+		return GetLinkByID(ctx, *id)
+	}
+
+	if url != nil {
+		return GetLinkByURI(ctx, *url)
+	}
+
+	return nil, fmt.Errorf("not valid input")
 }
 
 func (r *queryResolver) Stats(ctx context.Context, count *int) ([]*Stat, error) {
@@ -243,6 +275,10 @@ func (r *queryResolver) Stats(ctx context.Context, count *int) ([]*Stat, error) 
 	return stats, nil
 }
 
+func (r *queryResolver) PostsByTag(ctx context.Context, tag string) ([]*Post, error) {
+	return PostsByTag(ctx, tag)
+}
+
 func (r *queryResolver) Counts(ctx context.Context) ([]*Stat, error) {
 	stats := make([]*Stat, 0)
 	for _, table := range []string{
@@ -267,10 +303,10 @@ func (r *queryResolver) Whoami(ctx context.Context) (*User, error) {
 	return ForContext(ctx), nil
 }
 
-func (r *queryResolver) Links(ctx context.Context, limit *int, offset *int) ([]*Link, error) {
-	return GetLinks(ctx, limit, offset)
+func (r *queryResolver) Tweets(ctx context.Context, limit *int, offset *int) ([]*Tweet, error) {
+	return GetTweets(ctx, limit, offset)
 }
 
-func (r *queryResolver) Link(ctx context.Context, id string) (*Link, error) {
-	return nil, fmt.Errorf("not implemented")
+func (r *queryResolver) Tweet(ctx context.Context, id string) (*Tweet, error) {
+	return GetTweet(ctx, id)
 }

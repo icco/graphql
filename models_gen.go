@@ -41,6 +41,19 @@ type NewStat struct {
 	Value string `json:"value"`
 }
 
+type NewTweet struct {
+	FavoriteCount int       `json:"favorite_count"`
+	Hashtags      []string  `json:"hashtags"`
+	ID            string    `json:"id"`
+	Posted        time.Time `json:"posted"`
+	RetweetCount  int       `json:"retweet_count"`
+	Symbols       []string  `json:"symbols"`
+	Text          string    `json:"text"`
+	Urls          []string  `json:"urls"`
+	ScreenName    string    `json:"screen_name"`
+	UserMentions  []string  `json:"user_mentions"`
+}
+
 // A stat is a key value pair of two interesting strings.
 type Stat struct {
 	Key   string `json:"key"`

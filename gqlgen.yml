@@ -18,3 +18,5 @@ models:
     model: github.com/icco/graphql.User
   Link:
     model: github.com/icco/graphql.Link
+  Tweet:
+    model: github.com/icco/graphql.Tweet

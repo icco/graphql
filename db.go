@@ -104,6 +104,26 @@ var (
       ALTER TABLE users ADD COLUMN apikey UUID DEFAULT gen_random_uuid();
       `,
 		},
+		{
+			Version:     8,
+			Description: "Add tweets table",
+			Script: `
+      CREATE TABLE tweets(
+        id text PRIMARY KEY NOT NULL,
+        text text,
+        hashtags text[],
+        symbols text[],
+        user_mentions text[],
+        urls text[],
+        screen_name text,
+        favorites bigint,
+        retweets bigint,
+        posted timestamp with time zone,
+        created_at timestamp with time zone,
+        modified_at timestamp with time zone
+      );
+      `,
+		},
 	}
 )
 

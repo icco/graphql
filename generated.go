@@ -53,13 +53,15 @@ type ComplexityRoot struct {
 		Description func(childComplexity int) int
 		Screenshot  func(childComplexity int) int
 		Tags        func(childComplexity int) int
+		Modified    func(childComplexity int) int
 	}
 
 	Mutation struct {
-		CreatePost func(childComplexity int, input NewPost) int
-		EditPost   func(childComplexity int, Id string, input EditedPost) int
-		UpsertLink func(childComplexity int, input NewLink) int
-		UpsertStat func(childComplexity int, input NewStat) int
+		CreatePost  func(childComplexity int, input NewPost) int
+		EditPost    func(childComplexity int, Id string, input EditedPost) int
+		UpsertLink  func(childComplexity int, input NewLink) int
+		UpsertStat  func(childComplexity int, input NewStat) int
+		UpsertTweet func(childComplexity int, input NewTweet) int
 	}
 
 	Post struct {
@@ -83,16 +85,31 @@ type ComplexityRoot struct {
 		NextPost   func(childComplexity int, id string) int
 		PrevPost   func(childComplexity int, id string) int
 		Links      func(childComplexity int, limit *int, offset *int) int
-		Link       func(childComplexity int, id string) int
+		Link       func(childComplexity int, id *string, url *string) int
 		Stats      func(childComplexity int, count *int) int
 		PostsByTag func(childComplexity int, id string) int
 		Counts     func(childComplexity int) int
 		Whoami     func(childComplexity int) int
+		Tweets     func(childComplexity int, limit *int, offset *int) int
+		Tweet      func(childComplexity int, id string) int
 	}
 
 	Stat struct {
 		Key   func(childComplexity int) int
 		Value func(childComplexity int) int
+	}
+
+	Tweet struct {
+		Id            func(childComplexity int) int
+		Text          func(childComplexity int) int
+		Hashtags      func(childComplexity int) int
+		Symbols       func(childComplexity int) int
+		UserMentions  func(childComplexity int) int
+		Urls          func(childComplexity int) int
+		ScreenName    func(childComplexity int) int
+		FavoriteCount func(childComplexity int) int
+		RetweetCount  func(childComplexity int) int
+		Posted        func(childComplexity int) int
 	}
 
 	User struct {
@@ -109,6 +126,7 @@ type MutationResolver interface {
 	EditPost(ctx context.Context, Id string, input EditedPost) (Post, error)
 	UpsertLink(ctx context.Context, input NewLink) (Link, error)
 	UpsertStat(ctx context.Context, input NewStat) (Stat, error)
+	UpsertTweet(ctx context.Context, input NewTweet) (Tweet, error)
 }
 type QueryResolver interface {
 	Drafts(ctx context.Context, limit *int, offset *int) ([]*Post, error)
@@ -117,11 +135,13 @@ type QueryResolver interface {
 	NextPost(ctx context.Context, id string) (*Post, error)
 	PrevPost(ctx context.Context, id string) (*Post, error)
 	Links(ctx context.Context, limit *int, offset *int) ([]*Link, error)
-	Link(ctx context.Context, id string) (*Link, error)
+	Link(ctx context.Context, id *string, url *string) (*Link, error)
 	Stats(ctx context.Context, count *int) ([]*Stat, error)
 	PostsByTag(ctx context.Context, id string) ([]*Post, error)
 	Counts(ctx context.Context) ([]*Stat, error)
 	Whoami(ctx context.Context) (*User, error)
+	Tweets(ctx context.Context, limit *int, offset *int) ([]*Tweet, error)
+	Tweet(ctx context.Context, id string) (*Tweet, error)
 }
 
 func field_Mutation_createPost_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
@@ -184,6 +204,21 @@ func field_Mutation_upsertStat_args(rawArgs map[string]interface{}) (map[string]
 	if tmp, ok := rawArgs["input"]; ok {
 		var err error
 		arg0, err = UnmarshalNewStat(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+
+}
+
+func field_Mutation_upsertTweet_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 NewTweet
+	if tmp, ok := rawArgs["input"]; ok {
+		var err error
+		arg0, err = UnmarshalNewTweet(tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -342,15 +377,34 @@ func field_Query_links_args(rawArgs map[string]interface{}) (map[string]interfac
 
 func field_Query_link_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	args := map[string]interface{}{}
-	var arg0 string
+	var arg0 *string
 	if tmp, ok := rawArgs["id"]; ok {
 		var err error
-		arg0, err = graphql.UnmarshalID(tmp)
+		var ptr1 string
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalID(tmp)
+			arg0 = &ptr1
+		}
+
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["id"] = arg0
+	var arg1 *string
+	if tmp, ok := rawArgs["url"]; ok {
+		var err error
+		var ptr1 string
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalString(tmp)
+			arg1 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["url"] = arg1
 	return args, nil
 
 }
@@ -381,6 +435,55 @@ func field_Query_postsByTag_args(rawArgs map[string]interface{}) (map[string]int
 	if tmp, ok := rawArgs["id"]; ok {
 		var err error
 		arg0, err = graphql.UnmarshalString(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+
+}
+
+func field_Query_tweets_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 *int
+	if tmp, ok := rawArgs["limit"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg0 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["limit"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["offset"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg1 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["offset"] = arg1
+	return args, nil
+
+}
+
+func field_Query_tweet_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalID(tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -519,6 +622,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Link.Tags(childComplexity), true
 
+	case "Link.modified":
+		if e.complexity.Link.Modified == nil {
+			break
+		}
+
+		return e.complexity.Link.Modified(childComplexity), true
+
 	case "Mutation.createPost":
 		if e.complexity.Mutation.CreatePost == nil {
 			break
@@ -566,6 +676,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpsertStat(childComplexity, args["input"].(NewStat)), true
+
+	case "Mutation.upsertTweet":
+		if e.complexity.Mutation.UpsertTweet == nil {
+			break
+		}
+
+		args, err := field_Mutation_upsertTweet_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpsertTweet(childComplexity, args["input"].(NewTweet)), true
 
 	case "Post.id":
 		if e.complexity.Post.Id == nil {
@@ -726,7 +848,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Link(childComplexity, args["id"].(string)), true
+		return e.complexity.Query.Link(childComplexity, args["id"].(*string), args["url"].(*string)), true
 
 	case "Query.stats":
 		if e.complexity.Query.Stats == nil {
@@ -766,6 +888,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Whoami(childComplexity), true
 
+	case "Query.tweets":
+		if e.complexity.Query.Tweets == nil {
+			break
+		}
+
+		args, err := field_Query_tweets_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Tweets(childComplexity, args["limit"].(*int), args["offset"].(*int)), true
+
+	case "Query.tweet":
+		if e.complexity.Query.Tweet == nil {
+			break
+		}
+
+		args, err := field_Query_tweet_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Tweet(childComplexity, args["id"].(string)), true
+
 	case "Stat.key":
 		if e.complexity.Stat.Key == nil {
 			break
@@ -779,6 +925,76 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Stat.Value(childComplexity), true
+
+	case "Tweet.id":
+		if e.complexity.Tweet.Id == nil {
+			break
+		}
+
+		return e.complexity.Tweet.Id(childComplexity), true
+
+	case "Tweet.text":
+		if e.complexity.Tweet.Text == nil {
+			break
+		}
+
+		return e.complexity.Tweet.Text(childComplexity), true
+
+	case "Tweet.hashtags":
+		if e.complexity.Tweet.Hashtags == nil {
+			break
+		}
+
+		return e.complexity.Tweet.Hashtags(childComplexity), true
+
+	case "Tweet.symbols":
+		if e.complexity.Tweet.Symbols == nil {
+			break
+		}
+
+		return e.complexity.Tweet.Symbols(childComplexity), true
+
+	case "Tweet.user_mentions":
+		if e.complexity.Tweet.UserMentions == nil {
+			break
+		}
+
+		return e.complexity.Tweet.UserMentions(childComplexity), true
+
+	case "Tweet.urls":
+		if e.complexity.Tweet.Urls == nil {
+			break
+		}
+
+		return e.complexity.Tweet.Urls(childComplexity), true
+
+	case "Tweet.screen_name":
+		if e.complexity.Tweet.ScreenName == nil {
+			break
+		}
+
+		return e.complexity.Tweet.ScreenName(childComplexity), true
+
+	case "Tweet.favorite_count":
+		if e.complexity.Tweet.FavoriteCount == nil {
+			break
+		}
+
+		return e.complexity.Tweet.FavoriteCount(childComplexity), true
+
+	case "Tweet.retweet_count":
+		if e.complexity.Tweet.RetweetCount == nil {
+			break
+		}
+
+		return e.complexity.Tweet.RetweetCount(childComplexity), true
+
+	case "Tweet.posted":
+		if e.complexity.Tweet.Posted == nil {
+			break
+		}
+
+		return e.complexity.Tweet.Posted(childComplexity), true
 
 	case "User.id":
 		if e.complexity.User.Id == nil {
@@ -964,6 +1180,11 @@ func (ec *executionContext) _Link(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "tags":
 			out.Values[i] = ec._Link_tags(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "modified":
+			out.Values[i] = ec._Link_modified(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalid = true
 			}
@@ -1176,6 +1397,33 @@ func (ec *executionContext) _Link_tags(ctx context.Context, field graphql.Collec
 	return arr1
 }
 
+// nolint: vetshadow
+func (ec *executionContext) _Link_modified(ctx context.Context, field graphql.CollectedField, obj *Link) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Link",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Modified, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return graphql.MarshalTime(res)
+}
+
 var mutationImplementors = []string{"Mutation"}
 
 // nolint: gocyclo, errcheck, gas, goconst
@@ -1211,6 +1459,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "upsertStat":
 			out.Values[i] = ec._Mutation_upsertStat(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "upsertTweet":
+			out.Values[i] = ec._Mutation_upsertTweet(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalid = true
 			}
@@ -1359,6 +1612,40 @@ func (ec *executionContext) _Mutation_upsertStat(ctx context.Context, field grap
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 
 	return ec._Stat(ctx, field.Selections, &res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Mutation_upsertTweet(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Mutation_upsertTweet_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Mutation",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpsertTweet(rctx, args["input"].(NewTweet))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(Tweet)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	return ec._Tweet(ctx, field.Selections, &res)
 }
 
 var postImplementors = []string{"Post"}
@@ -1887,6 +2174,21 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				out.Values[i] = ec._Query_whoami(ctx, field)
 				wg.Done()
 			}(i, field)
+		case "tweets":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_tweets(ctx, field)
+				if out.Values[i] == graphql.Null {
+					invalid = true
+				}
+				wg.Done()
+			}(i, field)
+		case "tweet":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_tweet(ctx, field)
+				wg.Done()
+			}(i, field)
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
@@ -2236,7 +2538,7 @@ func (ec *executionContext) _Query_link(ctx context.Context, field graphql.Colle
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Link(rctx, args["id"].(string))
+		return ec.resolvers.Query().Link(rctx, args["id"].(*string), args["url"].(*string))
 	})
 	if resTmp == nil {
 		return graphql.Null
@@ -2486,6 +2788,111 @@ func (ec *executionContext) _Query_whoami(ctx context.Context, field graphql.Col
 }
 
 // nolint: vetshadow
+func (ec *executionContext) _Query_tweets(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_tweets_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Tweets(rctx, args["limit"].(*int), args["offset"].(*int))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*Tweet)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	arr1 := make(graphql.Array, len(res))
+	var wg sync.WaitGroup
+
+	isLen1 := len(res) == 1
+	if !isLen1 {
+		wg.Add(len(res))
+	}
+
+	for idx1 := range res {
+		idx1 := idx1
+		rctx := &graphql.ResolverContext{
+			Index:  &idx1,
+			Result: res[idx1],
+		}
+		ctx := graphql.WithResolverContext(ctx, rctx)
+		f := func(idx1 int) {
+			if !isLen1 {
+				defer wg.Done()
+			}
+			arr1[idx1] = func() graphql.Marshaler {
+
+				if res[idx1] == nil {
+					return graphql.Null
+				}
+
+				return ec._Tweet(ctx, field.Selections, res[idx1])
+			}()
+		}
+		if isLen1 {
+			f(idx1)
+		} else {
+			go f(idx1)
+		}
+
+	}
+	wg.Wait()
+	return arr1
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Query_tweet(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_tweet_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Tweet(rctx, args["id"].(string))
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*Tweet)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._Tweet(ctx, field.Selections, res)
+}
+
+// nolint: vetshadow
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
@@ -2636,6 +3043,387 @@ func (ec *executionContext) _Stat_value(ctx context.Context, field graphql.Colle
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return graphql.MarshalString(res)
+}
+
+var tweetImplementors = []string{"Tweet"}
+
+// nolint: gocyclo, errcheck, gas, goconst
+func (ec *executionContext) _Tweet(ctx context.Context, sel ast.SelectionSet, obj *Tweet) graphql.Marshaler {
+	fields := graphql.CollectFields(ctx, sel, tweetImplementors)
+
+	out := graphql.NewOrderedMap(len(fields))
+	invalid := false
+	for i, field := range fields {
+		out.Keys[i] = field.Alias
+
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Tweet")
+		case "id":
+			out.Values[i] = ec._Tweet_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "text":
+			out.Values[i] = ec._Tweet_text(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "hashtags":
+			out.Values[i] = ec._Tweet_hashtags(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "symbols":
+			out.Values[i] = ec._Tweet_symbols(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "user_mentions":
+			out.Values[i] = ec._Tweet_user_mentions(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "urls":
+			out.Values[i] = ec._Tweet_urls(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "screen_name":
+			out.Values[i] = ec._Tweet_screen_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "favorite_count":
+			out.Values[i] = ec._Tweet_favorite_count(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "retweet_count":
+			out.Values[i] = ec._Tweet_retweet_count(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "posted":
+			out.Values[i] = ec._Tweet_posted(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+
+	if invalid {
+		return graphql.Null
+	}
+	return out
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Tweet_id(ctx context.Context, field graphql.CollectedField, obj *Tweet) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Tweet",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return graphql.MarshalID(res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Tweet_text(ctx context.Context, field graphql.CollectedField, obj *Tweet) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Tweet",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Text, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return graphql.MarshalString(res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Tweet_hashtags(ctx context.Context, field graphql.CollectedField, obj *Tweet) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Tweet",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Hashtags, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	arr1 := make(graphql.Array, len(res))
+
+	for idx1 := range res {
+		arr1[idx1] = func() graphql.Marshaler {
+			return graphql.MarshalString(res[idx1])
+		}()
+	}
+
+	return arr1
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Tweet_symbols(ctx context.Context, field graphql.CollectedField, obj *Tweet) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Tweet",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Symbols, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	arr1 := make(graphql.Array, len(res))
+
+	for idx1 := range res {
+		arr1[idx1] = func() graphql.Marshaler {
+			return graphql.MarshalString(res[idx1])
+		}()
+	}
+
+	return arr1
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Tweet_user_mentions(ctx context.Context, field graphql.CollectedField, obj *Tweet) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Tweet",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserMentions, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	arr1 := make(graphql.Array, len(res))
+
+	for idx1 := range res {
+		arr1[idx1] = func() graphql.Marshaler {
+			return graphql.MarshalString(res[idx1])
+		}()
+	}
+
+	return arr1
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Tweet_urls(ctx context.Context, field graphql.CollectedField, obj *Tweet) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Tweet",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Urls, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	arr1 := make(graphql.Array, len(res))
+
+	for idx1 := range res {
+		arr1[idx1] = func() graphql.Marshaler {
+			return graphql.MarshalString(res[idx1])
+		}()
+	}
+
+	return arr1
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Tweet_screen_name(ctx context.Context, field graphql.CollectedField, obj *Tweet) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Tweet",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ScreenName, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return graphql.MarshalString(res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Tweet_favorite_count(ctx context.Context, field graphql.CollectedField, obj *Tweet) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Tweet",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FavoriteCount, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return graphql.MarshalInt(res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Tweet_retweet_count(ctx context.Context, field graphql.CollectedField, obj *Tweet) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Tweet",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RetweetCount, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return graphql.MarshalInt(res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Tweet_posted(ctx context.Context, field graphql.CollectedField, obj *Tweet) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Tweet",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Posted, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return graphql.MarshalTime(res)
 }
 
 var userImplementors = []string{"User"}
@@ -4422,6 +5210,122 @@ func UnmarshalNewStat(v interface{}) (NewStat, error) {
 	return it, nil
 }
 
+func UnmarshalNewTweet(v interface{}) (NewTweet, error) {
+	var it NewTweet
+	var asMap = v.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "favorite_count":
+			var err error
+			it.FavoriteCount, err = graphql.UnmarshalInt(v)
+			if err != nil {
+				return it, err
+			}
+		case "hashtags":
+			var err error
+			var rawIf1 []interface{}
+			if v != nil {
+				if tmp1, ok := v.([]interface{}); ok {
+					rawIf1 = tmp1
+				} else {
+					rawIf1 = []interface{}{v}
+				}
+			}
+			it.Hashtags = make([]string, len(rawIf1))
+			for idx1 := range rawIf1 {
+				it.Hashtags[idx1], err = graphql.UnmarshalString(rawIf1[idx1])
+			}
+			if err != nil {
+				return it, err
+			}
+		case "id":
+			var err error
+			it.ID, err = graphql.UnmarshalID(v)
+			if err != nil {
+				return it, err
+			}
+		case "posted":
+			var err error
+			it.Posted, err = graphql.UnmarshalTime(v)
+			if err != nil {
+				return it, err
+			}
+		case "retweet_count":
+			var err error
+			it.RetweetCount, err = graphql.UnmarshalInt(v)
+			if err != nil {
+				return it, err
+			}
+		case "symbols":
+			var err error
+			var rawIf1 []interface{}
+			if v != nil {
+				if tmp1, ok := v.([]interface{}); ok {
+					rawIf1 = tmp1
+				} else {
+					rawIf1 = []interface{}{v}
+				}
+			}
+			it.Symbols = make([]string, len(rawIf1))
+			for idx1 := range rawIf1 {
+				it.Symbols[idx1], err = graphql.UnmarshalString(rawIf1[idx1])
+			}
+			if err != nil {
+				return it, err
+			}
+		case "text":
+			var err error
+			it.Text, err = graphql.UnmarshalString(v)
+			if err != nil {
+				return it, err
+			}
+		case "urls":
+			var err error
+			var rawIf1 []interface{}
+			if v != nil {
+				if tmp1, ok := v.([]interface{}); ok {
+					rawIf1 = tmp1
+				} else {
+					rawIf1 = []interface{}{v}
+				}
+			}
+			it.Urls = make([]string, len(rawIf1))
+			for idx1 := range rawIf1 {
+				it.Urls[idx1], err = graphql.UnmarshalString(rawIf1[idx1])
+			}
+			if err != nil {
+				return it, err
+			}
+		case "screen_name":
+			var err error
+			it.ScreenName, err = graphql.UnmarshalString(v)
+			if err != nil {
+				return it, err
+			}
+		case "user_mentions":
+			var err error
+			var rawIf1 []interface{}
+			if v != nil {
+				if tmp1, ok := v.([]interface{}); ok {
+					rawIf1 = tmp1
+				} else {
+					rawIf1 = []interface{}{v}
+				}
+			}
+			it.UserMentions = make([]string, len(rawIf1))
+			for idx1 := range rawIf1 {
+				it.UserMentions[idx1], err = graphql.UnmarshalString(rawIf1[idx1])
+			}
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) FieldMiddleware(ctx context.Context, obj interface{}, next graphql.Resolver) (ret interface{}) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -4496,8 +5400,8 @@ type Query {
   "Returns a subset of all links ever, in reverse chronological order, using provided limit and offset."
   links(limit: Int, offset: Int): [Link]!
 
-  "Returns a single link by id."
-  link(id: ID!): Link
+  "Returns a single link by id or url."
+  link(id: ID, url: URI): Link
 
   "Returns a number of stats, ordered by most recently updated."
   stats(count: Int): [Stat]!
@@ -4510,6 +5414,12 @@ type Query {
 
   "If logged in, returns a user."
   whoami: User
+
+  "Returns tweets in database."
+  tweets(limit: Int, offset: Int): [Tweet]!
+
+  "Returns just one tweet."
+  tweet(id: ID!): Tweet
 }
 
 """
@@ -4544,6 +5454,7 @@ type Link {
   description: String!
   screenshot: URI!
   tags: [String!]!
+	modified: Time!
 }
 
 """
@@ -4564,6 +5475,22 @@ type User {
 	apikey: String!
 	created: Time!
 	modified: Time!
+}
+
+"""
+A Tweet is an archived tweet.
+"""
+type Tweet {
+  id: ID!
+  text: String!
+  hashtags: [String!]!
+  symbols: [String!]!
+  user_mentions: [String!]!
+  urls: [URI!]!
+  screen_name: String!
+  favorite_count: Int!
+  retweet_count: Int!
+  posted: Time!
 }
 
 """
@@ -4610,11 +5537,25 @@ input NewStat {
   value: String!
 }
 
+input NewTweet {
+  favorite_count: Int!
+  hashtags: [String!]
+  id: ID!
+  posted: Time!
+  retweet_count: Int!
+  symbols: [String!]
+  text: String!
+  urls: [URI!]
+  screen_name: String!
+  user_mentions: [String!]
+}
+
 type Mutation {
   createPost(input: NewPost!): Post! @hasRole(role: admin)
   editPost(Id: ID!, input: EditedPost!): Post! @hasRole(role: admin)
   upsertLink(input: NewLink!): Link! @hasRole(role: admin)
   upsertStat(input: NewStat!): Stat! @hasRole(role: admin)
+  upsertTweet(input: NewTweet!): Tweet! @hasRole(role: admin)
 }
 
 directive @hasRole(role: Role!) on FIELD_DEFINITION
