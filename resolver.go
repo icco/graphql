@@ -148,14 +148,18 @@ func (r *mutationResolver) UpsertStat(ctx context.Context, input NewStat) (Stat,
 	return Stat{}, fmt.Errorf("not implemented")
 }
 
+func (r *mutationResolver) UpsertTweet(ctx context.Context, input NewTweet) (Tweet, error) {
+	panic("not implemented")
+}
+
 type queryResolver struct{ *Resolver }
+
+func (r *queryResolver) Drafts(ctx context.Context, limit *int, offset *int) ([]*Post, error) {
+	panic("not implemented")
+}
 
 func (r *queryResolver) Posts(ctx context.Context, limit *int, offset *int) ([]*Post, error) {
 	return Posts(ctx, limit, offset)
-}
-
-func (r *queryResolver) PostsByTag(ctx context.Context, tag string) ([]*Post, error) {
-	return PostsByTag(ctx, tag)
 }
 
 func (r *queryResolver) Post(ctx context.Context, id string) (*Post, error) {
@@ -208,8 +212,12 @@ func (r *queryResolver) PrevPost(ctx context.Context, id string) (*Post, error) 
 	}
 }
 
-func (r *queryResolver) Drafts(ctx context.Context, limit *int, offset *int) ([]*Post, error) {
-	panic("not implemented")
+func (r *queryResolver) Links(ctx context.Context, limit *int, offset *int) ([]*Link, error) {
+	return GetLinks(ctx, limit, offset)
+}
+
+func (r *queryResolver) Link(ctx context.Context, id string) (*Link, error) {
+	return nil, fmt.Errorf("not implemented")
 }
 
 func (r *queryResolver) Stats(ctx context.Context, count *int) ([]*Stat, error) {
@@ -243,6 +251,10 @@ func (r *queryResolver) Stats(ctx context.Context, count *int) ([]*Stat, error) 
 	return stats, nil
 }
 
+func (r *queryResolver) PostsByTag(ctx context.Context, tag string) ([]*Post, error) {
+	return PostsByTag(ctx, tag)
+}
+
 func (r *queryResolver) Counts(ctx context.Context) ([]*Stat, error) {
 	stats := make([]*Stat, 0)
 	for _, table := range []string{
@@ -265,12 +277,4 @@ func (r *queryResolver) Counts(ctx context.Context) ([]*Stat, error) {
 
 func (r *queryResolver) Whoami(ctx context.Context) (*User, error) {
 	return ForContext(ctx), nil
-}
-
-func (r *queryResolver) Links(ctx context.Context, limit *int, offset *int) ([]*Link, error) {
-	return GetLinks(ctx, limit, offset)
-}
-
-func (r *queryResolver) Link(ctx context.Context, id string) (*Link, error) {
-	return nil, fmt.Errorf("not implemented")
 }

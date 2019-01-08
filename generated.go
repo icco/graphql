@@ -32,7 +32,6 @@ type Config struct {
 }
 
 type ResolverRoot interface {
-	Link() LinkResolver
 	Mutation() MutationResolver
 	Query() QueryResolver
 }
@@ -120,9 +119,6 @@ type ComplexityRoot struct {
 	}
 }
 
-type LinkResolver interface {
-	Modified(ctx context.Context, obj *Link) (time.Time, error)
-}
 type MutationResolver interface {
 	CreatePost(ctx context.Context, input NewPost) (Post, error)
 	EditPost(ctx context.Context, Id string, input EditedPost) (Post, error)
@@ -1048,7 +1044,6 @@ var linkImplementors = []string{"Link"}
 func (ec *executionContext) _Link(ctx context.Context, sel ast.SelectionSet, obj *Link) graphql.Marshaler {
 	fields := graphql.CollectFields(ctx, sel, linkImplementors)
 
-	var wg sync.WaitGroup
 	out := graphql.NewOrderedMap(len(fields))
 	invalid := false
 	for i, field := range fields {
@@ -1093,19 +1088,15 @@ func (ec *executionContext) _Link(ctx context.Context, sel ast.SelectionSet, obj
 				invalid = true
 			}
 		case "modified":
-			wg.Add(1)
-			go func(i int, field graphql.CollectedField) {
-				out.Values[i] = ec._Link_modified(ctx, field, obj)
-				if out.Values[i] == graphql.Null {
-					invalid = true
-				}
-				wg.Done()
-			}(i, field)
+			out.Values[i] = ec._Link_modified(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-	wg.Wait()
+
 	if invalid {
 		return graphql.Null
 	}
@@ -1323,7 +1314,7 @@ func (ec *executionContext) _Link_modified(ctx context.Context, field graphql.Co
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Link().Modified(rctx, obj)
+		return obj.Modified, nil
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
