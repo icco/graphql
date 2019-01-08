@@ -55,7 +55,7 @@ WHERE tweets.id = $1;
 func GetTweet(ctx context.Context, id string) (*Tweet, error) {
 	var tweet Tweet
 	row := db.QueryRowContext(ctx, "SELECT id, text, hashtags, symbols, user_mentions, urls, screen_name, favorites, retweets, posted FROM tweets WHERE id = $1", id)
-	err := row.Scan(&tweet.ID, &tweet.Text, pq.Array(&tweet.Hashtags), pq.Array(&tweet.Symbols), pq.Array(&tweet.UserMentions), pq.Array(&tweet.Urls), tweet.ScreenName, tweet.FavoriteCount, tweet.RetweetCount, tweet.Posted)
+	err := row.Scan(&tweet.ID, &tweet.Text, pq.Array(&tweet.Hashtags), pq.Array(&tweet.Symbols), pq.Array(&tweet.UserMentions), pq.Array(&tweet.Urls), &tweet.ScreenName, &tweet.FavoriteCount, &tweet.RetweetCount, &tweet.Posted)
 	switch {
 	case err == sql.ErrNoRows:
 		return nil, fmt.Errorf("No tweet %s", id)
@@ -86,7 +86,7 @@ func GetTweets(ctx context.Context, limitIn *int, offsetIn *int) ([]*Tweet, erro
 	tweets := make([]*Tweet, 0)
 	for rows.Next() {
 		tweet := new(Tweet)
-		err := rows.Scan(&tweet.ID, &tweet.Text, pq.Array(&tweet.Hashtags), pq.Array(&tweet.Symbols), pq.Array(&tweet.UserMentions), pq.Array(&tweet.Urls), tweet.ScreenName, tweet.FavoriteCount, tweet.RetweetCount, tweet.Posted)
+		err := rows.Scan(&tweet.ID, &tweet.Text, pq.Array(&tweet.Hashtags), pq.Array(&tweet.Symbols), pq.Array(&tweet.UserMentions), pq.Array(&tweet.Urls), &tweet.ScreenName, &tweet.FavoriteCount, &tweet.RetweetCount, &tweet.Posted)
 		if err != nil {
 			return nil, err
 		}
