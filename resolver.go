@@ -40,7 +40,7 @@ func New() Config {
 		u := ForContext(ctx)
 		if u == nil || Role(u.Role) != role {
 			// block calling the next resolver
-			return nil, fmt.Errorf("Forbidden")
+			return nil, fmt.Errorf("forbidden")
 		}
 
 		// or let it pass through
@@ -196,7 +196,7 @@ func (r *queryResolver) NextPost(ctx context.Context, id string) (*Post, error) 
 	case err == sql.ErrNoRows:
 		return nil, nil
 	case err != nil:
-		return nil, fmt.Errorf("Error running get query: %+v", err)
+		return nil, err
 	default:
 		i, err := strconv.ParseInt(postID, 10, 64)
 		if err != nil {
@@ -214,7 +214,7 @@ func (r *queryResolver) PrevPost(ctx context.Context, id string) (*Post, error) 
 	case err == sql.ErrNoRows:
 		return nil, nil
 	case err != nil:
-		return nil, fmt.Errorf("Error running get query: %+v", err)
+		return nil, err
 	default:
 		i, err := strconv.ParseInt(postID, 10, 64)
 		if err != nil {
@@ -230,7 +230,7 @@ func (r *queryResolver) Links(ctx context.Context, limit *int, offset *int) ([]*
 
 func (r *queryResolver) Link(ctx context.Context, id *string, url *string) (*Link, error) {
 	if id != nil && url != nil {
-		return nil, fmt.Errorf("Please don't specify an ID and a URI in input.")
+		return nil, fmt.Errorf("do not specify an ID and a URI in input")
 	}
 
 	if id != nil {
@@ -241,7 +241,7 @@ func (r *queryResolver) Link(ctx context.Context, id *string, url *string) (*Lin
 		return GetLinkByURI(ctx, *url)
 	}
 
-	return nil, fmt.Errorf("Not valid input.")
+	return nil, fmt.Errorf("not valid input")
 }
 
 func (r *queryResolver) Stats(ctx context.Context, count *int) ([]*Stat, error) {
