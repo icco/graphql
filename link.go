@@ -45,14 +45,29 @@ WHERE links.uri = $2;
 	return nil
 }
 
-// GetLink gets a link by ID from the database.
-func GetLink(ctx context.Context, uri string) (*Link, error) {
+// GetLinkByURI gets a link by uri from the database.
+func GetLinkByURI(ctx context.Context, uri string) (*Link, error) {
 	var link Link
 	row := db.QueryRowContext(ctx, "SELECT id, title, uri, description, created, modified_at, tags FROM links WHERE uri = $1", uri)
 	err := row.Scan(&link.ID, &link.Title, &link.URI, &link.Description, &link.Created, &link.Modified, pq.Array(&link.Tags))
 	switch {
 	case err == sql.ErrNoRows:
 		return nil, fmt.Errorf("No link %s", uri)
+	case err != nil:
+		return nil, fmt.Errorf("Error running get query: %+v", err)
+	default:
+		return &link, nil
+	}
+}
+
+// GetLinkByID gets a link by id from the database.
+func GetLinkByID(ctx context.Context, id string) (*Link, error) {
+	var link Link
+	row := db.QueryRowContext(ctx, "SELECT id, title, uri, description, created, modified_at, tags FROM links WHERE id = $1", id)
+	err := row.Scan(&link.ID, &link.Title, &link.URI, &link.Description, &link.Created, &link.Modified, pq.Array(&link.Tags))
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, fmt.Errorf("No link %s", id)
 	case err != nil:
 		return nil, fmt.Errorf("Error running get query: %+v", err)
 	default:

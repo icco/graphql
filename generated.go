@@ -85,7 +85,7 @@ type ComplexityRoot struct {
 		NextPost   func(childComplexity int, id string) int
 		PrevPost   func(childComplexity int, id string) int
 		Links      func(childComplexity int, limit *int, offset *int) int
-		Link       func(childComplexity int, id string) int
+		Link       func(childComplexity int, id *string, url *string) int
 		Stats      func(childComplexity int, count *int) int
 		PostsByTag func(childComplexity int, id string) int
 		Counts     func(childComplexity int) int
@@ -133,7 +133,7 @@ type QueryResolver interface {
 	NextPost(ctx context.Context, id string) (*Post, error)
 	PrevPost(ctx context.Context, id string) (*Post, error)
 	Links(ctx context.Context, limit *int, offset *int) ([]*Link, error)
-	Link(ctx context.Context, id string) (*Link, error)
+	Link(ctx context.Context, id *string, url *string) (*Link, error)
 	Stats(ctx context.Context, count *int) ([]*Stat, error)
 	PostsByTag(ctx context.Context, id string) ([]*Post, error)
 	Counts(ctx context.Context) ([]*Stat, error)
@@ -373,15 +373,34 @@ func field_Query_links_args(rawArgs map[string]interface{}) (map[string]interfac
 
 func field_Query_link_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	args := map[string]interface{}{}
-	var arg0 string
+	var arg0 *string
 	if tmp, ok := rawArgs["id"]; ok {
 		var err error
-		arg0, err = graphql.UnmarshalID(tmp)
+		var ptr1 string
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalID(tmp)
+			arg0 = &ptr1
+		}
+
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["id"] = arg0
+	var arg1 *string
+	if tmp, ok := rawArgs["url"]; ok {
+		var err error
+		var ptr1 string
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalString(tmp)
+			arg1 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["url"] = arg1
 	return args, nil
 
 }
@@ -776,7 +795,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Link(childComplexity, args["id"].(string)), true
+		return e.complexity.Query.Link(childComplexity, args["id"].(*string), args["url"].(*string)), true
 
 	case "Query.stats":
 		if e.complexity.Query.Stats == nil {
@@ -2427,7 +2446,7 @@ func (ec *executionContext) _Query_link(ctx context.Context, field graphql.Colle
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Link(rctx, args["id"].(string))
+		return ec.resolvers.Query().Link(rctx, args["id"].(*string), args["url"].(*string))
 	})
 	if resTmp == nil {
 		return graphql.Null
@@ -5194,8 +5213,8 @@ type Query {
   "Returns a subset of all links ever, in reverse chronological order, using provided limit and offset."
   links(limit: Int, offset: Int): [Link]!
 
-  "Returns a single link by id."
-  link(id: ID!): Link
+  "Returns a single link by id or url."
+  link(id: ID, url: URI): Link
 
   "Returns a number of stats, ordered by most recently updated."
   stats(count: Int): [Stat]!

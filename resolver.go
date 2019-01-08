@@ -136,7 +136,7 @@ func (r *mutationResolver) UpsertLink(ctx context.Context, input NewLink) (Link,
 		return Link{}, err
 	}
 
-	link, err := GetLink(ctx, l.URI)
+	link, err := GetLinkByURI(ctx, l.URI)
 	if err != nil {
 		return Link{}, err
 	}
@@ -216,8 +216,20 @@ func (r *queryResolver) Links(ctx context.Context, limit *int, offset *int) ([]*
 	return GetLinks(ctx, limit, offset)
 }
 
-func (r *queryResolver) Link(ctx context.Context, id string) (*Link, error) {
-	return nil, fmt.Errorf("not implemented")
+func (r *queryResolver) Link(ctx context.Context, id *string, url *string) (*Link, error) {
+	if id != nil && url != nil {
+		return nil, fmt.Errorf("Please don't specify an ID and a URI in input.")
+	}
+
+	if id != nil {
+		return GetLinkByID(ctx, *id)
+	}
+
+	if url != nil {
+		return GetLinkByURI(ctx, *url)
+	}
+
+	return nil, fmt.Errorf("Not valid input.")
 }
 
 func (r *queryResolver) Stats(ctx context.Context, count *int) ([]*Stat, error) {

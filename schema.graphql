@@ -24,8 +24,8 @@ type Query {
   "Returns a subset of all links ever, in reverse chronological order, using provided limit and offset."
   links(limit: Int, offset: Int): [Link]!
 
-  "Returns a single link by id."
-  link(id: ID!): Link
+  "Returns a single link by id or url."
+  link(id: ID, url: URI): Link
 
   "Returns a number of stats, ordered by most recently updated."
   stats(count: Int): [Stat]!
