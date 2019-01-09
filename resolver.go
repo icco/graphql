@@ -314,3 +314,8 @@ func (r *queryResolver) Tweet(ctx context.Context, id string) (*Tweet, error) {
 func (r *queryResolver) TweetsByScreenName(ctx context.Context, screenName string, limit *int, offset *int) ([]*Tweet, error) {
 	return GetTweetsByScreenName(ctx, screenName, limit, offset)
 }
+
+func (r *queryResolver) HomeTimelineURLs(ctx context.Context, limit *int) ([]*TwitterURL, error) {
+
+	return []*TwitterURL{}, nil
+}
