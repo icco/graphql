@@ -357,10 +357,7 @@ type twitterURLResolver struct{ *Resolver }
 func (r *twitterURLResolver) Tweets(ctx context.Context, obj *models.SavedURL) ([]*Tweet, error) {
 	tweets := make([]*Tweet, len(obj.TweetIDs))
 	for i, id := range obj.TweetIDs {
-		t, err := GetTweet(ctx, id)
-		if err != nil {
-			return []*Tweet{}, err
-		}
+		t, _ := GetTweet(ctx, id)
 		tweets[i] = t
 	}
 
