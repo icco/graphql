@@ -5,7 +5,10 @@ package graphql
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"strconv"
 	"time"
 
@@ -316,7 +319,31 @@ func (r *queryResolver) TweetsByScreenName(ctx context.Context, screenName strin
 	return GetTweetsByScreenName(ctx, screenName, limit, offset)
 }
 
-func (r *queryResolver) HomeTimelineURLs(ctx context.Context, limit *int) ([]*models.SavedURL, error) {
+func (r *queryResolver) HomeTimelineURLs(ctx context.Context, limitIn *int) ([]*models.SavedURL, error) {
+	urls := []*models.SavedURL{}
+	limit := 100
+	if limitIn != nil {
+		limit = *limitIn
+	}
 
-	return []*models.SavedURL{}, nil
+	url := fmt.Sprintf("https://cacophony.natwelch.com/?count=%d", limit)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return urls, err
+	}
+
+	req = req.WithContext(ctx)
+	client := http.DefaultClient
+	res, err := client.Do(req)
+	if err != nil {
+		return urls, err
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return urls, err
+	}
+
+	err = json.Unmarshal(body, &urls)
+	return urls, err
 }
