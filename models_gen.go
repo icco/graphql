@@ -60,13 +60,6 @@ type Stat struct {
 	Value string `json:"value"`
 }
 
-type TwitterURL struct {
-	Link       *string   `json:"link"`
-	TweetIDs   []string  `json:"tweetIDs"`
-	CreatedAt  time.Time `json:"createdAt"`
-	ModifiedAt time.Time `json:"modifiedAt"`
-}
-
 type Role string
 
 const (

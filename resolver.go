@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/icco/cacophony/models"
 )
 
 type key int
@@ -315,7 +316,7 @@ func (r *queryResolver) TweetsByScreenName(ctx context.Context, screenName strin
 	return GetTweetsByScreenName(ctx, screenName, limit, offset)
 }
 
-func (r *queryResolver) HomeTimelineURLs(ctx context.Context, limit *int) ([]*TwitterURL, error) {
+func (r *queryResolver) HomeTimelineURLs(ctx context.Context, limit *int) ([]*models.SavedURL, error) {
 
-	return []*TwitterURL{}, nil
+	return []*models.SavedURL{}, nil
 }

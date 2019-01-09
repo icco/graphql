@@ -12,6 +12,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
+	"github.com/icco/cacophony/models"
 	"github.com/vektah/gqlparser"
 	"github.com/vektah/gqlparser/ast"
 )
@@ -152,7 +153,7 @@ type QueryResolver interface {
 	Tweets(ctx context.Context, limit *int, offset *int) ([]*Tweet, error)
 	Tweet(ctx context.Context, id string) (*Tweet, error)
 	TweetsByScreenName(ctx context.Context, screen_name string, limit *int, offset *int) ([]*Tweet, error)
-	HomeTimelineURLs(ctx context.Context, limit *int) ([]*TwitterURL, error)
+	HomeTimelineURLs(ctx context.Context, limit *int) ([]*models.SavedURL, error)
 }
 
 func field_Mutation_createPost_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
@@ -3133,7 +3134,7 @@ func (ec *executionContext) _Query_homeTimelineURLs(ctx context.Context, field g
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*TwitterURL)
+	res := resTmp.([]*models.SavedURL)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 
@@ -3713,7 +3714,7 @@ func (ec *executionContext) _Tweet_posted(ctx context.Context, field graphql.Col
 var twitterURLImplementors = []string{"TwitterURL"}
 
 // nolint: gocyclo, errcheck, gas, goconst
-func (ec *executionContext) _TwitterURL(ctx context.Context, sel ast.SelectionSet, obj *TwitterURL) graphql.Marshaler {
+func (ec *executionContext) _TwitterURL(ctx context.Context, sel ast.SelectionSet, obj *models.SavedURL) graphql.Marshaler {
 	fields := graphql.CollectFields(ctx, sel, twitterURLImplementors)
 
 	out := graphql.NewOrderedMap(len(fields))
@@ -3753,7 +3754,7 @@ func (ec *executionContext) _TwitterURL(ctx context.Context, sel ast.SelectionSe
 }
 
 // nolint: vetshadow
-func (ec *executionContext) _TwitterURL_link(ctx context.Context, field graphql.CollectedField, obj *TwitterURL) graphql.Marshaler {
+func (ec *executionContext) _TwitterURL_link(ctx context.Context, field graphql.CollectedField, obj *models.SavedURL) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
@@ -3770,18 +3771,14 @@ func (ec *executionContext) _TwitterURL_link(ctx context.Context, field graphql.
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(string)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-
-	if res == nil {
-		return graphql.Null
-	}
-	return graphql.MarshalString(*res)
+	return graphql.MarshalString(res)
 }
 
 // nolint: vetshadow
-func (ec *executionContext) _TwitterURL_tweetIDs(ctx context.Context, field graphql.CollectedField, obj *TwitterURL) graphql.Marshaler {
+func (ec *executionContext) _TwitterURL_tweetIDs(ctx context.Context, field graphql.CollectedField, obj *models.SavedURL) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
@@ -3817,7 +3814,7 @@ func (ec *executionContext) _TwitterURL_tweetIDs(ctx context.Context, field grap
 }
 
 // nolint: vetshadow
-func (ec *executionContext) _TwitterURL_createdAt(ctx context.Context, field graphql.CollectedField, obj *TwitterURL) graphql.Marshaler {
+func (ec *executionContext) _TwitterURL_createdAt(ctx context.Context, field graphql.CollectedField, obj *models.SavedURL) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
@@ -3844,7 +3841,7 @@ func (ec *executionContext) _TwitterURL_createdAt(ctx context.Context, field gra
 }
 
 // nolint: vetshadow
-func (ec *executionContext) _TwitterURL_modifiedAt(ctx context.Context, field graphql.CollectedField, obj *TwitterURL) graphql.Marshaler {
+func (ec *executionContext) _TwitterURL_modifiedAt(ctx context.Context, field graphql.CollectedField, obj *models.SavedURL) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
