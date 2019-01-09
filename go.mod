@@ -17,8 +17,10 @@ require (
 	github.com/sirupsen/logrus v1.3.0
 	github.com/vektah/gqlparser v1.0.0
 	go.opencensus.io v0.18.0
+	golang.org/x/net v0.0.0-20190108225652-1e06a53dbb7e // indirect
 	golang.org/x/oauth2 v0.0.0-20181203162652-d668ce993890
 	google.golang.org/api v0.1.0
+	google.golang.org/genproto v0.0.0-20190108161440-ae2f86662275 // indirect
 	gopkg.in/unrolled/render.v1 v1.0.0-20181210145518-4c664cb3ad2f
 	gopkg.in/unrolled/secure.v1 v1.0.0-20190103195806-76e6d4e9b90c
 )
