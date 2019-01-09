@@ -64,6 +64,10 @@ func (r *Resolver) Query() QueryResolver {
 	return &queryResolver{r}
 }
 
+func (r *Resolver) TwitterURL() TwitterURLResolver {
+	return &twitterURLResolver{r}
+}
+
 type mutationResolver struct{ *Resolver }
 
 func (r *mutationResolver) CreatePost(ctx context.Context, input NewPost) (Post, error) {
@@ -346,4 +350,19 @@ func (r *queryResolver) HomeTimelineURLs(ctx context.Context, limitIn *int) ([]*
 
 	err = json.Unmarshal(body, &urls)
 	return urls, err
+}
+
+type twitterURLResolver struct{ *Resolver }
+
+func (r *twitterURLResolver) Tweets(ctx context.Context, obj *models.SavedURL) ([]*Tweet, error) {
+	tweets := make([]*Tweet, len(obj.TweetIDs))
+	for i, id := range obj.TweetIDs {
+		t, err := GetTweet(ctx, id)
+		if err != nil {
+			return []*Tweet{}, err
+		}
+		tweets[i] = t
+	}
+
+	return tweets, nil
 }

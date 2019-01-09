@@ -35,6 +35,7 @@ type Config struct {
 type ResolverRoot interface {
 	Mutation() MutationResolver
 	Query() QueryResolver
+	TwitterURL() TwitterURLResolver
 }
 
 type DirectiveRoot struct {
@@ -120,6 +121,7 @@ type ComplexityRoot struct {
 		TweetIds   func(childComplexity int) int
 		CreatedAt  func(childComplexity int) int
 		ModifiedAt func(childComplexity int) int
+		Tweets     func(childComplexity int) int
 	}
 
 	User struct {
@@ -154,6 +156,9 @@ type QueryResolver interface {
 	Tweet(ctx context.Context, id string) (*Tweet, error)
 	TweetsByScreenName(ctx context.Context, screen_name string, limit *int, offset *int) ([]*Tweet, error)
 	HomeTimelineURLs(ctx context.Context, limit *int) ([]*models.SavedURL, error)
+}
+type TwitterURLResolver interface {
+	Tweets(ctx context.Context, obj *models.SavedURL) ([]*Tweet, error)
 }
 
 func field_Mutation_createPost_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
@@ -1122,6 +1127,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.TwitterUrl.ModifiedAt(childComplexity), true
+
+	case "TwitterURL.tweets":
+		if e.complexity.TwitterUrl.Tweets == nil {
+			break
+		}
+
+		return e.complexity.TwitterUrl.Tweets(childComplexity), true
 
 	case "User.id":
 		if e.complexity.User.Id == nil {
@@ -3717,6 +3729,7 @@ var twitterURLImplementors = []string{"TwitterURL"}
 func (ec *executionContext) _TwitterURL(ctx context.Context, sel ast.SelectionSet, obj *models.SavedURL) graphql.Marshaler {
 	fields := graphql.CollectFields(ctx, sel, twitterURLImplementors)
 
+	var wg sync.WaitGroup
 	out := graphql.NewOrderedMap(len(fields))
 	invalid := false
 	for i, field := range fields {
@@ -3742,11 +3755,20 @@ func (ec *executionContext) _TwitterURL(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				invalid = true
 			}
+		case "tweets":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._TwitterURL_tweets(ctx, field, obj)
+				if out.Values[i] == graphql.Null {
+					invalid = true
+				}
+				wg.Done()
+			}(i, field)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-
+	wg.Wait()
 	if invalid {
 		return graphql.Null
 	}
@@ -3865,6 +3887,70 @@ func (ec *executionContext) _TwitterURL_modifiedAt(ctx context.Context, field gr
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return graphql.MarshalTime(res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _TwitterURL_tweets(ctx context.Context, field graphql.CollectedField, obj *models.SavedURL) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "TwitterURL",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.TwitterURL().Tweets(rctx, obj)
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*Tweet)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	arr1 := make(graphql.Array, len(res))
+	var wg sync.WaitGroup
+
+	isLen1 := len(res) == 1
+	if !isLen1 {
+		wg.Add(len(res))
+	}
+
+	for idx1 := range res {
+		idx1 := idx1
+		rctx := &graphql.ResolverContext{
+			Index:  &idx1,
+			Result: res[idx1],
+		}
+		ctx := graphql.WithResolverContext(ctx, rctx)
+		f := func(idx1 int) {
+			if !isLen1 {
+				defer wg.Done()
+			}
+			arr1[idx1] = func() graphql.Marshaler {
+
+				if res[idx1] == nil {
+					return graphql.Null
+				}
+
+				return ec._Tweet(ctx, field.Selections, res[idx1])
+			}()
+		}
+		if isLen1 {
+			f(idx1)
+		} else {
+			go f(idx1)
+		}
+
+	}
+	wg.Wait()
+	return arr1
 }
 
 var userImplementors = []string{"User"}
@@ -5944,6 +6030,7 @@ type TwitterURL {
   tweetIDs: [ID!]!
   createdAt: Time!
   modifiedAt: Time!
+  tweets: [Tweet]!
 }
 
 """

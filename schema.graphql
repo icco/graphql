@@ -127,6 +127,7 @@ type TwitterURL {
   tweetIDs: [ID!]!
   createdAt: Time!
   modifiedAt: Time!
+  tweets: [Tweet]!
 }
 
 """
