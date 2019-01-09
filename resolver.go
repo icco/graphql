@@ -5,11 +5,15 @@ package graphql
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/icco/cacophony/models"
 )
 
 type key int
@@ -58,6 +62,10 @@ func (r *Resolver) Mutation() MutationResolver {
 // Query returns the resolver for Queries.
 func (r *Resolver) Query() QueryResolver {
 	return &queryResolver{r}
+}
+
+func (r *Resolver) TwitterURL() TwitterURLResolver {
+	return &twitterURLResolver{r}
 }
 
 type mutationResolver struct{ *Resolver }
@@ -309,4 +317,49 @@ func (r *queryResolver) Tweets(ctx context.Context, limit *int, offset *int) ([]
 
 func (r *queryResolver) Tweet(ctx context.Context, id string) (*Tweet, error) {
 	return GetTweet(ctx, id)
+}
+
+func (r *queryResolver) TweetsByScreenName(ctx context.Context, screenName string, limit *int, offset *int) ([]*Tweet, error) {
+	return GetTweetsByScreenName(ctx, screenName, limit, offset)
+}
+
+func (r *queryResolver) HomeTimelineURLs(ctx context.Context, limitIn *int) ([]*models.SavedURL, error) {
+	urls := []*models.SavedURL{}
+	limit := 100
+	if limitIn != nil {
+		limit = *limitIn
+	}
+
+	url := fmt.Sprintf("https://cacophony.natwelch.com/?count=%d", limit)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return urls, err
+	}
+
+	req = req.WithContext(ctx)
+	client := http.DefaultClient
+	res, err := client.Do(req)
+	if err != nil {
+		return urls, err
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return urls, err
+	}
+
+	err = json.Unmarshal(body, &urls)
+	return urls, err
+}
+
+type twitterURLResolver struct{ *Resolver }
+
+func (r *twitterURLResolver) Tweets(ctx context.Context, obj *models.SavedURL) ([]*Tweet, error) {
+	tweets := make([]*Tweet, len(obj.TweetIDs))
+	for i, id := range obj.TweetIDs {
+		t, _ := GetTweet(ctx, id)
+		tweets[i] = t
+	}
+
+	return tweets, nil
 }

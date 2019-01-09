@@ -20,3 +20,5 @@ models:
     model: github.com/icco/graphql.Link
   Tweet:
     model: github.com/icco/graphql.Tweet
+  TwitterURL:
+    model: github.com/icco/cacophony/models.SavedURL

@@ -102,3 +102,39 @@ func GetTweets(ctx context.Context, limitIn *int, offsetIn *int) ([]*Tweet, erro
 
 	return tweets, nil
 }
+
+// GetTweetsByScreenName returns an array of tweets from the database filtered by screenname.
+func GetTweetsByScreenName(ctx context.Context, screenName string, limitIn *int, offsetIn *int) ([]*Tweet, error) {
+	limit := 10
+	if limitIn != nil {
+		limit = *limitIn
+	}
+
+	offset := 0
+	if offsetIn != nil {
+		offset = *offsetIn
+	}
+
+	rows, err := db.QueryContext(ctx, "SELECT id, text, hashtags, symbols, user_mentions, urls, screen_name, favorites, retweets, posted FROM tweets WHERE screen_name = $3 ORDER BY posted DESC LIMIT $1 OFFSET $2", limit, offset, screenName)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	tweets := make([]*Tweet, 0)
+	for rows.Next() {
+		tweet := new(Tweet)
+		err := rows.Scan(&tweet.ID, &tweet.Text, pq.Array(&tweet.Hashtags), pq.Array(&tweet.Symbols), pq.Array(&tweet.UserMentions), pq.Array(&tweet.Urls), &tweet.ScreenName, &tweet.FavoriteCount, &tweet.RetweetCount, &tweet.Posted)
+		if err != nil {
+			return nil, err
+		}
+
+		tweets = append(tweets, tweet)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return tweets, nil
+}

@@ -44,6 +44,11 @@ type Query {
 
   "Returns just one tweet."
   tweet(id: ID!): Tweet
+
+  "Returns a user's tweets by screen name."
+  tweetsByScreenName(screen_name: String!, limit: Int, offset: Int): [Tweet]!
+
+  homeTimelineURLs(limit: Int): [TwitterURL]!
 }
 
 """
@@ -115,6 +120,14 @@ type Tweet {
   favorite_count: Int!
   retweet_count: Int!
   posted: Time!
+}
+
+type TwitterURL {
+  link: URI
+  tweetIDs: [ID!]!
+  createdAt: Time!
+  modifiedAt: Time!
+  tweets: [Tweet]!
 }
 
 """

@@ -12,6 +12,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
+	"github.com/icco/cacophony/models"
 	"github.com/vektah/gqlparser"
 	"github.com/vektah/gqlparser/ast"
 )
@@ -34,6 +35,7 @@ type Config struct {
 type ResolverRoot interface {
 	Mutation() MutationResolver
 	Query() QueryResolver
+	TwitterURL() TwitterURLResolver
 }
 
 type DirectiveRoot struct {
@@ -79,19 +81,21 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Drafts     func(childComplexity int, limit *int, offset *int) int
-		Posts      func(childComplexity int, limit *int, offset *int) int
-		Post       func(childComplexity int, id string) int
-		NextPost   func(childComplexity int, id string) int
-		PrevPost   func(childComplexity int, id string) int
-		Links      func(childComplexity int, limit *int, offset *int) int
-		Link       func(childComplexity int, id *string, url *string) int
-		Stats      func(childComplexity int, count *int) int
-		PostsByTag func(childComplexity int, id string) int
-		Counts     func(childComplexity int) int
-		Whoami     func(childComplexity int) int
-		Tweets     func(childComplexity int, limit *int, offset *int) int
-		Tweet      func(childComplexity int, id string) int
+		Drafts             func(childComplexity int, limit *int, offset *int) int
+		Posts              func(childComplexity int, limit *int, offset *int) int
+		Post               func(childComplexity int, id string) int
+		NextPost           func(childComplexity int, id string) int
+		PrevPost           func(childComplexity int, id string) int
+		Links              func(childComplexity int, limit *int, offset *int) int
+		Link               func(childComplexity int, id *string, url *string) int
+		Stats              func(childComplexity int, count *int) int
+		PostsByTag         func(childComplexity int, id string) int
+		Counts             func(childComplexity int) int
+		Whoami             func(childComplexity int) int
+		Tweets             func(childComplexity int, limit *int, offset *int) int
+		Tweet              func(childComplexity int, id string) int
+		TweetsByScreenName func(childComplexity int, screen_name string, limit *int, offset *int) int
+		HomeTimelineUrls   func(childComplexity int, limit *int) int
 	}
 
 	Stat struct {
@@ -110,6 +114,14 @@ type ComplexityRoot struct {
 		FavoriteCount func(childComplexity int) int
 		RetweetCount  func(childComplexity int) int
 		Posted        func(childComplexity int) int
+	}
+
+	TwitterUrl struct {
+		Link       func(childComplexity int) int
+		TweetIds   func(childComplexity int) int
+		CreatedAt  func(childComplexity int) int
+		ModifiedAt func(childComplexity int) int
+		Tweets     func(childComplexity int) int
 	}
 
 	User struct {
@@ -142,6 +154,11 @@ type QueryResolver interface {
 	Whoami(ctx context.Context) (*User, error)
 	Tweets(ctx context.Context, limit *int, offset *int) ([]*Tweet, error)
 	Tweet(ctx context.Context, id string) (*Tweet, error)
+	TweetsByScreenName(ctx context.Context, screen_name string, limit *int, offset *int) ([]*Tweet, error)
+	HomeTimelineURLs(ctx context.Context, limit *int) ([]*models.SavedURL, error)
+}
+type TwitterURLResolver interface {
+	Tweets(ctx context.Context, obj *models.SavedURL) ([]*Tweet, error)
 }
 
 func field_Mutation_createPost_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
@@ -489,6 +506,69 @@ func field_Query_tweet_args(rawArgs map[string]interface{}) (map[string]interfac
 		}
 	}
 	args["id"] = arg0
+	return args, nil
+
+}
+
+func field_Query_tweetsByScreenName_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["screen_name"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalString(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["screen_name"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["limit"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg1 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["limit"] = arg1
+	var arg2 *int
+	if tmp, ok := rawArgs["offset"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg2 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["offset"] = arg2
+	return args, nil
+
+}
+
+func field_Query_homeTimelineURLs_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 *int
+	if tmp, ok := rawArgs["limit"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg0 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["limit"] = arg0
 	return args, nil
 
 }
@@ -912,6 +992,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Tweet(childComplexity, args["id"].(string)), true
 
+	case "Query.tweetsByScreenName":
+		if e.complexity.Query.TweetsByScreenName == nil {
+			break
+		}
+
+		args, err := field_Query_tweetsByScreenName_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.TweetsByScreenName(childComplexity, args["screen_name"].(string), args["limit"].(*int), args["offset"].(*int)), true
+
+	case "Query.homeTimelineURLs":
+		if e.complexity.Query.HomeTimelineUrls == nil {
+			break
+		}
+
+		args, err := field_Query_homeTimelineURLs_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.HomeTimelineUrls(childComplexity, args["limit"].(*int)), true
+
 	case "Stat.key":
 		if e.complexity.Stat.Key == nil {
 			break
@@ -995,6 +1099,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Tweet.Posted(childComplexity), true
+
+	case "TwitterURL.link":
+		if e.complexity.TwitterUrl.Link == nil {
+			break
+		}
+
+		return e.complexity.TwitterUrl.Link(childComplexity), true
+
+	case "TwitterURL.tweetIDs":
+		if e.complexity.TwitterUrl.TweetIds == nil {
+			break
+		}
+
+		return e.complexity.TwitterUrl.TweetIds(childComplexity), true
+
+	case "TwitterURL.createdAt":
+		if e.complexity.TwitterUrl.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.TwitterUrl.CreatedAt(childComplexity), true
+
+	case "TwitterURL.modifiedAt":
+		if e.complexity.TwitterUrl.ModifiedAt == nil {
+			break
+		}
+
+		return e.complexity.TwitterUrl.ModifiedAt(childComplexity), true
+
+	case "TwitterURL.tweets":
+		if e.complexity.TwitterUrl.Tweets == nil {
+			break
+		}
+
+		return e.complexity.TwitterUrl.Tweets(childComplexity), true
 
 	case "User.id":
 		if e.complexity.User.Id == nil {
@@ -2189,6 +2328,24 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				out.Values[i] = ec._Query_tweet(ctx, field)
 				wg.Done()
 			}(i, field)
+		case "tweetsByScreenName":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_tweetsByScreenName(ctx, field)
+				if out.Values[i] == graphql.Null {
+					invalid = true
+				}
+				wg.Done()
+			}(i, field)
+		case "homeTimelineURLs":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_homeTimelineURLs(ctx, field)
+				if out.Values[i] == graphql.Null {
+					invalid = true
+				}
+				wg.Done()
+			}(i, field)
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
@@ -2893,6 +3050,146 @@ func (ec *executionContext) _Query_tweet(ctx context.Context, field graphql.Coll
 }
 
 // nolint: vetshadow
+func (ec *executionContext) _Query_tweetsByScreenName(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_tweetsByScreenName_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().TweetsByScreenName(rctx, args["screen_name"].(string), args["limit"].(*int), args["offset"].(*int))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*Tweet)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	arr1 := make(graphql.Array, len(res))
+	var wg sync.WaitGroup
+
+	isLen1 := len(res) == 1
+	if !isLen1 {
+		wg.Add(len(res))
+	}
+
+	for idx1 := range res {
+		idx1 := idx1
+		rctx := &graphql.ResolverContext{
+			Index:  &idx1,
+			Result: res[idx1],
+		}
+		ctx := graphql.WithResolverContext(ctx, rctx)
+		f := func(idx1 int) {
+			if !isLen1 {
+				defer wg.Done()
+			}
+			arr1[idx1] = func() graphql.Marshaler {
+
+				if res[idx1] == nil {
+					return graphql.Null
+				}
+
+				return ec._Tweet(ctx, field.Selections, res[idx1])
+			}()
+		}
+		if isLen1 {
+			f(idx1)
+		} else {
+			go f(idx1)
+		}
+
+	}
+	wg.Wait()
+	return arr1
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Query_homeTimelineURLs(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_homeTimelineURLs_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().HomeTimelineURLs(rctx, args["limit"].(*int))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*models.SavedURL)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	arr1 := make(graphql.Array, len(res))
+	var wg sync.WaitGroup
+
+	isLen1 := len(res) == 1
+	if !isLen1 {
+		wg.Add(len(res))
+	}
+
+	for idx1 := range res {
+		idx1 := idx1
+		rctx := &graphql.ResolverContext{
+			Index:  &idx1,
+			Result: res[idx1],
+		}
+		ctx := graphql.WithResolverContext(ctx, rctx)
+		f := func(idx1 int) {
+			if !isLen1 {
+				defer wg.Done()
+			}
+			arr1[idx1] = func() graphql.Marshaler {
+
+				if res[idx1] == nil {
+					return graphql.Null
+				}
+
+				return ec._TwitterURL(ctx, field.Selections, res[idx1])
+			}()
+		}
+		if isLen1 {
+			f(idx1)
+		} else {
+			go f(idx1)
+		}
+
+	}
+	wg.Wait()
+	return arr1
+}
+
+// nolint: vetshadow
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
@@ -3424,6 +3721,236 @@ func (ec *executionContext) _Tweet_posted(ctx context.Context, field graphql.Col
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return graphql.MarshalTime(res)
+}
+
+var twitterURLImplementors = []string{"TwitterURL"}
+
+// nolint: gocyclo, errcheck, gas, goconst
+func (ec *executionContext) _TwitterURL(ctx context.Context, sel ast.SelectionSet, obj *models.SavedURL) graphql.Marshaler {
+	fields := graphql.CollectFields(ctx, sel, twitterURLImplementors)
+
+	var wg sync.WaitGroup
+	out := graphql.NewOrderedMap(len(fields))
+	invalid := false
+	for i, field := range fields {
+		out.Keys[i] = field.Alias
+
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TwitterURL")
+		case "link":
+			out.Values[i] = ec._TwitterURL_link(ctx, field, obj)
+		case "tweetIDs":
+			out.Values[i] = ec._TwitterURL_tweetIDs(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "createdAt":
+			out.Values[i] = ec._TwitterURL_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "modifiedAt":
+			out.Values[i] = ec._TwitterURL_modifiedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "tweets":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._TwitterURL_tweets(ctx, field, obj)
+				if out.Values[i] == graphql.Null {
+					invalid = true
+				}
+				wg.Done()
+			}(i, field)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	wg.Wait()
+	if invalid {
+		return graphql.Null
+	}
+	return out
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _TwitterURL_link(ctx context.Context, field graphql.CollectedField, obj *models.SavedURL) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "TwitterURL",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Link, nil
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return graphql.MarshalString(res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _TwitterURL_tweetIDs(ctx context.Context, field graphql.CollectedField, obj *models.SavedURL) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "TwitterURL",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TweetIDs, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	arr1 := make(graphql.Array, len(res))
+
+	for idx1 := range res {
+		arr1[idx1] = func() graphql.Marshaler {
+			return graphql.MarshalID(res[idx1])
+		}()
+	}
+
+	return arr1
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _TwitterURL_createdAt(ctx context.Context, field graphql.CollectedField, obj *models.SavedURL) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "TwitterURL",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return graphql.MarshalTime(res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _TwitterURL_modifiedAt(ctx context.Context, field graphql.CollectedField, obj *models.SavedURL) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "TwitterURL",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ModifiedAt, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return graphql.MarshalTime(res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _TwitterURL_tweets(ctx context.Context, field graphql.CollectedField, obj *models.SavedURL) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "TwitterURL",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.TwitterURL().Tweets(rctx, obj)
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*Tweet)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	arr1 := make(graphql.Array, len(res))
+	var wg sync.WaitGroup
+
+	isLen1 := len(res) == 1
+	if !isLen1 {
+		wg.Add(len(res))
+	}
+
+	for idx1 := range res {
+		idx1 := idx1
+		rctx := &graphql.ResolverContext{
+			Index:  &idx1,
+			Result: res[idx1],
+		}
+		ctx := graphql.WithResolverContext(ctx, rctx)
+		f := func(idx1 int) {
+			if !isLen1 {
+				defer wg.Done()
+			}
+			arr1[idx1] = func() graphql.Marshaler {
+
+				if res[idx1] == nil {
+					return graphql.Null
+				}
+
+				return ec._Tweet(ctx, field.Selections, res[idx1])
+			}()
+		}
+		if isLen1 {
+			f(idx1)
+		} else {
+			go f(idx1)
+		}
+
+	}
+	wg.Wait()
+	return arr1
 }
 
 var userImplementors = []string{"User"}
@@ -5420,6 +5947,11 @@ type Query {
 
   "Returns just one tweet."
   tweet(id: ID!): Tweet
+
+  "Returns a user's tweets by screen name."
+  tweetsByScreenName(screen_name: String!, limit: Int, offset: Int): [Tweet]!
+
+  homeTimelineURLs(limit: Int): [TwitterURL]!
 }
 
 """
@@ -5491,6 +6023,14 @@ type Tweet {
   favorite_count: Int!
   retweet_count: Int!
   posted: Time!
+}
+
+type TwitterURL {
+  link: URI
+  tweetIDs: [ID!]!
+  createdAt: Time!
+  modifiedAt: Time!
+  tweets: [Tweet]!
 }
 
 """
