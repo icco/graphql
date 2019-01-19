@@ -45,6 +45,8 @@ WHERE links.uri = $2;
 	return nil
 }
 
+func (l *Link) IsLinkable() {}
+
 // GetLinkByURI gets a link by uri from the database.
 func GetLinkByURI(ctx context.Context, uri string) (*Link, error) {
 	var link Link

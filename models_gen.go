@@ -9,6 +9,15 @@ import (
 	"time"
 )
 
+// A book is a book on Goodreads.
+type Book struct {
+	ID    string `json:"id"`
+	URI   string `json:"uri"`
+	Title string `json:"title"`
+}
+
+func (Book) IsLinkable() {}
+
 // Comment is an undefined type reserved for the future.
 type Comment struct {
 	ID string `json:"id"`
@@ -19,6 +28,10 @@ type EditedPost struct {
 	Title    string    `json:"title"`
 	Datetime time.Time `json:"datetime"`
 	Draft    bool      `json:"draft"`
+}
+
+type Linkable interface {
+	IsLinkable()
 }
 
 type NewLink struct {
@@ -52,6 +65,10 @@ type NewTweet struct {
 	Urls          []string  `json:"urls"`
 	ScreenName    string    `json:"screen_name"`
 	UserMentions  []string  `json:"user_mentions"`
+}
+
+type Searchable interface {
+	IsSearchable()
 }
 
 // A stat is a key value pair of two interesting strings.

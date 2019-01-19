@@ -52,6 +52,8 @@ WHERE tweets.id = $1;
 	return nil
 }
 
+func (t *Tweet) IsLinkable() {}
+
 // GetTweet returns a single tweet by id.
 func GetTweet(ctx context.Context, id string) (*Tweet, error) {
 	var tweet Tweet
