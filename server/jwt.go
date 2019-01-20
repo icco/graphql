@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/auth0-community/auth0"
+	"github.com/auth0-community/go-auth0"
 	jose "gopkg.in/square/go-jose.v2"
 )
 
@@ -22,15 +22,26 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		audience := []string{AUTH0["API-AUDIENCE"]}
 
 		configuration := auth0.NewConfiguration(secretProvider, audience, AUTH0["DOMAIN"], jose.HS256)
-		validator := auth0.NewValidator(configuration)
+		validator := auth0.NewValidator(configuration, nil)
 
 		token, err := validator.ValidateRequest(r)
 
 		if err != nil {
 			log.WithError(err).Error("Token is not valid")
 			http.Error(w, http.StatusText(403), 403)
-		} else {
-			next.ServeHTTP(w, r)
+			return
 		}
+
+		claims := map[string]interface{}{}
+		err = validator.Claims(r, token, &claims)
+		if err != nil {
+			log.WithError(err).Error("Claims are not valid")
+			http.Error(w, http.StatusText(403), 403)
+			return
+		}
+
+		// TODO: do something with claims
+
+		next.ServeHTTP(w, r)
 	})
 }

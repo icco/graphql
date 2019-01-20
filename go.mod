@@ -5,6 +5,7 @@ require (
 	github.com/99designs/gqlgen v0.7.1
 	github.com/99designs/gqlgen-contrib v0.0.0-20181214005309-52113d2e3f08
 	github.com/GuiaBolso/darwin v0.0.0-20170210191649-86919dfcf808
+	github.com/auth0-community/go-auth0 v1.0.0
 	github.com/aws/aws-sdk-go v1.16.22 // indirect
 	github.com/census-instrumentation/opencensus-proto v0.1.0 // indirect
 	github.com/go-chi/chi v4.0.0+incompatible
@@ -28,6 +29,7 @@ require (
 	google.golang.org/api v0.1.0
 	google.golang.org/genproto v0.0.0-20190111180523-db91494dd46c // indirect
 	google.golang.org/grpc v1.18.0 // indirect
+	gopkg.in/square/go-jose.v2 v2.2.2
 	gopkg.in/unrolled/render.v1 v1.0.0-20190117215946-449f39850074
 	gopkg.in/unrolled/secure.v1 v1.0.0-20190103195806-76e6d4e9b90c
 )

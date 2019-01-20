@@ -93,7 +93,6 @@ func main() {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Recoverer)
 	r.Use(sdLogging.LoggingMiddleware(log))
-	r.Use(ContextMiddleware)
 
 	r.Use(cors.New(cors.Options{
 		AllowCredentials:   true,
