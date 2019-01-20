@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"net/http"
 	"os"
 
 	"github.com/auth0-community/go-auth0"
+	"github.com/icco/graphql"
 	jose "gopkg.in/square/go-jose.v2"
 )
 
@@ -49,7 +51,18 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		}
 		log.WithField("claims", claims).Debug("Got Claims!")
 
-		// TODO: do something with claims
+		// According to Auth0, the sub claim is what we're supposed to use to identify a unique user... so here we go!
+		userid, ok := claims["sub"].(string)
+		if ok {
+			user, err := graphql.GetUser(r.Context(), userid)
+			if err != nil {
+				log.WithError(err).WithField("claims", claims).Error("could not get user")
+			} else {
+				// put it in context
+				ctx := context.WithValue(r.Context(), graphql.UserCtxKey, user)
+				r = r.WithContext(ctx)
+			}
+		}
 
 		next.ServeHTTP(w, r)
 	})
