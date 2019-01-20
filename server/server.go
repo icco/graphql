@@ -57,11 +57,6 @@ func main() {
 		log.Fatalf("Init DB: %+v", err)
 	}
 
-	OAuthConfig = configureOAuthClient(
-		os.Getenv("OAUTH2_CLIENTID"),
-		os.Getenv("OAUTH2_SECRET"),
-		os.Getenv("OAUTH2_REDIRECT"))
-
 	port := "8080"
 	if fromEnv := os.Getenv("PORT"); fromEnv != "" {
 		port = fromEnv
@@ -127,26 +122,24 @@ func main() {
 	})
 
 	// Everything that does SSL only
+	sslOnly := secure.New(secure.Options{
+		BrowserXssFilter:     true,
+		ContentTypeNosniff:   true,
+		FrameDeny:            true,
+		HostsProxyHeaders:    []string{"X-Forwarded-Host"},
+		IsDevelopment:        isDev,
+		SSLProxyHeaders:      map[string]string{"X-Forwarded-Proto": "https"},
+		SSLRedirect:          !isDev,
+		STSIncludeSubdomains: true,
+		STSPreload:           true,
+		STSSeconds:           315360000,
+	}).Handler
+
 	r.Group(func(r chi.Router) {
-		r.Use(secure.New(secure.Options{
-			BrowserXssFilter:     true,
-			ContentTypeNosniff:   true,
-			FrameDeny:            true,
-			HostsProxyHeaders:    []string{"X-Forwarded-Host"},
-			IsDevelopment:        isDev,
-			SSLProxyHeaders:      map[string]string{"X-Forwarded-Proto": "https"},
-			SSLRedirect:          !isDev,
-			STSIncludeSubdomains: true,
-			STSPreload:           true,
-			STSSeconds:           315360000,
-		}).Handler)
+		r.Use(sslOnly)
+		r.Use(AuthMiddleware)
 
 		r.Get("/cron", cronHandler)
-
-		r.Mount("/debug", middleware.Profiler())
-
-		r.Mount("/admin", adminRouter())
-
 		r.Handle("/", handler.Playground("graphql", "/graphql"))
 		r.Handle("/graphql", handler.GraphQL(
 			graphql.NewExecutableSchema(graphql.New()),
@@ -175,11 +168,6 @@ func main() {
 			}),
 			handler.Tracer(gqlopencensus.New()),
 		))
-
-		// Auth stuff
-		r.HandleFunc("/login", loginHandler)
-		r.HandleFunc("/logout", logoutHandler)
-		r.HandleFunc("/callback", callbackHandler)
 	})
 
 	h := &ochttp.Handler{
