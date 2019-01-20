@@ -45,6 +45,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			http.Error(w, http.StatusText(403), 403)
 			return
 		}
+		log.WithField("claims", claims).Debug("Got Claims!")
 
 		// TODO: do something with claims
 
