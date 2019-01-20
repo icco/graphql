@@ -18,10 +18,9 @@ var (
 
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		secretProvider := auth0.NewKeyProvider([]byte(AUTH0["API-SECRET"]))
+		secretProvider := auth0.NewJWKClient(auth0.JWKClientOptions{URI: AUTH0["DOMAIN"] + "/.well-known/jwks.json"}, nil)
 		audience := []string{AUTH0["API-AUDIENCE"]}
-
-		configuration := auth0.NewConfiguration(secretProvider, audience, AUTH0["DOMAIN"], jose.HS256)
+		configuration := auth0.NewConfiguration(secretProvider, audience, AUTH0["DOMAIN"]+"/", jose.RS256)
 		validator := auth0.NewValidator(configuration, nil)
 
 		token, err := validator.ValidateRequest(r)
