@@ -1,6 +1,7 @@
 module github.com/icco/graphql
 
 require (
+	contrib.go.opencensus.io/exporter/ocagent v0.4.2 // indirect
 	contrib.go.opencensus.io/exporter/stackdriver v0.9.0
 	github.com/99designs/gqlgen v0.7.1
 	github.com/99designs/gqlgen-contrib v0.0.0-20181214005309-52113d2e3f08
@@ -10,23 +11,17 @@ require (
 	github.com/census-instrumentation/opencensus-proto v0.1.0 // indirect
 	github.com/go-chi/chi v4.0.0+incompatible
 	github.com/go-chi/cors v1.0.0
-	github.com/gofrs/uuid v3.2.0+incompatible
-	github.com/gorilla/sessions v1.1.3
 	github.com/icco/cacophony v0.0.0-20190110214701-78f01afc2df5
 	github.com/icco/logrus-stackdriver-formatter v0.3.0
 	github.com/lib/pq v1.0.0
 	github.com/opencensus-integrations/ocsql v0.1.3
-	github.com/prometheus/client_model v0.0.0-20190115171406-56726106282f // indirect
-	github.com/prometheus/procfs v0.0.0-20190117184657-bf6a532e95b1 // indirect
 	github.com/russross/blackfriday v2.0.0+incompatible
 	github.com/sirupsen/logrus v1.3.0
 	github.com/vektah/gqlparser v1.0.0
-	go.opencensus.io v0.18.0
+	go.opencensus.io v0.18.1-0.20181204023538-aab39bd6a98b
 	golang.org/x/net v0.0.0-20190119204137-ed066c81e75e // indirect
-	golang.org/x/oauth2 v0.0.0-20190115181402-5dab4167f31c
+	golang.org/x/oauth2 v0.0.0-20190115181402-5dab4167f31c // indirect
 	golang.org/x/sys v0.0.0-20190116161447-11f53e031339 // indirect
-	golang.org/x/tools v0.0.0-20190118193359-16909d206f00 // indirect
-	google.golang.org/api v0.1.0
 	google.golang.org/genproto v0.0.0-20190111180523-db91494dd46c // indirect
 	google.golang.org/grpc v1.18.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.2.2
