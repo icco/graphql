@@ -26,10 +26,16 @@ func AuthMiddleware(next http.Handler) http.Handler {
 
 		token, err := validator.ValidateRequest(r)
 
+		// This also returns an error if no token
 		if err != nil {
-			log.WithError(err).Error("Token is not valid")
-			http.Error(w, http.StatusText(403), 403)
-			return
+			if err.Error() == "Token not found" {
+				next.ServeHTTP(w, r)
+				return
+			} else {
+				log.WithField("auth", AUTH0).WithError(err).Error("Token is not valid")
+				http.Error(w, `{"error": "Error reading auth."}`, http.StatusBadRequest)
+				return
+			}
 		}
 
 		claims := map[string]interface{}{}
