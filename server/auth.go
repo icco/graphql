@@ -10,8 +10,8 @@ import (
 	"os"
 	"strings"
 
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gofrs/uuid"
-	"github.com/gorilla/sessions"
 	"github.com/icco/graphql"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -19,29 +19,19 @@ import (
 )
 
 const (
-	defaultSessionID        = "graphql.natwelch"
 	googleProfileSessionKey = "google_profile"
 	oauthTokenSessionKey    = "oauth_token"
 	oauthFlowRedirectKey    = "redirect"
 )
 
 var (
-	// SessionStore is a configured session cookie store.
-	SessionStore = sessions.NewCookieStore([]byte(os.Getenv("SESSION_SECRET")))
-
 	// OAuthConfig is used to store and share the Oauth2 Config.
 	OAuthConfig *oauth2.Config
 )
 
-func init() {
-	// Gob encoding for gorilla/sessions
-	gob.Register(&oauth2.Token{})
-	gob.Register(&graphql.User{})
-}
-
 func appErrorf(w http.ResponseWriter, err error, msg string, args ...interface{}) {
 	message := fmt.Sprintf(msg, args...)
-	log.Printf("%s: %+v", message, err)
+	log.WithError(err).Error(message)
 	j, _ := json.Marshal(map[string]string{"error": message})
 	http.Error(w, string(j), http.StatusInternalServerError)
 	return
@@ -81,15 +71,7 @@ func configureOAuthClient(clientID, clientSecret, redirectURL string) *oauth2.Co
 }
 
 func logoutHandler(w http.ResponseWriter, r *http.Request) {
-	// Nuke session
-	session, _ := SessionStore.Get(r, defaultSessionID)
-	session.Values[oauthTokenSessionKey] = nil
-	session.Values[googleProfileSessionKey] = nil
-	if err := session.Save(r, w); err != nil {
-		appErrorf(w, err, "could not save session: %v", err)
-		return
-	}
-
+	// TODO: Actually log folks out.
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
@@ -180,19 +162,24 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 // 403.
 func AdminOnly(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		session, err := SessionStore.Get(r, defaultSessionID)
+		authBackend := InitJWTAuthenticationBackend()
 		var user *graphql.User
 
 		// If error, we couldn't parse session.
 		allowed := false
-		if err != nil {
-			log.Printf("session parsing error: %+v", err)
-		}
+		token, err := jwt.ParseFromRequest(r, func(token *jwt.Token) (interface{}, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
+				return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+			} else {
+				return authBackend.PublicKey, nil
+			}
+		})
 
-		if session.Values[googleProfileSessionKey] != nil {
-			profile := session.Values[googleProfileSessionKey].(*graphql.User)
-			if profile.ID != "" {
-				user, err = graphql.GetUser(r.Context(), profile.ID)
+		if err != nil {
+			log.WithError(err).Error("JWT parsing error")
+		} else {
+			if token.Valid {
+				user, err = graphql.GetUser(r.Context(), token.UserID)
 				if err != nil {
 					appErrorf(w, err, "could not upsert user: %v", err)
 					return
