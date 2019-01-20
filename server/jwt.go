@@ -9,6 +9,7 @@ import (
 )
 
 var (
+	// AUTH0 holds our Auth0 config constants.
 	AUTH0 = map[string]string{
 		"API-SECRET":   os.Getenv("AUTH0_API_SECRET"),
 		"API-AUDIENCE": os.Getenv("AUTH0_API_AUDIENCE"),
@@ -16,6 +17,8 @@ var (
 	}
 )
 
+// AuthMiddleware parses the incomming authentication header and turns it into
+// an attached user.
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		secretProvider := auth0.NewJWKClient(auth0.JWKClientOptions{URI: AUTH0["DOMAIN"] + "/.well-known/jwks.json"}, nil)
@@ -30,11 +33,11 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			if err.Error() == "Token not found" {
 				next.ServeHTTP(w, r)
 				return
-			} else {
-				log.WithField("auth", AUTH0).WithError(err).Error("Token is not valid")
-				http.Error(w, `{"error": "Error reading auth."}`, http.StatusBadRequest)
-				return
 			}
+
+			log.WithField("auth", AUTH0).WithError(err).Error("Token is not valid")
+			http.Error(w, `{"error": "Error reading auth."}`, http.StatusBadRequest)
+			return
 		}
 
 		claims := map[string]interface{}{}
