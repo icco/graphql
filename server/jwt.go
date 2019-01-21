@@ -29,7 +29,8 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			apikey := r.Header.Get("X-API-AUTH")
 			user, err := graphql.GetUserByAPIKey(r.Context(), apikey)
 			if err != nil {
-				appErrorf(w, err, "could not get user by apikey: %v", err)
+				log.WithError(err).Error("could not get user by apikey")
+				http.Error(w, `{"error": "could not get a user with that API key"}`, http.StatusBadRequest)
 				return
 			}
 
@@ -55,7 +56,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			}
 
 			log.WithField("auth", AUTH0).WithError(err).Error("Token is not valid")
-			http.Error(w, `{"error": "Error reading auth."}`, http.StatusBadRequest)
+			http.Error(w, `{"error": "Error reading auth token"}`, http.StatusBadRequest)
 			return
 		}
 
