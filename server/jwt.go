@@ -23,6 +23,23 @@ var (
 // an attached user.
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		// API Key dropout
+		if r.Header.Get("X-API-AUTH") != "" {
+			apikey := r.Header.Get("X-API-AUTH")
+			user, err := graphql.GetUserByAPIKey(r.Context(), apikey)
+			if err != nil {
+				appErrorf(w, err, "could not get user by apikey: %v", err)
+				return
+			}
+
+			// put it in context
+			ctx := context.WithValue(r.Context(), graphql.UserCtxKey, user)
+			r = r.WithContext(ctx)
+			next.ServeHTTP(w, r)
+			return
+		}
+
 		secretProvider := auth0.NewJWKClient(auth0.JWKClientOptions{URI: AUTH0["DOMAIN"] + "/.well-known/jwks.json"}, nil)
 		audience := []string{AUTH0["API-AUDIENCE"]}
 		configuration := auth0.NewConfiguration(secretProvider, audience, AUTH0["DOMAIN"]+"/", jose.RS256)
