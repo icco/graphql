@@ -67,7 +67,6 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			http.Error(w, http.StatusText(403), 403)
 			return
 		}
-		log.WithField("claims", claims).Debug("Got Claims!")
 
 		// According to Auth0, the sub claim is what we're supposed to use to identify a unique user... so here we go!
 		userid, ok := claims["sub"].(string)
