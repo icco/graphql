@@ -131,6 +131,18 @@ type TwitterURL {
 }
 
 """
+A Log is a journal entry by an individual.
+"""
+type Log {
+  id: ID!
+  content: String
+  user: User
+  project: String!
+  code: String!
+  datetime: Time!
+}
+
+"""
 Time is a datetime scalar with timezone.
 """
 scalar Time
