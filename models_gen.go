@@ -21,6 +21,16 @@ type EditedPost struct {
 	Draft    bool      `json:"draft"`
 }
 
+// A Log is a journal entry by an individual.
+type Log struct {
+	ID       string    `json:"id"`
+	Content  *string   `json:"content"`
+	User     *User     `json:"user"`
+	Project  string    `json:"project"`
+	Code     string    `json:"code"`
+	Datetime time.Time `json:"datetime"`
+}
+
 type NewLink struct {
 	Title       string     `json:"title"`
 	URI         string     `json:"uri"`
