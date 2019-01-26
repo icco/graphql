@@ -147,7 +147,7 @@ func main() {
 				if ok {
 					log.WithError(err).Error("Error seen during graphql")
 				}
-				return errors.New("Fatal message seen when processing request")
+				return errors.New("fatal error seen while processing request")
 			}),
 			handler.CacheSize(512),
 			handler.RequestMiddleware(func(ctx context.Context, next func(ctx context.Context) []byte) []byte {
