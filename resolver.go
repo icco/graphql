@@ -92,7 +92,7 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input NewPost) (Post,
 	if input.Datetime != nil {
 		p.Datetime = *input.Datetime
 	} else {
-		p.Dateimte = time.Now()
+		p.Datetime = time.Now()
 	}
 
 	if input.Draft != nil {

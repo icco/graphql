@@ -161,6 +161,10 @@ func (p *Post) Save(ctx context.Context) error {
 	}
 	p.Tags = tags
 
+	if p.Title == "" {
+		p.Title = fmt.Sprintf("Untitled #%s", p.ID)
+	}
+
 	if _, err := db.ExecContext(
 		ctx,
 		`
