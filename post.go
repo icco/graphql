@@ -28,37 +28,6 @@ type Post struct {
 	Links    []*Link   `json:"links"`
 }
 
-// GeneratePost returns a fresh post that has not yet been saved to the
-// database.
-func GeneratePost(ctx context.Context, title string, content string, datetime time.Time, tags []string, draft bool) *Post {
-	e := new(Post)
-
-	// Set ID
-	maxID, err := GetMaxID(ctx)
-	if err != nil {
-		return e
-	}
-	id := maxID + 1
-	e.ID = fmt.Sprintf("%d", id)
-
-	if title == "" {
-		title = fmt.Sprintf("Untitled #%d", id)
-	}
-
-	// User supplied content
-	e.Title = title
-	e.Content = content
-	e.Datetime = datetime
-	e.Tags = tags
-	e.Draft = draft
-
-	// Computer generated content
-	e.Created = time.Now()
-	e.Modified = time.Now()
-
-	return e
-}
-
 // GetMaxID returns the greatest post ID in the database.
 func GetMaxID(ctx context.Context) (int64, error) {
 	row := db.QueryRowContext(ctx, "SELECT MAX(id) from posts")
@@ -165,13 +134,19 @@ func (p *Post) Save(ctx context.Context) error {
 		p.Title = fmt.Sprintf("Untitled #%s", p.ID)
 	}
 
+	if p.Created.IsZero() {
+		p.Created = time.Now()
+	}
+
+	p.Modified = time.Now()
+
 	if _, err := db.ExecContext(
 		ctx,
 		`
 INSERT INTO posts(id, title, content, date, draft, created_at, modified_at, tags)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 ON CONFLICT (id) DO UPDATE
-SET (title, content, date, draft, modified_at, tags) = ($2, $3, $4, $5, $7, $8)
+SET (title, content, date, draft, created_at, modified_at, tags) = ($2, $3, $4, $5, $6, $7, $8)
 WHERE posts.id = $1;
 `,
 		p.ID,
@@ -180,7 +155,7 @@ WHERE posts.id = $1;
 		p.Datetime,
 		p.Draft,
 		p.Created,
-		time.Now(),
+		p.Modified,
 		pq.Array(p.Tags)); err != nil {
 		return err
 	}
