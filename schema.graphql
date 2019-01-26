@@ -148,10 +148,10 @@ type Comment {
 }
 
 input NewPost {
-  content: String!
-  title: String!
-  datetime: Time!
-  draft: Boolean!
+  content: String
+  title: String
+  datetime: Time
+  draft: Boolean
 }
 
 input EditedPost {

@@ -5685,25 +5685,45 @@ func UnmarshalNewPost(v interface{}) (NewPost, error) {
 		switch k {
 		case "content":
 			var err error
-			it.Content, err = graphql.UnmarshalString(v)
+			var ptr1 string
+			if v != nil {
+				ptr1, err = graphql.UnmarshalString(v)
+				it.Content = &ptr1
+			}
+
 			if err != nil {
 				return it, err
 			}
 		case "title":
 			var err error
-			it.Title, err = graphql.UnmarshalString(v)
+			var ptr1 string
+			if v != nil {
+				ptr1, err = graphql.UnmarshalString(v)
+				it.Title = &ptr1
+			}
+
 			if err != nil {
 				return it, err
 			}
 		case "datetime":
 			var err error
-			it.Datetime, err = graphql.UnmarshalTime(v)
+			var ptr1 time.Time
+			if v != nil {
+				ptr1, err = graphql.UnmarshalTime(v)
+				it.Datetime = &ptr1
+			}
+
 			if err != nil {
 				return it, err
 			}
 		case "draft":
 			var err error
-			it.Draft, err = graphql.UnmarshalBoolean(v)
+			var ptr1 bool
+			if v != nil {
+				ptr1, err = graphql.UnmarshalBoolean(v)
+				it.Draft = &ptr1
+			}
+
 			if err != nil {
 				return it, err
 			}
@@ -6051,10 +6071,10 @@ type Comment {
 }
 
 input NewPost {
-  content: String!
-  title: String!
-  datetime: Time!
-  draft: Boolean!
+  content: String
+  title: String
+  datetime: Time
+  draft: Boolean
 }
 
 input EditedPost {

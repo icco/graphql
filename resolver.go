@@ -80,10 +80,10 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input NewPost) (Post,
 	id := maxID + 1
 
 	p.ID = strconv.FormatInt(id, 10)
-	p.Title = input.Title
-	p.Content = input.Content
-	p.Datetime = input.Datetime
-	p.Draft = input.Draft
+	p.Title = *input.Title
+	p.Content = *input.Content
+	p.Datetime = *input.Datetime
+	p.Draft = *input.Draft
 	p.Created = time.Now()
 
 	err = p.Save(ctx)
