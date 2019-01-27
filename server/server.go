@@ -92,6 +92,7 @@ func main() {
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Recoverer)
+	r.Use(middleware.DefaultCompress)
 	r.Use(sdLogging.LoggingMiddleware(log))
 
 	r.Use(cors.New(cors.Options{
