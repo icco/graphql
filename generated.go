@@ -96,6 +96,7 @@ type ComplexityRoot struct {
 		Tweet              func(childComplexity int, id string) int
 		TweetsByScreenName func(childComplexity int, screen_name string, limit *int, offset *int) int
 		HomeTimelineUrls   func(childComplexity int, limit *int) int
+		Tags               func(childComplexity int) int
 	}
 
 	Stat struct {
@@ -156,6 +157,7 @@ type QueryResolver interface {
 	Tweet(ctx context.Context, id string) (*Tweet, error)
 	TweetsByScreenName(ctx context.Context, screen_name string, limit *int, offset *int) ([]*Tweet, error)
 	HomeTimelineURLs(ctx context.Context, limit *int) ([]*models.SavedURL, error)
+	Tags(ctx context.Context) ([]string, error)
 }
 type TwitterURLResolver interface {
 	Tweets(ctx context.Context, obj *models.SavedURL) ([]*Tweet, error)
@@ -1015,6 +1017,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.HomeTimelineUrls(childComplexity, args["limit"].(*int)), true
+
+	case "Query.tags":
+		if e.complexity.Query.Tags == nil {
+			break
+		}
+
+		return e.complexity.Query.Tags(childComplexity), true
 
 	case "Stat.key":
 		if e.complexity.Stat.Key == nil {
@@ -2346,6 +2355,15 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				wg.Done()
 			}(i, field)
+		case "tags":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_tags(ctx, field)
+				if out.Values[i] == graphql.Null {
+					invalid = true
+				}
+				wg.Done()
+			}(i, field)
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
@@ -3186,6 +3204,42 @@ func (ec *executionContext) _Query_homeTimelineURLs(ctx context.Context, field g
 
 	}
 	wg.Wait()
+	return arr1
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Query_tags(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Tags(rctx)
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	arr1 := make(graphql.Array, len(res))
+
+	for idx1 := range res {
+		arr1[idx1] = func() graphql.Marshaler {
+			return graphql.MarshalString(res[idx1])
+		}()
+	}
+
 	return arr1
 }
 
@@ -5972,6 +6026,9 @@ type Query {
   tweetsByScreenName(screen_name: String!, limit: Int, offset: Int): [Tweet]!
 
   homeTimelineURLs(limit: Int): [TwitterURL]!
+
+  "Returns all tags used in a post."
+  tags: [String!]!
 }
 
 """

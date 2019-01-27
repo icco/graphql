@@ -370,6 +370,10 @@ func (r *queryResolver) HomeTimelineURLs(ctx context.Context, limitIn *int) ([]*
 	return urls, err
 }
 
+func (r *queryResolver) Tags(ctx context.Context) ([]string, error) {
+	return AllTags(ctx)
+}
+
 type twitterURLResolver struct{ *Resolver }
 
 func (r *twitterURLResolver) Tweets(ctx context.Context, obj *models.SavedURL) ([]*Tweet, error) {

@@ -78,6 +78,32 @@ func AllPosts(ctx context.Context, isDraft bool) ([]*Post, error) {
 	return posts, nil
 }
 
+// AllTags returns all tags used in all posts.
+func AllTags(ctx context.Context) ([]string, error) {
+	rows, err := db.QueryContext(ctx, "SELECT UNNEST(tags) AS tag, COUNT(*) AS cnt FROM posts GROUP BY tag ORDER BY cnt DESC")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	tags := make([]string, 0)
+	for rows.Next() {
+		var tag string
+		var cnt int
+		err := rows.Scan(&tag, &cnt)
+		if err != nil {
+			return tags, err
+		}
+		tags = append(tags, tag)
+	}
+
+	if err = rows.Err(); err != nil {
+		return tags, err
+	}
+
+	return tags, nil
+}
+
 // Drafts is a simple wrapper around Posts that does return drafts.
 func Drafts(ctx context.Context) ([]*Post, error) {
 	return AllPosts(ctx, true)
