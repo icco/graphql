@@ -79,7 +79,7 @@ func AllPosts(ctx context.Context, isDraft bool) ([]*Post, error) {
 }
 
 func AllTags(ctx context.Context) ([]string, error) {
-	rows, err := db.QueryContext(ctx, "select unnest(tags) as tag from posts group by tag")
+	rows, err := db.QueryContext(ctx, "SELECT UNNEST(tags) AS tag, COUNT(*) AS cnt FROM posts GROUP BY tag ORDER BY cnt DESC")
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +88,8 @@ func AllTags(ctx context.Context) ([]string, error) {
 	tags := make([]string, 0)
 	for rows.Next() {
 		var tag string
-		err := rows.Scan(&tag)
+		var cnt int
+		err := rows.Scan(&tag, &cnt)
 		if err != nil {
 			return tags, err
 		}
