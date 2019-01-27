@@ -36,7 +36,7 @@ require (
 	github.com/shurcooL/home v0.0.0-20190120230144-cf17a69b0cc5 // indirect
 	github.com/shurcooL/htmlg v0.0.0-20190120222857-1e8a37b806f3 // indirect
 	github.com/shurcooL/httpfs v0.0.0-20181222201310-74dc9339e414 // indirect
-	github.com/shurcooL/issues v0.0.0-20190119024938-0d39520a96b7 // indirect
+	github.com/shurcooL/issues v0.0.0-20190120000219-08d8dadf8acb // indirect
 	github.com/shurcooL/issuesapp v0.0.0-20181229001453-b8198a402c58 // indirect
 	github.com/shurcooL/notifications v0.0.0-20181111060504-bcc2b3082a7a // indirect
 	github.com/shurcooL/octicon v0.0.0-20181222203144-9ff1a4cf27f4 // indirect
