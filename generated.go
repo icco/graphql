@@ -6027,6 +6027,7 @@ type Query {
 
   homeTimelineURLs(limit: Int): [TwitterURL]!
 
+  "Returns all tags used in a post."
   tags: [String!]!
 }
 

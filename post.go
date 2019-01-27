@@ -78,6 +78,7 @@ func AllPosts(ctx context.Context, isDraft bool) ([]*Post, error) {
 	return posts, nil
 }
 
+// AllTags returns all tags used in all posts.
 func AllTags(ctx context.Context) ([]string, error) {
 	rows, err := db.QueryContext(ctx, "SELECT UNNEST(tags) AS tag, COUNT(*) AS cnt FROM posts GROUP BY tag ORDER BY cnt DESC")
 	if err != nil {
