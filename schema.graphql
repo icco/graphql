@@ -49,6 +49,8 @@ type Query {
   tweetsByScreenName(screen_name: String!, limit: Int, offset: Int): [Tweet]!
 
   homeTimelineURLs(limit: Int): [TwitterURL]!
+
+  tags: [String!]!
 }
 
 """

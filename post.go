@@ -78,6 +78,30 @@ func AllPosts(ctx context.Context, isDraft bool) ([]*Post, error) {
 	return posts, nil
 }
 
+func AllTags(ctx context.Context) ([]string, error) {
+	rows, err := db.QueryContext(ctx, "select unnest(tags) as tag from posts group by tag")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	tags := make([]string, 0)
+	for rows.Next() {
+		var tag string
+		err := rows.Scan(&tag)
+		if err != nil {
+			return tags, err
+		}
+		tags = append(tags, tag)
+	}
+
+	if err = rows.Err(); err != nil {
+		return tags, err
+	}
+
+	return tags, nil
+}
+
 // Drafts is a simple wrapper around Posts that does return drafts.
 func Drafts(ctx context.Context) ([]*Post, error) {
 	return AllPosts(ctx, true)
