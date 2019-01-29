@@ -16,11 +16,11 @@ import (
 	"github.com/icco/cacophony/models"
 )
 
-type key int
+type key int8
 
 const (
 	// UserCtxKey is a constant context key
-	UserCtxKey = iota
+	UserCtxKey key = 0
 )
 
 // ForContext finds the user from the context. Requires
