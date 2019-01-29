@@ -51,6 +51,17 @@ func New() Config {
 		return next(ctx)
 	}
 
+	c.Directives.LoggedIn = func(ctx context.Context, _ interface{}, next graphql.Resolver) (interface{}, error) {
+		u := ForContext(ctx)
+		if u == nil {
+			// block calling the next resolver
+			return nil, fmt.Errorf("forbidden")
+		}
+
+		// or let it pass through
+		return next(ctx)
+	}
+
 	return c
 }
 
@@ -171,6 +182,10 @@ func (r *mutationResolver) UpsertLink(ctx context.Context, input NewLink) (Link,
 
 func (r *mutationResolver) UpsertStat(ctx context.Context, input NewStat) (Stat, error) {
 	return Stat{}, fmt.Errorf("not implemented")
+}
+
+func (r *mutationResolver) InsterLog(ctx context.Context, input NewLog) (*Log, error) {
+	return nil, fmt.Errorf("not implemented")
 }
 
 func (r *mutationResolver) UpsertTweet(ctx context.Context, input NewTweet) (Tweet, error) {
