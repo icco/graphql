@@ -85,6 +85,7 @@ type ComplexityRoot struct {
 		Draft    func(childComplexity int) int
 		Tags     func(childComplexity int) int
 		Links    func(childComplexity int) int
+		Uri      func(childComplexity int) int
 	}
 
 	Query struct {
@@ -875,6 +876,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Post.Links(childComplexity), true
+
+	case "Post.uri":
+		if e.complexity.Post.Uri == nil {
+			break
+		}
+
+		return e.complexity.Post.Uri(childComplexity), true
 
 	case "Query.drafts":
 		if e.complexity.Query.Drafts == nil {
@@ -2014,6 +2022,11 @@ func (ec *executionContext) _Post(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalid = true
 			}
+		case "uri":
+			out.Values[i] = ec._Post_uri(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2366,6 +2379,33 @@ func (ec *executionContext) _Post_links(ctx context.Context, field graphql.Colle
 	}
 	wg.Wait()
 	return arr1
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Post_uri(ctx context.Context, field graphql.CollectedField, obj *Post) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Post",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.URI(), nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return graphql.MarshalString(res)
 }
 
 var queryImplementors = []string{"Query"}
@@ -6235,6 +6275,9 @@ type Post implements Linkable {
 
   "links are the links referenced in a post."
   links: [Link]!
+
+  "uri returns an absolute link to this post."
+  uri: URI!
 }
 
 """

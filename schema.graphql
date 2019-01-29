@@ -81,6 +81,9 @@ type Post implements Linkable {
 
   "links are the links referenced in a post."
   links: [Link]!
+
+  "uri returns an absolute link to this post."
+  uri: URI!
 }
 
 """

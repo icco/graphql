@@ -204,6 +204,11 @@ func (p *Post) HTML() template.HTML {
 	return Markdown(p.Content)
 }
 
+// URI returns an absolute link to this post.
+func (p *Post) URI() string {
+	return fmt.Sprintf("https://writing.natwelch.com/post/%s", p.ID)
+}
+
 // ReadTime calculates the number of seconds it should take to read the post.
 func (p *Post) ReadTime() int32 {
 	ReadingSpeed := 265.0
