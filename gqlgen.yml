@@ -12,13 +12,15 @@ resolver:
   filename: resolver.go
   type: Resolver
 models:
-  Post:
-    model: github.com/icco/graphql.Post
-  User:
-    model: github.com/icco/graphql.User
+  Geo:
+    model: github.com/icco/graphql.Geo
   Link:
     model: github.com/icco/graphql.Link
+  Post:
+    model: github.com/icco/graphql.Post
   Tweet:
     model: github.com/icco/graphql.Tweet
   TwitterURL:
     model: github.com/icco/cacophony/models.SavedURL
+  User:
+    model: github.com/icco/graphql.User

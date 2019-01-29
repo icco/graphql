@@ -25,6 +25,7 @@ require (
 	github.com/lib/pq v1.0.0
 	github.com/microcosm-cc/bluemonday v1.0.2 // indirect
 	github.com/opencensus-integrations/ocsql v0.1.3
+	github.com/paulmach/orb v0.1.1
 	github.com/prometheus/client_model v0.0.0-20190115171406-56726106282f // indirect
 	github.com/prometheus/common v0.1.0 // indirect
 	github.com/prometheus/procfs v0.0.0-20190117184657-bf6a532e95b1 // indirect
