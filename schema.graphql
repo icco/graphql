@@ -49,6 +49,9 @@ type Query {
   tweetsByScreenName(screen_name: String!, limit: Int, offset: Int): [Tweet]!
 
   homeTimelineURLs(limit: Int): [TwitterURL]!
+
+  "Returns all tags used in a post."
+  tags: [String!]!
 }
 
 interface Searchable {
@@ -166,10 +169,10 @@ type Comment {
 }
 
 input NewPost {
-  content: String!
-  title: String!
-  datetime: Time!
-  draft: Boolean!
+  content: String
+  title: String
+  datetime: Time
+  draft: Boolean
 }
 
 input EditedPost {

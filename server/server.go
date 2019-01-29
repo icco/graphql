@@ -92,6 +92,7 @@ func main() {
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Recoverer)
+	r.Use(middleware.DefaultCompress)
 	r.Use(sdLogging.LoggingMiddleware(log))
 
 	r.Use(cors.New(cors.Options{
@@ -147,7 +148,7 @@ func main() {
 				if ok {
 					log.WithError(err).Error("Error seen during graphql")
 				}
-				return errors.New("Fatal message seen when processing request")
+				return errors.New("fatal error seen while processing request")
 			}),
 			handler.CacheSize(512),
 			handler.RequestMiddleware(func(ctx context.Context, next func(ctx context.Context) []byte) []byte {
