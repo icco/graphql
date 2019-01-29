@@ -10,6 +10,8 @@ type Geo struct {
 	Long float64 `json:"long"`
 }
 
-func (g *Geo) ToOrb() orb.Point {
-	return orb.Point{g.Long, g.Lat}
+// ToOrb translates a Geo point into one that has lots of useful functions on
+// it.
+func (g *Geo) ToOrb() *orb.Point {
+	return &orb.Point{g.Long, g.Lat}
 }
