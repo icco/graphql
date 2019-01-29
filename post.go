@@ -213,6 +213,8 @@ func (p *Post) ReadTime() int32 {
 	return seconds
 }
 
+// IsLinkable exists to show that this method implements the Linkable type in
+// graphql.
 func (p *Post) IsLinkable() {}
 
 // Posts returns some posts.

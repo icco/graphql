@@ -45,6 +45,8 @@ WHERE links.uri = $2;
 	return nil
 }
 
+// IsLinkable exists to show that this method implements the Linkable type in
+// graphql.
 func (l *Link) IsLinkable() {}
 
 // GetLinkByURI gets a link by uri from the database.
