@@ -40,10 +40,10 @@ type NewLink struct {
 }
 
 type NewPost struct {
-	Content  string    `json:"content"`
-	Title    string    `json:"title"`
-	Datetime time.Time `json:"datetime"`
-	Draft    bool      `json:"draft"`
+	Content  *string    `json:"content"`
+	Title    *string    `json:"title"`
+	Datetime *time.Time `json:"datetime"`
+	Draft    *bool      `json:"draft"`
 }
 
 type NewStat struct {
