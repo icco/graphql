@@ -19,15 +19,19 @@ import (
 type key int8
 
 const (
-	// UserCtxKey is a constant context key
-	UserCtxKey key = 0
+	userCtxKey key = 0
 )
 
-// ForContext finds the user from the context. Requires
-// server.ContextMiddleware to have run.
+// ForContext finds the user from the context. This is usually inserted by
+// WithUser.
 func ForContext(ctx context.Context) *User {
-	raw, _ := ctx.Value(UserCtxKey).(*User)
+	raw, _ := ctx.Value(userCtxKey).(*User)
 	return raw
+}
+
+// WithUser puts a user in the context.
+func WithUser(ctx context.Context, u *User) context.Context {
+	return context.WithValue(ctx, userCtxKey, u)
 }
 
 // Resolver is the type that gqlgen expects to exist
