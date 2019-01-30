@@ -12,6 +12,8 @@ resolver:
   filename: resolver.go
   type: Resolver
 models:
+  Book:
+    model: github.com/icco/graphql.Book
   Post:
     model: github.com/icco/graphql.Post
   User:

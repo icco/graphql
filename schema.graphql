@@ -54,10 +54,18 @@ type Query {
   tags: [String!]!
 }
 
+interface Searchable {
+  summary: String!
+}
+
+interface Linkable {
+  uri: URI!
+}
+
 """
 A post is an individual post in the blog.
 """
-type Post {
+type Post implements Linkable {
   id: ID!
   title: String!
   content: String!
@@ -73,12 +81,15 @@ type Post {
 
   "links are the links referenced in a post."
   links: [Link]!
+
+  "uri returns an absolute link to this post."
+  uri: URI!
 }
 
 """
 A link is a link I have save on pinboard or a link in a post.
 """
-type Link {
+type Link implements Linkable {
   id: ID!
   title: String!
   uri: URI!
@@ -112,7 +123,7 @@ type User {
 """
 A Tweet is an archived tweet.
 """
-type Tweet {
+type Tweet implements Linkable {
   id: ID!
   text: String!
   hashtags: [String!]!
@@ -131,6 +142,16 @@ type TwitterURL {
   createdAt: Time!
   modifiedAt: Time!
   tweets: [Tweet]!
+}
+
+
+"""
+A book is a book on Goodreads.
+"""
+type Book implements Linkable {
+  id: ID!
+  uri: URI!
+  title: String!
 }
 
 """
@@ -155,6 +176,12 @@ input NewPost {
   title: String
   datetime: Time
   draft: Boolean
+}
+
+input EditBook {
+  id: ID,
+  title: String,
+  goodreads_id: String!,
 }
 
 input EditedPost {
@@ -193,6 +220,7 @@ input NewTweet {
 type Mutation {
   createPost(input: NewPost!): Post! @hasRole(role: admin)
   editPost(Id: ID!, input: EditedPost!): Post! @hasRole(role: admin)
+  upsertBook(input: EditBook!): Book! @hasRole(role: admin)
   upsertLink(input: NewLink!): Link! @hasRole(role: admin)
   upsertStat(input: NewStat!): Stat! @hasRole(role: admin)
   upsertTweet(input: NewTweet!): Tweet! @hasRole(role: admin)

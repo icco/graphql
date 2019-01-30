@@ -204,6 +204,11 @@ func (p *Post) HTML() template.HTML {
 	return Markdown(p.Content)
 }
 
+// URI returns an absolute link to this post.
+func (p *Post) URI() string {
+	return fmt.Sprintf("https://writing.natwelch.com/post/%s", p.ID)
+}
+
 // ReadTime calculates the number of seconds it should take to read the post.
 func (p *Post) ReadTime() int32 {
 	ReadingSpeed := 265.0
@@ -212,6 +217,10 @@ func (p *Post) ReadTime() int32 {
 
 	return seconds
 }
+
+// IsLinkable exists to show that this method implements the Linkable type in
+// graphql.
+func (p *Post) IsLinkable() {}
 
 // Posts returns some posts.
 func Posts(ctx context.Context, limit *int, offset *int) ([]*Post, error) {
