@@ -20,23 +20,25 @@ type Book struct {
 	Modified    time.Time `json:"modified"`
 }
 
+// IsLinkable exists to show that this method implements the Linkable type in
+// graphql.
 func (Book) IsLinkable() {}
 
 // Save inserts or updates a book into the database.
-func (p *Book) Save(ctx context.Context) error {
-	if p.ID == "" {
+func (b *Book) Save(ctx context.Context) error {
+	if b.ID == "" {
 		uuid, err := uuid.NewRandom()
 		if err != nil {
 			return err
 		}
-		p.ID = uuid.String()
+		b.ID = uuid.String()
 	}
 
-	if p.Created.IsZero() {
-		p.Created = time.Now()
+	if b.Created.IsZero() {
+		b.Created = time.Now()
 	}
 
-	p.Modified = time.Now()
+	b.Modified = time.Now()
 
 	if _, err := db.ExecContext(
 		ctx,
@@ -47,17 +49,18 @@ ON CONFLICT (id) DO UPDATE
 SET (title, goodreads_id, created_at, modified_at) = ($2, $3, $4, $5)
 WHERE books.id = $1;
 `,
-		p.ID,
-		p.Title,
-		p.GoodreadsID,
-		p.Created,
-		p.Modified); err != nil {
+		b.ID,
+		b.Title,
+		b.GoodreadsID,
+		b.Created,
+		b.Modified); err != nil {
 		return err
 	}
 
 	return nil
 }
 
+// URI returns an absolute link to this book.
 func (b *Book) URI() string {
-	return fmt.Sprintf("https://goodreads.com/%s", b.GoodreadsID)
+	return fmt.Sprintf("https://www.goodreads.com/book/show/%s", b.GoodreadsID)
 }
