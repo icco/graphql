@@ -68,6 +68,7 @@ type ComplexityRoot struct {
 	Mutation struct {
 		CreatePost  func(childComplexity int, input NewPost) int
 		EditPost    func(childComplexity int, Id string, input EditedPost) int
+		UpsertBook  func(childComplexity int, input EditBook) int
 		UpsertLink  func(childComplexity int, input NewLink) int
 		UpsertStat  func(childComplexity int, input NewStat) int
 		UpsertTweet func(childComplexity int, input NewTweet) int
@@ -145,6 +146,7 @@ type ComplexityRoot struct {
 type MutationResolver interface {
 	CreatePost(ctx context.Context, input NewPost) (Post, error)
 	EditPost(ctx context.Context, Id string, input EditedPost) (Post, error)
+	UpsertBook(ctx context.Context, input EditBook) (Book, error)
 	UpsertLink(ctx context.Context, input NewLink) (Link, error)
 	UpsertStat(ctx context.Context, input NewStat) (Stat, error)
 	UpsertTweet(ctx context.Context, input NewTweet) (Tweet, error)
@@ -206,6 +208,21 @@ func field_Mutation_editPost_args(rawArgs map[string]interface{}) (map[string]in
 		}
 	}
 	args["input"] = arg1
+	return args, nil
+
+}
+
+func field_Mutation_upsertBook_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 EditBook
+	if tmp, ok := rawArgs["input"]; ok {
+		var err error
+		arg0, err = UnmarshalEditBook(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
 	return args, nil
 
 }
@@ -763,6 +780,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.EditPost(childComplexity, args["Id"].(string), args["input"].(EditedPost)), true
+
+	case "Mutation.upsertBook":
+		if e.complexity.Mutation.UpsertBook == nil {
+			break
+		}
+
+		args, err := field_Mutation_upsertBook_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpsertBook(childComplexity, args["input"].(EditBook)), true
 
 	case "Mutation.upsertLink":
 		if e.complexity.Mutation.UpsertLink == nil {
@@ -1341,7 +1370,7 @@ func (ec *executionContext) _Book_uri(ctx context.Context, field graphql.Collect
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.URI, nil
+		return obj.URI(), nil
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -1757,6 +1786,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalid = true
 			}
+		case "upsertBook":
+			out.Values[i] = ec._Mutation_upsertBook(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
 		case "upsertLink":
 			out.Values[i] = ec._Mutation_upsertLink(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -1849,6 +1883,40 @@ func (ec *executionContext) _Mutation_editPost(ctx context.Context, field graphq
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 
 	return ec._Post(ctx, field.Selections, &res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Mutation_upsertBook(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Mutation_upsertBook_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Mutation",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpsertBook(rctx, args["input"].(EditBook))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(Book)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	return ec._Book(ctx, field.Selections, &res)
 }
 
 // nolint: vetshadow
@@ -5854,6 +5922,46 @@ func (ec *executionContext) _Searchable(ctx context.Context, sel ast.SelectionSe
 	}
 }
 
+func UnmarshalEditBook(v interface{}) (EditBook, error) {
+	var it EditBook
+	var asMap = v.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+			var ptr1 string
+			if v != nil {
+				ptr1, err = graphql.UnmarshalID(v)
+				it.ID = &ptr1
+			}
+
+			if err != nil {
+				return it, err
+			}
+		case "title":
+			var err error
+			var ptr1 string
+			if v != nil {
+				ptr1, err = graphql.UnmarshalString(v)
+				it.Title = &ptr1
+			}
+
+			if err != nil {
+				return it, err
+			}
+		case "goodreadsid":
+			var err error
+			it.Goodreadsid, err = graphql.UnmarshalString(v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func UnmarshalEditedPost(v interface{}) (EditedPost, error) {
 	var it EditedPost
 	var asMap = v.(map[string]interface{})
@@ -6372,6 +6480,12 @@ input NewPost {
   draft: Boolean
 }
 
+input EditBook {
+  id: ID,
+  title: String,
+  goodreadsid: String!,
+}
+
 input EditedPost {
   content: String!
   title: String!
@@ -6408,6 +6522,7 @@ input NewTweet {
 type Mutation {
   createPost(input: NewPost!): Post! @hasRole(role: admin)
   editPost(Id: ID!, input: EditedPost!): Post! @hasRole(role: admin)
+  upsertBook(input: EditBook!): Book! @hasRole(role: admin)
   upsertLink(input: NewLink!): Link! @hasRole(role: admin)
   upsertStat(input: NewStat!): Stat! @hasRole(role: admin)
   upsertTweet(input: NewTweet!): Tweet! @hasRole(role: admin)

@@ -178,6 +178,12 @@ input NewPost {
   draft: Boolean
 }
 
+input EditBook {
+  id: ID,
+  title: String,
+  goodreadsid: String!,
+}
+
 input EditedPost {
   content: String!
   title: String!
@@ -214,6 +220,7 @@ input NewTweet {
 type Mutation {
   createPost(input: NewPost!): Post! @hasRole(role: admin)
   editPost(Id: ID!, input: EditedPost!): Post! @hasRole(role: admin)
+  upsertBook(input: EditBook!): Book! @hasRole(role: admin)
   upsertLink(input: NewLink!): Link! @hasRole(role: admin)
   upsertStat(input: NewStat!): Stat! @hasRole(role: admin)
   upsertTweet(input: NewTweet!): Tweet! @hasRole(role: admin)

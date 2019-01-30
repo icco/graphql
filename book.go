@@ -1,6 +1,10 @@
 package graphql
 
 import (
+	"context"
+	"fmt"
+	"time"
+
 	"github.com/google/uuid"
 )
 
@@ -12,6 +16,8 @@ type Book struct {
 	Link        string
 	Authors     []string
 	ISBN        string
+	Created     time.Time `json:"created"`
+	Modified    time.Time `json:"modified"`
 }
 
 func (Book) IsLinkable() {}

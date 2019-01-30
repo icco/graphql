@@ -120,6 +120,23 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input NewPost) (Post,
 	return *post, nil
 }
 
+func (r *mutationResolver) UpsertBook(ctx context.Context, input EditBook) (Book, error) {
+	b := &Book{}
+
+	if input.ID != nil {
+		b.ID = *input.ID
+	}
+
+	if input.Title != nil {
+		b.Title = *input.Title
+	}
+
+	b.GoodreadsID = input.GoodreadsID
+
+	err := b.Save(ctx)
+	return *b, err
+}
+
 func (r *mutationResolver) EditPost(ctx context.Context, id string, input EditedPost) (Post, error) {
 	p := &Post{}
 	p.ID = id

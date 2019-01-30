@@ -14,6 +14,12 @@ type Comment struct {
 	ID string `json:"id"`
 }
 
+type EditBook struct {
+	ID          *string `json:"id"`
+	Title       *string `json:"title"`
+	Goodreadsid string  `json:"goodreadsid"`
+}
+
 type EditedPost struct {
 	Content  string    `json:"content"`
 	Title    string    `json:"title"`
