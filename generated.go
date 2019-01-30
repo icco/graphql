@@ -5950,9 +5950,9 @@ func UnmarshalEditBook(v interface{}) (EditBook, error) {
 			if err != nil {
 				return it, err
 			}
-		case "goodreadsid":
+		case "goodreads_id":
 			var err error
-			it.Goodreadsid, err = graphql.UnmarshalString(v)
+			it.GoodreadsID, err = graphql.UnmarshalString(v)
 			if err != nil {
 				return it, err
 			}
@@ -6483,7 +6483,7 @@ input NewPost {
 input EditBook {
   id: ID,
   title: String,
-  goodreadsid: String!,
+  goodreads_id: String!,
 }
 
 input EditedPost {

@@ -17,7 +17,7 @@ type Comment struct {
 type EditBook struct {
 	ID          *string `json:"id"`
 	Title       *string `json:"title"`
-	Goodreadsid string  `json:"goodreadsid"`
+	GoodreadsID string  `json:"goodreads_id"`
 }
 
 type EditedPost struct {

@@ -181,7 +181,7 @@ input NewPost {
 input EditBook {
   id: ID,
   title: String,
-  goodreadsid: String!,
+  goodreads_id: String!,
 }
 
 input EditedPost {
