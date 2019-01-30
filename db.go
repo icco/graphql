@@ -124,6 +124,19 @@ var (
       );
       `,
 		},
+		{
+			Version:     9,
+			Description: "Add books table",
+			Script: `
+      CREATE TABLE books(
+        id text PRIMARY KEY NOT NULL,
+        title text,
+        goodreads_id text,
+        created_at timestamp with time zone,
+        modified_at timestamp with time zone
+      );
+      `,
+		},
 	}
 )
 

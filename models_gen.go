@@ -9,15 +9,6 @@ import (
 	"time"
 )
 
-// A book is a book on Goodreads.
-type Book struct {
-	ID    string `json:"id"`
-	URI   string `json:"uri"`
-	Title string `json:"title"`
-}
-
-func (Book) IsLinkable() {}
-
 // Comment is an undefined type reserved for the future.
 type Comment struct {
 	ID string `json:"id"`
