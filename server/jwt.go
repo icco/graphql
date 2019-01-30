@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"net/http"
 	"os"
 
@@ -35,7 +34,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			}
 
 			// put it in context
-			ctx := context.WithValue(r.Context(), graphql.UserCtxKey, user)
+			ctx := graphql.WithUser(r.Context(), user)
 			r = r.WithContext(ctx)
 			next.ServeHTTP(w, r)
 			return
@@ -76,7 +75,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 				log.WithError(err).WithField("claims", claims).Error("could not get user")
 			} else {
 				// put it in context
-				ctx := context.WithValue(r.Context(), graphql.UserCtxKey, user)
+				ctx := graphql.WithUser(r.Context(), user)
 				r = r.WithContext(ctx)
 			}
 		}

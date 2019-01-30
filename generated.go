@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"strconv"
 	"sync"
 	"time"
@@ -45,6 +46,12 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	Book struct {
+		Id    func(childComplexity int) int
+		Uri   func(childComplexity int) int
+		Title func(childComplexity int) int
+	}
+
 	Comment struct {
 		Id func(childComplexity int) int
 	}
@@ -78,6 +85,7 @@ type ComplexityRoot struct {
 	Mutation struct {
 		CreatePost  func(childComplexity int, input NewPost) int
 		EditPost    func(childComplexity int, Id string, input EditedPost) int
+		UpsertBook  func(childComplexity int, input EditBook) int
 		UpsertLink  func(childComplexity int, input NewLink) int
 		UpsertStat  func(childComplexity int, input NewStat) int
 		UpsertTweet func(childComplexity int, input NewTweet) int
@@ -96,6 +104,7 @@ type ComplexityRoot struct {
 		Draft    func(childComplexity int) int
 		Tags     func(childComplexity int) int
 		Links    func(childComplexity int) int
+		Uri      func(childComplexity int) int
 	}
 
 	Query struct {
@@ -155,6 +164,7 @@ type ComplexityRoot struct {
 type MutationResolver interface {
 	CreatePost(ctx context.Context, input NewPost) (Post, error)
 	EditPost(ctx context.Context, Id string, input EditedPost) (Post, error)
+	UpsertBook(ctx context.Context, input EditBook) (Book, error)
 	UpsertLink(ctx context.Context, input NewLink) (Link, error)
 	UpsertStat(ctx context.Context, input NewStat) (Stat, error)
 	UpsertTweet(ctx context.Context, input NewTweet) (Tweet, error)
@@ -217,6 +227,21 @@ func field_Mutation_editPost_args(rawArgs map[string]interface{}) (map[string]in
 		}
 	}
 	args["input"] = arg1
+	return args, nil
+
+}
+
+func field_Mutation_upsertBook_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 EditBook
+	if tmp, ok := rawArgs["input"]; ok {
+		var err error
+		arg0, err = UnmarshalEditBook(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
 	return args, nil
 
 }
@@ -682,6 +707,27 @@ func (e *executableSchema) Schema() *ast.Schema {
 func (e *executableSchema) Complexity(typeName, field string, childComplexity int, rawArgs map[string]interface{}) (int, bool) {
 	switch typeName + "." + field {
 
+	case "Book.id":
+		if e.complexity.Book.Id == nil {
+			break
+		}
+
+		return e.complexity.Book.Id(childComplexity), true
+
+	case "Book.uri":
+		if e.complexity.Book.Uri == nil {
+			break
+		}
+
+		return e.complexity.Book.Uri(childComplexity), true
+
+	case "Book.title":
+		if e.complexity.Book.Title == nil {
+			break
+		}
+
+		return e.complexity.Book.Title(childComplexity), true
+
 	case "Comment.id":
 		if e.complexity.Comment.Id == nil {
 			break
@@ -832,6 +878,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.EditPost(childComplexity, args["Id"].(string), args["input"].(EditedPost)), true
 
+	case "Mutation.upsertBook":
+		if e.complexity.Mutation.UpsertBook == nil {
+			break
+		}
+
+		args, err := field_Mutation_upsertBook_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpsertBook(childComplexity, args["input"].(EditBook)), true
+
 	case "Mutation.upsertLink":
 		if e.complexity.Mutation.UpsertLink == nil {
 			break
@@ -956,6 +1014,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Post.Links(childComplexity), true
+
+	case "Post.uri":
+		if e.complexity.Post.Uri == nil {
+			break
+		}
+
+		return e.complexity.Post.Uri(childComplexity), true
 
 	case "Query.drafts":
 		if e.complexity.Query.Drafts == nil {
@@ -1334,6 +1399,127 @@ type executionContext struct {
 	*executableSchema
 }
 
+var bookImplementors = []string{"Book", "Linkable"}
+
+// nolint: gocyclo, errcheck, gas, goconst
+func (ec *executionContext) _Book(ctx context.Context, sel ast.SelectionSet, obj *Book) graphql.Marshaler {
+	fields := graphql.CollectFields(ctx, sel, bookImplementors)
+
+	out := graphql.NewOrderedMap(len(fields))
+	invalid := false
+	for i, field := range fields {
+		out.Keys[i] = field.Alias
+
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Book")
+		case "id":
+			out.Values[i] = ec._Book_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "uri":
+			out.Values[i] = ec._Book_uri(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "title":
+			out.Values[i] = ec._Book_title(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+
+	if invalid {
+		return graphql.Null
+	}
+	return out
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Book_id(ctx context.Context, field graphql.CollectedField, obj *Book) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Book",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return graphql.MarshalID(res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Book_uri(ctx context.Context, field graphql.CollectedField, obj *Book) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Book",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.URI(), nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return graphql.MarshalString(res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Book_title(ctx context.Context, field graphql.CollectedField, obj *Book) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Book",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Title, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return graphql.MarshalString(res)
+}
+
 var commentImplementors = []string{"Comment"}
 
 // nolint: gocyclo, errcheck, gas, goconst
@@ -1480,7 +1666,7 @@ func (ec *executionContext) _Geo_long(ctx context.Context, field graphql.Collect
 	return graphql.MarshalFloat(res)
 }
 
-var linkImplementors = []string{"Link"}
+var linkImplementors = []string{"Link", "Linkable"}
 
 // nolint: gocyclo, errcheck, gas, goconst
 func (ec *executionContext) _Link(ctx context.Context, sel ast.SelectionSet, obj *Link) graphql.Marshaler {
@@ -2047,6 +2233,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalid = true
 			}
+		case "upsertBook":
+			out.Values[i] = ec._Mutation_upsertBook(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
 		case "upsertLink":
 			out.Values[i] = ec._Mutation_upsertLink(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -2141,6 +2332,40 @@ func (ec *executionContext) _Mutation_editPost(ctx context.Context, field graphq
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 
 	return ec._Post(ctx, field.Selections, &res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Mutation_upsertBook(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Mutation_upsertBook_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Mutation",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpsertBook(rctx, args["input"].(EditBook))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(Book)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	return ec._Book(ctx, field.Selections, &res)
 }
 
 // nolint: vetshadow
@@ -2280,7 +2505,7 @@ func (ec *executionContext) _Mutation_insterLog(ctx context.Context, field graph
 	return ec._Log(ctx, field.Selections, res)
 }
 
-var postImplementors = []string{"Post"}
+var postImplementors = []string{"Post", "Linkable"}
 
 // nolint: gocyclo, errcheck, gas, goconst
 func (ec *executionContext) _Post(ctx context.Context, sel ast.SelectionSet, obj *Post) graphql.Marshaler {
@@ -2346,6 +2571,11 @@ func (ec *executionContext) _Post(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "links":
 			out.Values[i] = ec._Post_links(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "uri":
+			out.Values[i] = ec._Post_uri(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalid = true
 			}
@@ -2701,6 +2931,33 @@ func (ec *executionContext) _Post_links(ctx context.Context, field graphql.Colle
 	}
 	wg.Wait()
 	return arr1
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Post_uri(ctx context.Context, field graphql.CollectedField, obj *Post) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Post",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.URI(), nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return graphql.MarshalString(res)
 }
 
 var queryImplementors = []string{"Query"}
@@ -3880,7 +4137,7 @@ func (ec *executionContext) _Stat_value(ctx context.Context, field graphql.Colle
 	return graphql.MarshalString(res)
 }
 
-var tweetImplementors = []string{"Tweet"}
+var tweetImplementors = []string{"Tweet", "Linkable"}
 
 // nolint: gocyclo, errcheck, gas, goconst
 func (ec *executionContext) _Tweet(ctx context.Context, sel ast.SelectionSet, obj *Tweet) graphql.Marshaler {
@@ -6121,6 +6378,74 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 	return ec.___Type(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Linkable(ctx context.Context, sel ast.SelectionSet, obj *Linkable) graphql.Marshaler {
+	switch obj := (*obj).(type) {
+	case nil:
+		return graphql.Null
+	case *Post:
+		return ec._Post(ctx, sel, obj)
+	case *Link:
+		return ec._Link(ctx, sel, obj)
+	case *Tweet:
+		return ec._Tweet(ctx, sel, obj)
+	case Book:
+		return ec._Book(ctx, sel, &obj)
+	case *Book:
+		return ec._Book(ctx, sel, obj)
+	default:
+		panic(fmt.Errorf("unexpected type %T", obj))
+	}
+}
+
+func (ec *executionContext) _Searchable(ctx context.Context, sel ast.SelectionSet, obj *Searchable) graphql.Marshaler {
+	switch obj := (*obj).(type) {
+	case nil:
+		return graphql.Null
+	default:
+		panic(fmt.Errorf("unexpected type %T", obj))
+	}
+}
+
+func UnmarshalEditBook(v interface{}) (EditBook, error) {
+	var it EditBook
+	var asMap = v.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+			var ptr1 string
+			if v != nil {
+				ptr1, err = graphql.UnmarshalID(v)
+				it.ID = &ptr1
+			}
+
+			if err != nil {
+				return it, err
+			}
+		case "title":
+			var err error
+			var ptr1 string
+			if v != nil {
+				ptr1, err = graphql.UnmarshalString(v)
+				it.Title = &ptr1
+			}
+
+			if err != nil {
+				return it, err
+			}
+		case "goodreads_id":
+			var err error
+			it.GoodreadsID, err = graphql.UnmarshalString(v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func UnmarshalEditedPost(v interface{}) (EditedPost, error) {
 	var it EditedPost
 	var asMap = v.(map[string]interface{})
@@ -6592,10 +6917,18 @@ type Query {
   tags: [String!]!
 }
 
+interface Searchable {
+  summary: String!
+}
+
+interface Linkable {
+  uri: URI!
+}
+
 """
 A post is an individual post in the blog.
 """
-type Post {
+type Post implements Linkable {
   id: ID!
   title: String!
   content: String!
@@ -6611,12 +6944,15 @@ type Post {
 
   "links are the links referenced in a post."
   links: [Link]!
+
+  "uri returns an absolute link to this post."
+  uri: URI!
 }
 
 """
 A link is a link I have save on pinboard or a link in a post.
 """
-type Link {
+type Link implements Linkable {
   id: ID!
   title: String!
   uri: URI!
@@ -6650,7 +6986,7 @@ type User {
 """
 A Tweet is an archived tweet.
 """
-type Tweet {
+type Tweet implements Linkable {
   id: ID!
   text: String!
   hashtags: [String!]!
@@ -6669,6 +7005,16 @@ type TwitterURL {
   createdAt: Time!
   modifiedAt: Time!
   tweets: [Tweet]!
+}
+
+
+"""
+A book is a book on Goodreads.
+"""
+type Book implements Linkable {
+  id: ID!
+  uri: URI!
+  title: String!
 }
 
 """
@@ -6714,6 +7060,12 @@ input NewPost {
   title: String
   datetime: Time
   draft: Boolean
+}
+
+input EditBook {
+  id: ID,
+  title: String,
+  goodreads_id: String!,
 }
 
 input EditedPost {
@@ -6765,6 +7117,7 @@ input NewGeo {
 type Mutation {
   createPost(input: NewPost!): Post! @hasRole(role: admin)
   editPost(Id: ID!, input: EditedPost!): Post! @hasRole(role: admin)
+  upsertBook(input: EditBook!): Book! @hasRole(role: admin)
   upsertLink(input: NewLink!): Link! @hasRole(role: admin)
   upsertStat(input: NewStat!): Stat! @hasRole(role: admin)
   upsertTweet(input: NewTweet!): Tweet! @hasRole(role: admin)

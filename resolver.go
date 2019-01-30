@@ -16,18 +16,22 @@ import (
 	"github.com/icco/cacophony/models"
 )
 
-type key int
+type key int8
 
 const (
-	// UserCtxKey is a constant context key
-	UserCtxKey = iota
+	userCtxKey key = 0
 )
 
-// ForContext finds the user from the context. Requires
-// server.ContextMiddleware to have run.
+// ForContext finds the user from the context. This is usually inserted by
+// WithUser.
 func ForContext(ctx context.Context) *User {
-	raw, _ := ctx.Value(UserCtxKey).(*User)
+	raw, _ := ctx.Value(userCtxKey).(*User)
 	return raw
+}
+
+// WithUser puts a user in the context.
+func WithUser(ctx context.Context, u *User) context.Context {
+	return context.WithValue(ctx, userCtxKey, u)
 }
 
 // Resolver is the type that gqlgen expects to exist
@@ -125,6 +129,23 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input NewPost) (Post,
 	}
 
 	return *post, nil
+}
+
+func (r *mutationResolver) UpsertBook(ctx context.Context, input EditBook) (Book, error) {
+	b := &Book{}
+
+	if input.ID != nil {
+		b.ID = *input.ID
+	}
+
+	if input.Title != nil {
+		b.Title = *input.Title
+	}
+
+	b.GoodreadsID = input.GoodreadsID
+
+	err := b.Save(ctx)
+	return *b, err
 }
 
 func (r *mutationResolver) EditPost(ctx context.Context, id string, input EditedPost) (Post, error) {
