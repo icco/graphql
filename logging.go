@@ -12,10 +12,16 @@ var log = logrus.New()
 // InitLogging initializes a logger to send things to stackdriver.
 func InitLogging() *logrus.Logger {
 	log.Formatter = stackdriver.NewFormatter()
-	log.Level = logrus.DebugLevel
 	log.SetOutput(os.Stdout)
 
-	log.Info("Logger successfully initialised!")
+	// Debug only in dev
+	if os.Getenv("NAT_ENV") != "production" {
+		log.Level = logrus.DebugLevel
+	} else {
+		log.Level = logrus.InfoLevel
+	}
+
+	log.Debug("Logger successfully initialised!")
 
 	return log
 }
