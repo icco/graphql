@@ -155,6 +155,27 @@ type Book implements Linkable {
 }
 
 """
+A Log is a journal entry by an individual.
+"""
+type Log {
+  id: ID!
+  code: String!
+  datetime: Time!
+  description: String!
+  location: Geo
+  project: String!
+  user: User!
+}
+
+"""
+Geo is a simple type for wrapping a point.
+"""
+type Geo {
+  lat: Float!
+  long: Float!
+}
+
+"""
 Time is a datetime scalar with timezone.
 """
 scalar Time
@@ -217,6 +238,19 @@ input NewTweet {
   user_mentions: [String!]
 }
 
+
+input NewLog {
+  code: String!
+  description: String
+  location: NewGeo
+  project: String!
+}
+
+input NewGeo {
+  lat: Float!
+  long: Float!
+}
+
 type Mutation {
   createPost(input: NewPost!): Post! @hasRole(role: admin)
   editPost(Id: ID!, input: EditedPost!): Post! @hasRole(role: admin)
@@ -224,9 +258,12 @@ type Mutation {
   upsertLink(input: NewLink!): Link! @hasRole(role: admin)
   upsertStat(input: NewStat!): Stat! @hasRole(role: admin)
   upsertTweet(input: NewTweet!): Tweet! @hasRole(role: admin)
+  insertLog(input: NewLog!): Log @loggedIn
 }
 
 directive @hasRole(role: Role!) on FIELD_DEFINITION
+
+directive @loggedIn on FIELD_DEFINITION
 
 enum Role {
   admin
