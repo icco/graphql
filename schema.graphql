@@ -258,7 +258,7 @@ type Mutation {
   upsertLink(input: NewLink!): Link! @hasRole(role: admin)
   upsertStat(input: NewStat!): Stat! @hasRole(role: admin)
   upsertTweet(input: NewTweet!): Tweet! @hasRole(role: admin)
-  insterLog(input: NewLog!): Log @loggedIn
+  insertLog(input: NewLog!): Log @loggedIn
 }
 
 directive @hasRole(role: Role!) on FIELD_DEFINITION

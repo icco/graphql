@@ -89,7 +89,7 @@ type ComplexityRoot struct {
 		UpsertLink  func(childComplexity int, input NewLink) int
 		UpsertStat  func(childComplexity int, input NewStat) int
 		UpsertTweet func(childComplexity int, input NewTweet) int
-		InsterLog   func(childComplexity int, input NewLog) int
+		InsertLog   func(childComplexity int, input NewLog) int
 	}
 
 	Post struct {
@@ -168,7 +168,7 @@ type MutationResolver interface {
 	UpsertLink(ctx context.Context, input NewLink) (Link, error)
 	UpsertStat(ctx context.Context, input NewStat) (Stat, error)
 	UpsertTweet(ctx context.Context, input NewTweet) (Tweet, error)
-	InsterLog(ctx context.Context, input NewLog) (*Log, error)
+	InsertLog(ctx context.Context, input NewLog) (*Log, error)
 }
 type QueryResolver interface {
 	Drafts(ctx context.Context, limit *int, offset *int) ([]*Post, error)
@@ -291,7 +291,7 @@ func field_Mutation_upsertTweet_args(rawArgs map[string]interface{}) (map[string
 
 }
 
-func field_Mutation_insterLog_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func field_Mutation_insertLog_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	args := map[string]interface{}{}
 	var arg0 NewLog
 	if tmp, ok := rawArgs["input"]; ok {
@@ -926,17 +926,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpsertTweet(childComplexity, args["input"].(NewTweet)), true
 
-	case "Mutation.insterLog":
-		if e.complexity.Mutation.InsterLog == nil {
+	case "Mutation.insertLog":
+		if e.complexity.Mutation.InsertLog == nil {
 			break
 		}
 
-		args, err := field_Mutation_insterLog_args(rawArgs)
+		args, err := field_Mutation_insertLog_args(rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.InsterLog(childComplexity, args["input"].(NewLog)), true
+		return e.complexity.Mutation.InsertLog(childComplexity, args["input"].(NewLog)), true
 
 	case "Post.id":
 		if e.complexity.Post.Id == nil {
@@ -2253,8 +2253,8 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalid = true
 			}
-		case "insterLog":
-			out.Values[i] = ec._Mutation_insterLog(ctx, field)
+		case "insertLog":
+			out.Values[i] = ec._Mutation_insertLog(ctx, field)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2471,11 +2471,11 @@ func (ec *executionContext) _Mutation_upsertTweet(ctx context.Context, field gra
 }
 
 // nolint: vetshadow
-func (ec *executionContext) _Mutation_insterLog(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+func (ec *executionContext) _Mutation_insertLog(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := field_Mutation_insterLog_args(rawArgs)
+	args, err := field_Mutation_insertLog_args(rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -2489,7 +2489,7 @@ func (ec *executionContext) _Mutation_insterLog(ctx context.Context, field graph
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().InsterLog(rctx, args["input"].(NewLog))
+		return ec.resolvers.Mutation().InsertLog(rctx, args["input"].(NewLog))
 	})
 	if resTmp == nil {
 		return graphql.Null
@@ -7121,7 +7121,7 @@ type Mutation {
   upsertLink(input: NewLink!): Link! @hasRole(role: admin)
   upsertStat(input: NewStat!): Stat! @hasRole(role: admin)
   upsertTweet(input: NewTweet!): Tweet! @hasRole(role: admin)
-  insterLog(input: NewLog!): Log @loggedIn
+  insertLog(input: NewLog!): Log @loggedIn
 }
 
 directive @hasRole(role: Role!) on FIELD_DEFINITION

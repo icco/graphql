@@ -205,7 +205,7 @@ func (r *mutationResolver) UpsertStat(ctx context.Context, input NewStat) (Stat,
 	return Stat{}, fmt.Errorf("not implemented")
 }
 
-func (r *mutationResolver) InsterLog(ctx context.Context, input NewLog) (*Log, error) {
+func (r *mutationResolver) InsertLog(ctx context.Context, input NewLog) (*Log, error) {
 	return nil, fmt.Errorf("not implemented")
 }
 
