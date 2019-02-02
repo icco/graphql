@@ -70,7 +70,9 @@ func main() {
 			ProjectID:               "icco-cloud",
 			MonitoredResource:       monitoredresource.Autodetect(),
 			DefaultMonitoringLabels: labels,
-			DefaultTraceAttributes:  map[string]interface{}{"/http/host": "graphql.natwelch.com"},
+			OnError: func(err error) {
+				log.WithError(err).Error("couldn't upload to stackdriver")
+			},
 		})
 
 		if err != nil {
@@ -81,7 +83,7 @@ func main() {
 		view.RegisterExporter(sd)
 		trace.RegisterExporter(sd)
 		trace.ApplyConfig(trace.Config{
-			DefaultSampler: trace.AlwaysSample(),
+			DefaultSampler: trace.ProbabilitySampler(0.1),
 		})
 	}
 
