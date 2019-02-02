@@ -151,21 +151,7 @@ func main() {
 				return errors.New("fatal error seen while processing request")
 			}),
 			handler.CacheSize(512),
-			handler.RequestMiddleware(func(ctx context.Context, next func(ctx context.Context) []byte) []byte {
-				rctx := gql.GetRequestContext(ctx)
-
-				// We do this because RequestContext has fields that can't be easily
-				// serialized in json, and we don't care about them.
-				subsetContext := map[string]interface{}{
-					"query":      rctx.RawQuery,
-					"variables":  rctx.Variables,
-					"extensions": rctx.Extensions,
-				}
-
-				log.WithField("gql", subsetContext).Printf("request gql")
-
-				return next(ctx)
-			}),
+			handler.RequestMiddleware(GqlLoggingMiddleware),
 			handler.Tracer(gqlopencensus.New()),
 		))
 	})
@@ -179,6 +165,22 @@ func main() {
 	}
 
 	log.Fatal(http.ListenAndServe(":"+port, h))
+}
+
+func GqlLoggingMiddleware(ctx context.Context, next func(ctx context.Context) []byte) []byte {
+	rctx := gql.GetRequestContext(ctx)
+
+	// We do this because RequestContext has fields that can't be easily
+	// serialized in json, and we don't care about them.
+	subsetContext := map[string]interface{}{
+		"query":      rctx.RawQuery,
+		"variables":  rctx.Variables,
+		"extensions": rctx.Extensions,
+	}
+
+	log.WithField("gql", subsetContext).Debug("request gql")
+
+	return next(ctx)
 }
 
 func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
