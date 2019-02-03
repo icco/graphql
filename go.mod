@@ -5,7 +5,7 @@ require (
 	contrib.go.opencensus.io/exporter/ocagent v0.4.3 // indirect
 	contrib.go.opencensus.io/exporter/stackdriver v0.9.1
 	dmitri.shuralyov.com/app/changes v0.0.0-20181114035150-5af16e21babb // indirect
-	dmitri.shuralyov.com/service/change v0.0.0-20190130035545-6cc139383561 // indirect
+	dmitri.shuralyov.com/service/change v0.0.0-20190203163610-217368fe4577 // indirect
 	github.com/99designs/gqlgen v0.7.1
 	github.com/99designs/gqlgen-contrib v0.0.0-20181214005309-52113d2e3f08
 	github.com/GuiaBolso/darwin v0.0.0-20170210191649-86919dfcf808
@@ -19,7 +19,7 @@ require (
 	github.com/google/uuid v1.1.0
 	github.com/gopherjs/gopherjs v0.0.0-20181103185306-d547d1d9531e // indirect
 	github.com/gorilla/mux v1.7.0 // indirect
-	github.com/gregjones/httpcache v0.0.0-20181110185634-c63ab54fda8f // indirect
+	github.com/gregjones/httpcache v0.0.0-20190203031600-7a902570cb17 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.7.0 // indirect
 	github.com/icco/cacophony v0.0.0-20190110214701-78f01afc2df5
 	github.com/icco/cron v0.0.0-20190121032237-b4835d3918f3 // indirect
@@ -30,7 +30,7 @@ require (
 	github.com/paulmach/orb v0.1.1
 	github.com/prometheus/client_model v0.0.0-20190129233127-fd36f4220a90 // indirect
 	github.com/prometheus/common v0.2.0 // indirect
-	github.com/prometheus/procfs v0.0.0-20190129233650-316cf8ccfec5 // indirect
+	github.com/prometheus/procfs v0.0.0-20190203183350-488faf799f86 // indirect
 	github.com/russross/blackfriday v2.0.0+incompatible
 	github.com/shurcooL/go v0.0.0-20190121191506-3fef8c783dec // indirect
 	github.com/shurcooL/gofontwoff v0.0.0-20181114050219-180f79e6909d // indirect
@@ -55,8 +55,8 @@ require (
 	golang.org/x/net v0.0.0-20190125091013-d26f9f9a57f3 // indirect
 	golang.org/x/oauth2 v0.0.0-20190130055435-99b60b757ec1 // indirect
 	golang.org/x/perf v0.0.0-20190124201629-844a5f5b46f4 // indirect
-	golang.org/x/sys v0.0.0-20190201152629-afcc84fd7533 // indirect
-	golang.org/x/tools v0.0.0-20190202202610-718ddee9569a // indirect
+	golang.org/x/sys v0.0.0-20190203050204-7ae0202eb74c // indirect
+	golang.org/x/tools v0.0.0-20190202235157-7414d4c1f71c // indirect
 	google.golang.org/genproto v0.0.0-20190201180003-4b09977fb922 // indirect
 	google.golang.org/grpc v1.18.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.2.2
