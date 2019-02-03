@@ -7153,7 +7153,7 @@ type Tweet implements Linkable {
   favorite_count: Int!
   retweet_count: Int!
   posted: Time!
-  uri: String!
+  uri: URI!
 }
 
 type TwitterURL {

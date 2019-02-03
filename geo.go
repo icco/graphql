@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/paulmach/orb"
+	"github.com/paulmach/orb/encoding/wkb"
 )
 
 // Geo is a simple type for wrapping a point. Units are in Degrees.
@@ -19,19 +20,30 @@ func (g *Geo) ToOrb() *orb.Point {
 	return &orb.Point{g.Long, g.Lat}
 }
 
-func (g *Geo) ToDatabaseString() string {
-	return fmt.Sprintf("POINT(%f %f)", g.Lat, g.Long)
+func GeoFromOrb(p *orb.Point) *Geo {
+	if p == nil {
+		return nil
+	}
+
+	return &Geo{
+		Long: p[0],
+		Lat:  p[1],
+	}
+}
+
+func GeoScanner(g interface{}) *wkb.GeometryScanner {
+	return wkb.Scanner(g)
 }
 
 func GeoConvertValue(v interface{}) (driver.Value, error) {
 	g, ok := v.(*Geo)
 	if !ok {
-		return driver.Value(""), fmt.Errorf("is not a Geo")
+		return wkb.Value(nil), fmt.Errorf("is not a Geo")
 	}
 
 	if g == nil {
-		return driver.Value(nil), nil
+		return wkb.Value(nil), nil
 	}
 
-	return driver.Value(g.ToDatabaseString()), nil
+	return wkb.Value(g.ToOrb()), nil
 }
