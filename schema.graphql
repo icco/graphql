@@ -54,7 +54,7 @@ type Query {
   tags: [String!]!
 
   "Returns all Logs for a user. If no user specified, returns your logs."
-  logs(user: User): [Log]! @loggedIn
+  logs(user_id: String): [Log]! @loggedIn
 }
 
 interface Searchable {
@@ -137,6 +137,7 @@ type Tweet implements Linkable {
   favorite_count: Int!
   retweet_count: Int!
   posted: Time!
+  uri: String!
 }
 
 type TwitterURL {

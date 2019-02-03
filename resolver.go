@@ -426,9 +426,14 @@ func (r *queryResolver) Tags(ctx context.Context) ([]string, error) {
 	return AllTags(ctx)
 }
 
-func (r *queryResolver) Logs(ctx context.Context, u *User) ([]*Log, error) {
-	if u == nil {
-		u = ForContext(ctx)
+func (r *queryResolver) Logs(ctx context.Context, uid *string) ([]*Log, error) {
+	var err error
+	u := ForContext(ctx)
+	if uid != nil {
+		u, err = GetUser(ctx, *uid)
+		if err != nil {
+			return []*Log{}, err
+		}
 	}
 
 	return UserLogs(ctx, u)
