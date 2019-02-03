@@ -69,6 +69,7 @@ WHERE logs.id = $1;
 	return nil
 }
 
+// SetUser looks up a user by ID and then sets it for this log.
 func (l *Log) SetUser(ctx context.Context, id string) error {
 	u, err := GetUser(ctx, id)
 	if err != nil {
@@ -82,6 +83,7 @@ func (l *Log) SetUser(ctx context.Context, id string) error {
 	return nil
 }
 
+// UserLogs gets all logs for a User.
 func UserLogs(ctx context.Context, u *User) ([]*Log, error) {
 	rows, err := db.QueryContext(
 		ctx,

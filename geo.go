@@ -20,6 +20,7 @@ func (g *Geo) ToOrb() *orb.Point {
 	return &orb.Point{g.Long, g.Lat}
 }
 
+// GeoFromOrb creates a Geo from github.com/paulmach/orb.Point.
 func GeoFromOrb(p *orb.Point) *Geo {
 	if p == nil {
 		return nil
@@ -31,10 +32,12 @@ func GeoFromOrb(p *orb.Point) *Geo {
 	}
 }
 
+// GeoScanner is used for unmarshaling data from a database row.
 func GeoScanner(g interface{}) *wkb.GeometryScanner {
 	return wkb.Scanner(g)
 }
 
+// GeoConvertValue is used for marshaling data to a database.
 func GeoConvertValue(v interface{}) (driver.Value, error) {
 	g, ok := v.(*Geo)
 	if !ok {
