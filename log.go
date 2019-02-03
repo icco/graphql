@@ -48,11 +48,11 @@ func (l *Log) Save(ctx context.Context) error {
 	if _, err := db.ExecContext(
 		ctx,
 		`
-INSERT INTO posts(id, code, datetime, description, location, project, user_id, created_at, modified_at)
+INSERT INTO logs(id, code, datetime, description, location, project, user_id, created_at, modified_at)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 ON CONFLICT (id) DO UPDATE
 SET (code, datetime, description, location, project, user_id, created_at, modified_at) = ($2, $3, $4, $5, $6, $7, $8, $9)
-WHERE posts.id = $1;
+WHERE logs.id = $1;
 `,
 		l.ID,
 		l.Code,
