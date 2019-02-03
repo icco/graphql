@@ -38,11 +38,11 @@ func GeoScanner(g interface{}) *wkb.GeometryScanner {
 func GeoConvertValue(v interface{}) (driver.Value, error) {
 	g, ok := v.(*Geo)
 	if !ok {
-		return wkb.Value(nil), fmt.Errorf("is not a Geo")
+		return driver.Value(nil), fmt.Errorf("is not a Geo")
 	}
 
 	if g == nil {
-		return wkb.Value(nil), nil
+		return driver.Value(nil), nil
 	}
 
 	return wkb.Value(g.ToOrb()), nil

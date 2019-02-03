@@ -210,6 +210,11 @@ func (r *mutationResolver) InsertLog(ctx context.Context, input NewLog) (*Log, e
 	l.Code = input.Code
 	l.Project = input.Project
 
+	u := ForContext(ctx)
+	if u != nil {
+		l.User = *u
+	}
+
 	if input.Description != nil {
 		l.Description = *input.Description
 	}
