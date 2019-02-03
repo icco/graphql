@@ -31,17 +31,6 @@ type Linkable interface {
 	IsLinkable()
 }
 
-// A Log is a journal entry by an individual.
-type Log struct {
-	ID          string    `json:"id"`
-	Code        string    `json:"code"`
-	Datetime    time.Time `json:"datetime"`
-	Description string    `json:"description"`
-	Location    *Geo      `json:"location"`
-	Project     string    `json:"project"`
-	User        User      `json:"user"`
-}
-
 type NewGeo struct {
 	Lat  float64 `json:"lat"`
 	Long float64 `json:"long"`

@@ -206,7 +206,28 @@ func (r *mutationResolver) UpsertStat(ctx context.Context, input NewStat) (Stat,
 }
 
 func (r *mutationResolver) InsertLog(ctx context.Context, input NewLog) (*Log, error) {
-	return nil, fmt.Errorf("not implemented")
+	l := &Log{}
+	l.Code = input.Code
+	l.Project = input.Project
+
+	u := ForContext(ctx)
+	if u != nil {
+		l.User = *u
+	}
+
+	if input.Description != nil {
+		l.Description = *input.Description
+	}
+
+	if input.Location != nil {
+		l.Location = &Geo{
+			Lat:  input.Location.Lat,
+			Long: input.Location.Long,
+		}
+	}
+
+	err := l.Save(ctx)
+	return l, err
 }
 
 func (r *mutationResolver) UpsertTweet(ctx context.Context, input NewTweet) (Tweet, error) {
@@ -408,6 +429,19 @@ func (r *queryResolver) HomeTimelineURLs(ctx context.Context, limitIn *int) ([]*
 
 func (r *queryResolver) Tags(ctx context.Context) ([]string, error) {
 	return AllTags(ctx)
+}
+
+func (r *queryResolver) Logs(ctx context.Context, uid *string) ([]*Log, error) {
+	var err error
+	u := ForContext(ctx)
+	if uid != nil {
+		u, err = GetUser(ctx, *uid)
+		if err != nil {
+			return []*Log{}, err
+		}
+	}
+
+	return UserLogs(ctx, u)
 }
 
 type twitterURLResolver struct{ *Resolver }

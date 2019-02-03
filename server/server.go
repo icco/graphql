@@ -169,6 +169,7 @@ func main() {
 	log.Fatal(http.ListenAndServe(":"+port, h))
 }
 
+// GqlLoggingMiddleware is a middleware for gqlgen that logs all gql requests to debug.
 func GqlLoggingMiddleware(ctx context.Context, next func(ctx context.Context) []byte) []byte {
 	rctx := gql.GetRequestContext(ctx)
 
