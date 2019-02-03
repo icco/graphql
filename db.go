@@ -14,7 +14,7 @@ import (
 
 var (
 	db         *sql.DB
-	driver     = "postgres"
+	dbDriver   = "postgres"
 	migrations = []darwin.Migration{
 		{
 			Version:     1,
@@ -137,6 +137,25 @@ var (
       );
       `,
 		},
+		{
+			Version:     10,
+			Description: "Add logs table",
+			Script: `
+      CREATE EXTENSION postgis;
+      CREATE EXTENSION postgis_topology;
+      CREATE TABLE logs(
+        id text PRIMARY KEY NOT NULL,
+        code TEXT,
+        datetime TIMESTAMP WITH TIME ZONE,
+        description TEXT,
+        location GEOGRAPHY(POINT),
+        project TEXT,
+        user_id TEXT,
+        created_at TIMESTAMP WITH TIME ZONE,
+        modified_at TIMESTAMP WITH TIME ZONE
+      );
+      `,
+		},
 	}
 )
 
@@ -145,7 +164,7 @@ func InitDB(dataSourceName string) (*sql.DB, error) {
 	var err error
 
 	// Connect to Database
-	wrappedDriver, err := ocsql.Register(driver, ocsql.WithAllTraceOptions())
+	wrappedDriver, err := ocsql.Register(dbDriver, ocsql.WithAllTraceOptions())
 	if err != nil {
 		return nil, fmt.Errorf("Failed to register the ocsql driver: %v", err)
 	}
