@@ -20,7 +20,7 @@ type Log struct {
 	Modified    time.Time
 }
 
-// Save inserts or updates a post into the database.
+// Save inserts or updates a log into the database.
 func (l *Log) Save(ctx context.Context) error {
 	if l.ID == "" {
 		uuid, err := uuid.NewRandom()
@@ -80,4 +80,30 @@ func (l *Log) SetUser(ctx context.Context, id string) error {
 	}
 
 	return nil
+}
+
+func UserLogs(ctx context.Context, u *User) ([]*Log, error) {
+	rows, err := db.QueryContext(
+		ctx,
+		"SELECT id, code, datetime, description, location, project, user_id, created_at, modified_at FROM logs WHERE user_id = $1 ORDER BY date DESC",
+		u.ID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	logs := make([]*Log, 0)
+	for rows.Next() {
+		l := &Log{}
+		err := rows.Scan(&l.ID, &l.Code, &l.Datetime, &l.Description, &l.Location, &l.Project, &l.User.ID, &l.Created, &l.Modified)
+		if err != nil {
+			return nil, err
+		}
+		logs = append(logs, l)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return logs, nil
 }

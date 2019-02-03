@@ -52,6 +52,9 @@ type Query {
 
   "Returns all tags used in a post."
   tags: [String!]!
+
+  "Returns all Logs for a user. If no user specified, returns your logs."
+  logs(user: User): [Log]! @loggedIn
 }
 
 interface Searchable {

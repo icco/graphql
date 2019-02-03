@@ -426,6 +426,14 @@ func (r *queryResolver) Tags(ctx context.Context) ([]string, error) {
 	return AllTags(ctx)
 }
 
+func (r *queryResolver) Logs(ctx context.Context, u *User) ([]*Log, error) {
+	if u == nil {
+		u = ForContext(ctx)
+	}
+
+	return UserLogs(ctx, u)
+}
+
 type twitterURLResolver struct{ *Resolver }
 
 func (r *twitterURLResolver) Tweets(ctx context.Context, obj *models.SavedURL) ([]*Tweet, error) {
