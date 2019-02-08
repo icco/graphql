@@ -157,6 +157,7 @@ func main() {
 			handler.Tracer(gqlopencensus.New()),
 		))
 	})
+	r.Post("/photo/new", photoUploadHandler)
 
 	h := &ochttp.Handler{
 		Handler:     r,
@@ -189,6 +190,34 @@ func GqlLoggingMiddleware(ctx context.Context, next func(ctx context.Context) []
 func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	Renderer.JSON(w, http.StatusOK, map[string]string{
 		"healthy": "true",
+	})
+}
+
+func photoUploadHandler(w http.ResponseWriter, r *http.Request) {
+	u := graphql.ForContext(r.Context())
+	if u == nil {
+		Renderer.JSON(w, http.StatusForbidden, map[string]string{
+			"error": "403: you must be logged in",
+		})
+		return
+	}
+
+	var buf bytes.Buffer
+	file, header, err := r.FormFile("file")
+	if err != nil {
+		msg := "error reading file upload"
+		log.WithError(err).Error(msg)
+		Renderer.JSON(w, http.StatusInternalServerError, map[string]string{
+			"error": msg,
+		})
+		return
+	}
+	defer file.Close()
+	io.Copy(&buf, file)
+	// Do something with buffer
+
+	Renderer.JSON(w, http.StatusOK, map[string]string{
+		"upload": "ok",
 	})
 }
 
