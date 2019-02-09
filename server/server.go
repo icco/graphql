@@ -198,9 +198,12 @@ func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 func photoUploadHandler(w http.ResponseWriter, r *http.Request) {
 	u := graphql.ForContext(r.Context())
 	if u == nil {
-		Renderer.JSON(w, http.StatusForbidden, map[string]string{
+		err := Renderer.JSON(w, http.StatusForbidden, map[string]string{
 			"error": "403: you must be logged in",
 		})
+		if err != nil {
+			log.WithError(err).Error("could not render json")
+		}
 		return
 	}
 
