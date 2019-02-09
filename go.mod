@@ -17,12 +17,16 @@ require (
 	github.com/lib/pq v1.0.0
 	github.com/opencensus-integrations/ocsql v0.1.3
 	github.com/paulmach/orb v0.1.1
+	github.com/prometheus/procfs v0.0.0-20190209105433-f8d8b3f739bd // indirect
 	github.com/russross/blackfriday v2.0.0+incompatible
 	github.com/sirupsen/logrus v1.3.0
 	github.com/unrolled/render v0.0.0-20190117215946-449f39850074
 	github.com/unrolled/secure v0.0.0-20190103195806-76e6d4e9b90c
 	github.com/vektah/gqlparser v1.1.0
 	go.opencensus.io v0.19.0
+	golang.org/x/build v0.0.0-20190208213738-77d92a99a537 // indirect
 	golang.org/x/crypto v0.0.0-20190208162236-193df9c0f06f // indirect
+	golang.org/x/sys v0.0.0-20190209173611-3b5209105503 // indirect
+	golang.org/x/tools v0.0.0-20190208222737-3744606dbb67 // indirect
 	gopkg.in/square/go-jose.v2 v2.2.2
 )
