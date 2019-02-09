@@ -207,18 +207,22 @@ func photoUploadHandler(w http.ResponseWriter, r *http.Request) {
 	var buf bytes.Buffer
 	file, header, err := r.FormFile("file")
 	if err != nil {
-		msg := "error reading file upload"
-		log.WithError(err).Error(msg)
-		return internalErrorHandler(w, r)
+		log.WithError(err).Error("error reading file upload")
+		internalErrorHandler(w, r)
+		return
 	}
 	defer file.Close()
-	io.Copy(&buf, file)
-	// Do something with buffer
+	_, err = io.Copy(&buf, file)
+	if err != nil {
+		log.WithError(err).Error("error reading file upload")
+		internalErrorHandler(w, r)
+		return
+	}
 
 	// Example: {"Content-Disposition":["form-data; name=\"file\"; filename=\"test.jpg\""],"Content-Type":["image/jpeg"]},"Size":3422342}
 	log.WithField("file_header", header).Debug("recieved file")
 
-	err := Renderer.JSON(w, http.StatusOK, map[string]string{
+	err = Renderer.JSON(w, http.StatusOK, map[string]string{
 		"upload": "ok",
 	})
 	if err != nil {
