@@ -14,7 +14,10 @@ import (
 )
 
 var (
-	StorageBucket     *storage.BucketHandle
+	// StorageBucket is the client for GCS.
+	StorageBucket *storage.BucketHandle
+
+	// StorageBucketName is the bucket name we are uploading to.
 	StorageBucketName string
 )
 
