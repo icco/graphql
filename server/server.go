@@ -1,14 +1,11 @@
 package main
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"html/template"
-	"io"
 	"net/http"
 	"os"
-	"path"
 
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	"contrib.go.opencensus.io/exporter/stackdriver/monitoredresource"
@@ -19,7 +16,6 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
-	"github.com/google/uuid"
 	"github.com/icco/graphql"
 	sdLogging "github.com/icco/logrus-stackdriver-formatter"
 	"github.com/unrolled/render"
@@ -195,58 +191,6 @@ func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	Renderer.JSON(w, http.StatusOK, map[string]string{
 		"healthy": "true",
 	})
-}
-
-func photoUploadHandler(w http.ResponseWriter, r *http.Request) {
-	u := graphql.ForContext(r.Context())
-	if u == nil {
-		err := Renderer.JSON(w, http.StatusForbidden, map[string]string{
-			"error": "403: you must be logged in",
-		})
-		if err != nil {
-			log.WithError(err).Error("could not render json")
-		}
-		return
-	}
-
-	file, header, err := r.FormFile("file")
-	if err == http.ErrMissingFile {
-		err := Renderer.JSON(w, http.StatusBadRequest, map[string]string{
-			"error": "400: you must send a file",
-		})
-		if err != nil {
-			log.WithError(err).Error("could not render json")
-		}
-		return
-	} else if err != nil {
-		log.WithError(err).Error("error reading file upload")
-		internalErrorHandler(w, r)
-		return
-	}
-	defer file.Close()
-
-	// Example: {"Content-Disposition":["form-data; name=\"file\"; filename=\"test.jpg\""],"Content-Type":["image/jpeg"]},"Size":3422342}
-	log.WithField("file_header", header).Debug("recieved file")
-
-	name := fmt.Sprintf("photos/%d/%s%s", time.Now().Year(), uuid.NewRandom(), path.Ext(fh.Filename))
-	uploader := StorageBucket.Object(name).NewWriter(ctx)
-	uploader.ACL = []storage.ACLRule{{Entity: storage.AllUsers, Role: storage.RoleReader}}
-	uploader.ContentType = fh.Header.Get("Content-Type")
-	uploader.CacheControl = "public, max-age=86400"
-	_, err = io.Copy(uploader, file)
-	if err != nil {
-		log.WithError(err).Error("error reading file upload")
-		internalErrorHandler(w, r)
-		return
-	}
-
-	err = Renderer.JSON(w, http.StatusOK, map[string]string{
-		"upload": "ok",
-		"file":   fmt.Sprintf("https://storage.googleapis.com/%s/%s", StorageBucketName, name),
-	})
-	if err != nil {
-		log.WithError(err).Error("could not render json")
-	}
 }
 
 func cronHandler(w http.ResponseWriter, r *http.Request) {

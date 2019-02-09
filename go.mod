@@ -1,11 +1,11 @@
 module github.com/icco/graphql
 
 require (
+	cloud.google.com/go v0.36.0
 	contrib.go.opencensus.io/exporter/stackdriver v0.9.1
 	github.com/99designs/gqlgen v0.7.2
 	github.com/99designs/gqlgen-contrib v0.0.0-20181214005309-52113d2e3f08
 	github.com/GuiaBolso/darwin v0.0.0-20170210191649-86919dfcf808
-	github.com/Shopify/sarama v1.20.1 // indirect
 	github.com/auth0-community/go-auth0 v1.0.0
 	github.com/aws/aws-sdk-go v1.16.31 // indirect
 	github.com/go-chi/chi v4.0.1+incompatible
