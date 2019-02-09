@@ -73,14 +73,28 @@ func photoUploadHandler(w http.ResponseWriter, r *http.Request) {
 		internalErrorHandler(w, r)
 		return
 	}
+
+	tctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
+	defer cancel()
+
 	name := fmt.Sprintf("photos/%d/%s%s", time.Now().Year(), id, path.Ext(header.Filename))
-	uploader := StorageBucket.Object(name).NewWriter(r.Context())
+	uploader := StorageBucket.Object(name).NewWriter(tctx)
 	uploader.ACL = []storage.ACLRule{{Entity: storage.AllUsers, Role: storage.RoleReader}}
 	uploader.ContentType = header.Header.Get("Content-Type")
 	uploader.CacheControl = "public, max-age=86400"
+
+	// Add a checksum.
+	//uploader.CRC32C = crc32.Checksum(file, crc32.MakeTable(crc32.Castagnoli))
+	//uploader.SendCRC32C = true
+
 	_, err = io.Copy(uploader, file)
 	if err != nil {
 		log.WithError(err).Error("error reading file upload")
+		internalErrorHandler(w, r)
+		return
+	}
+	if err := uploader.Close(); err != nil {
+		log.WithError(err).Error("error saving file")
 		internalErrorHandler(w, r)
 		return
 	}
