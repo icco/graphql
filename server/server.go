@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"html/template"
+	"io"
 	"net/http"
 	"os"
 
@@ -215,6 +217,8 @@ func photoUploadHandler(w http.ResponseWriter, r *http.Request) {
 	defer file.Close()
 	io.Copy(&buf, file)
 	// Do something with buffer
+
+	log.WithField("file_header", header).Debug("recieved file")
 
 	Renderer.JSON(w, http.StatusOK, map[string]string{
 		"upload": "ok",
