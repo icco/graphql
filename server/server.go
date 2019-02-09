@@ -20,11 +20,11 @@ import (
 	"github.com/go-chi/cors"
 	"github.com/icco/graphql"
 	sdLogging "github.com/icco/logrus-stackdriver-formatter"
+	"github.com/unrolled/render"
+	"github.com/unrolled/secure"
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
-	"gopkg.in/unrolled/render.v1"
-	"gopkg.in/unrolled/secure.v1"
 )
 
 var (
@@ -35,13 +35,13 @@ var (
 	Renderer = render.New(render.Options{
 		Charset:                   "UTF-8",
 		Directory:                 "./server/views",
-		DisableHTTPErrorRendering: false,
+		DisableHTTPErrorRendering: true,
 		Extensions:                []string{".tmpl", ".html"},
+		Funcs:                     []template.FuncMap{{}},
 		IndentJSON:                false,
 		IndentXML:                 true,
 		Layout:                    "layout",
 		RequirePartials:           true,
-		Funcs:                     []template.FuncMap{{}},
 	})
 
 	dbURL = os.Getenv("DATABASE_URL")
@@ -158,8 +158,8 @@ func main() {
 			handler.RequestMiddleware(GqlLoggingMiddleware),
 			handler.Tracer(gqlopencensus.New()),
 		))
+		r.Post("/photo/new", photoUploadHandler)
 	})
-	r.Post("/photo/new", photoUploadHandler)
 
 	h := &ochttp.Handler{
 		Handler:     r,
@@ -209,20 +209,21 @@ func photoUploadHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		msg := "error reading file upload"
 		log.WithError(err).Error(msg)
-		Renderer.JSON(w, http.StatusInternalServerError, map[string]string{
-			"error": msg,
-		})
-		return
+		return internalErrorHandler(w, r)
 	}
 	defer file.Close()
 	io.Copy(&buf, file)
 	// Do something with buffer
 
+	// Example: {"Content-Disposition":["form-data; name=\"file\"; filename=\"test.jpg\""],"Content-Type":["image/jpeg"]},"Size":3422342}
 	log.WithField("file_header", header).Debug("recieved file")
 
-	Renderer.JSON(w, http.StatusOK, map[string]string{
+	err := Renderer.JSON(w, http.StatusOK, map[string]string{
 		"upload": "ok",
 	})
+	if err != nil {
+		log.WithError(err).Error("could not render json")
+	}
 }
 
 func cronHandler(w http.ResponseWriter, r *http.Request) {
@@ -244,13 +245,29 @@ func cronHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}(context.Background())
 
-	Renderer.JSON(w, http.StatusOK, map[string]string{
+	err := Renderer.JSON(w, http.StatusOK, map[string]string{
 		"cron": "ok",
 	})
+	if err != nil {
+		log.WithError(err).Error("could not render json")
+	}
+}
+
+func internalErrorHandler(w http.ResponseWriter, r *http.Request) {
+
+	err := Renderer.JSON(w, http.StatusInternalServerError, map[string]string{
+		"error": "500: An internal server error occured",
+	})
+	if err != nil {
+		log.WithError(err).Error("could not render json")
+	}
 }
 
 func notFoundHandler(w http.ResponseWriter, r *http.Request) {
-	Renderer.JSON(w, http.StatusNotFound, map[string]string{
+	err := Renderer.JSON(w, http.StatusNotFound, map[string]string{
 		"error": "404: This page could not be found",
 	})
+	if err != nil {
+		log.WithError(err).Error("could not render json")
+	}
 }
