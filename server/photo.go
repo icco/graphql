@@ -1,46 +1,13 @@
 package main
 
 import (
-	"context"
-	"fmt"
-	"io"
 	"net/http"
-	"path"
-	"time"
 
-	"cloud.google.com/go/storage"
-	"github.com/google/uuid"
 	"github.com/icco/graphql"
 )
 
-var (
-	// StorageBucket is the client for GCS.
-	StorageBucket *storage.BucketHandle
-
-	// StorageBucketName is the bucket name we are uploading to.
-	StorageBucketName string
-)
-
-func init() {
-	var err error
-	StorageBucketName = "icco-cloud"
-	StorageBucket, err = configureStorage(StorageBucketName)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-func configureStorage(bucketID string) (*storage.BucketHandle, error) {
-	ctx := context.Background()
-	client, err := storage.NewClient(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return client.Bucket(bucketID), nil
-}
-
 func photoUploadHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
 	u := graphql.ForContext(r.Context())
 	if u == nil {
 		err := Renderer.JSON(w, http.StatusForbidden, map[string]string{
@@ -68,43 +35,23 @@ func photoUploadHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	// Example: {"Content-Disposition":["form-data; name=\"file\"; filename=\"test.jpg\""],"Content-Type":["image/jpeg"]},"Size":3422342}
 	log.WithField("file_header", header).Debug("recieved file")
-	id, err := uuid.NewRandom()
-	if err != nil {
-		log.WithError(err).Error("error generating random")
-		internalErrorHandler(w, r)
-		return
+
+	p := &graphql.Photo{
+		ContentType: header.Header.Get("Content-Type"),
+		User:        *u,
 	}
 
-	tctx, cancel := context.WithTimeout(r.Context(), 30*time.Second)
-	defer cancel()
-
-	name := fmt.Sprintf("photos/%d/%s%s", time.Now().Year(), id, path.Ext(header.Filename))
-	uploader := StorageBucket.Object(name).NewWriter(tctx)
-	uploader.ACL = []storage.ACLRule{{Entity: storage.AllUsers, Role: storage.RoleReader}}
-	uploader.ContentType = header.Header.Get("Content-Type")
-	uploader.CacheControl = "public, max-age=86400"
-
-	// Add a checksum.
-	//uploader.CRC32C = crc32.Checksum(file, crc32.MakeTable(crc32.Castagnoli))
-	//uploader.SendCRC32C = true
-
-	_, err = io.Copy(uploader, file)
+	err = p.Upload(ctx, file)
 	if err != nil {
-		log.WithError(err).Error("error reading file upload")
-		internalErrorHandler(w, r)
-		return
-	}
-	if err := uploader.Close(); err != nil {
-		log.WithError(err).Error("error saving file")
+		log.WithError(err).Error("could not save image")
 		internalErrorHandler(w, r)
 		return
 	}
 
 	err = Renderer.JSON(w, http.StatusOK, map[string]string{
 		"upload": "ok",
-		"file":   fmt.Sprintf("https://storage.googleapis.com/%s/%s", StorageBucketName, name),
+		"file":   p.URI(),
 	})
 	if err != nil {
 		log.WithError(err).Error("could not render json")
