@@ -156,6 +156,20 @@ var (
       );
       `,
 		},
+		{
+			Version:     11,
+			Description: "Add photos table",
+			Script: `
+      CREATE TABLE photos (
+        id TEXT PRIMARY KEY NOT NULL,
+        year INT,
+        user_id TEXT,
+        content_type TEXT,
+        created_at TIMESTAMP WITH TIME ZONE,
+        modified_at TIMESTAMP WITH TIME ZONE
+      );
+      `,
+		},
 	}
 )
 

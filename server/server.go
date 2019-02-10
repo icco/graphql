@@ -18,11 +18,11 @@ import (
 	"github.com/go-chi/cors"
 	"github.com/icco/graphql"
 	sdLogging "github.com/icco/logrus-stackdriver-formatter"
+	"github.com/unrolled/render"
+	"github.com/unrolled/secure"
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
-	"gopkg.in/unrolled/render.v1"
-	"gopkg.in/unrolled/secure.v1"
 )
 
 var (
@@ -33,13 +33,13 @@ var (
 	Renderer = render.New(render.Options{
 		Charset:                   "UTF-8",
 		Directory:                 "./server/views",
-		DisableHTTPErrorRendering: false,
+		DisableHTTPErrorRendering: true,
 		Extensions:                []string{".tmpl", ".html"},
+		Funcs:                     []template.FuncMap{{}},
 		IndentJSON:                false,
 		IndentXML:                 true,
 		Layout:                    "layout",
 		RequirePartials:           true,
-		Funcs:                     []template.FuncMap{{}},
 	})
 
 	dbURL = os.Getenv("DATABASE_URL")
@@ -156,6 +156,7 @@ func main() {
 			handler.RequestMiddleware(GqlLoggingMiddleware),
 			handler.Tracer(gqlopencensus.New()),
 		))
+		r.Post("/photo/new", photoUploadHandler)
 	})
 
 	h := &ochttp.Handler{
@@ -211,13 +212,29 @@ func cronHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}(context.Background())
 
-	Renderer.JSON(w, http.StatusOK, map[string]string{
+	err := Renderer.JSON(w, http.StatusOK, map[string]string{
 		"cron": "ok",
 	})
+	if err != nil {
+		log.WithError(err).Error("could not render json")
+	}
+}
+
+func internalErrorHandler(w http.ResponseWriter, r *http.Request) {
+
+	err := Renderer.JSON(w, http.StatusInternalServerError, map[string]string{
+		"error": "500: An internal server error occured",
+	})
+	if err != nil {
+		log.WithError(err).Error("could not render json")
+	}
 }
 
 func notFoundHandler(w http.ResponseWriter, r *http.Request) {
-	Renderer.JSON(w, http.StatusNotFound, map[string]string{
+	err := Renderer.JSON(w, http.StatusNotFound, map[string]string{
 		"error": "404: This page could not be found",
 	})
+	if err != nil {
+		log.WithError(err).Error("could not render json")
+	}
 }

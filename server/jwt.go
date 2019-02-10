@@ -54,7 +54,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 				return
 			}
 
-			log.WithField("auth", AUTH0).WithError(err).Error("Token is not valid")
+			log.WithField("auth", AUTH0).WithError(err).Error("token is not valid")
 			http.Error(w, `{"error": "Error reading auth token"}`, http.StatusBadRequest)
 			return
 		}

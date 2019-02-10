@@ -25,8 +25,12 @@ const (
 // ForContext finds the user from the context. This is usually inserted by
 // WithUser.
 func ForContext(ctx context.Context) *User {
-	raw, _ := ctx.Value(userCtxKey).(*User)
-	return raw
+	u, ok := ctx.Value(userCtxKey).(*User)
+	if !ok {
+		return nil
+	}
+
+	return u
 }
 
 // WithUser puts a user in the context.
