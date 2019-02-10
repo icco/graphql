@@ -122,7 +122,7 @@ func (p *Photo) Path() string {
 	return fmt.Sprintf("photos/%d/%s%s", p.Year, p.ID, ext)
 }
 
-// Returns the URI for this photo.
+// URI returns the URI for this photo.
 func (p *Photo) URI() string {
 	return fmt.Sprintf("https://storage.googleapis.com/%s/%s", StorageBucketName, p.Path())
 }
