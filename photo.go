@@ -16,7 +16,7 @@ const (
 	StorageBucketName = "icco-cloud"
 )
 
-func configureStorage(bucketID string, ctx context.Context) (*storage.BucketHandle, error) {
+func configureStorage(ctx context.Context, bucketID string) (*storage.BucketHandle, error) {
 	client, err := storage.NewClient(ctx)
 	if err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func (p *Photo) Upload(ctx context.Context, f io.Reader) error {
 		return err
 	}
 
-	stgClient, err := configureStorage(StorageBucketName, ctx)
+	stgClient, err := configureStorage(ctx, StorageBucketName)
 	if err != nil {
 		return err
 	}
