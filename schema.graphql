@@ -180,6 +180,17 @@ type Geo {
 }
 
 """
+Page is a wiki page.
+"""
+type Page {
+  id: ID!
+  slug: String!
+  constent: String!
+  created: Time!
+  modified: Time!
+}
+
+"""
 Time is a datetime scalar with timezone.
 """
 scalar Time
