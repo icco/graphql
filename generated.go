@@ -85,11 +85,11 @@ type ComplexityRoot struct {
 	Mutation struct {
 		CreatePost  func(childComplexity int, input NewPost) int
 		EditPost    func(childComplexity int, Id string, input EditedPost) int
+		InsertLog   func(childComplexity int, input NewLog) int
 		UpsertBook  func(childComplexity int, input EditBook) int
 		UpsertLink  func(childComplexity int, input NewLink) int
 		UpsertStat  func(childComplexity int, input NewStat) int
 		UpsertTweet func(childComplexity int, input NewTweet) int
-		InsertLog   func(childComplexity int, input NewLog) int
 	}
 
 	Page struct {
@@ -174,11 +174,11 @@ type ComplexityRoot struct {
 type MutationResolver interface {
 	CreatePost(ctx context.Context, input NewPost) (Post, error)
 	EditPost(ctx context.Context, Id string, input EditedPost) (Post, error)
+	InsertLog(ctx context.Context, input NewLog) (*Log, error)
 	UpsertBook(ctx context.Context, input EditBook) (Book, error)
 	UpsertLink(ctx context.Context, input NewLink) (Link, error)
 	UpsertStat(ctx context.Context, input NewStat) (Stat, error)
 	UpsertTweet(ctx context.Context, input NewTweet) (Tweet, error)
-	InsertLog(ctx context.Context, input NewLog) (*Log, error)
 }
 type QueryResolver interface {
 	Drafts(ctx context.Context, limit *int, offset *int) ([]*Post, error)
@@ -242,6 +242,21 @@ func field_Mutation_editPost_args(rawArgs map[string]interface{}) (map[string]in
 
 }
 
+func field_Mutation_insertLog_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 NewLog
+	if tmp, ok := rawArgs["input"]; ok {
+		var err error
+		arg0, err = UnmarshalNewLog(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+
+}
+
 func field_Mutation_upsertBook_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	args := map[string]interface{}{}
 	var arg0 EditBook
@@ -293,21 +308,6 @@ func field_Mutation_upsertTweet_args(rawArgs map[string]interface{}) (map[string
 	if tmp, ok := rawArgs["input"]; ok {
 		var err error
 		arg0, err = UnmarshalNewTweet(tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-
-}
-
-func field_Mutation_insertLog_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	args := map[string]interface{}{}
-	var arg0 NewLog
-	if tmp, ok := rawArgs["input"]; ok {
-		var err error
-		arg0, err = UnmarshalNewLog(tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -909,6 +909,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.EditPost(childComplexity, args["Id"].(string), args["input"].(EditedPost)), true
 
+	case "Mutation.insertLog":
+		if e.complexity.Mutation.InsertLog == nil {
+			break
+		}
+
+		args, err := field_Mutation_insertLog_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.InsertLog(childComplexity, args["input"].(NewLog)), true
+
 	case "Mutation.upsertBook":
 		if e.complexity.Mutation.UpsertBook == nil {
 			break
@@ -956,18 +968,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpsertTweet(childComplexity, args["input"].(NewTweet)), true
-
-	case "Mutation.insertLog":
-		if e.complexity.Mutation.InsertLog == nil {
-			break
-		}
-
-		args, err := field_Mutation_insertLog_args(rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.InsertLog(childComplexity, args["input"].(NewLog)), true
 
 	case "Page.id":
 		if e.complexity.Page.Id == nil {
@@ -2318,6 +2318,8 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalid = true
 			}
+		case "insertLog":
+			out.Values[i] = ec._Mutation_insertLog(ctx, field)
 		case "upsertBook":
 			out.Values[i] = ec._Mutation_upsertBook(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -2338,8 +2340,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalid = true
 			}
-		case "insertLog":
-			out.Values[i] = ec._Mutation_insertLog(ctx, field)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2417,6 +2417,41 @@ func (ec *executionContext) _Mutation_editPost(ctx context.Context, field graphq
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 
 	return ec._Post(ctx, field.Selections, &res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Mutation_insertLog(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Mutation_insertLog_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Mutation",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().InsertLog(rctx, args["input"].(NewLog))
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*Log)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._Log(ctx, field.Selections, res)
 }
 
 // nolint: vetshadow
@@ -2553,41 +2588,6 @@ func (ec *executionContext) _Mutation_upsertTweet(ctx context.Context, field gra
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 
 	return ec._Tweet(ctx, field.Selections, &res)
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _Mutation_insertLog(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := field_Mutation_insertLog_args(rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	rctx := &graphql.ResolverContext{
-		Object: "Mutation",
-		Args:   args,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().InsertLog(rctx, args["input"].(NewLog))
-	})
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*Log)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-
-	if res == nil {
-		return graphql.Null
-	}
-
-	return ec._Log(ctx, field.Selections, res)
 }
 
 var pageImplementors = []string{"Page"}
@@ -7242,6 +7242,169 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var parsedSchema = gqlparser.MustLoadSchema(
+	&ast.Source{Name: "blog.graphql", Input: `"""
+Comment is an undefined type reserved for the future.
+"""
+type Comment {
+  id: ID!
+}
+
+"""
+A post is an individual post in the blog.
+"""
+type Post implements Linkable {
+  id: ID!
+  title: String!
+  content: String!
+  summary: String!
+  readtime: Int!
+
+  "datetime is the published time of an article."
+  datetime: Time!
+  created: Time!
+  modified: Time!
+  draft: Boolean!
+  tags: [String!]!
+
+  "links are the links referenced in a post."
+  links: [Link]!
+
+  "uri returns an absolute link to this post."
+  uri: URI!
+}
+
+input NewPost {
+  content: String
+  title: String
+  datetime: Time
+  draft: Boolean
+}
+
+input EditedPost {
+  content: String!
+  title: String!
+  datetime: Time!
+  draft: Boolean!
+}
+`},
+	&ast.Source{Name: "generics.graphql", Input: `interface Searchable {
+  summary: String!
+}
+
+interface Linkable {
+  uri: URI!
+}
+
+"""
+A link is a link I have save on pinboard or a link in a post.
+"""
+type Link implements Linkable {
+  id: ID!
+  title: String!
+  uri: URI!
+  created: Time!
+  description: String!
+  screenshot: URI!
+  tags: [String!]!
+	modified: Time!
+}
+
+"""
+A stat is a key value pair of two interesting strings.
+"""
+type Stat {
+  key: String!
+  value: String!
+}
+
+"""
+A user is a logged in user.
+"""
+type User {
+	id: ID!
+	role: String!
+	apikey: String!
+	created: Time!
+	modified: Time!
+}
+
+"""
+A Tweet is an archived tweet.
+"""
+type Tweet implements Linkable {
+  id: ID!
+  text: String!
+  hashtags: [String!]!
+  symbols: [String!]!
+  user_mentions: [String!]!
+  urls: [URI!]!
+  screen_name: String!
+  favorite_count: Int!
+  retweet_count: Int!
+  posted: Time!
+  uri: URI!
+}
+
+type TwitterURL {
+  link: URI
+  tweetIDs: [ID!]!
+  createdAt: Time!
+  modifiedAt: Time!
+  tweets: [Tweet]!
+}
+
+
+"""
+A book is a book on Goodreads.
+"""
+type Book implements Linkable {
+  id: ID!
+  uri: URI!
+  title: String!
+}
+
+"""
+Time is a datetime scalar with timezone.
+"""
+scalar Time
+
+"""
+A URI is a url or url like thing.
+"""
+scalar URI
+
+input EditBook {
+  id: ID,
+  title: String,
+  goodreads_id: String!,
+}
+
+input NewLink {
+  title: String!
+  uri: URI!
+  description: String!
+  tags: [String!]!
+  created: Time
+}
+
+input NewStat {
+  key: String!
+  value: String!
+}
+
+input NewTweet {
+  favorite_count: Int!
+  hashtags: [String!]
+  id: ID!
+  posted: Time!
+  retweet_count: Int!
+  symbols: [String!]
+  text: String!
+  urls: [URI!]
+  screen_name: String!
+  user_mentions: [String!]
+}
+`},
 	&ast.Source{Name: "schema.graphql", Input: `schema {
   query: Query
 }
@@ -7301,108 +7464,26 @@ type Query {
   logs(user_id: String): [Log]! @loggedIn
 }
 
-interface Searchable {
-  summary: String!
+type Mutation {
+  createPost(input: NewPost!): Post! @hasRole(role: admin)
+  editPost(Id: ID!, input: EditedPost!): Post! @hasRole(role: admin)
+  insertLog(input: NewLog!): Log @loggedIn
+  upsertBook(input: EditBook!): Book! @hasRole(role: admin)
+  upsertLink(input: NewLink!): Link! @hasRole(role: admin)
+  upsertStat(input: NewStat!): Stat! @hasRole(role: admin)
+  upsertTweet(input: NewTweet!): Tweet! @hasRole(role: admin)
 }
 
-interface Linkable {
-  uri: URI!
+directive @hasRole(role: Role!) on FIELD_DEFINITION
+
+directive @loggedIn on FIELD_DEFINITION
+
+enum Role {
+  admin
+  normal
 }
-
-"""
-A post is an individual post in the blog.
-"""
-type Post implements Linkable {
-  id: ID!
-  title: String!
-  content: String!
-  summary: String!
-  readtime: Int!
-
-  "datetime is the published time of an article."
-  datetime: Time!
-  created: Time!
-  modified: Time!
-  draft: Boolean!
-  tags: [String!]!
-
-  "links are the links referenced in a post."
-  links: [Link]!
-
-  "uri returns an absolute link to this post."
-  uri: URI!
-}
-
-"""
-A link is a link I have save on pinboard or a link in a post.
-"""
-type Link implements Linkable {
-  id: ID!
-  title: String!
-  uri: URI!
-  created: Time!
-  description: String!
-  screenshot: URI!
-  tags: [String!]!
-	modified: Time!
-}
-
-"""
-A stat is a key value pair of two interesting strings.
-"""
-type Stat {
-  key: String!
-  value: String!
-}
-
-
-"""
-A user is a logged in user.
-"""
-type User {
-	id: ID!
-	role: String!
-	apikey: String!
-	created: Time!
-	modified: Time!
-}
-
-"""
-A Tweet is an archived tweet.
-"""
-type Tweet implements Linkable {
-  id: ID!
-  text: String!
-  hashtags: [String!]!
-  symbols: [String!]!
-  user_mentions: [String!]!
-  urls: [URI!]!
-  screen_name: String!
-  favorite_count: Int!
-  retweet_count: Int!
-  posted: Time!
-  uri: URI!
-}
-
-type TwitterURL {
-  link: URI
-  tweetIDs: [ID!]!
-  createdAt: Time!
-  modifiedAt: Time!
-  tweets: [Tweet]!
-}
-
-
-"""
-A book is a book on Goodreads.
-"""
-type Book implements Linkable {
-  id: ID!
-  uri: URI!
-  title: String!
-}
-
-"""
+`},
+	&ast.Source{Name: "wiki.graphql", Input: `"""
 A Log is a journal entry by an individual.
 """
 type Log {
@@ -7434,70 +7515,6 @@ type Page {
   modified: Time!
 }
 
-"""
-Time is a datetime scalar with timezone.
-"""
-scalar Time
-
-"""
-A URI is a url or url like thing.
-"""
-scalar URI
-
-"""
-Comment is an undefined type reserved for the future.
-"""
-type Comment {
-  id: ID!
-}
-
-input NewPost {
-  content: String
-  title: String
-  datetime: Time
-  draft: Boolean
-}
-
-input EditBook {
-  id: ID,
-  title: String,
-  goodreads_id: String!,
-}
-
-input EditedPost {
-  content: String!
-  title: String!
-  datetime: Time!
-  draft: Boolean!
-}
-
-input NewLink {
-  title: String!
-  uri: URI!
-  description: String!
-  tags: [String!]!
-  created: Time
-}
-
-input NewStat {
-  key: String!
-  value: String!
-}
-
-input NewTweet {
-  favorite_count: Int!
-  hashtags: [String!]
-  id: ID!
-  posted: Time!
-  retweet_count: Int!
-  symbols: [String!]
-  text: String!
-  urls: [URI!]
-  screen_name: String!
-  user_mentions: [String!]
-}
-
-
 input NewLog {
   code: String!
   description: String
@@ -7510,23 +7527,5 @@ input NewGeo {
   long: Float!
 }
 
-type Mutation {
-  createPost(input: NewPost!): Post! @hasRole(role: admin)
-  editPost(Id: ID!, input: EditedPost!): Post! @hasRole(role: admin)
-  upsertBook(input: EditBook!): Book! @hasRole(role: admin)
-  upsertLink(input: NewLink!): Link! @hasRole(role: admin)
-  upsertStat(input: NewStat!): Stat! @hasRole(role: admin)
-  upsertTweet(input: NewTweet!): Tweet! @hasRole(role: admin)
-  insertLog(input: NewLog!): Log @loggedIn
-}
-
-directive @hasRole(role: Role!) on FIELD_DEFINITION
-
-directive @loggedIn on FIELD_DEFINITION
-
-enum Role {
-  admin
-  normal
-}
 `},
 )
