@@ -22,9 +22,9 @@ const (
 	userCtxKey key = 0
 )
 
-// ForContext finds the user from the context. This is usually inserted by
-// WithUser.
-func ForContext(ctx context.Context) *User {
+// GetUserFromContext finds the user from the context. This is usually inserted
+// by WithUser.
+func GetUserFromContext(ctx context.Context) *User {
 	u, ok := ctx.Value(userCtxKey).(*User)
 	if !ok {
 		return nil
@@ -49,7 +49,7 @@ func New() Config {
 	}
 
 	c.Directives.HasRole = func(ctx context.Context, _ interface{}, next graphql.Resolver, role Role) (interface{}, error) {
-		u := ForContext(ctx)
+		u := GetUserFromContext(ctx)
 		if u == nil || Role(u.Role) != role {
 			// block calling the next resolver
 			return nil, fmt.Errorf("forbidden")
@@ -60,7 +60,7 @@ func New() Config {
 	}
 
 	c.Directives.LoggedIn = func(ctx context.Context, _ interface{}, next graphql.Resolver) (interface{}, error) {
-		u := ForContext(ctx)
+		u := GetUserFromContext(ctx)
 		if u == nil {
 			// block calling the next resolver
 			return nil, fmt.Errorf("forbidden")
@@ -214,7 +214,7 @@ func (r *mutationResolver) InsertLog(ctx context.Context, input NewLog) (*Log, e
 	l.Code = input.Code
 	l.Project = input.Project
 
-	u := ForContext(ctx)
+	u := GetUserFromContext(ctx)
 	if u != nil {
 		l.User = *u
 	}
@@ -387,7 +387,7 @@ func (r *queryResolver) Counts(ctx context.Context) ([]*Stat, error) {
 }
 
 func (r *queryResolver) Whoami(ctx context.Context) (*User, error) {
-	return ForContext(ctx), nil
+	return GetUserFromContext(ctx), nil
 }
 
 func (r *queryResolver) Tweets(ctx context.Context, limit *int, offset *int) ([]*Tweet, error) {
@@ -437,7 +437,7 @@ func (r *queryResolver) Tags(ctx context.Context) ([]string, error) {
 
 func (r *queryResolver) Logs(ctx context.Context, uid *string) ([]*Log, error) {
 	var err error
-	u := ForContext(ctx)
+	u := GetUserFromContext(ctx)
 	if uid != nil {
 		u, err = GetUser(ctx, *uid)
 		if err != nil {

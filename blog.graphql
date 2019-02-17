@@ -42,3 +42,26 @@ input EditedPost {
   datetime: Time!
   draft: Boolean!
 }
+
+extend type Query {
+  "Returns an array of inprogress posts."
+  drafts(limit: Int, offset: Int): [Post]! @hasRole(role: admin)
+
+  "Returns an array of all posts, ordered by reverse chronological order, using provided limit and offset."
+  posts(limit: Int, offset: Int): [Post]!
+
+  "Returns a single post by ID."
+  post(id: ID!): Post
+
+  "Returns post id for the next post chronologically."
+  nextPost(id: ID!): Post
+
+  "Returns post id for the previous post chronologically."
+  prevPost(id: ID!): Post
+
+  "Returns all posts that contain a tag."
+  postsByTag(id: String!): [Post]!
+
+  "Returns all tags used in a post."
+  tags: [String!]!
+}
