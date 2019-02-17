@@ -1,0 +1,44 @@
+"""
+Comment is an undefined type reserved for the future.
+"""
+type Comment {
+  id: ID!
+}
+
+"""
+A post is an individual post in the blog.
+"""
+type Post implements Linkable {
+  id: ID!
+  title: String!
+  content: String!
+  summary: String!
+  readtime: Int!
+
+  "datetime is the published time of an article."
+  datetime: Time!
+  created: Time!
+  modified: Time!
+  draft: Boolean!
+  tags: [String!]!
+
+  "links are the links referenced in a post."
+  links: [Link]!
+
+  "uri returns an absolute link to this post."
+  uri: URI!
+}
+
+input NewPost {
+  content: String
+  title: String
+  datetime: Time
+  draft: Boolean
+}
+
+input EditedPost {
+  content: String!
+  title: String!
+  datetime: Time!
+  draft: Boolean!
+}

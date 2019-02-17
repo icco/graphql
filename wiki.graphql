@@ -1,0 +1,44 @@
+"""
+A Log is a journal entry by an individual.
+"""
+type Log {
+  id: ID!
+  code: String!
+  datetime: Time!
+  description: String!
+  location: Geo
+  project: String!
+  user: User!
+}
+
+"""
+Geo is a simple type for wrapping a point.
+"""
+type Geo {
+  lat: Float!
+  long: Float!
+}
+
+"""
+Page is a wiki page.
+"""
+type Page {
+  id: ID!
+  slug: String!
+  constent: String!
+  created: Time!
+  modified: Time!
+}
+
+input NewLog {
+  code: String!
+  description: String
+  location: NewGeo
+  project: String!
+}
+
+input NewGeo {
+  lat: Float!
+  long: Float!
+}
+

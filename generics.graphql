@@ -1,0 +1,117 @@
+interface Searchable {
+  summary: String!
+}
+
+interface Linkable {
+  uri: URI!
+}
+
+"""
+A link is a link I have save on pinboard or a link in a post.
+"""
+type Link implements Linkable {
+  id: ID!
+  title: String!
+  uri: URI!
+  created: Time!
+  description: String!
+  screenshot: URI!
+  tags: [String!]!
+	modified: Time!
+}
+
+"""
+A stat is a key value pair of two interesting strings.
+"""
+type Stat {
+  key: String!
+  value: String!
+}
+
+"""
+A user is a logged in user.
+"""
+type User {
+	id: ID!
+	role: String!
+	apikey: String!
+	created: Time!
+	modified: Time!
+}
+
+"""
+A Tweet is an archived tweet.
+"""
+type Tweet implements Linkable {
+  id: ID!
+  text: String!
+  hashtags: [String!]!
+  symbols: [String!]!
+  user_mentions: [String!]!
+  urls: [URI!]!
+  screen_name: String!
+  favorite_count: Int!
+  retweet_count: Int!
+  posted: Time!
+  uri: URI!
+}
+
+type TwitterURL {
+  link: URI
+  tweetIDs: [ID!]!
+  createdAt: Time!
+  modifiedAt: Time!
+  tweets: [Tweet]!
+}
+
+
+"""
+A book is a book on Goodreads.
+"""
+type Book implements Linkable {
+  id: ID!
+  uri: URI!
+  title: String!
+}
+
+"""
+Time is a datetime scalar with timezone.
+"""
+scalar Time
+
+"""
+A URI is a url or url like thing.
+"""
+scalar URI
+
+input EditBook {
+  id: ID,
+  title: String,
+  goodreads_id: String!,
+}
+
+input NewLink {
+  title: String!
+  uri: URI!
+  description: String!
+  tags: [String!]!
+  created: Time
+}
+
+input NewStat {
+  key: String!
+  value: String!
+}
+
+input NewTweet {
+  favorite_count: Int!
+  hashtags: [String!]
+  id: ID!
+  posted: Time!
+  retweet_count: Int!
+  symbols: [String!]
+  text: String!
+  urls: [URI!]
+  screen_name: String!
+  user_mentions: [String!]
+}
