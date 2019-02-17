@@ -1,5 +1,3 @@
-//go:generate go run ./scripts/gqlgen.go
-
 package graphql
 
 import (
