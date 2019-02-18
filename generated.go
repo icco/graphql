@@ -95,7 +95,10 @@ type ComplexityRoot struct {
 	Page struct {
 		Id       func(childComplexity int) int
 		Slug     func(childComplexity int) int
-		Constent func(childComplexity int) int
+		Title    func(childComplexity int) int
+		Content  func(childComplexity int) int
+		Category func(childComplexity int) int
+		Tags     func(childComplexity int) int
 		Created  func(childComplexity int) int
 		Modified func(childComplexity int) int
 	}
@@ -983,12 +986,33 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Page.Slug(childComplexity), true
 
-	case "Page.constent":
-		if e.complexity.Page.Constent == nil {
+	case "Page.title":
+		if e.complexity.Page.Title == nil {
 			break
 		}
 
-		return e.complexity.Page.Constent(childComplexity), true
+		return e.complexity.Page.Title(childComplexity), true
+
+	case "Page.content":
+		if e.complexity.Page.Content == nil {
+			break
+		}
+
+		return e.complexity.Page.Content(childComplexity), true
+
+	case "Page.category":
+		if e.complexity.Page.Category == nil {
+			break
+		}
+
+		return e.complexity.Page.Category(childComplexity), true
+
+	case "Page.tags":
+		if e.complexity.Page.Tags == nil {
+			break
+		}
+
+		return e.complexity.Page.Tags(childComplexity), true
 
 	case "Page.created":
 		if e.complexity.Page.Created == nil {
@@ -2614,8 +2638,23 @@ func (ec *executionContext) _Page(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalid = true
 			}
-		case "constent":
-			out.Values[i] = ec._Page_constent(ctx, field, obj)
+		case "title":
+			out.Values[i] = ec._Page_title(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "content":
+			out.Values[i] = ec._Page_content(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "category":
+			out.Values[i] = ec._Page_category(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "tags":
+			out.Values[i] = ec._Page_tags(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalid = true
 			}
@@ -2695,7 +2734,7 @@ func (ec *executionContext) _Page_slug(ctx context.Context, field graphql.Collec
 }
 
 // nolint: vetshadow
-func (ec *executionContext) _Page_constent(ctx context.Context, field graphql.CollectedField, obj *Page) graphql.Marshaler {
+func (ec *executionContext) _Page_title(ctx context.Context, field graphql.CollectedField, obj *Page) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
@@ -2707,7 +2746,7 @@ func (ec *executionContext) _Page_constent(ctx context.Context, field graphql.Co
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Constent, nil
+		return obj.Title, nil
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -2719,6 +2758,96 @@ func (ec *executionContext) _Page_constent(ctx context.Context, field graphql.Co
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return graphql.MarshalString(res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Page_content(ctx context.Context, field graphql.CollectedField, obj *Page) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Page",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Content, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return graphql.MarshalString(res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Page_category(ctx context.Context, field graphql.CollectedField, obj *Page) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Page",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Category, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return graphql.MarshalString(res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Page_tags(ctx context.Context, field graphql.CollectedField, obj *Page) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Page",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Tags, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	arr1 := make(graphql.Array, len(res))
+
+	for idx1 := range res {
+		arr1[idx1] = func() graphql.Marshaler {
+			return graphql.MarshalString(res[idx1])
+		}()
+	}
+
+	return arr1
 }
 
 // nolint: vetshadow
@@ -6827,6 +6956,63 @@ func UnmarshalEditBook(v interface{}) (EditBook, error) {
 	return it, nil
 }
 
+func UnmarshalEditPage(v interface{}) (EditPage, error) {
+	var it EditPage
+	var asMap = v.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+			var ptr1 string
+			if v != nil {
+				ptr1, err = graphql.UnmarshalID(v)
+				it.ID = &ptr1
+			}
+
+			if err != nil {
+				return it, err
+			}
+		case "slug":
+			var err error
+			var ptr1 string
+			if v != nil {
+				ptr1, err = graphql.UnmarshalString(v)
+				it.Slug = &ptr1
+			}
+
+			if err != nil {
+				return it, err
+			}
+		case "content":
+			var err error
+			it.Content, err = graphql.UnmarshalString(v)
+			if err != nil {
+				return it, err
+			}
+		case "title":
+			var err error
+			it.Title, err = graphql.UnmarshalString(v)
+			if err != nil {
+				return it, err
+			}
+		case "category":
+			var err error
+			var ptr1 string
+			if v != nil {
+				ptr1, err = graphql.UnmarshalString(v)
+				it.Category = &ptr1
+			}
+
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func UnmarshalEditedPost(v interface{}) (EditedPost, error) {
 	var it EditedPost
 	var asMap = v.(map[string]interface{})
@@ -7329,7 +7515,7 @@ type Link implements Linkable {
   description: String!
   screenshot: URI!
   tags: [String!]!
-	modified: Time!
+  modified: Time!
 }
 
 """
@@ -7344,11 +7530,11 @@ type Stat {
 A user is a logged in user.
 """
 type User {
-	id: ID!
-	role: String!
-	apikey: String!
-	created: Time!
-	modified: Time!
+  id: ID!
+  role: String!
+  apikey: String!
+  created: Time!
+  modified: Time!
 }
 
 """
@@ -7510,9 +7696,20 @@ Page is a wiki page.
 type Page {
   id: ID!
   slug: String!
-  constent: String!
+  title: String!
+  content: String!
+  category: String!
+  tags: [String!]!
   created: Time!
   modified: Time!
+}
+
+input EditPage {
+  id: ID
+  slug: String
+  content: String!
+  title: String!
+  category: String
 }
 
 input NewLog {

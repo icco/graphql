@@ -25,9 +25,20 @@ Page is a wiki page.
 type Page {
   id: ID!
   slug: String!
-  constent: String!
+  title: String!
+  content: String!
+  category: String!
+  tags: [String!]!
   created: Time!
   modified: Time!
+}
+
+input EditPage {
+  id: ID
+  slug: String
+  content: String!
+  title: String!
+  category: String
 }
 
 input NewLog {

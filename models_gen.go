@@ -20,6 +20,14 @@ type EditBook struct {
 	GoodreadsID string  `json:"goodreads_id"`
 }
 
+type EditPage struct {
+	ID       *string `json:"id"`
+	Slug     *string `json:"slug"`
+	Content  string  `json:"content"`
+	Title    string  `json:"title"`
+	Category *string `json:"category"`
+}
+
 type EditedPost struct {
 	Content  string    `json:"content"`
 	Title    string    `json:"title"`
@@ -80,7 +88,10 @@ type NewTweet struct {
 type Page struct {
 	ID       string    `json:"id"`
 	Slug     string    `json:"slug"`
-	Constent string    `json:"constent"`
+	Title    string    `json:"title"`
+	Content  string    `json:"content"`
+	Category string    `json:"category"`
+	Tags     []string  `json:"tags"`
 	Created  time.Time `json:"created"`
 	Modified time.Time `json:"modified"`
 }
