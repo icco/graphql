@@ -233,18 +233,22 @@ func (r *mutationResolver) InsertLog(ctx context.Context, input NewLog) (*Log, e
 }
 
 func (r *mutationResolver) UpsertPage(ctx context.Context, input EditPage) (Page, error) {
-	p := &Page{
-		Content: input.Content,
-		Title:   input.Content,
+	var err error
+	p := &Page{}
+
+	if input.ID != nil {
+		p, err = GetPageByID(ctx, *input.ID)
+		if err != nil {
+			return Page{}, err
+		}
 	}
+
+	p.Content = input.Content
+	p.Title = input.Title
 
 	u := GetUserFromContext(ctx)
 	if u != nil {
 		p.User = *u
-	}
-
-	if input.ID != nil {
-		p.ID = *input.ID
 	}
 
 	if input.Slug != nil {
@@ -255,7 +259,7 @@ func (r *mutationResolver) UpsertPage(ctx context.Context, input EditPage) (Page
 		p.Category = *input.Category
 	}
 
-	err := p.Save(ctx)
+	err = p.Save(ctx)
 	if err != nil {
 		return Page{}, err
 	}
