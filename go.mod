@@ -11,11 +11,15 @@ require (
 	github.com/go-chi/chi v4.0.1+incompatible
 	github.com/go-chi/cors v1.0.0
 	github.com/google/uuid v1.1.0
+	github.com/gosimple/slug v1.4.2
 	github.com/icco/cacophony v0.0.0-20190208141533-6619033d7424
 	github.com/icco/logrus-stackdriver-formatter v0.3.0
 	github.com/lib/pq v1.0.0
+	github.com/mozillazg/go-slugify v0.2.0
+	github.com/mozillazg/go-unidecode v0.1.0 // indirect
 	github.com/opencensus-integrations/ocsql v0.1.3
 	github.com/paulmach/orb v0.1.1
+	github.com/rainycape/unidecode v0.0.0-20150907023854-cb7f23ec59be // indirect
 	github.com/russross/blackfriday v2.0.0+incompatible
 	github.com/sirupsen/logrus v1.3.0
 	github.com/unrolled/render v0.0.0-20190117215946-449f39850074

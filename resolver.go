@@ -233,7 +233,27 @@ func (r *mutationResolver) InsertLog(ctx context.Context, input NewLog) (*Log, e
 }
 
 func (r *mutationResolver) UpsertPage(ctx context.Context, input EditPage) (Page, error) {
-	p := &Page{}
+	p := &Page{
+		Content: input.Content,
+		Title:   input.Content,
+	}
+
+	u := GetUserFromContext(ctx)
+	if u != nil {
+		p.User = *u
+	}
+
+	if input.ID != nil {
+		p.ID = *input.ID
+	}
+
+	if input.Slug != nil {
+		p.Slug = *input.Slug
+	}
+
+	if input.Category != nil {
+		p.Category = *input.Category
+	}
 
 	err := p.Save(ctx)
 	if err != nil {
@@ -241,7 +261,6 @@ func (r *mutationResolver) UpsertPage(ctx context.Context, input EditPage) (Page
 	}
 
 	return *p, nil
-
 }
 
 func (r *mutationResolver) UpsertTweet(ctx context.Context, input NewTweet) (Tweet, error) {
