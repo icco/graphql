@@ -83,13 +83,13 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		CreatePost  func(childComplexity int, input NewPost) int
-		EditPost    func(childComplexity int, Id string, input EditedPost) int
-		InsertLog   func(childComplexity int, input NewLog) int
 		UpsertBook  func(childComplexity int, input EditBook) int
 		UpsertLink  func(childComplexity int, input NewLink) int
 		UpsertStat  func(childComplexity int, input NewStat) int
 		UpsertTweet func(childComplexity int, input NewTweet) int
+		CreatePost  func(childComplexity int, input NewPost) int
+		EditPost    func(childComplexity int, Id string, input EditedPost) int
+		InsertLog   func(childComplexity int, input NewLog) int
 	}
 
 	Page struct {
@@ -175,13 +175,13 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	CreatePost(ctx context.Context, input NewPost) (Post, error)
-	EditPost(ctx context.Context, Id string, input EditedPost) (Post, error)
-	InsertLog(ctx context.Context, input NewLog) (*Log, error)
 	UpsertBook(ctx context.Context, input EditBook) (Book, error)
 	UpsertLink(ctx context.Context, input NewLink) (Link, error)
 	UpsertStat(ctx context.Context, input NewStat) (Stat, error)
 	UpsertTweet(ctx context.Context, input NewTweet) (Tweet, error)
+	CreatePost(ctx context.Context, input NewPost) (Post, error)
+	EditPost(ctx context.Context, Id string, input EditedPost) (Post, error)
+	InsertLog(ctx context.Context, input NewLog) (*Log, error)
 }
 type QueryResolver interface {
 	Links(ctx context.Context, limit *int, offset *int) ([]*Link, error)
@@ -204,60 +204,6 @@ type QueryResolver interface {
 }
 type TwitterURLResolver interface {
 	Tweets(ctx context.Context, obj *models.SavedURL) ([]*Tweet, error)
-}
-
-func field_Mutation_createPost_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	args := map[string]interface{}{}
-	var arg0 NewPost
-	if tmp, ok := rawArgs["input"]; ok {
-		var err error
-		arg0, err = UnmarshalNewPost(tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-
-}
-
-func field_Mutation_editPost_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["Id"]; ok {
-		var err error
-		arg0, err = graphql.UnmarshalID(tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["Id"] = arg0
-	var arg1 EditedPost
-	if tmp, ok := rawArgs["input"]; ok {
-		var err error
-		arg1, err = UnmarshalEditedPost(tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg1
-	return args, nil
-
-}
-
-func field_Mutation_insertLog_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	args := map[string]interface{}{}
-	var arg0 NewLog
-	if tmp, ok := rawArgs["input"]; ok {
-		var err error
-		arg0, err = UnmarshalNewLog(tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-
 }
 
 func field_Mutation_upsertBook_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
@@ -311,6 +257,60 @@ func field_Mutation_upsertTweet_args(rawArgs map[string]interface{}) (map[string
 	if tmp, ok := rawArgs["input"]; ok {
 		var err error
 		arg0, err = UnmarshalNewTweet(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+
+}
+
+func field_Mutation_createPost_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 NewPost
+	if tmp, ok := rawArgs["input"]; ok {
+		var err error
+		arg0, err = UnmarshalNewPost(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+
+}
+
+func field_Mutation_editPost_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["Id"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalID(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["Id"] = arg0
+	var arg1 EditedPost
+	if tmp, ok := rawArgs["input"]; ok {
+		var err error
+		arg1, err = UnmarshalEditedPost(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
+	return args, nil
+
+}
+
+func field_Mutation_insertLog_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 NewLog
+	if tmp, ok := rawArgs["input"]; ok {
+		var err error
+		arg0, err = UnmarshalNewLog(tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -888,42 +888,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Log.User(childComplexity), true
 
-	case "Mutation.createPost":
-		if e.complexity.Mutation.CreatePost == nil {
-			break
-		}
-
-		args, err := field_Mutation_createPost_args(rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.CreatePost(childComplexity, args["input"].(NewPost)), true
-
-	case "Mutation.editPost":
-		if e.complexity.Mutation.EditPost == nil {
-			break
-		}
-
-		args, err := field_Mutation_editPost_args(rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.EditPost(childComplexity, args["Id"].(string), args["input"].(EditedPost)), true
-
-	case "Mutation.insertLog":
-		if e.complexity.Mutation.InsertLog == nil {
-			break
-		}
-
-		args, err := field_Mutation_insertLog_args(rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.InsertLog(childComplexity, args["input"].(NewLog)), true
-
 	case "Mutation.upsertBook":
 		if e.complexity.Mutation.UpsertBook == nil {
 			break
@@ -971,6 +935,42 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpsertTweet(childComplexity, args["input"].(NewTweet)), true
+
+	case "Mutation.createPost":
+		if e.complexity.Mutation.CreatePost == nil {
+			break
+		}
+
+		args, err := field_Mutation_createPost_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreatePost(childComplexity, args["input"].(NewPost)), true
+
+	case "Mutation.editPost":
+		if e.complexity.Mutation.EditPost == nil {
+			break
+		}
+
+		args, err := field_Mutation_editPost_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditPost(childComplexity, args["Id"].(string), args["input"].(EditedPost)), true
+
+	case "Mutation.insertLog":
+		if e.complexity.Mutation.InsertLog == nil {
+			break
+		}
+
+		args, err := field_Mutation_insertLog_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.InsertLog(childComplexity, args["input"].(NewLog)), true
 
 	case "Page.id":
 		if e.complexity.Page.Id == nil {
@@ -2332,18 +2332,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Mutation")
-		case "createPost":
-			out.Values[i] = ec._Mutation_createPost(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
-		case "editPost":
-			out.Values[i] = ec._Mutation_editPost(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
-		case "insertLog":
-			out.Values[i] = ec._Mutation_insertLog(ctx, field)
 		case "upsertBook":
 			out.Values[i] = ec._Mutation_upsertBook(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -2364,6 +2352,18 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalid = true
 			}
+		case "createPost":
+			out.Values[i] = ec._Mutation_createPost(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "editPost":
+			out.Values[i] = ec._Mutation_editPost(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "insertLog":
+			out.Values[i] = ec._Mutation_insertLog(ctx, field)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2373,109 +2373,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		return graphql.Null
 	}
 	return out
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _Mutation_createPost(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := field_Mutation_createPost_args(rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	rctx := &graphql.ResolverContext{
-		Object: "Mutation",
-		Args:   args,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreatePost(rctx, args["input"].(NewPost))
-	})
-	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(Post)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-
-	return ec._Post(ctx, field.Selections, &res)
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _Mutation_editPost(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := field_Mutation_editPost_args(rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	rctx := &graphql.ResolverContext{
-		Object: "Mutation",
-		Args:   args,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().EditPost(rctx, args["Id"].(string), args["input"].(EditedPost))
-	})
-	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(Post)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-
-	return ec._Post(ctx, field.Selections, &res)
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _Mutation_insertLog(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := field_Mutation_insertLog_args(rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	rctx := &graphql.ResolverContext{
-		Object: "Mutation",
-		Args:   args,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().InsertLog(rctx, args["input"].(NewLog))
-	})
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*Log)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-
-	if res == nil {
-		return graphql.Null
-	}
-
-	return ec._Log(ctx, field.Selections, res)
 }
 
 // nolint: vetshadow
@@ -2612,6 +2509,109 @@ func (ec *executionContext) _Mutation_upsertTweet(ctx context.Context, field gra
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 
 	return ec._Tweet(ctx, field.Selections, &res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Mutation_createPost(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Mutation_createPost_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Mutation",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreatePost(rctx, args["input"].(NewPost))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(Post)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	return ec._Post(ctx, field.Selections, &res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Mutation_editPost(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Mutation_editPost_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Mutation",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditPost(rctx, args["Id"].(string), args["input"].(EditedPost))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(Post)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	return ec._Post(ctx, field.Selections, &res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Mutation_insertLog(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Mutation_insertLog_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Mutation",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().InsertLog(rctx, args["input"].(NewLog))
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*Log)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._Log(ctx, field.Selections, res)
 }
 
 var pageImplementors = []string{"Page"}
@@ -7495,8 +7495,28 @@ extend type Query {
   "Returns all tags used in a post."
   tags: [String!]!
 }
+
+extend type Mutation {
+  createPost(input: NewPost!): Post! @hasRole(role: admin)
+
+  editPost(Id: ID!, input: EditedPost!): Post! @hasRole(role: admin)
+}
 `},
-	&ast.Source{Name: "generics.graphql", Input: `interface Searchable {
+	&ast.Source{Name: "generics.graphql", Input: `schema {
+  query: Query
+  mutation: Mutation
+}
+
+directive @hasRole(role: Role!) on FIELD_DEFINITION
+
+directive @loggedIn on FIELD_DEFINITION
+
+enum Role {
+  admin
+  normal
+}
+
+interface Searchable {
   summary: String!
 }
 
@@ -7644,29 +7664,12 @@ type Query {
 
   homeTimelineURLs(limit: Int): [TwitterURL]!
 }
-`},
-	&ast.Source{Name: "schema.graphql", Input: `schema {
-  query: Query
-  mutation: Mutation
-}
 
 type Mutation {
-  createPost(input: NewPost!): Post! @hasRole(role: admin)
-  editPost(Id: ID!, input: EditedPost!): Post! @hasRole(role: admin)
-  insertLog(input: NewLog!): Log @loggedIn
   upsertBook(input: EditBook!): Book! @hasRole(role: admin)
   upsertLink(input: NewLink!): Link! @hasRole(role: admin)
   upsertStat(input: NewStat!): Stat! @hasRole(role: admin)
   upsertTweet(input: NewTweet!): Tweet! @hasRole(role: admin)
-}
-
-directive @hasRole(role: Role!) on FIELD_DEFINITION
-
-directive @loggedIn on FIELD_DEFINITION
-
-enum Role {
-  admin
-  normal
 }
 `},
 	&ast.Source{Name: "wiki.graphql", Input: `"""
@@ -7727,6 +7730,10 @@ input NewGeo {
 extend type Query {
   "Returns all Logs for a user. If no user specified, returns your logs."
   logs(user_id: String): [Log]! @loggedIn
+}
+
+extend type Mutation {
+  insertLog(input: NewLog!): Log @loggedIn
 }
 `},
 )
