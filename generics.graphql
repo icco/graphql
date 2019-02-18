@@ -17,7 +17,7 @@ type Link implements Linkable {
   description: String!
   screenshot: URI!
   tags: [String!]!
-	modified: Time!
+  modified: Time!
 }
 
 """
@@ -32,11 +32,11 @@ type Stat {
 A user is a logged in user.
 """
 type User {
-	id: ID!
-	role: String!
-	apikey: String!
-	created: Time!
-	modified: Time!
+  id: ID!
+  role: String!
+  apikey: String!
+  created: Time!
+  modified: Time!
 }
 
 """
