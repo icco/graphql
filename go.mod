@@ -2,6 +2,7 @@ module github.com/icco/graphql
 
 require (
 	cloud.google.com/go v0.36.0
+	contrib.go.opencensus.io/exporter/ocagent v0.4.4 // indirect
 	contrib.go.opencensus.io/exporter/stackdriver v0.9.1
 	github.com/99designs/gqlgen v0.7.2
 	github.com/99designs/gqlgen-contrib v0.0.0-20181214005309-52113d2e3f08
@@ -15,8 +16,6 @@ require (
 	github.com/icco/cacophony v0.0.0-20190208141533-6619033d7424
 	github.com/icco/logrus-stackdriver-formatter v0.3.0
 	github.com/lib/pq v1.0.0
-	github.com/mozillazg/go-slugify v0.2.0
-	github.com/mozillazg/go-unidecode v0.1.0 // indirect
 	github.com/opencensus-integrations/ocsql v0.1.3
 	github.com/paulmach/orb v0.1.1
 	github.com/rainycape/unidecode v0.0.0-20150907023854-cb7f23ec59be // indirect
