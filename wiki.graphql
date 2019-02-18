@@ -29,6 +29,7 @@ type Page {
   content: String!
   category: String!
   tags: [String!]!
+  user: User!
   created: Time!
   modified: Time!
 }
@@ -60,4 +61,5 @@ extend type Query {
 
 extend type Mutation {
   insertLog(input: NewLog!): Log @loggedIn
+  upsertPage(input: EditPage!): Page! @loggedIn
 }

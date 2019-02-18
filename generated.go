@@ -90,6 +90,7 @@ type ComplexityRoot struct {
 		CreatePost  func(childComplexity int, input NewPost) int
 		EditPost    func(childComplexity int, Id string, input EditedPost) int
 		InsertLog   func(childComplexity int, input NewLog) int
+		UpsertPage  func(childComplexity int, input EditPage) int
 	}
 
 	Page struct {
@@ -99,6 +100,7 @@ type ComplexityRoot struct {
 		Content  func(childComplexity int) int
 		Category func(childComplexity int) int
 		Tags     func(childComplexity int) int
+		User     func(childComplexity int) int
 		Created  func(childComplexity int) int
 		Modified func(childComplexity int) int
 	}
@@ -182,6 +184,7 @@ type MutationResolver interface {
 	CreatePost(ctx context.Context, input NewPost) (Post, error)
 	EditPost(ctx context.Context, Id string, input EditedPost) (Post, error)
 	InsertLog(ctx context.Context, input NewLog) (*Log, error)
+	UpsertPage(ctx context.Context, input EditPage) (Page, error)
 }
 type QueryResolver interface {
 	Links(ctx context.Context, limit *int, offset *int) ([]*Link, error)
@@ -311,6 +314,21 @@ func field_Mutation_insertLog_args(rawArgs map[string]interface{}) (map[string]i
 	if tmp, ok := rawArgs["input"]; ok {
 		var err error
 		arg0, err = UnmarshalNewLog(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+
+}
+
+func field_Mutation_upsertPage_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 EditPage
+	if tmp, ok := rawArgs["input"]; ok {
+		var err error
+		arg0, err = UnmarshalEditPage(tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -972,6 +990,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.InsertLog(childComplexity, args["input"].(NewLog)), true
 
+	case "Mutation.upsertPage":
+		if e.complexity.Mutation.UpsertPage == nil {
+			break
+		}
+
+		args, err := field_Mutation_upsertPage_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpsertPage(childComplexity, args["input"].(EditPage)), true
+
 	case "Page.id":
 		if e.complexity.Page.Id == nil {
 			break
@@ -1013,6 +1043,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Page.Tags(childComplexity), true
+
+	case "Page.user":
+		if e.complexity.Page.User == nil {
+			break
+		}
+
+		return e.complexity.Page.User(childComplexity), true
 
 	case "Page.created":
 		if e.complexity.Page.Created == nil {
@@ -2364,6 +2401,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "insertLog":
 			out.Values[i] = ec._Mutation_insertLog(ctx, field)
+		case "upsertPage":
+			out.Values[i] = ec._Mutation_upsertPage(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2614,6 +2656,40 @@ func (ec *executionContext) _Mutation_insertLog(ctx context.Context, field graph
 	return ec._Log(ctx, field.Selections, res)
 }
 
+// nolint: vetshadow
+func (ec *executionContext) _Mutation_upsertPage(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Mutation_upsertPage_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Mutation",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpsertPage(rctx, args["input"].(EditPage))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(Page)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	return ec._Page(ctx, field.Selections, &res)
+}
+
 var pageImplementors = []string{"Page"}
 
 // nolint: gocyclo, errcheck, gas, goconst
@@ -2655,6 +2731,11 @@ func (ec *executionContext) _Page(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "tags":
 			out.Values[i] = ec._Page_tags(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "user":
+			out.Values[i] = ec._Page_user(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalid = true
 			}
@@ -2848,6 +2929,34 @@ func (ec *executionContext) _Page_tags(ctx context.Context, field graphql.Collec
 	}
 
 	return arr1
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Page_user(ctx context.Context, field graphql.CollectedField, obj *Page) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Page",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.User, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(User)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	return ec._User(ctx, field.Selections, &res)
 }
 
 // nolint: vetshadow
@@ -7703,6 +7812,7 @@ type Page {
   content: String!
   category: String!
   tags: [String!]!
+  user: User!
   created: Time!
   modified: Time!
 }
@@ -7734,6 +7844,7 @@ extend type Query {
 
 extend type Mutation {
   insertLog(input: NewLog!): Log @loggedIn
+  upsertPage(input: EditPage!): Page! @loggedIn
 }
 `},
 )

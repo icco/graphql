@@ -232,6 +232,18 @@ func (r *mutationResolver) InsertLog(ctx context.Context, input NewLog) (*Log, e
 	return l, err
 }
 
+func (r *mutationResolver) UpsertPage(ctx context.Context, input EditPage) (Page, error) {
+	p := &Page{}
+
+	err := p.Save(ctx)
+	if err != nil {
+		return Page{}, err
+	}
+
+	return *p, nil
+
+}
+
 func (r *mutationResolver) UpsertTweet(ctx context.Context, input NewTweet) (Tweet, error) {
 	t := &Tweet{
 		FavoriteCount: input.FavoriteCount,

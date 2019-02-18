@@ -84,18 +84,6 @@ type NewTweet struct {
 	UserMentions  []string  `json:"user_mentions"`
 }
 
-// Page is a wiki page.
-type Page struct {
-	ID       string    `json:"id"`
-	Slug     string    `json:"slug"`
-	Title    string    `json:"title"`
-	Content  string    `json:"content"`
-	Category string    `json:"category"`
-	Tags     []string  `json:"tags"`
-	Created  time.Time `json:"created"`
-	Modified time.Time `json:"modified"`
-}
-
 type Searchable interface {
 	IsSearchable()
 }
