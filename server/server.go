@@ -121,6 +121,9 @@ func main() {
 		}).Handler)
 
 		r.Get("/healthz", healthCheckHandler)
+		r.Options("/photo/new", func(w http.ResponseWriter, r *http.Request) {
+			w.Write([]byte(""))
+		})
 	})
 
 	// Everything that does SSL only
@@ -156,6 +159,7 @@ func main() {
 			handler.RequestMiddleware(GqlLoggingMiddleware),
 			handler.Tracer(gqlopencensus.New()),
 		))
+
 		r.Post("/photo/new", photoUploadHandler)
 	})
 
