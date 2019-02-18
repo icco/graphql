@@ -57,3 +57,7 @@ extend type Query {
   "Returns all Logs for a user. If no user specified, returns your logs."
   logs(user_id: String): [Log]! @loggedIn
 }
+
+extend type Mutation {
+  insertLog(input: NewLog!): Log @loggedIn
+}

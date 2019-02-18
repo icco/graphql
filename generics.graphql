@@ -1,3 +1,17 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+directive @hasRole(role: Role!) on FIELD_DEFINITION
+
+directive @loggedIn on FIELD_DEFINITION
+
+enum Role {
+  admin
+  normal
+}
+
 interface Searchable {
   summary: String!
 }
@@ -145,4 +159,11 @@ type Query {
   tweetsByScreenName(screen_name: String!, limit: Int, offset: Int): [Tweet]!
 
   homeTimelineURLs(limit: Int): [TwitterURL]!
+}
+
+type Mutation {
+  upsertBook(input: EditBook!): Book! @hasRole(role: admin)
+  upsertLink(input: NewLink!): Link! @hasRole(role: admin)
+  upsertStat(input: NewStat!): Stat! @hasRole(role: admin)
+  upsertTweet(input: NewTweet!): Tweet! @hasRole(role: admin)
 }

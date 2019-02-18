@@ -65,3 +65,9 @@ extend type Query {
   "Returns all tags used in a post."
   tags: [String!]!
 }
+
+extend type Mutation {
+  createPost(input: NewPost!): Post! @hasRole(role: admin)
+
+  editPost(Id: ID!, input: EditedPost!): Post! @hasRole(role: admin)
+}
