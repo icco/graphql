@@ -138,6 +138,8 @@ type ComplexityRoot struct {
 		PostsByTag         func(childComplexity int, id string) int
 		Tags               func(childComplexity int) int
 		Logs               func(childComplexity int, user_id *string) int
+		GetPageById        func(childComplexity int, id string) int
+		GetPageBySlug      func(childComplexity int, slug string) int
 	}
 
 	Stat struct {
@@ -204,6 +206,8 @@ type QueryResolver interface {
 	PostsByTag(ctx context.Context, id string) ([]*Post, error)
 	Tags(ctx context.Context) ([]string, error)
 	Logs(ctx context.Context, user_id *string) ([]*Log, error)
+	GetPageByID(ctx context.Context, id string) (*Page, error)
+	GetPageBySlug(ctx context.Context, slug string) (*Page, error)
 }
 type TwitterURLResolver interface {
 	Tweets(ctx context.Context, obj *models.SavedURL) ([]*Tweet, error)
@@ -682,6 +686,36 @@ func field_Query_logs_args(rawArgs map[string]interface{}) (map[string]interface
 		}
 	}
 	args["user_id"] = arg0
+	return args, nil
+
+}
+
+func field_Query_getPageByID_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalID(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+
+}
+
+func field_Query_getPageBySlug_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["slug"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalID(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["slug"] = arg0
 	return args, nil
 
 }
@@ -1337,6 +1371,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Logs(childComplexity, args["user_id"].(*string)), true
+
+	case "Query.getPageByID":
+		if e.complexity.Query.GetPageById == nil {
+			break
+		}
+
+		args, err := field_Query_getPageByID_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetPageById(childComplexity, args["id"].(string)), true
+
+	case "Query.getPageBySlug":
+		if e.complexity.Query.GetPageBySlug == nil {
+			break
+		}
+
+		args, err := field_Query_getPageBySlug_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetPageBySlug(childComplexity, args["slug"].(string)), true
 
 	case "Stat.key":
 		if e.complexity.Stat.Key == nil {
@@ -3622,6 +3680,18 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				wg.Done()
 			}(i, field)
+		case "getPageByID":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_getPageByID(ctx, field)
+				wg.Done()
+			}(i, field)
+		case "getPageBySlug":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_getPageBySlug(ctx, field)
+				wg.Done()
+			}(i, field)
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
@@ -4569,6 +4639,76 @@ func (ec *executionContext) _Query_logs(ctx context.Context, field graphql.Colle
 	}
 	wg.Wait()
 	return arr1
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Query_getPageByID(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_getPageByID_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetPageByID(rctx, args["id"].(string))
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*Page)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._Page(ctx, field.Selections, res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Query_getPageBySlug(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_getPageBySlug_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetPageBySlug(rctx, args["slug"].(string))
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*Page)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._Page(ctx, field.Selections, res)
 }
 
 // nolint: vetshadow
@@ -7840,6 +7980,9 @@ input NewGeo {
 extend type Query {
   "Returns all Logs for a user. If no user specified, returns your logs."
   logs(user_id: String): [Log]! @loggedIn
+
+  getPageByID(id: ID!): Page
+  getPageBySlug(slug: ID!): Page
 }
 
 extend type Mutation {

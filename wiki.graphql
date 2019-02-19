@@ -57,6 +57,9 @@ input NewGeo {
 extend type Query {
   "Returns all Logs for a user. If no user specified, returns your logs."
   logs(user_id: String): [Log]! @loggedIn
+
+  getPageByID(id: ID!): Page
+  getPageBySlug(slug: ID!): Page
 }
 
 extend type Mutation {

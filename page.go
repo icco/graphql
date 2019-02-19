@@ -88,7 +88,32 @@ func GetPageByID(ctx context.Context, id string) (*Page, error) {
 	err := row.Scan(&p.ID, &p.Slug, &p.Title, &p.Content, &p.Category, pq.Array(&p.Tags), &userID, &p.Created, &p.Modified)
 	switch {
 	case err == sql.ErrNoRows:
-		return nil, fmt.Errorf("No post with id %d", id)
+		return nil, fmt.Errorf("No post with id")
+	case err != nil:
+		return nil, fmt.Errorf("Error running get query: %+v", err)
+	default:
+		u, err := GetUser(ctx, userID)
+		if err != nil {
+			return nil, err
+		}
+
+		if u != nil {
+			p.User = *u
+		}
+		return &p, nil
+	}
+}
+
+// GetPageByID gets a page by ID from the database.
+func GetPageBySlug(ctx context.Context, slug string) (*Page, error) {
+	var p Page
+	var userID string
+
+	row := db.QueryRowContext(ctx, "SELECT id, slug, title, content, category, tags, user_id, created_at, modified_at FROM pages WHERE slug = $1", slug)
+	err := row.Scan(&p.ID, &p.Slug, &p.Title, &p.Content, &p.Category, pq.Array(&p.Tags), &userID, &p.Created, &p.Modified)
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, fmt.Errorf("No post with slug")
 	case err != nil:
 		return nil, fmt.Errorf("Error running get query: %+v", err)
 	default:

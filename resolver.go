@@ -481,6 +481,14 @@ func (r *queryResolver) Logs(ctx context.Context, uid *string) ([]*Log, error) {
 	return UserLogs(ctx, u)
 }
 
+func (r *queryResolver) GetPageByID(ctx context.Context, id string) (*Page, error) {
+	return GetPageByID(ctx, id)
+}
+
+func (r *queryResolver) GetPageBySlug(ctx context.Context, slug string) (*Page, error) {
+	return GetPageBySlug(ctx, slug)
+}
+
 type twitterURLResolver struct{ *Resolver }
 
 func (r *twitterURLResolver) Tweets(ctx context.Context, obj *models.SavedURL) ([]*Tweet, error) {
