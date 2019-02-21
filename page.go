@@ -131,5 +131,35 @@ func GetPageBySlug(ctx context.Context, slug string) (*Page, error) {
 
 // GetPages returns an array of all pages that exist.
 func GetPages(ctx context.Context) ([]*Page, error) {
-	return []*Page{}, nil
+	rows, err := db.QueryContext(ctx, "SELECT id, slug, title, content, category, tags, user_id, created_at, modified_at FROM pages ORDER BY modified_at DESC")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	pages := make([]*Page, 0)
+	for rows.Next() {
+		var p Page
+		var userID string
+		err := rows.Scan(&p.ID, &p.Slug, &p.Title, &p.Content, &p.Category, pq.Array(&p.Tags), &userID, &p.Created, &p.Modified)
+		if err != nil {
+			return nil, err
+		}
+
+		u, err := GetUser(ctx, userID)
+		if err != nil {
+			return nil, err
+		}
+
+		if u != nil {
+			p.User = *u
+		}
+
+		pages = append(pages, &p)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return pages, nil
 }
