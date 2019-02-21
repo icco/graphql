@@ -104,7 +104,7 @@ func GetPageByID(ctx context.Context, id string) (*Page, error) {
 	}
 }
 
-// GetPageByID gets a page by ID from the database.
+// GetPageBySlug gets a page by ID from the database.
 func GetPageBySlug(ctx context.Context, slug string) (*Page, error) {
 	var p Page
 	var userID string
@@ -129,6 +129,7 @@ func GetPageBySlug(ctx context.Context, slug string) (*Page, error) {
 	}
 }
 
+// GetPages returns an array of all pages that exist.
 func GetPages(ctx context.Context) ([]*Page, error) {
 	return []*Page{}, nil
 }
