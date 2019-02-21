@@ -4,8 +4,11 @@ import (
 	"context"
 	"errors"
 	"html/template"
+	stdlog "log"
 	"net/http"
 	"os"
+	"runtime/debug"
+	"strings"
 
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	"contrib.go.opencensus.io/exporter/stackdriver/monitoredresource"
@@ -24,6 +27,16 @@ import (
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
 )
+
+type debugLogger struct{}
+
+func (d debugLogger) Write(p []byte) (n int, err error) {
+	s := string(p)
+	if strings.Contains(s, "multiple response.WriteHeader") {
+		debug.PrintStack()
+	}
+	return os.Stderr.Write(p)
+}
 
 var (
 	// Renderer is a renderer for all occasions. These are our preferred default options.
@@ -91,9 +104,6 @@ func main() {
 
 	r := chi.NewRouter()
 
-	r.Use(middleware.RequestID)
-	r.Use(middleware.RealIP)
-	r.Use(middleware.Recoverer)
 	r.Use(middleware.DefaultCompress)
 	r.Use(sdLogging.LoggingMiddleware(log))
 
@@ -142,10 +152,14 @@ func main() {
 
 	r.Group(func(r chi.Router) {
 		r.Use(sslOnly)
-		r.Use(AuthMiddleware)
-
 		r.Get("/cron", cronHandler)
 		r.Handle("/", handler.Playground("graphql", "/graphql"))
+	})
+
+	r.Group(func(r chi.Router) {
+		r.Use(sslOnly)
+		r.Use(AuthMiddleware)
+
 		r.Handle("/graphql", handler.GraphQL(
 			graphql.NewExecutableSchema(graphql.New()),
 			handler.RecoverFunc(func(ctx context.Context, intErr interface{}) error {
@@ -171,7 +185,16 @@ func main() {
 		log.Fatal("Failed to register ochttp.DefaultServerViews")
 	}
 
-	log.Fatal(http.ListenAndServe(":"+port, h))
+	// Now use the logger with your http.Server:
+	logger := stdlog.New(debugLogger{}, "", 0)
+
+	server := &http.Server{
+		Addr:     ":" + port,
+		Handler:  h,
+		ErrorLog: logger,
+	}
+
+	log.Fatal(server.ListenAndServe())
 }
 
 // GqlLoggingMiddleware is a middleware for gqlgen that logs all gql requests to debug.
