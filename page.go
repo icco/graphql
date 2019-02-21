@@ -128,3 +128,7 @@ func GetPageBySlug(ctx context.Context, slug string) (*Page, error) {
 		return &p, nil
 	}
 }
+
+func GetPages(ctx context.Context) ([]*Page, error) {
+	return []*Page{}, nil
+}

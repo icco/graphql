@@ -60,6 +60,7 @@ extend type Query {
 
   getPageByID(id: ID!): Page
   getPageBySlug(slug: ID!): Page
+  getPages: [Page]!
 }
 
 extend type Mutation {

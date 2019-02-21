@@ -489,6 +489,10 @@ func (r *queryResolver) GetPageBySlug(ctx context.Context, slug string) (*Page, 
 	return GetPageBySlug(ctx, slug)
 }
 
+func (r *queryResolver) GetPages(ctx context.Context) ([]*Page, error) {
+	return GetPages(ctx)
+}
+
 type twitterURLResolver struct{ *Resolver }
 
 func (r *twitterURLResolver) Tweets(ctx context.Context, obj *models.SavedURL) ([]*Tweet, error) {
