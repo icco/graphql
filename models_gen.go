@@ -28,11 +28,12 @@ type EditPage struct {
 	Category *string `json:"category"`
 }
 
-type EditedPost struct {
-	Content  string    `json:"content"`
-	Title    string    `json:"title"`
-	Datetime time.Time `json:"datetime"`
-	Draft    bool      `json:"draft"`
+type EditPost struct {
+	ID       *string    `json:"id"`
+	Content  *string    `json:"content"`
+	Title    *string    `json:"title"`
+	Datetime *time.Time `json:"datetime"`
+	Draft    *bool      `json:"draft"`
 }
 
 type Linkable interface {
@@ -57,13 +58,6 @@ type NewLog struct {
 	Description *string `json:"description"`
 	Location    *NewGeo `json:"location"`
 	Project     string  `json:"project"`
-}
-
-type NewPost struct {
-	Content  *string    `json:"content"`
-	Title    *string    `json:"title"`
-	Datetime *time.Time `json:"datetime"`
-	Draft    *bool      `json:"draft"`
 }
 
 type NewStat struct {
