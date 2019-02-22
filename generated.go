@@ -83,13 +83,26 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		CreatePost  func(childComplexity int, input NewPost) int
-		EditPost    func(childComplexity int, Id string, input EditedPost) int
 		UpsertBook  func(childComplexity int, input EditBook) int
 		UpsertLink  func(childComplexity int, input NewLink) int
 		UpsertStat  func(childComplexity int, input NewStat) int
 		UpsertTweet func(childComplexity int, input NewTweet) int
+		CreatePost  func(childComplexity int, input NewPost) int
+		EditPost    func(childComplexity int, Id string, input EditedPost) int
 		InsertLog   func(childComplexity int, input NewLog) int
+		UpsertPage  func(childComplexity int, input EditPage) int
+	}
+
+	Page struct {
+		Id       func(childComplexity int) int
+		Slug     func(childComplexity int) int
+		Title    func(childComplexity int) int
+		Content  func(childComplexity int) int
+		Category func(childComplexity int) int
+		Tags     func(childComplexity int) int
+		User     func(childComplexity int) int
+		Created  func(childComplexity int) int
+		Modified func(childComplexity int) int
 	}
 
 	Post struct {
@@ -108,23 +121,26 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Drafts             func(childComplexity int, limit *int, offset *int) int
-		Posts              func(childComplexity int, limit *int, offset *int) int
-		Post               func(childComplexity int, id string) int
-		NextPost           func(childComplexity int, id string) int
-		PrevPost           func(childComplexity int, id string) int
 		Links              func(childComplexity int, limit *int, offset *int) int
 		Link               func(childComplexity int, id *string, url *string) int
 		Stats              func(childComplexity int, count *int) int
-		PostsByTag         func(childComplexity int, id string) int
 		Counts             func(childComplexity int) int
 		Whoami             func(childComplexity int) int
 		Tweets             func(childComplexity int, limit *int, offset *int) int
 		Tweet              func(childComplexity int, id string) int
 		TweetsByScreenName func(childComplexity int, screen_name string, limit *int, offset *int) int
 		HomeTimelineUrls   func(childComplexity int, limit *int) int
+		Drafts             func(childComplexity int, limit *int, offset *int) int
+		Posts              func(childComplexity int, limit *int, offset *int) int
+		Post               func(childComplexity int, id string) int
+		NextPost           func(childComplexity int, id string) int
+		PrevPost           func(childComplexity int, id string) int
+		PostsByTag         func(childComplexity int, id string) int
 		Tags               func(childComplexity int) int
 		Logs               func(childComplexity int, user_id *string) int
+		GetPageById        func(childComplexity int, id string) int
+		GetPageBySlug      func(childComplexity int, slug string) int
+		GetPages           func(childComplexity int) int
 	}
 
 	Stat struct {
@@ -164,74 +180,39 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	CreatePost(ctx context.Context, input NewPost) (Post, error)
-	EditPost(ctx context.Context, Id string, input EditedPost) (Post, error)
 	UpsertBook(ctx context.Context, input EditBook) (Book, error)
 	UpsertLink(ctx context.Context, input NewLink) (Link, error)
 	UpsertStat(ctx context.Context, input NewStat) (Stat, error)
 	UpsertTweet(ctx context.Context, input NewTweet) (Tweet, error)
+	CreatePost(ctx context.Context, input NewPost) (Post, error)
+	EditPost(ctx context.Context, Id string, input EditedPost) (Post, error)
 	InsertLog(ctx context.Context, input NewLog) (*Log, error)
+	UpsertPage(ctx context.Context, input EditPage) (Page, error)
 }
 type QueryResolver interface {
-	Drafts(ctx context.Context, limit *int, offset *int) ([]*Post, error)
-	Posts(ctx context.Context, limit *int, offset *int) ([]*Post, error)
-	Post(ctx context.Context, id string) (*Post, error)
-	NextPost(ctx context.Context, id string) (*Post, error)
-	PrevPost(ctx context.Context, id string) (*Post, error)
 	Links(ctx context.Context, limit *int, offset *int) ([]*Link, error)
 	Link(ctx context.Context, id *string, url *string) (*Link, error)
 	Stats(ctx context.Context, count *int) ([]*Stat, error)
-	PostsByTag(ctx context.Context, id string) ([]*Post, error)
 	Counts(ctx context.Context) ([]*Stat, error)
 	Whoami(ctx context.Context) (*User, error)
 	Tweets(ctx context.Context, limit *int, offset *int) ([]*Tweet, error)
 	Tweet(ctx context.Context, id string) (*Tweet, error)
 	TweetsByScreenName(ctx context.Context, screen_name string, limit *int, offset *int) ([]*Tweet, error)
 	HomeTimelineURLs(ctx context.Context, limit *int) ([]*models.SavedURL, error)
+	Drafts(ctx context.Context, limit *int, offset *int) ([]*Post, error)
+	Posts(ctx context.Context, limit *int, offset *int) ([]*Post, error)
+	Post(ctx context.Context, id string) (*Post, error)
+	NextPost(ctx context.Context, id string) (*Post, error)
+	PrevPost(ctx context.Context, id string) (*Post, error)
+	PostsByTag(ctx context.Context, id string) ([]*Post, error)
 	Tags(ctx context.Context) ([]string, error)
 	Logs(ctx context.Context, user_id *string) ([]*Log, error)
+	GetPageByID(ctx context.Context, id string) (*Page, error)
+	GetPageBySlug(ctx context.Context, slug string) (*Page, error)
+	GetPages(ctx context.Context) ([]*Page, error)
 }
 type TwitterURLResolver interface {
 	Tweets(ctx context.Context, obj *models.SavedURL) ([]*Tweet, error)
-}
-
-func field_Mutation_createPost_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	args := map[string]interface{}{}
-	var arg0 NewPost
-	if tmp, ok := rawArgs["input"]; ok {
-		var err error
-		arg0, err = UnmarshalNewPost(tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-
-}
-
-func field_Mutation_editPost_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["Id"]; ok {
-		var err error
-		arg0, err = graphql.UnmarshalID(tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["Id"] = arg0
-	var arg1 EditedPost
-	if tmp, ok := rawArgs["input"]; ok {
-		var err error
-		arg1, err = UnmarshalEditedPost(tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg1
-	return args, nil
-
 }
 
 func field_Mutation_upsertBook_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
@@ -294,6 +275,45 @@ func field_Mutation_upsertTweet_args(rawArgs map[string]interface{}) (map[string
 
 }
 
+func field_Mutation_createPost_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 NewPost
+	if tmp, ok := rawArgs["input"]; ok {
+		var err error
+		arg0, err = UnmarshalNewPost(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+
+}
+
+func field_Mutation_editPost_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["Id"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalID(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["Id"] = arg0
+	var arg1 EditedPost
+	if tmp, ok := rawArgs["input"]; ok {
+		var err error
+		arg1, err = UnmarshalEditedPost(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
+	return args, nil
+
+}
+
 func field_Mutation_insertLog_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	args := map[string]interface{}{}
 	var arg0 NewLog
@@ -305,6 +325,221 @@ func field_Mutation_insertLog_args(rawArgs map[string]interface{}) (map[string]i
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+
+}
+
+func field_Mutation_upsertPage_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 EditPage
+	if tmp, ok := rawArgs["input"]; ok {
+		var err error
+		arg0, err = UnmarshalEditPage(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+
+}
+
+func field_Query_links_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 *int
+	if tmp, ok := rawArgs["limit"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg0 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["limit"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["offset"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg1 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["offset"] = arg1
+	return args, nil
+
+}
+
+func field_Query_link_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 *string
+	if tmp, ok := rawArgs["id"]; ok {
+		var err error
+		var ptr1 string
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalID(tmp)
+			arg0 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	var arg1 *string
+	if tmp, ok := rawArgs["url"]; ok {
+		var err error
+		var ptr1 string
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalString(tmp)
+			arg1 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["url"] = arg1
+	return args, nil
+
+}
+
+func field_Query_stats_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 *int
+	if tmp, ok := rawArgs["count"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg0 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["count"] = arg0
+	return args, nil
+
+}
+
+func field_Query_tweets_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 *int
+	if tmp, ok := rawArgs["limit"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg0 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["limit"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["offset"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg1 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["offset"] = arg1
+	return args, nil
+
+}
+
+func field_Query_tweet_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalID(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+
+}
+
+func field_Query_tweetsByScreenName_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["screen_name"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalString(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["screen_name"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["limit"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg1 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["limit"] = arg1
+	var arg2 *int
+	if tmp, ok := rawArgs["offset"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg2 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["offset"] = arg2
+	return args, nil
+
+}
+
+func field_Query_homeTimelineURLs_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 *int
+	if tmp, ok := rawArgs["limit"]; ok {
+		var err error
+		var ptr1 int
+		if tmp != nil {
+			ptr1, err = graphql.UnmarshalInt(tmp)
+			arg0 = &ptr1
+		}
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["limit"] = arg0
 	return args, nil
 
 }
@@ -422,94 +657,6 @@ func field_Query_prevPost_args(rawArgs map[string]interface{}) (map[string]inter
 
 }
 
-func field_Query_links_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	args := map[string]interface{}{}
-	var arg0 *int
-	if tmp, ok := rawArgs["limit"]; ok {
-		var err error
-		var ptr1 int
-		if tmp != nil {
-			ptr1, err = graphql.UnmarshalInt(tmp)
-			arg0 = &ptr1
-		}
-
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["limit"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["offset"]; ok {
-		var err error
-		var ptr1 int
-		if tmp != nil {
-			ptr1, err = graphql.UnmarshalInt(tmp)
-			arg1 = &ptr1
-		}
-
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["offset"] = arg1
-	return args, nil
-
-}
-
-func field_Query_link_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	args := map[string]interface{}{}
-	var arg0 *string
-	if tmp, ok := rawArgs["id"]; ok {
-		var err error
-		var ptr1 string
-		if tmp != nil {
-			ptr1, err = graphql.UnmarshalID(tmp)
-			arg0 = &ptr1
-		}
-
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	var arg1 *string
-	if tmp, ok := rawArgs["url"]; ok {
-		var err error
-		var ptr1 string
-		if tmp != nil {
-			ptr1, err = graphql.UnmarshalString(tmp)
-			arg1 = &ptr1
-		}
-
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["url"] = arg1
-	return args, nil
-
-}
-
-func field_Query_stats_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	args := map[string]interface{}{}
-	var arg0 *int
-	if tmp, ok := rawArgs["count"]; ok {
-		var err error
-		var ptr1 int
-		if tmp != nil {
-			ptr1, err = graphql.UnmarshalInt(tmp)
-			arg0 = &ptr1
-		}
-
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["count"] = arg0
-	return args, nil
-
-}
-
 func field_Query_postsByTag_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	args := map[string]interface{}{}
 	var arg0 string
@@ -521,118 +668,6 @@ func field_Query_postsByTag_args(rawArgs map[string]interface{}) (map[string]int
 		}
 	}
 	args["id"] = arg0
-	return args, nil
-
-}
-
-func field_Query_tweets_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	args := map[string]interface{}{}
-	var arg0 *int
-	if tmp, ok := rawArgs["limit"]; ok {
-		var err error
-		var ptr1 int
-		if tmp != nil {
-			ptr1, err = graphql.UnmarshalInt(tmp)
-			arg0 = &ptr1
-		}
-
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["limit"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["offset"]; ok {
-		var err error
-		var ptr1 int
-		if tmp != nil {
-			ptr1, err = graphql.UnmarshalInt(tmp)
-			arg1 = &ptr1
-		}
-
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["offset"] = arg1
-	return args, nil
-
-}
-
-func field_Query_tweet_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		var err error
-		arg0, err = graphql.UnmarshalID(tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	return args, nil
-
-}
-
-func field_Query_tweetsByScreenName_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["screen_name"]; ok {
-		var err error
-		arg0, err = graphql.UnmarshalString(tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["screen_name"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["limit"]; ok {
-		var err error
-		var ptr1 int
-		if tmp != nil {
-			ptr1, err = graphql.UnmarshalInt(tmp)
-			arg1 = &ptr1
-		}
-
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["limit"] = arg1
-	var arg2 *int
-	if tmp, ok := rawArgs["offset"]; ok {
-		var err error
-		var ptr1 int
-		if tmp != nil {
-			ptr1, err = graphql.UnmarshalInt(tmp)
-			arg2 = &ptr1
-		}
-
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["offset"] = arg2
-	return args, nil
-
-}
-
-func field_Query_homeTimelineURLs_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	args := map[string]interface{}{}
-	var arg0 *int
-	if tmp, ok := rawArgs["limit"]; ok {
-		var err error
-		var ptr1 int
-		if tmp != nil {
-			ptr1, err = graphql.UnmarshalInt(tmp)
-			arg0 = &ptr1
-		}
-
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["limit"] = arg0
 	return args, nil
 
 }
@@ -653,6 +688,36 @@ func field_Query_logs_args(rawArgs map[string]interface{}) (map[string]interface
 		}
 	}
 	args["user_id"] = arg0
+	return args, nil
+
+}
+
+func field_Query_getPageByID_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalID(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+
+}
+
+func field_Query_getPageBySlug_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["slug"]; ok {
+		var err error
+		arg0, err = graphql.UnmarshalID(tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["slug"] = arg0
 	return args, nil
 
 }
@@ -877,30 +942,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Log.User(childComplexity), true
 
-	case "Mutation.createPost":
-		if e.complexity.Mutation.CreatePost == nil {
-			break
-		}
-
-		args, err := field_Mutation_createPost_args(rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.CreatePost(childComplexity, args["input"].(NewPost)), true
-
-	case "Mutation.editPost":
-		if e.complexity.Mutation.EditPost == nil {
-			break
-		}
-
-		args, err := field_Mutation_editPost_args(rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.EditPost(childComplexity, args["Id"].(string), args["input"].(EditedPost)), true
-
 	case "Mutation.upsertBook":
 		if e.complexity.Mutation.UpsertBook == nil {
 			break
@@ -949,6 +990,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpsertTweet(childComplexity, args["input"].(NewTweet)), true
 
+	case "Mutation.createPost":
+		if e.complexity.Mutation.CreatePost == nil {
+			break
+		}
+
+		args, err := field_Mutation_createPost_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreatePost(childComplexity, args["input"].(NewPost)), true
+
+	case "Mutation.editPost":
+		if e.complexity.Mutation.EditPost == nil {
+			break
+		}
+
+		args, err := field_Mutation_editPost_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.EditPost(childComplexity, args["Id"].(string), args["input"].(EditedPost)), true
+
 	case "Mutation.insertLog":
 		if e.complexity.Mutation.InsertLog == nil {
 			break
@@ -960,6 +1025,81 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.InsertLog(childComplexity, args["input"].(NewLog)), true
+
+	case "Mutation.upsertPage":
+		if e.complexity.Mutation.UpsertPage == nil {
+			break
+		}
+
+		args, err := field_Mutation_upsertPage_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpsertPage(childComplexity, args["input"].(EditPage)), true
+
+	case "Page.id":
+		if e.complexity.Page.Id == nil {
+			break
+		}
+
+		return e.complexity.Page.Id(childComplexity), true
+
+	case "Page.slug":
+		if e.complexity.Page.Slug == nil {
+			break
+		}
+
+		return e.complexity.Page.Slug(childComplexity), true
+
+	case "Page.title":
+		if e.complexity.Page.Title == nil {
+			break
+		}
+
+		return e.complexity.Page.Title(childComplexity), true
+
+	case "Page.content":
+		if e.complexity.Page.Content == nil {
+			break
+		}
+
+		return e.complexity.Page.Content(childComplexity), true
+
+	case "Page.category":
+		if e.complexity.Page.Category == nil {
+			break
+		}
+
+		return e.complexity.Page.Category(childComplexity), true
+
+	case "Page.tags":
+		if e.complexity.Page.Tags == nil {
+			break
+		}
+
+		return e.complexity.Page.Tags(childComplexity), true
+
+	case "Page.user":
+		if e.complexity.Page.User == nil {
+			break
+		}
+
+		return e.complexity.Page.User(childComplexity), true
+
+	case "Page.created":
+		if e.complexity.Page.Created == nil {
+			break
+		}
+
+		return e.complexity.Page.Created(childComplexity), true
+
+	case "Page.modified":
+		if e.complexity.Page.Modified == nil {
+			break
+		}
+
+		return e.complexity.Page.Modified(childComplexity), true
 
 	case "Post.id":
 		if e.complexity.Post.Id == nil {
@@ -1045,66 +1185,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Post.Uri(childComplexity), true
 
-	case "Query.drafts":
-		if e.complexity.Query.Drafts == nil {
-			break
-		}
-
-		args, err := field_Query_drafts_args(rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.Drafts(childComplexity, args["limit"].(*int), args["offset"].(*int)), true
-
-	case "Query.posts":
-		if e.complexity.Query.Posts == nil {
-			break
-		}
-
-		args, err := field_Query_posts_args(rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.Posts(childComplexity, args["limit"].(*int), args["offset"].(*int)), true
-
-	case "Query.post":
-		if e.complexity.Query.Post == nil {
-			break
-		}
-
-		args, err := field_Query_post_args(rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.Post(childComplexity, args["id"].(string)), true
-
-	case "Query.nextPost":
-		if e.complexity.Query.NextPost == nil {
-			break
-		}
-
-		args, err := field_Query_nextPost_args(rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.NextPost(childComplexity, args["id"].(string)), true
-
-	case "Query.prevPost":
-		if e.complexity.Query.PrevPost == nil {
-			break
-		}
-
-		args, err := field_Query_prevPost_args(rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.PrevPost(childComplexity, args["id"].(string)), true
-
 	case "Query.links":
 		if e.complexity.Query.Links == nil {
 			break
@@ -1140,18 +1220,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Stats(childComplexity, args["count"].(*int)), true
-
-	case "Query.postsByTag":
-		if e.complexity.Query.PostsByTag == nil {
-			break
-		}
-
-		args, err := field_Query_postsByTag_args(rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.PostsByTag(childComplexity, args["id"].(string)), true
 
 	case "Query.counts":
 		if e.complexity.Query.Counts == nil {
@@ -1215,6 +1283,78 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.HomeTimelineUrls(childComplexity, args["limit"].(*int)), true
 
+	case "Query.drafts":
+		if e.complexity.Query.Drafts == nil {
+			break
+		}
+
+		args, err := field_Query_drafts_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Drafts(childComplexity, args["limit"].(*int), args["offset"].(*int)), true
+
+	case "Query.posts":
+		if e.complexity.Query.Posts == nil {
+			break
+		}
+
+		args, err := field_Query_posts_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Posts(childComplexity, args["limit"].(*int), args["offset"].(*int)), true
+
+	case "Query.post":
+		if e.complexity.Query.Post == nil {
+			break
+		}
+
+		args, err := field_Query_post_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Post(childComplexity, args["id"].(string)), true
+
+	case "Query.nextPost":
+		if e.complexity.Query.NextPost == nil {
+			break
+		}
+
+		args, err := field_Query_nextPost_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.NextPost(childComplexity, args["id"].(string)), true
+
+	case "Query.prevPost":
+		if e.complexity.Query.PrevPost == nil {
+			break
+		}
+
+		args, err := field_Query_prevPost_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.PrevPost(childComplexity, args["id"].(string)), true
+
+	case "Query.postsByTag":
+		if e.complexity.Query.PostsByTag == nil {
+			break
+		}
+
+		args, err := field_Query_postsByTag_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.PostsByTag(childComplexity, args["id"].(string)), true
+
 	case "Query.tags":
 		if e.complexity.Query.Tags == nil {
 			break
@@ -1233,6 +1373,37 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Logs(childComplexity, args["user_id"].(*string)), true
+
+	case "Query.getPageByID":
+		if e.complexity.Query.GetPageById == nil {
+			break
+		}
+
+		args, err := field_Query_getPageByID_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetPageById(childComplexity, args["id"].(string)), true
+
+	case "Query.getPageBySlug":
+		if e.complexity.Query.GetPageBySlug == nil {
+			break
+		}
+
+		args, err := field_Query_getPageBySlug_args(rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetPageBySlug(childComplexity, args["slug"].(string)), true
+
+	case "Query.getPages":
+		if e.complexity.Query.GetPages == nil {
+			break
+		}
+
+		return e.complexity.Query.GetPages(childComplexity), true
 
 	case "Stat.key":
 		if e.complexity.Stat.Key == nil {
@@ -2265,16 +2436,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Mutation")
-		case "createPost":
-			out.Values[i] = ec._Mutation_createPost(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
-		case "editPost":
-			out.Values[i] = ec._Mutation_editPost(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalid = true
-			}
 		case "upsertBook":
 			out.Values[i] = ec._Mutation_upsertBook(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -2295,8 +2456,23 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalid = true
 			}
+		case "createPost":
+			out.Values[i] = ec._Mutation_createPost(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "editPost":
+			out.Values[i] = ec._Mutation_editPost(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
 		case "insertLog":
 			out.Values[i] = ec._Mutation_insertLog(ctx, field)
+		case "upsertPage":
+			out.Values[i] = ec._Mutation_upsertPage(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2306,74 +2482,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		return graphql.Null
 	}
 	return out
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _Mutation_createPost(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := field_Mutation_createPost_args(rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	rctx := &graphql.ResolverContext{
-		Object: "Mutation",
-		Args:   args,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreatePost(rctx, args["input"].(NewPost))
-	})
-	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(Post)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-
-	return ec._Post(ctx, field.Selections, &res)
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _Mutation_editPost(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := field_Mutation_editPost_args(rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	rctx := &graphql.ResolverContext{
-		Object: "Mutation",
-		Args:   args,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().EditPost(rctx, args["Id"].(string), args["input"].(EditedPost))
-	})
-	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(Post)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-
-	return ec._Post(ctx, field.Selections, &res)
 }
 
 // nolint: vetshadow
@@ -2513,6 +2621,74 @@ func (ec *executionContext) _Mutation_upsertTweet(ctx context.Context, field gra
 }
 
 // nolint: vetshadow
+func (ec *executionContext) _Mutation_createPost(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Mutation_createPost_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Mutation",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreatePost(rctx, args["input"].(NewPost))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(Post)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	return ec._Post(ctx, field.Selections, &res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Mutation_editPost(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Mutation_editPost_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Mutation",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().EditPost(rctx, args["Id"].(string), args["input"].(EditedPost))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(Post)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	return ec._Post(ctx, field.Selections, &res)
+}
+
+// nolint: vetshadow
 func (ec *executionContext) _Mutation_insertLog(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
@@ -2545,6 +2721,363 @@ func (ec *executionContext) _Mutation_insertLog(ctx context.Context, field graph
 	}
 
 	return ec._Log(ctx, field.Selections, res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Mutation_upsertPage(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Mutation_upsertPage_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Mutation",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpsertPage(rctx, args["input"].(EditPage))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(Page)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	return ec._Page(ctx, field.Selections, &res)
+}
+
+var pageImplementors = []string{"Page"}
+
+// nolint: gocyclo, errcheck, gas, goconst
+func (ec *executionContext) _Page(ctx context.Context, sel ast.SelectionSet, obj *Page) graphql.Marshaler {
+	fields := graphql.CollectFields(ctx, sel, pageImplementors)
+
+	out := graphql.NewOrderedMap(len(fields))
+	invalid := false
+	for i, field := range fields {
+		out.Keys[i] = field.Alias
+
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Page")
+		case "id":
+			out.Values[i] = ec._Page_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "slug":
+			out.Values[i] = ec._Page_slug(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "title":
+			out.Values[i] = ec._Page_title(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "content":
+			out.Values[i] = ec._Page_content(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "category":
+			out.Values[i] = ec._Page_category(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "tags":
+			out.Values[i] = ec._Page_tags(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "user":
+			out.Values[i] = ec._Page_user(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "created":
+			out.Values[i] = ec._Page_created(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		case "modified":
+			out.Values[i] = ec._Page_modified(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+
+	if invalid {
+		return graphql.Null
+	}
+	return out
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Page_id(ctx context.Context, field graphql.CollectedField, obj *Page) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Page",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return graphql.MarshalID(res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Page_slug(ctx context.Context, field graphql.CollectedField, obj *Page) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Page",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Slug, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return graphql.MarshalString(res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Page_title(ctx context.Context, field graphql.CollectedField, obj *Page) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Page",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Title, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return graphql.MarshalString(res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Page_content(ctx context.Context, field graphql.CollectedField, obj *Page) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Page",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Content, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return graphql.MarshalString(res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Page_category(ctx context.Context, field graphql.CollectedField, obj *Page) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Page",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Category, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return graphql.MarshalString(res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Page_tags(ctx context.Context, field graphql.CollectedField, obj *Page) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Page",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Tags, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	arr1 := make(graphql.Array, len(res))
+
+	for idx1 := range res {
+		arr1[idx1] = func() graphql.Marshaler {
+			return graphql.MarshalString(res[idx1])
+		}()
+	}
+
+	return arr1
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Page_user(ctx context.Context, field graphql.CollectedField, obj *Page) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Page",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.User, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(User)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	return ec._User(ctx, field.Selections, &res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Page_created(ctx context.Context, field graphql.CollectedField, obj *Page) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Page",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Created, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return graphql.MarshalTime(res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Page_modified(ctx context.Context, field graphql.CollectedField, obj *Page) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Page",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Modified, nil
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return graphql.MarshalTime(res)
 }
 
 var postImplementors = []string{"Post", "Linkable"}
@@ -3021,42 +3554,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
-		case "drafts":
-			wg.Add(1)
-			go func(i int, field graphql.CollectedField) {
-				out.Values[i] = ec._Query_drafts(ctx, field)
-				if out.Values[i] == graphql.Null {
-					invalid = true
-				}
-				wg.Done()
-			}(i, field)
-		case "posts":
-			wg.Add(1)
-			go func(i int, field graphql.CollectedField) {
-				out.Values[i] = ec._Query_posts(ctx, field)
-				if out.Values[i] == graphql.Null {
-					invalid = true
-				}
-				wg.Done()
-			}(i, field)
-		case "post":
-			wg.Add(1)
-			go func(i int, field graphql.CollectedField) {
-				out.Values[i] = ec._Query_post(ctx, field)
-				wg.Done()
-			}(i, field)
-		case "nextPost":
-			wg.Add(1)
-			go func(i int, field graphql.CollectedField) {
-				out.Values[i] = ec._Query_nextPost(ctx, field)
-				wg.Done()
-			}(i, field)
-		case "prevPost":
-			wg.Add(1)
-			go func(i int, field graphql.CollectedField) {
-				out.Values[i] = ec._Query_prevPost(ctx, field)
-				wg.Done()
-			}(i, field)
 		case "links":
 			wg.Add(1)
 			go func(i int, field graphql.CollectedField) {
@@ -3076,15 +3573,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			wg.Add(1)
 			go func(i int, field graphql.CollectedField) {
 				out.Values[i] = ec._Query_stats(ctx, field)
-				if out.Values[i] == graphql.Null {
-					invalid = true
-				}
-				wg.Done()
-			}(i, field)
-		case "postsByTag":
-			wg.Add(1)
-			go func(i int, field graphql.CollectedField) {
-				out.Values[i] = ec._Query_postsByTag(ctx, field)
 				if out.Values[i] == graphql.Null {
 					invalid = true
 				}
@@ -3138,6 +3626,51 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				wg.Done()
 			}(i, field)
+		case "drafts":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_drafts(ctx, field)
+				if out.Values[i] == graphql.Null {
+					invalid = true
+				}
+				wg.Done()
+			}(i, field)
+		case "posts":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_posts(ctx, field)
+				if out.Values[i] == graphql.Null {
+					invalid = true
+				}
+				wg.Done()
+			}(i, field)
+		case "post":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_post(ctx, field)
+				wg.Done()
+			}(i, field)
+		case "nextPost":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_nextPost(ctx, field)
+				wg.Done()
+			}(i, field)
+		case "prevPost":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_prevPost(ctx, field)
+				wg.Done()
+			}(i, field)
+		case "postsByTag":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_postsByTag(ctx, field)
+				if out.Values[i] == graphql.Null {
+					invalid = true
+				}
+				wg.Done()
+			}(i, field)
 		case "tags":
 			wg.Add(1)
 			go func(i int, field graphql.CollectedField) {
@@ -3156,6 +3689,27 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				wg.Done()
 			}(i, field)
+		case "getPageByID":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_getPageByID(ctx, field)
+				wg.Done()
+			}(i, field)
+		case "getPageBySlug":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_getPageBySlug(ctx, field)
+				wg.Done()
+			}(i, field)
+		case "getPages":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Query_getPages(ctx, field)
+				if out.Values[i] == graphql.Null {
+					invalid = true
+				}
+				wg.Done()
+			}(i, field)
 		case "__type":
 			out.Values[i] = ec._Query___type(ctx, field)
 		case "__schema":
@@ -3169,251 +3723,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		return graphql.Null
 	}
 	return out
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _Query_drafts(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := field_Query_drafts_args(rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Args:   args,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Drafts(rctx, args["limit"].(*int), args["offset"].(*int))
-	})
-	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*Post)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-
-	arr1 := make(graphql.Array, len(res))
-	var wg sync.WaitGroup
-
-	isLen1 := len(res) == 1
-	if !isLen1 {
-		wg.Add(len(res))
-	}
-
-	for idx1 := range res {
-		idx1 := idx1
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
-		f := func(idx1 int) {
-			if !isLen1 {
-				defer wg.Done()
-			}
-			arr1[idx1] = func() graphql.Marshaler {
-
-				if res[idx1] == nil {
-					return graphql.Null
-				}
-
-				return ec._Post(ctx, field.Selections, res[idx1])
-			}()
-		}
-		if isLen1 {
-			f(idx1)
-		} else {
-			go f(idx1)
-		}
-
-	}
-	wg.Wait()
-	return arr1
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _Query_posts(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := field_Query_posts_args(rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Args:   args,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Posts(rctx, args["limit"].(*int), args["offset"].(*int))
-	})
-	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*Post)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-
-	arr1 := make(graphql.Array, len(res))
-	var wg sync.WaitGroup
-
-	isLen1 := len(res) == 1
-	if !isLen1 {
-		wg.Add(len(res))
-	}
-
-	for idx1 := range res {
-		idx1 := idx1
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
-		f := func(idx1 int) {
-			if !isLen1 {
-				defer wg.Done()
-			}
-			arr1[idx1] = func() graphql.Marshaler {
-
-				if res[idx1] == nil {
-					return graphql.Null
-				}
-
-				return ec._Post(ctx, field.Selections, res[idx1])
-			}()
-		}
-		if isLen1 {
-			f(idx1)
-		} else {
-			go f(idx1)
-		}
-
-	}
-	wg.Wait()
-	return arr1
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _Query_post(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := field_Query_post_args(rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Args:   args,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Post(rctx, args["id"].(string))
-	})
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*Post)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-
-	if res == nil {
-		return graphql.Null
-	}
-
-	return ec._Post(ctx, field.Selections, res)
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _Query_nextPost(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := field_Query_nextPost_args(rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Args:   args,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().NextPost(rctx, args["id"].(string))
-	})
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*Post)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-
-	if res == nil {
-		return graphql.Null
-	}
-
-	return ec._Post(ctx, field.Selections, res)
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _Query_prevPost(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := field_Query_prevPost_args(rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Args:   args,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().PrevPost(rctx, args["id"].(string))
-	})
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*Post)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-
-	if res == nil {
-		return graphql.Null
-	}
-
-	return ec._Post(ctx, field.Selections, res)
 }
 
 // nolint: vetshadow
@@ -3578,76 +3887,6 @@ func (ec *executionContext) _Query_stats(ctx context.Context, field graphql.Coll
 				}
 
 				return ec._Stat(ctx, field.Selections, res[idx1])
-			}()
-		}
-		if isLen1 {
-			f(idx1)
-		} else {
-			go f(idx1)
-		}
-
-	}
-	wg.Wait()
-	return arr1
-}
-
-// nolint: vetshadow
-func (ec *executionContext) _Query_postsByTag(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
-	ctx = ec.Tracer.StartFieldExecution(ctx, field)
-	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := field_Query_postsByTag_args(rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Args:   args,
-		Field:  field,
-	}
-	ctx = graphql.WithResolverContext(ctx, rctx)
-	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
-	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().PostsByTag(rctx, args["id"].(string))
-	})
-	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*Post)
-	rctx.Result = res
-	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-
-	arr1 := make(graphql.Array, len(res))
-	var wg sync.WaitGroup
-
-	isLen1 := len(res) == 1
-	if !isLen1 {
-		wg.Add(len(res))
-	}
-
-	for idx1 := range res {
-		idx1 := idx1
-		rctx := &graphql.ResolverContext{
-			Index:  &idx1,
-			Result: res[idx1],
-		}
-		ctx := graphql.WithResolverContext(ctx, rctx)
-		f := func(idx1 int) {
-			if !isLen1 {
-				defer wg.Done()
-			}
-			arr1[idx1] = func() graphql.Marshaler {
-
-				if res[idx1] == nil {
-					return graphql.Null
-				}
-
-				return ec._Post(ctx, field.Selections, res[idx1])
 			}()
 		}
 		if isLen1 {
@@ -4000,6 +4239,321 @@ func (ec *executionContext) _Query_homeTimelineURLs(ctx context.Context, field g
 }
 
 // nolint: vetshadow
+func (ec *executionContext) _Query_drafts(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_drafts_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Drafts(rctx, args["limit"].(*int), args["offset"].(*int))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*Post)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	arr1 := make(graphql.Array, len(res))
+	var wg sync.WaitGroup
+
+	isLen1 := len(res) == 1
+	if !isLen1 {
+		wg.Add(len(res))
+	}
+
+	for idx1 := range res {
+		idx1 := idx1
+		rctx := &graphql.ResolverContext{
+			Index:  &idx1,
+			Result: res[idx1],
+		}
+		ctx := graphql.WithResolverContext(ctx, rctx)
+		f := func(idx1 int) {
+			if !isLen1 {
+				defer wg.Done()
+			}
+			arr1[idx1] = func() graphql.Marshaler {
+
+				if res[idx1] == nil {
+					return graphql.Null
+				}
+
+				return ec._Post(ctx, field.Selections, res[idx1])
+			}()
+		}
+		if isLen1 {
+			f(idx1)
+		} else {
+			go f(idx1)
+		}
+
+	}
+	wg.Wait()
+	return arr1
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Query_posts(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_posts_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Posts(rctx, args["limit"].(*int), args["offset"].(*int))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*Post)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	arr1 := make(graphql.Array, len(res))
+	var wg sync.WaitGroup
+
+	isLen1 := len(res) == 1
+	if !isLen1 {
+		wg.Add(len(res))
+	}
+
+	for idx1 := range res {
+		idx1 := idx1
+		rctx := &graphql.ResolverContext{
+			Index:  &idx1,
+			Result: res[idx1],
+		}
+		ctx := graphql.WithResolverContext(ctx, rctx)
+		f := func(idx1 int) {
+			if !isLen1 {
+				defer wg.Done()
+			}
+			arr1[idx1] = func() graphql.Marshaler {
+
+				if res[idx1] == nil {
+					return graphql.Null
+				}
+
+				return ec._Post(ctx, field.Selections, res[idx1])
+			}()
+		}
+		if isLen1 {
+			f(idx1)
+		} else {
+			go f(idx1)
+		}
+
+	}
+	wg.Wait()
+	return arr1
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Query_post(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_post_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Post(rctx, args["id"].(string))
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*Post)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._Post(ctx, field.Selections, res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Query_nextPost(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_nextPost_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().NextPost(rctx, args["id"].(string))
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*Post)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._Post(ctx, field.Selections, res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Query_prevPost(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_prevPost_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().PrevPost(rctx, args["id"].(string))
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*Post)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._Post(ctx, field.Selections, res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Query_postsByTag(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_postsByTag_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().PostsByTag(rctx, args["id"].(string))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*Post)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	arr1 := make(graphql.Array, len(res))
+	var wg sync.WaitGroup
+
+	isLen1 := len(res) == 1
+	if !isLen1 {
+		wg.Add(len(res))
+	}
+
+	for idx1 := range res {
+		idx1 := idx1
+		rctx := &graphql.ResolverContext{
+			Index:  &idx1,
+			Result: res[idx1],
+		}
+		ctx := graphql.WithResolverContext(ctx, rctx)
+		f := func(idx1 int) {
+			if !isLen1 {
+				defer wg.Done()
+			}
+			arr1[idx1] = func() graphql.Marshaler {
+
+				if res[idx1] == nil {
+					return graphql.Null
+				}
+
+				return ec._Post(ctx, field.Selections, res[idx1])
+			}()
+		}
+		if isLen1 {
+			f(idx1)
+		} else {
+			go f(idx1)
+		}
+
+	}
+	wg.Wait()
+	return arr1
+}
+
+// nolint: vetshadow
 func (ec *executionContext) _Query_tags(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
@@ -4092,6 +4646,140 @@ func (ec *executionContext) _Query_logs(ctx context.Context, field graphql.Colle
 				}
 
 				return ec._Log(ctx, field.Selections, res[idx1])
+			}()
+		}
+		if isLen1 {
+			f(idx1)
+		} else {
+			go f(idx1)
+		}
+
+	}
+	wg.Wait()
+	return arr1
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Query_getPageByID(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_getPageByID_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetPageByID(rctx, args["id"].(string))
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*Page)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._Page(ctx, field.Selections, res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Query_getPageBySlug(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := field_Query_getPageBySlug_args(rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   args,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetPageBySlug(rctx, args["slug"].(string))
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*Page)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._Page(ctx, field.Selections, res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Query_getPages(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetPages(rctx)
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*Page)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	arr1 := make(graphql.Array, len(res))
+	var wg sync.WaitGroup
+
+	isLen1 := len(res) == 1
+	if !isLen1 {
+		wg.Add(len(res))
+	}
+
+	for idx1 := range res {
+		idx1 := idx1
+		rctx := &graphql.ResolverContext{
+			Index:  &idx1,
+			Result: res[idx1],
+		}
+		ctx := graphql.WithResolverContext(ctx, rctx)
+		f := func(idx1 int) {
+			if !isLen1 {
+				defer wg.Done()
+			}
+			arr1[idx1] = func() graphql.Marshaler {
+
+				if res[idx1] == nil {
+					return graphql.Null
+				}
+
+				return ec._Page(ctx, field.Selections, res[idx1])
 			}()
 		}
 		if isLen1 {
@@ -6599,6 +7287,63 @@ func UnmarshalEditBook(v interface{}) (EditBook, error) {
 	return it, nil
 }
 
+func UnmarshalEditPage(v interface{}) (EditPage, error) {
+	var it EditPage
+	var asMap = v.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+			var ptr1 string
+			if v != nil {
+				ptr1, err = graphql.UnmarshalID(v)
+				it.ID = &ptr1
+			}
+
+			if err != nil {
+				return it, err
+			}
+		case "slug":
+			var err error
+			var ptr1 string
+			if v != nil {
+				ptr1, err = graphql.UnmarshalString(v)
+				it.Slug = &ptr1
+			}
+
+			if err != nil {
+				return it, err
+			}
+		case "content":
+			var err error
+			it.Content, err = graphql.UnmarshalString(v)
+			if err != nil {
+				return it, err
+			}
+		case "title":
+			var err error
+			it.Title, err = graphql.UnmarshalString(v)
+			if err != nil {
+				return it, err
+			}
+		case "category":
+			var err error
+			var ptr1 string
+			if v != nil {
+				ptr1, err = graphql.UnmarshalString(v)
+				it.Category = &ptr1
+			}
+
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func UnmarshalEditedPost(v interface{}) (EditedPost, error) {
 	var it EditedPost
 	var asMap = v.(map[string]interface{})
@@ -7014,71 +7759,11 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var parsedSchema = gqlparser.MustLoadSchema(
-	&ast.Source{Name: "schema.graphql", Input: `schema {
-  query: Query
-}
-
+	&ast.Source{Name: "blog.graphql", Input: `"""
+Comment is an undefined type reserved for the future.
 """
-The query type, represents all of the entry points into our object graph.
-"""
-type Query {
-  "Returns an array of inprogress posts."
-  drafts(limit: Int, offset: Int): [Post]! @hasRole(role: admin)
-
-  "Returns an array of all posts, ordered by reverse chronological order, using provided limit and offset."
-  posts(limit: Int, offset: Int): [Post]!
-
-  "Returns a single post by ID."
-  post(id: ID!): Post
-
-  "Returns post id for the next post chronologically."
-  nextPost(id: ID!): Post
-
-  "Returns post id for the previous post chronologically."
-  prevPost(id: ID!): Post
-
-  "Returns a subset of all links ever, in reverse chronological order, using provided limit and offset."
-  links(limit: Int, offset: Int): [Link]!
-
-  "Returns a single link by id or url."
-  link(id: ID, url: URI): Link
-
-  "Returns a number of stats, ordered by most recently updated."
-  stats(count: Int): [Stat]!
-
-  "Returns all posts that contain a tag."
-  postsByTag(id: String!): [Post]!
-
-  "Returns counts of entries in the database."
-  counts: [Stat]!
-
-  "If logged in, returns a user."
-  whoami: User
-
-  "Returns tweets in database."
-  tweets(limit: Int, offset: Int): [Tweet]!
-
-  "Returns just one tweet."
-  tweet(id: ID!): Tweet
-
-  "Returns a user's tweets by screen name."
-  tweetsByScreenName(screen_name: String!, limit: Int, offset: Int): [Tweet]!
-
-  homeTimelineURLs(limit: Int): [TwitterURL]!
-
-  "Returns all tags used in a post."
-  tags: [String!]!
-
-  "Returns all Logs for a user. If no user specified, returns your logs."
-  logs(user_id: String): [Log]! @loggedIn
-}
-
-interface Searchable {
-  summary: String!
-}
-
-interface Linkable {
-  uri: URI!
+type Comment {
+  id: ID!
 }
 
 """
@@ -7105,6 +7790,71 @@ type Post implements Linkable {
   uri: URI!
 }
 
+input NewPost {
+  content: String
+  title: String
+  datetime: Time
+  draft: Boolean
+}
+
+input EditedPost {
+  content: String!
+  title: String!
+  datetime: Time!
+  draft: Boolean!
+}
+
+extend type Query {
+  "Returns an array of inprogress posts."
+  drafts(limit: Int, offset: Int): [Post]! @hasRole(role: admin)
+
+  "Returns an array of all posts, ordered by reverse chronological order, using provided limit and offset."
+  posts(limit: Int, offset: Int): [Post]!
+
+  "Returns a single post by ID."
+  post(id: ID!): Post
+
+  "Returns post id for the next post chronologically."
+  nextPost(id: ID!): Post
+
+  "Returns post id for the previous post chronologically."
+  prevPost(id: ID!): Post
+
+  "Returns all posts that contain a tag."
+  postsByTag(id: String!): [Post]!
+
+  "Returns all tags used in a post."
+  tags: [String!]!
+}
+
+extend type Mutation {
+  createPost(input: NewPost!): Post! @hasRole(role: admin)
+
+  editPost(Id: ID!, input: EditedPost!): Post! @hasRole(role: admin)
+}
+`},
+	&ast.Source{Name: "generics.graphql", Input: `schema {
+  query: Query
+  mutation: Mutation
+}
+
+directive @hasRole(role: Role!) on FIELD_DEFINITION
+
+directive @loggedIn on FIELD_DEFINITION
+
+enum Role {
+  admin
+  normal
+}
+
+interface Searchable {
+  summary: String!
+}
+
+interface Linkable {
+  uri: URI!
+}
+
 """
 A link is a link I have save on pinboard or a link in a post.
 """
@@ -7116,7 +7866,7 @@ type Link implements Linkable {
   description: String!
   screenshot: URI!
   tags: [String!]!
-	modified: Time!
+  modified: Time!
 }
 
 """
@@ -7127,16 +7877,15 @@ type Stat {
   value: String!
 }
 
-
 """
 A user is a logged in user.
 """
 type User {
-	id: ID!
-	role: String!
-	apikey: String!
-	created: Time!
-	modified: Time!
+  id: ID!
+  role: String!
+  apikey: String!
+  created: Time!
+  modified: Time!
 }
 
 """
@@ -7175,27 +7924,6 @@ type Book implements Linkable {
 }
 
 """
-A Log is a journal entry by an individual.
-"""
-type Log {
-  id: ID!
-  code: String!
-  datetime: Time!
-  description: String!
-  location: Geo
-  project: String!
-  user: User!
-}
-
-"""
-Geo is a simple type for wrapping a point.
-"""
-type Geo {
-  lat: Float!
-  long: Float!
-}
-
-"""
 Time is a datetime scalar with timezone.
 """
 scalar Time
@@ -7205,31 +7933,10 @@ A URI is a url or url like thing.
 """
 scalar URI
 
-"""
-Comment is an undefined type reserved for the future.
-"""
-type Comment {
-  id: ID!
-}
-
-input NewPost {
-  content: String
-  title: String
-  datetime: Time
-  draft: Boolean
-}
-
 input EditBook {
   id: ID,
   title: String,
   goodreads_id: String!,
-}
-
-input EditedPost {
-  content: String!
-  title: String!
-  datetime: Time!
-  draft: Boolean!
 }
 
 input NewLink {
@@ -7258,6 +7965,87 @@ input NewTweet {
   user_mentions: [String!]
 }
 
+"""
+The query type, represents all of the entry points into our object graph.
+"""
+type Query {
+  "Returns a subset of all links ever, in reverse chronological order, using provided limit and offset."
+  links(limit: Int, offset: Int): [Link]!
+
+  "Returns a single link by id or url."
+  link(id: ID, url: URI): Link
+
+  "Returns a number of stats, ordered by most recently updated."
+  stats(count: Int): [Stat]!
+
+  "Returns counts of entries in the database."
+  counts: [Stat]!
+
+  "If logged in, returns a user."
+  whoami: User
+
+  "Returns tweets in database."
+  tweets(limit: Int, offset: Int): [Tweet]!
+
+  "Returns just one tweet."
+  tweet(id: ID!): Tweet
+
+  "Returns a user's tweets by screen name."
+  tweetsByScreenName(screen_name: String!, limit: Int, offset: Int): [Tweet]!
+
+  homeTimelineURLs(limit: Int): [TwitterURL]!
+}
+
+type Mutation {
+  upsertBook(input: EditBook!): Book! @hasRole(role: admin)
+  upsertLink(input: NewLink!): Link! @hasRole(role: admin)
+  upsertStat(input: NewStat!): Stat! @hasRole(role: admin)
+  upsertTweet(input: NewTweet!): Tweet! @hasRole(role: admin)
+}
+`},
+	&ast.Source{Name: "wiki.graphql", Input: `"""
+A Log is a journal entry by an individual.
+"""
+type Log {
+  id: ID!
+  code: String!
+  datetime: Time!
+  description: String!
+  location: Geo
+  project: String!
+  user: User!
+}
+
+"""
+Geo is a simple type for wrapping a point.
+"""
+type Geo {
+  lat: Float!
+  long: Float!
+}
+
+"""
+Page is a wiki page.
+"""
+type Page {
+  id: ID!
+  slug: String!
+  title: String!
+  content: String!
+  category: String!
+  tags: [String!]!
+  user: User!
+  created: Time!
+  modified: Time!
+}
+
+input EditPage {
+  id: ID
+  slug: String
+  content: String!
+  title: String!
+  category: String
+}
 
 input NewLog {
   code: String!
@@ -7271,23 +8059,18 @@ input NewGeo {
   long: Float!
 }
 
-type Mutation {
-  createPost(input: NewPost!): Post! @hasRole(role: admin)
-  editPost(Id: ID!, input: EditedPost!): Post! @hasRole(role: admin)
-  upsertBook(input: EditBook!): Book! @hasRole(role: admin)
-  upsertLink(input: NewLink!): Link! @hasRole(role: admin)
-  upsertStat(input: NewStat!): Stat! @hasRole(role: admin)
-  upsertTweet(input: NewTweet!): Tweet! @hasRole(role: admin)
-  insertLog(input: NewLog!): Log @loggedIn
+extend type Query {
+  "Returns all Logs for a user. If no user specified, returns your logs."
+  logs(user_id: String): [Log]! @loggedIn
+
+  getPageByID(id: ID!): Page
+  getPageBySlug(slug: ID!): Page
+  getPages: [Page]!
 }
 
-directive @hasRole(role: Role!) on FIELD_DEFINITION
-
-directive @loggedIn on FIELD_DEFINITION
-
-enum Role {
-  admin
-  normal
+extend type Mutation {
+  insertLog(input: NewLog!): Log @loggedIn
+  upsertPage(input: EditPage!): Page! @loggedIn
 }
 `},
 )

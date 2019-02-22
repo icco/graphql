@@ -8,7 +8,7 @@ import (
 
 func photoUploadHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	u := graphql.ForContext(r.Context())
+	u := graphql.GetUserFromContext(r.Context())
 	if u == nil {
 		err := Renderer.JSON(w, http.StatusForbidden, map[string]string{
 			"error": "403: you must be logged in",

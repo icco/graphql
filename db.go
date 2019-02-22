@@ -170,6 +170,23 @@ var (
       );
       `,
 		},
+		{
+			Version:     12,
+			Description: "Add pages table",
+			Script: `
+      CREATE TABLE pages (
+        id TEXT PRIMARY KEY NOT NULL,
+        slug TEXT,
+        title TEXT,
+        content TEXT,
+        category TEXT,
+        tags TEXT[],
+        user_id TEXT,
+        created_at TIMESTAMP WITH TIME ZONE,
+        modified_at TIMESTAMP WITH TIME ZONE
+      );
+      `,
+		},
 	}
 )
 

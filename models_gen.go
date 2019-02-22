@@ -20,6 +20,14 @@ type EditBook struct {
 	GoodreadsID string  `json:"goodreads_id"`
 }
 
+type EditPage struct {
+	ID       *string `json:"id"`
+	Slug     *string `json:"slug"`
+	Content  string  `json:"content"`
+	Title    string  `json:"title"`
+	Category *string `json:"category"`
+}
+
 type EditedPost struct {
 	Content  string    `json:"content"`
 	Title    string    `json:"title"`
