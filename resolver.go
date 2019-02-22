@@ -113,7 +113,7 @@ func (r *mutationResolver) EditPost(ctx context.Context, input EditPost) (Post, 
 	p := &Post{}
 
 	if input.ID != nil {
-		p.ID = *input.id
+		p.ID = *input.ID
 	}
 
 	if input.Title != nil {
