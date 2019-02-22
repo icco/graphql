@@ -88,49 +88,8 @@ func (r *Resolver) TwitterURL() TwitterURLResolver {
 
 type mutationResolver struct{ *Resolver }
 
-func (r *mutationResolver) CreatePost(ctx context.Context, input NewPost) (Post, error) {
-	p := &Post{}
-	maxID, err := GetMaxID(ctx)
-	if err != nil {
-		return Post{}, err
-	}
-	id := maxID + 1
-
-	p.ID = strconv.FormatInt(id, 10)
-
-	if input.Title != nil {
-		p.Title = *input.Title
-	}
-
-	if input.Content != nil {
-		p.Content = *input.Content
-	}
-
-	if input.Datetime != nil {
-		p.Datetime = *input.Datetime
-	} else {
-		p.Datetime = time.Now()
-	}
-
-	if input.Draft != nil {
-		p.Draft = *input.Draft
-	} else {
-		p.Draft = true
-	}
-
-	p.Created = time.Now()
-
-	err = p.Save(ctx)
-	if err != nil {
-		return Post{}, err
-	}
-
-	post, err := GetPost(ctx, id)
-	if err != nil {
-		return Post{}, err
-	}
-
-	return *post, nil
+func (r *mutationResolver) CreatePost(ctx context.Context, input EditPost) (Post, error) {
+	return r.EditPost(ctx, input)
 }
 
 func (r *mutationResolver) UpsertBook(ctx context.Context, input EditBook) (Book, error) {
@@ -150,13 +109,30 @@ func (r *mutationResolver) UpsertBook(ctx context.Context, input EditBook) (Book
 	return *b, err
 }
 
-func (r *mutationResolver) EditPost(ctx context.Context, id string, input EditedPost) (Post, error) {
+func (r *mutationResolver) EditPost(ctx context.Context, input EditPost) (Post, error) {
 	p := &Post{}
-	p.ID = id
-	p.Title = input.Title
-	p.Content = input.Content
-	p.Datetime = input.Datetime
-	p.Draft = input.Draft
+
+	if input.ID != nil {
+		p.ID = *input.ID
+	}
+
+	if input.Title != nil {
+		p.Title = *input.Title
+	}
+
+	if input.Content != nil {
+		p.Content = *input.Content
+	}
+
+	if input.Datetime != nil {
+		p.Datetime = *input.Datetime
+	}
+
+	if input.Draft != nil {
+		p.Draft = *input.Draft
+	} else {
+		p.Draft = true
+	}
 
 	err := p.Save(ctx)
 	if err != nil {

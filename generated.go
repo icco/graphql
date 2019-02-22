@@ -87,8 +87,8 @@ type ComplexityRoot struct {
 		UpsertLink  func(childComplexity int, input NewLink) int
 		UpsertStat  func(childComplexity int, input NewStat) int
 		UpsertTweet func(childComplexity int, input NewTweet) int
-		CreatePost  func(childComplexity int, input NewPost) int
-		EditPost    func(childComplexity int, Id string, input EditedPost) int
+		CreatePost  func(childComplexity int, input EditPost) int
+		EditPost    func(childComplexity int, input EditPost) int
 		InsertLog   func(childComplexity int, input NewLog) int
 		UpsertPage  func(childComplexity int, input EditPage) int
 	}
@@ -184,8 +184,8 @@ type MutationResolver interface {
 	UpsertLink(ctx context.Context, input NewLink) (Link, error)
 	UpsertStat(ctx context.Context, input NewStat) (Stat, error)
 	UpsertTweet(ctx context.Context, input NewTweet) (Tweet, error)
-	CreatePost(ctx context.Context, input NewPost) (Post, error)
-	EditPost(ctx context.Context, Id string, input EditedPost) (Post, error)
+	CreatePost(ctx context.Context, input EditPost) (Post, error)
+	EditPost(ctx context.Context, input EditPost) (Post, error)
 	InsertLog(ctx context.Context, input NewLog) (*Log, error)
 	UpsertPage(ctx context.Context, input EditPage) (Page, error)
 }
@@ -277,10 +277,10 @@ func field_Mutation_upsertTweet_args(rawArgs map[string]interface{}) (map[string
 
 func field_Mutation_createPost_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	args := map[string]interface{}{}
-	var arg0 NewPost
+	var arg0 EditPost
 	if tmp, ok := rawArgs["input"]; ok {
 		var err error
-		arg0, err = UnmarshalNewPost(tmp)
+		arg0, err = UnmarshalEditPost(tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -292,24 +292,15 @@ func field_Mutation_createPost_args(rawArgs map[string]interface{}) (map[string]
 
 func field_Mutation_editPost_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["Id"]; ok {
-		var err error
-		arg0, err = graphql.UnmarshalID(tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["Id"] = arg0
-	var arg1 EditedPost
+	var arg0 EditPost
 	if tmp, ok := rawArgs["input"]; ok {
 		var err error
-		arg1, err = UnmarshalEditedPost(tmp)
+		arg0, err = UnmarshalEditPost(tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["input"] = arg1
+	args["input"] = arg0
 	return args, nil
 
 }
@@ -1000,7 +991,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreatePost(childComplexity, args["input"].(NewPost)), true
+		return e.complexity.Mutation.CreatePost(childComplexity, args["input"].(EditPost)), true
 
 	case "Mutation.editPost":
 		if e.complexity.Mutation.EditPost == nil {
@@ -1012,7 +1003,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.EditPost(childComplexity, args["Id"].(string), args["input"].(EditedPost)), true
+		return e.complexity.Mutation.EditPost(childComplexity, args["input"].(EditPost)), true
 
 	case "Mutation.insertLog":
 		if e.complexity.Mutation.InsertLog == nil {
@@ -2639,7 +2630,7 @@ func (ec *executionContext) _Mutation_createPost(ctx context.Context, field grap
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreatePost(rctx, args["input"].(NewPost))
+		return ec.resolvers.Mutation().CreatePost(rctx, args["input"].(EditPost))
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -2673,7 +2664,7 @@ func (ec *executionContext) _Mutation_editPost(ctx context.Context, field graphq
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().EditPost(rctx, args["Id"].(string), args["input"].(EditedPost))
+		return ec.resolvers.Mutation().EditPost(rctx, args["input"].(EditPost))
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -7344,33 +7335,64 @@ func UnmarshalEditPage(v interface{}) (EditPage, error) {
 	return it, nil
 }
 
-func UnmarshalEditedPost(v interface{}) (EditedPost, error) {
-	var it EditedPost
+func UnmarshalEditPost(v interface{}) (EditPost, error) {
+	var it EditPost
 	var asMap = v.(map[string]interface{})
 
 	for k, v := range asMap {
 		switch k {
+		case "id":
+			var err error
+			var ptr1 string
+			if v != nil {
+				ptr1, err = graphql.UnmarshalID(v)
+				it.ID = &ptr1
+			}
+
+			if err != nil {
+				return it, err
+			}
 		case "content":
 			var err error
-			it.Content, err = graphql.UnmarshalString(v)
+			var ptr1 string
+			if v != nil {
+				ptr1, err = graphql.UnmarshalString(v)
+				it.Content = &ptr1
+			}
+
 			if err != nil {
 				return it, err
 			}
 		case "title":
 			var err error
-			it.Title, err = graphql.UnmarshalString(v)
+			var ptr1 string
+			if v != nil {
+				ptr1, err = graphql.UnmarshalString(v)
+				it.Title = &ptr1
+			}
+
 			if err != nil {
 				return it, err
 			}
 		case "datetime":
 			var err error
-			it.Datetime, err = graphql.UnmarshalTime(v)
+			var ptr1 time.Time
+			if v != nil {
+				ptr1, err = graphql.UnmarshalTime(v)
+				it.Datetime = &ptr1
+			}
+
 			if err != nil {
 				return it, err
 			}
 		case "draft":
 			var err error
-			it.Draft, err = graphql.UnmarshalBoolean(v)
+			var ptr1 bool
+			if v != nil {
+				ptr1, err = graphql.UnmarshalBoolean(v)
+				it.Draft = &ptr1
+			}
+
 			if err != nil {
 				return it, err
 			}
@@ -7499,62 +7521,6 @@ func UnmarshalNewLog(v interface{}) (NewLog, error) {
 		case "project":
 			var err error
 			it.Project, err = graphql.UnmarshalString(v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func UnmarshalNewPost(v interface{}) (NewPost, error) {
-	var it NewPost
-	var asMap = v.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "content":
-			var err error
-			var ptr1 string
-			if v != nil {
-				ptr1, err = graphql.UnmarshalString(v)
-				it.Content = &ptr1
-			}
-
-			if err != nil {
-				return it, err
-			}
-		case "title":
-			var err error
-			var ptr1 string
-			if v != nil {
-				ptr1, err = graphql.UnmarshalString(v)
-				it.Title = &ptr1
-			}
-
-			if err != nil {
-				return it, err
-			}
-		case "datetime":
-			var err error
-			var ptr1 time.Time
-			if v != nil {
-				ptr1, err = graphql.UnmarshalTime(v)
-				it.Datetime = &ptr1
-			}
-
-			if err != nil {
-				return it, err
-			}
-		case "draft":
-			var err error
-			var ptr1 bool
-			if v != nil {
-				ptr1, err = graphql.UnmarshalBoolean(v)
-				it.Draft = &ptr1
-			}
-
 			if err != nil {
 				return it, err
 			}
@@ -7790,18 +7756,12 @@ type Post implements Linkable {
   uri: URI!
 }
 
-input NewPost {
+input EditPost {
+  id: ID
   content: String
   title: String
   datetime: Time
   draft: Boolean
-}
-
-input EditedPost {
-  content: String!
-  title: String!
-  datetime: Time!
-  draft: Boolean!
 }
 
 extend type Query {
@@ -7828,9 +7788,8 @@ extend type Query {
 }
 
 extend type Mutation {
-  createPost(input: NewPost!): Post! @hasRole(role: admin)
-
-  editPost(Id: ID!, input: EditedPost!): Post! @hasRole(role: admin)
+  createPost(input: EditPost!): Post! @hasRole(role: admin)
+  editPost(input: EditPost!): Post! @hasRole(role: admin)
 }
 `},
 	&ast.Source{Name: "generics.graphql", Input: `schema {

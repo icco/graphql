@@ -29,18 +29,12 @@ type Post implements Linkable {
   uri: URI!
 }
 
-input NewPost {
+input EditPost {
+  id: ID
   content: String
   title: String
   datetime: Time
   draft: Boolean
-}
-
-input EditedPost {
-  content: String!
-  title: String!
-  datetime: Time!
-  draft: Boolean!
 }
 
 extend type Query {
@@ -67,7 +61,6 @@ extend type Query {
 }
 
 extend type Mutation {
-  createPost(input: NewPost!): Post! @hasRole(role: admin)
-
-  editPost(Id: ID!, input: EditedPost!): Post! @hasRole(role: admin)
+  createPost(input: EditPost!): Post! @hasRole(role: admin)
+  editPost(input: EditPost!): Post! @hasRole(role: admin)
 }
