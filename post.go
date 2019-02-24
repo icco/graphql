@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html/template"
 	"math"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -37,6 +38,25 @@ func GetMaxID(ctx context.Context) (int64, error) {
 	}
 
 	return id, nil
+}
+
+// GetPostString gets a post by an ID string.
+func GetPostString(ctx context.Context, id string) (*Post, error) {
+	match, err := regexp.MatchString("^[0-9]+$", id)
+	if err != nil {
+		return nil, err
+	}
+
+	if !match {
+		return nil, fmt.Errorf("No post with id %s", id)
+	}
+
+	i, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	return GetPost(ctx, i)
 }
 
 // GetPost gets a post by ID from the database.
@@ -194,6 +214,16 @@ WHERE posts.id = $1;
 	return nil
 }
 
+// IntID returns this posts ID as an int.
+func (p *Post) IntID() int64 {
+	i, err := strconv.ParseInt(p.ID, 10, 64)
+	if err != nil {
+		return 0
+	}
+
+	return i
+}
+
 // Summary returns the first sentence of a post.
 func (p *Post) Summary() string {
 	return SummarizeText(p.Content)
@@ -207,6 +237,36 @@ func (p *Post) HTML() template.HTML {
 // URI returns an absolute link to this post.
 func (p *Post) URI() string {
 	return fmt.Sprintf("https://writing.natwelch.com/post/%s", p.ID)
+}
+
+// Next returns the next post chronologically.
+func (p *Post) Next(ctx context.Context) (*Post, error) {
+	var postID string
+	row := db.QueryRowContext(ctx, "SELECT id FROM posts WHERE draft = false AND date > (SELECT date FROM posts WHERE id = $1) ORDER BY date ASC LIMIT 1", p.ID)
+	err := row.Scan(&postID)
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, nil
+	case err != nil:
+		return nil, err
+	default:
+		return GetPostString(ctx, postID)
+	}
+}
+
+// Prev returns the previous post chronologically.
+func (p *Post) Prev(ctx context.Context) (*Post, error) {
+	var postID string
+	row := db.QueryRowContext(ctx, "SELECT id FROM posts WHERE draft = false AND date < (SELECT date FROM posts WHERE id = $1) ORDER BY date DESC LIMIT 1", p.ID)
+	err := row.Scan(&postID)
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, nil
+	case err != nil:
+		return nil, err
+	default:
+		return GetPostString(ctx, postID)
+	}
 }
 
 // ReadTime calculates the number of seconds it should take to read the post.

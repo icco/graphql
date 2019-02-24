@@ -27,6 +27,9 @@ type Post implements Linkable {
 
   "uri returns an absolute link to this post."
   uri: URI!
+
+  next: Post
+  prev: Post
 }
 
 input EditPost {

@@ -118,6 +118,8 @@ type ComplexityRoot struct {
 		Tags     func(childComplexity int) int
 		Links    func(childComplexity int) int
 		Uri      func(childComplexity int) int
+		Next     func(childComplexity int) int
+		Prev     func(childComplexity int) int
 	}
 
 	Query struct {
@@ -1175,6 +1177,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Post.Uri(childComplexity), true
+
+	case "Post.next":
+		if e.complexity.Post.Next == nil {
+			break
+		}
+
+		return e.complexity.Post.Next(childComplexity), true
+
+	case "Post.prev":
+		if e.complexity.Post.Prev == nil {
+			break
+		}
+
+		return e.complexity.Post.Prev(childComplexity), true
 
 	case "Query.links":
 		if e.complexity.Query.Links == nil {
@@ -3077,6 +3093,7 @@ var postImplementors = []string{"Post", "Linkable"}
 func (ec *executionContext) _Post(ctx context.Context, sel ast.SelectionSet, obj *Post) graphql.Marshaler {
 	fields := graphql.CollectFields(ctx, sel, postImplementors)
 
+	var wg sync.WaitGroup
 	out := graphql.NewOrderedMap(len(fields))
 	invalid := false
 	for i, field := range fields {
@@ -3145,11 +3162,23 @@ func (ec *executionContext) _Post(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalid = true
 			}
+		case "next":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Post_next(ctx, field, obj)
+				wg.Done()
+			}(i, field)
+		case "prev":
+			wg.Add(1)
+			go func(i int, field graphql.CollectedField) {
+				out.Values[i] = ec._Post_prev(ctx, field, obj)
+				wg.Done()
+			}(i, field)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
-
+	wg.Wait()
 	if invalid {
 		return graphql.Null
 	}
@@ -3524,6 +3553,64 @@ func (ec *executionContext) _Post_uri(ctx context.Context, field graphql.Collect
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return graphql.MarshalString(res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Post_next(ctx context.Context, field graphql.CollectedField, obj *Post) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Post",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Next(ctx)
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*Post)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._Post(ctx, field.Selections, res)
+}
+
+// nolint: vetshadow
+func (ec *executionContext) _Post_prev(ctx context.Context, field graphql.CollectedField, obj *Post) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Post",
+		Args:   nil,
+		Field:  field,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Prev(ctx)
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*Post)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+
+	if res == nil {
+		return graphql.Null
+	}
+
+	return ec._Post(ctx, field.Selections, res)
 }
 
 var queryImplementors = []string{"Query"}
@@ -7754,6 +7841,9 @@ type Post implements Linkable {
 
   "uri returns an absolute link to this post."
   uri: URI!
+
+  next: Post
+  prev: Post
 }
 
 input EditPost {

@@ -2,12 +2,10 @@ package graphql
 
 import (
 	"context"
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -139,12 +137,7 @@ func (r *mutationResolver) EditPost(ctx context.Context, input EditPost) (Post, 
 		return Post{}, err
 	}
 
-	i, err := strconv.ParseInt(p.ID, 10, 64)
-	if err != nil {
-		return *p, err
-	}
-
-	post, err := GetPost(ctx, i)
+	post, err := GetPostString(ctx, p.ID)
 	if err != nil {
 		return Post{}, err
 	}
@@ -276,48 +269,25 @@ func (r *queryResolver) Posts(ctx context.Context, limit *int, offset *int) ([]*
 }
 
 func (r *queryResolver) Post(ctx context.Context, id string) (*Post, error) {
-	i, err := strconv.ParseInt(id, 10, 64)
+	return GetPostString(ctx, id)
+}
+
+func (r *queryResolver) NextPost(ctx context.Context, id string) (*Post, error) {
+	p, err := GetPostString(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	return GetPost(ctx, i)
-}
-
-func (r *queryResolver) NextPost(ctx context.Context, id string) (*Post, error) {
-	var postID string
-	row := db.QueryRowContext(ctx, "SELECT id FROM posts WHERE draft = false AND date > (SELECT date FROM posts WHERE id = $1) ORDER BY date ASC LIMIT 1", id)
-	err := row.Scan(&postID)
-	switch {
-	case err == sql.ErrNoRows:
-		return nil, nil
-	case err != nil:
-		return nil, err
-	default:
-		i, err := strconv.ParseInt(postID, 10, 64)
-		if err != nil {
-			return nil, err
-		}
-		return GetPost(ctx, i)
-	}
+	return p.Next(ctx)
 }
 
 func (r *queryResolver) PrevPost(ctx context.Context, id string) (*Post, error) {
-	var postID string
-	row := db.QueryRowContext(ctx, "SELECT id FROM posts WHERE draft = false AND date < (SELECT date FROM posts WHERE id = $1) ORDER BY date DESC LIMIT 1", id)
-	err := row.Scan(&postID)
-	switch {
-	case err == sql.ErrNoRows:
-		return nil, nil
-	case err != nil:
+	p, err := GetPostString(ctx, id)
+	if err != nil {
 		return nil, err
-	default:
-		i, err := strconv.ParseInt(postID, 10, 64)
-		if err != nil {
-			return nil, err
-		}
-		return GetPost(ctx, i)
 	}
+
+	return p.Prev(ctx)
 }
 
 func (r *queryResolver) Links(ctx context.Context, limit *int, offset *int) ([]*Link, error) {
