@@ -66,7 +66,7 @@ func GetPost(ctx context.Context, id int64) (*Post, error) {
 	err := row.Scan(&post.ID, &post.Title, &post.Content, &post.Datetime, &post.Created, &post.Modified, pq.Array(&post.Tags), &post.Draft)
 	switch {
 	case err == sql.ErrNoRows:
-		return nil, fmt.Errorf("No post with id %d", id)
+		return nil, nil
 	case err != nil:
 		return nil, fmt.Errorf("Error running get query: %+v", err)
 	default:
