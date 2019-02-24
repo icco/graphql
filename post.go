@@ -180,6 +180,10 @@ func (p *Post) Save(ctx context.Context) error {
 		p.Title = fmt.Sprintf("Untitled #%s", p.ID)
 	}
 
+	if p.Datetime.IsZero() {
+		p.Datetime = time.Now()
+	}
+
 	if p.Created.IsZero() {
 		p.Created = time.Now()
 	}

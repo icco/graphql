@@ -108,10 +108,19 @@ func (r *mutationResolver) UpsertBook(ctx context.Context, input EditBook) (Book
 }
 
 func (r *mutationResolver) EditPost(ctx context.Context, input EditPost) (Post, error) {
+	var err error
 	p := &Post{}
 
+	// We do this so the defaults in save don't overwrite stuff on upsert.
 	if input.ID != nil {
-		p.ID = *input.ID
+		p, err = GetPostString(ctx, *input.ID)
+		if err != nil {
+			return Post{}, err
+		}
+
+		if p == nil {
+			return Post{}, fmt.Errorf("cannot edit post that does not exist")
+		}
 	}
 
 	if input.Title != nil {
@@ -132,7 +141,7 @@ func (r *mutationResolver) EditPost(ctx context.Context, input EditPost) (Post, 
 		p.Draft = true
 	}
 
-	err := p.Save(ctx)
+	err = p.Save(ctx)
 	if err != nil {
 		return Post{}, err
 	}
