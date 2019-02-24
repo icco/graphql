@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html/template"
 	"math"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -37,6 +38,25 @@ func GetMaxID(ctx context.Context) (int64, error) {
 	}
 
 	return id, nil
+}
+
+// GetPostString gets a post by an ID string.
+func GetPostString(ctx context.Context, id string) (*Post, error) {
+	match, err := regexp.MatchString("^[0-9]+$", id)
+	if err != nil {
+		return nil, err
+	}
+
+	if !match {
+		return nil, fmt.Errorf("No post with id %d", id)
+	}
+
+	i, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	return GetPost(ctx, i)
 }
 
 // GetPost gets a post by ID from the database.
@@ -192,6 +212,15 @@ WHERE posts.id = $1;
 	}
 
 	return nil
+}
+
+func (p *Post) IntID() int64 {
+	i, err := strconv.ParseInt(p.ID, 10, 64)
+	if err != nil {
+		return 0
+	}
+
+	return i
 }
 
 // Summary returns the first sentence of a post.

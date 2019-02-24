@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -139,12 +138,7 @@ func (r *mutationResolver) EditPost(ctx context.Context, input EditPost) (Post, 
 		return Post{}, err
 	}
 
-	i, err := strconv.ParseInt(p.ID, 10, 64)
-	if err != nil {
-		return *p, err
-	}
-
-	post, err := GetPost(ctx, i)
+	post, err := GetPostString(ctx, p.ID)
 	if err != nil {
 		return Post{}, err
 	}
@@ -276,12 +270,7 @@ func (r *queryResolver) Posts(ctx context.Context, limit *int, offset *int) ([]*
 }
 
 func (r *queryResolver) Post(ctx context.Context, id string) (*Post, error) {
-	i, err := strconv.ParseInt(id, 10, 64)
-	if err != nil {
-		return nil, err
-	}
-
-	return GetPost(ctx, i)
+	return GetPostString(ctx, id)
 }
 
 func (r *queryResolver) NextPost(ctx context.Context, id string) (*Post, error) {
@@ -294,11 +283,7 @@ func (r *queryResolver) NextPost(ctx context.Context, id string) (*Post, error) 
 	case err != nil:
 		return nil, err
 	default:
-		i, err := strconv.ParseInt(postID, 10, 64)
-		if err != nil {
-			return nil, err
-		}
-		return GetPost(ctx, i)
+		return GetPostString(ctx, postID)
 	}
 }
 
@@ -312,11 +297,7 @@ func (r *queryResolver) PrevPost(ctx context.Context, id string) (*Post, error) 
 	case err != nil:
 		return nil, err
 	default:
-		i, err := strconv.ParseInt(postID, 10, 64)
-		if err != nil {
-			return nil, err
-		}
-		return GetPost(ctx, i)
+		return GetPostString(ctx, postID)
 	}
 }
 
