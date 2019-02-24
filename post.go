@@ -48,7 +48,7 @@ func GetPostString(ctx context.Context, id string) (*Post, error) {
 	}
 
 	if !match {
-		return nil, fmt.Errorf("No post with id %d", id)
+		return nil, fmt.Errorf("No post with id %s", id)
 	}
 
 	i, err := strconv.ParseInt(id, 10, 64)
