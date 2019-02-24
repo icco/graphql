@@ -238,6 +238,34 @@ func (p *Post) URI() string {
 	return fmt.Sprintf("https://writing.natwelch.com/post/%s", p.ID)
 }
 
+func (p *Post) Next(ctx context.Context) (*Post, error) {
+	var postID string
+	row := db.QueryRowContext(ctx, "SELECT id FROM posts WHERE draft = false AND date > (SELECT date FROM posts WHERE id = $1) ORDER BY date ASC LIMIT 1", p.ID)
+	err := row.Scan(&postID)
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, nil
+	case err != nil:
+		return nil, err
+	default:
+		return GetPostString(ctx, postID)
+	}
+}
+
+func (p *Post) Prev(ctx context.Context) (*Post, error) {
+	var postID string
+	row := db.QueryRowContext(ctx, "SELECT id FROM posts WHERE draft = false AND date < (SELECT date FROM posts WHERE id = $1) ORDER BY date DESC LIMIT 1", p.ID)
+	err := row.Scan(&postID)
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, nil
+	case err != nil:
+		return nil, err
+	default:
+		return GetPostString(ctx, postID)
+	}
+}
+
 // ReadTime calculates the number of seconds it should take to read the post.
 func (p *Post) ReadTime() int32 {
 	ReadingSpeed := 265.0
