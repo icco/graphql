@@ -214,6 +214,7 @@ WHERE posts.id = $1;
 	return nil
 }
 
+// IntID returns this posts ID as an int.
 func (p *Post) IntID() int64 {
 	i, err := strconv.ParseInt(p.ID, 10, 64)
 	if err != nil {
@@ -238,6 +239,7 @@ func (p *Post) URI() string {
 	return fmt.Sprintf("https://writing.natwelch.com/post/%s", p.ID)
 }
 
+// Next returns the next post chronologically.
 func (p *Post) Next(ctx context.Context) (*Post, error) {
 	var postID string
 	row := db.QueryRowContext(ctx, "SELECT id FROM posts WHERE draft = false AND date > (SELECT date FROM posts WHERE id = $1) ORDER BY date ASC LIMIT 1", p.ID)
@@ -252,6 +254,7 @@ func (p *Post) Next(ctx context.Context) (*Post, error) {
 	}
 }
 
+// Prev returns the previous post chronologically.
 func (p *Post) Prev(ctx context.Context) (*Post, error) {
 	var postID string
 	row := db.QueryRowContext(ctx, "SELECT id FROM posts WHERE draft = false AND date < (SELECT date FROM posts WHERE id = $1) ORDER BY date DESC LIMIT 1", p.ID)
