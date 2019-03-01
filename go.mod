@@ -1,5 +1,7 @@
 module github.com/icco/graphql
 
+go 1.12
+
 require (
 	cloud.google.com/go v0.36.0
 	contrib.go.opencensus.io/exporter/stackdriver v0.9.1
@@ -8,10 +10,11 @@ require (
 	github.com/GuiaBolso/darwin v0.0.0-20170210191649-86919dfcf808
 	github.com/Shopify/sarama v1.20.1 // indirect
 	github.com/auth0-community/go-auth0 v1.0.0
-	github.com/go-chi/chi v4.0.1+incompatible
+	github.com/go-chi/chi v4.0.2+incompatible
 	github.com/go-chi/cors v1.0.0
-	github.com/google/uuid v1.1.0
+	github.com/google/uuid v1.1.1
 	github.com/gosimple/slug v1.4.2
+	github.com/hashicorp/golang-lru v0.5.1 // indirect
 	github.com/icco/cacophony v0.0.0-20190208141533-6619033d7424
 	github.com/icco/logrus-stackdriver-formatter v0.3.0
 	github.com/lib/pq v1.0.0
@@ -24,5 +27,5 @@ require (
 	github.com/unrolled/secure v1.0.0
 	github.com/vektah/gqlparser v1.1.1
 	go.opencensus.io v0.19.0
-	gopkg.in/square/go-jose.v2 v2.2.2
+	gopkg.in/square/go-jose.v2 v2.3.0
 )
