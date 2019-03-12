@@ -40,12 +40,17 @@ input EditPost {
   draft: Boolean
 }
 
+input Limit {
+  limit: Int
+  offset: Int
+}
+
 extend type Query {
   "Returns an array of inprogress posts."
-  drafts(limit: Int, offset: Int): [Post]! @hasRole(role: admin)
+  drafts(input: Limit): [Post]! @hasRole(role: admin)
 
   "Returns an array of all posts, ordered by reverse chronological order, using provided limit and offset."
-  posts(limit: Int, offset: Int): [Post]!
+  posts(input: Limit): [Post]!
 
   "Returns a single post by ID."
   post(id: ID!): Post

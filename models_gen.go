@@ -36,6 +36,11 @@ type EditPost struct {
 	Draft    *bool      `json:"draft"`
 }
 
+type Limit struct {
+	Limit  *int `json:"limit"`
+	Offset *int `json:"offset"`
+}
+
 type Linkable interface {
 	IsLinkable()
 }

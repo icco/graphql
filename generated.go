@@ -132,8 +132,8 @@ type ComplexityRoot struct {
 		Tweet              func(childComplexity int, id string) int
 		TweetsByScreenName func(childComplexity int, screen_name string, limit *int, offset *int) int
 		HomeTimelineUrls   func(childComplexity int, limit *int) int
-		Drafts             func(childComplexity int, limit *int, offset *int) int
-		Posts              func(childComplexity int, limit *int, offset *int) int
+		Drafts             func(childComplexity int, input *Limit) int
+		Posts              func(childComplexity int, input *Limit) int
 		Post               func(childComplexity int, id string) int
 		NextPost           func(childComplexity int, id string) int
 		PrevPost           func(childComplexity int, id string) int
@@ -201,8 +201,8 @@ type QueryResolver interface {
 	Tweet(ctx context.Context, id string) (*Tweet, error)
 	TweetsByScreenName(ctx context.Context, screen_name string, limit *int, offset *int) ([]*Tweet, error)
 	HomeTimelineURLs(ctx context.Context, limit *int) ([]*models.SavedURL, error)
-	Drafts(ctx context.Context, limit *int, offset *int) ([]*Post, error)
-	Posts(ctx context.Context, limit *int, offset *int) ([]*Post, error)
+	Drafts(ctx context.Context, input *Limit) ([]*Post, error)
+	Posts(ctx context.Context, input *Limit) ([]*Post, error)
 	Post(ctx context.Context, id string) (*Post, error)
 	NextPost(ctx context.Context, id string) (*Post, error)
 	PrevPost(ctx context.Context, id string) (*Post, error)
@@ -539,12 +539,12 @@ func field_Query_homeTimelineURLs_args(rawArgs map[string]interface{}) (map[stri
 
 func field_Query_drafts_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	args := map[string]interface{}{}
-	var arg0 *int
-	if tmp, ok := rawArgs["limit"]; ok {
+	var arg0 *Limit
+	if tmp, ok := rawArgs["input"]; ok {
 		var err error
-		var ptr1 int
+		var ptr1 Limit
 		if tmp != nil {
-			ptr1, err = graphql.UnmarshalInt(tmp)
+			ptr1, err = UnmarshalLimit(tmp)
 			arg0 = &ptr1
 		}
 
@@ -552,33 +552,19 @@ func field_Query_drafts_args(rawArgs map[string]interface{}) (map[string]interfa
 			return nil, err
 		}
 	}
-	args["limit"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["offset"]; ok {
-		var err error
-		var ptr1 int
-		if tmp != nil {
-			ptr1, err = graphql.UnmarshalInt(tmp)
-			arg1 = &ptr1
-		}
-
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["offset"] = arg1
+	args["input"] = arg0
 	return args, nil
 
 }
 
 func field_Query_posts_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	args := map[string]interface{}{}
-	var arg0 *int
-	if tmp, ok := rawArgs["limit"]; ok {
+	var arg0 *Limit
+	if tmp, ok := rawArgs["input"]; ok {
 		var err error
-		var ptr1 int
+		var ptr1 Limit
 		if tmp != nil {
-			ptr1, err = graphql.UnmarshalInt(tmp)
+			ptr1, err = UnmarshalLimit(tmp)
 			arg0 = &ptr1
 		}
 
@@ -586,21 +572,7 @@ func field_Query_posts_args(rawArgs map[string]interface{}) (map[string]interfac
 			return nil, err
 		}
 	}
-	args["limit"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["offset"]; ok {
-		var err error
-		var ptr1 int
-		if tmp != nil {
-			ptr1, err = graphql.UnmarshalInt(tmp)
-			arg1 = &ptr1
-		}
-
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["offset"] = arg1
+	args["input"] = arg0
 	return args, nil
 
 }
@@ -1300,7 +1272,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Drafts(childComplexity, args["limit"].(*int), args["offset"].(*int)), true
+		return e.complexity.Query.Drafts(childComplexity, args["input"].(*Limit)), true
 
 	case "Query.posts":
 		if e.complexity.Query.Posts == nil {
@@ -1312,7 +1284,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Posts(childComplexity, args["limit"].(*int), args["offset"].(*int)), true
+		return e.complexity.Query.Posts(childComplexity, args["input"].(*Limit)), true
 
 	case "Query.post":
 		if e.complexity.Query.Post == nil {
@@ -4335,7 +4307,7 @@ func (ec *executionContext) _Query_drafts(ctx context.Context, field graphql.Col
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Drafts(rctx, args["limit"].(*int), args["offset"].(*int))
+		return ec.resolvers.Query().Drafts(rctx, args["input"].(*Limit))
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -4405,7 +4377,7 @@ func (ec *executionContext) _Query_posts(ctx context.Context, field graphql.Coll
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Posts(rctx, args["limit"].(*int), args["offset"].(*int))
+		return ec.resolvers.Query().Posts(rctx, args["input"].(*Limit))
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -7489,6 +7461,40 @@ func UnmarshalEditPost(v interface{}) (EditPost, error) {
 	return it, nil
 }
 
+func UnmarshalLimit(v interface{}) (Limit, error) {
+	var it Limit
+	var asMap = v.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "limit":
+			var err error
+			var ptr1 int
+			if v != nil {
+				ptr1, err = graphql.UnmarshalInt(v)
+				it.Limit = &ptr1
+			}
+
+			if err != nil {
+				return it, err
+			}
+		case "offset":
+			var err error
+			var ptr1 int
+			if v != nil {
+				ptr1, err = graphql.UnmarshalInt(v)
+				it.Offset = &ptr1
+			}
+
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func UnmarshalNewGeo(v interface{}) (NewGeo, error) {
 	var it NewGeo
 	var asMap = v.(map[string]interface{})
@@ -7854,12 +7860,17 @@ input EditPost {
   draft: Boolean
 }
 
+input Limit {
+  limit: Int
+  offset: Int
+}
+
 extend type Query {
   "Returns an array of inprogress posts."
-  drafts(limit: Int, offset: Int): [Post]! @hasRole(role: admin)
+  drafts(input: Limit): [Post]! @hasRole(role: admin)
 
   "Returns an array of all posts, ordered by reverse chronological order, using provided limit and offset."
-  posts(limit: Int, offset: Int): [Post]!
+  posts(input: Limit): [Post]!
 
   "Returns a single post by ID."
   post(id: ID!): Post
