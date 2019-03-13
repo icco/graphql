@@ -16,7 +16,7 @@ type Link struct {
 	URI         URI       `json:"uri"`
 	Created     time.Time `json:"created"`
 	Description string    `json:"description"`
-	Screenshot  string    `json:"screenshot"`
+	Screenshot  URI       `json:"screenshot"`
 	Tags        []string  `json:"tags"`
 	Modified    time.Time `json:"modified"`
 }

@@ -16,7 +16,7 @@ type Tweet struct {
 	Hashtags      []string  `json:"hashtags"`
 	Symbols       []string  `json:"symbols"`
 	UserMentions  []string  `json:"user_mentions"`
-	Urls          []string  `json:"urls"`
+	Urls          []URI     `json:"urls"`
 	ScreenName    string    `json:"screen_name"`
 	FavoriteCount int       `json:"favorite_count"`
 	RetweetCount  int       `json:"retweet_count"`
