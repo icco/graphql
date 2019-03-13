@@ -36,12 +36,8 @@ type Config struct {
 }
 
 type ResolverRoot interface {
-	Book() BookResolver
-	Link() LinkResolver
 	Mutation() MutationResolver
-	Post() PostResolver
 	Query() QueryResolver
-	Tweet() TweetResolver
 	TwitterURL() TwitterURLResolver
 }
 
@@ -187,14 +183,6 @@ type ComplexityRoot struct {
 	}
 }
 
-type BookResolver interface {
-	URI(ctx context.Context, obj *Book) (*URI, error)
-}
-type LinkResolver interface {
-	URI(ctx context.Context, obj *Link) (*URI, error)
-
-	Screenshot(ctx context.Context, obj *Link) (*URI, error)
-}
 type MutationResolver interface {
 	UpsertBook(ctx context.Context, input EditBook) (*Book, error)
 	UpsertLink(ctx context.Context, input NewLink) (*Link, error)
@@ -204,9 +192,6 @@ type MutationResolver interface {
 	EditPost(ctx context.Context, input EditPost) (*Post, error)
 	InsertLog(ctx context.Context, input NewLog) (*Log, error)
 	UpsertPage(ctx context.Context, input EditPage) (*Page, error)
-}
-type PostResolver interface {
-	URI(ctx context.Context, obj *Post) (*URI, error)
 }
 type QueryResolver interface {
 	Links(ctx context.Context, input *Limit) ([]*Link, error)
@@ -229,11 +214,6 @@ type QueryResolver interface {
 	GetPageByID(ctx context.Context, id string) (*Page, error)
 	GetPageBySlug(ctx context.Context, slug string) (*Page, error)
 	GetPages(ctx context.Context) ([]*Page, error)
-}
-type TweetResolver interface {
-	Urls(ctx context.Context, obj *Tweet) ([]URI, error)
-
-	URI(ctx context.Context, obj *Tweet) (*URI, error)
 }
 type TwitterURLResolver interface {
 	Link(ctx context.Context, obj *models.SavedURL) (*URI, error)
@@ -1914,7 +1894,7 @@ func (ec *executionContext) _Book_uri(ctx context.Context, field graphql.Collect
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Book().URI(rctx, obj)
+		return obj.URI(), nil
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -1922,10 +1902,10 @@ func (ec *executionContext) _Book_uri(ctx context.Context, field graphql.Collect
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*URI)
+	res := resTmp.(URI)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNURI2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, field.Selections, res)
+	return ec.marshalNURI2githubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Book_title(ctx context.Context, field graphql.CollectedField, obj *Book) graphql.Marshaler {
@@ -2096,7 +2076,7 @@ func (ec *executionContext) _Link_uri(ctx context.Context, field graphql.Collect
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Link().URI(rctx, obj)
+		return obj.URI, nil
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -2104,10 +2084,10 @@ func (ec *executionContext) _Link_uri(ctx context.Context, field graphql.Collect
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*URI)
+	res := resTmp.(URI)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNURI2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, field.Selections, res)
+	return ec.marshalNURI2githubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Link_created(ctx context.Context, field graphql.CollectedField, obj *Link) graphql.Marshaler {
@@ -2174,7 +2154,7 @@ func (ec *executionContext) _Link_screenshot(ctx context.Context, field graphql.
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Link().Screenshot(rctx, obj)
+		return obj.Screenshot, nil
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -2182,10 +2162,10 @@ func (ec *executionContext) _Link_screenshot(ctx context.Context, field graphql.
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*URI)
+	res := resTmp.(URI)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNURI2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, field.Selections, res)
+	return ec.marshalNURI2githubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Link_tags(ctx context.Context, field graphql.CollectedField, obj *Link) graphql.Marshaler {
@@ -3212,7 +3192,7 @@ func (ec *executionContext) _Post_uri(ctx context.Context, field graphql.Collect
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Post().URI(rctx, obj)
+		return obj.URI(), nil
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -3220,10 +3200,10 @@ func (ec *executionContext) _Post_uri(ctx context.Context, field graphql.Collect
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*URI)
+	res := resTmp.(URI)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNURI2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, field.Selections, res)
+	return ec.marshalNURI2githubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Post_next(ctx context.Context, field graphql.CollectedField, obj *Post) graphql.Marshaler {
@@ -4127,7 +4107,7 @@ func (ec *executionContext) _Tweet_urls(ctx context.Context, field graphql.Colle
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Tweet().Urls(rctx, obj)
+		return obj.Urls, nil
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -4257,7 +4237,7 @@ func (ec *executionContext) _Tweet_uri(ctx context.Context, field graphql.Collec
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Tweet().URI(rctx, obj)
+		return obj.URI(), nil
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -4265,10 +4245,10 @@ func (ec *executionContext) _Tweet_uri(ctx context.Context, field graphql.Collec
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*URI)
+	res := resTmp.(URI)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNURI2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, field.Selections, res)
+	return ec.marshalNURI2githubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _TwitterURL_link(ctx context.Context, field graphql.CollectedField, obj *models.SavedURL) graphql.Marshaler {
@@ -5716,19 +5696,10 @@ func (ec *executionContext) _Book(ctx context.Context, sel ast.SelectionSet, obj
 				invalid = true
 			}
 		case "uri":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Book_uri(ctx, field, obj)
-				if res == graphql.Null {
-					invalid = true
-				}
-				return res
-			})
+			out.Values[i] = ec._Book_uri(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
 		case "title":
 			out.Values[i] = ec._Book_title(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -5826,19 +5797,10 @@ func (ec *executionContext) _Link(ctx context.Context, sel ast.SelectionSet, obj
 				invalid = true
 			}
 		case "uri":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Link_uri(ctx, field, obj)
-				if res == graphql.Null {
-					invalid = true
-				}
-				return res
-			})
+			out.Values[i] = ec._Link_uri(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
 		case "created":
 			out.Values[i] = ec._Link_created(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -5850,19 +5812,10 @@ func (ec *executionContext) _Link(ctx context.Context, sel ast.SelectionSet, obj
 				invalid = true
 			}
 		case "screenshot":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Link_screenshot(ctx, field, obj)
-				if res == graphql.Null {
-					invalid = true
-				}
-				return res
-			})
+			out.Values[i] = ec._Link_screenshot(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
 		case "tags":
 			out.Values[i] = ec._Link_tags(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -6135,19 +6088,10 @@ func (ec *executionContext) _Post(ctx context.Context, sel ast.SelectionSet, obj
 				invalid = true
 			}
 		case "uri":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Post_uri(ctx, field, obj)
-				if res == graphql.Null {
-					invalid = true
-				}
-				return res
-			})
+			out.Values[i] = ec._Post_uri(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
 		case "next":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -6536,19 +6480,10 @@ func (ec *executionContext) _Tweet(ctx context.Context, sel ast.SelectionSet, ob
 				invalid = true
 			}
 		case "urls":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Tweet_urls(ctx, field, obj)
-				if res == graphql.Null {
-					invalid = true
-				}
-				return res
-			})
+			out.Values[i] = ec._Tweet_urls(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
 		case "screen_name":
 			out.Values[i] = ec._Tweet_screen_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -6570,19 +6505,10 @@ func (ec *executionContext) _Tweet(ctx context.Context, sel ast.SelectionSet, ob
 				invalid = true
 			}
 		case "uri":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Tweet_uri(ctx, field, obj)
-				if res == graphql.Null {
-					invalid = true
-				}
-				return res
-			})
+			out.Values[i] = ec._Tweet_uri(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalid = true
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -7483,24 +7409,6 @@ func (ec *executionContext) marshalNURI2ᚕgithubᚗcomᚋiccoᚋgraphqlᚐURI(c
 	}
 
 	return ret
-}
-
-func (ec *executionContext) unmarshalNURI2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx context.Context, v interface{}) (*URI, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalNURI2githubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, v)
-	return &res, err
-}
-
-func (ec *executionContext) marshalNURI2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx context.Context, sel ast.SelectionSet, v *URI) graphql.Marshaler {
-	if v == nil {
-		if !ec.HasError(graphql.GetResolverContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._URI(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNUser2githubᚗcomᚋiccoᚋgraphqlᚐUser(ctx context.Context, sel ast.SelectionSet, v User) graphql.Marshaler {

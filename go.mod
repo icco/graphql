@@ -11,7 +11,7 @@ require (
 	github.com/Shopify/sarama v1.20.1 // indirect
 	github.com/auth0-community/go-auth0 v1.0.0
 	github.com/census-instrumentation/opencensus-proto v0.2.0 // indirect
-	github.com/go-chi/chi v4.0.2+incompatible
+	github.com/go-chi/chi v4.0.1+incompatible
 	github.com/go-chi/cors v1.0.0
 	github.com/google/uuid v1.1.1
 	github.com/gosimple/slug v1.4.2
@@ -25,7 +25,7 @@ require (
 	github.com/sirupsen/logrus v1.4.0
 	github.com/unrolled/render v1.0.0
 	github.com/unrolled/secure v1.0.0
-	github.com/vektah/gqlparser v1.1.2
-	go.opencensus.io v0.19.1
+	github.com/vektah/gqlparser v1.1.0
+	go.opencensus.io v0.19.0
 	gopkg.in/square/go-jose.v2 v2.3.0
 )

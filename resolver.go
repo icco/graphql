@@ -477,6 +477,10 @@ func (r *queryResolver) GetPages(ctx context.Context) ([]*Page, error) {
 
 type twitterURLResolver struct{ *Resolver }
 
+func (r *twitterURLResolver) Link(ctx context.Context, obj *models.SavedURL) (*URI, error) {
+	return nil, fmt.Errorf("not implemented")
+}
+
 func (r *twitterURLResolver) Tweets(ctx context.Context, obj *models.SavedURL) ([]*Tweet, error) {
 	tweets := make([]*Tweet, len(obj.TweetIDs))
 	for i, id := range obj.TweetIDs {
