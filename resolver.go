@@ -1,3 +1,5 @@
+//go:generate go run github.com/99designs/gqlgen -v
+
 package graphql
 
 import (
@@ -86,11 +88,11 @@ func (r *Resolver) TwitterURL() TwitterURLResolver {
 
 type mutationResolver struct{ *Resolver }
 
-func (r *mutationResolver) CreatePost(ctx context.Context, input EditPost) (Post, error) {
+func (r *mutationResolver) CreatePost(ctx context.Context, input EditPost) (*Post, error) {
 	return r.EditPost(ctx, input)
 }
 
-func (r *mutationResolver) UpsertBook(ctx context.Context, input EditBook) (Book, error) {
+func (r *mutationResolver) UpsertBook(ctx context.Context, input EditBook) (*Book, error) {
 	b := &Book{}
 
 	if input.ID != nil {
@@ -104,10 +106,10 @@ func (r *mutationResolver) UpsertBook(ctx context.Context, input EditBook) (Book
 	b.GoodreadsID = input.GoodreadsID
 
 	err := b.Save(ctx)
-	return *b, err
+	return b, err
 }
 
-func (r *mutationResolver) EditPost(ctx context.Context, input EditPost) (Post, error) {
+func (r *mutationResolver) EditPost(ctx context.Context, input EditPost) (*Post, error) {
 	var err error
 	p := &Post{}
 
@@ -115,11 +117,11 @@ func (r *mutationResolver) EditPost(ctx context.Context, input EditPost) (Post, 
 	if input.ID != nil {
 		p, err = GetPostString(ctx, *input.ID)
 		if err != nil {
-			return Post{}, err
+			return nil, err
 		}
 
 		if p == nil {
-			return Post{}, fmt.Errorf("cannot edit post that does not exist")
+			return nil, fmt.Errorf("cannot edit post that does not exist")
 		}
 	}
 
@@ -143,22 +145,22 @@ func (r *mutationResolver) EditPost(ctx context.Context, input EditPost) (Post, 
 
 	err = p.Save(ctx)
 	if err != nil {
-		return Post{}, err
+		return nil, err
 	}
 
 	post, err := GetPostString(ctx, p.ID)
 	if err != nil {
-		return Post{}, err
+		return nil, err
 	}
 
-	return *post, nil
+	return post, nil
 }
 
-func (r *mutationResolver) UpsertLink(ctx context.Context, input NewLink) (Link, error) {
+func (r *mutationResolver) UpsertLink(ctx context.Context, input NewLink) (*Link, error) {
 	l := &Link{}
 	l.Title = input.Title
 	l.Description = input.Description
-	l.URI = input.URI
+	l.URI = URI{input.URI}
 	l.Tags = input.Tags
 
 	if input.Created != nil {
@@ -170,19 +172,19 @@ func (r *mutationResolver) UpsertLink(ctx context.Context, input NewLink) (Link,
 
 	err := l.Save(ctx)
 	if err != nil {
-		return Link{}, err
+		return nil, err
 	}
 
 	link, err := GetLinkByURI(ctx, l.URI)
 	if err != nil {
-		return Link{}, err
+		return nil, err
 	}
 
-	return *link, nil
+	return link, nil
 }
 
-func (r *mutationResolver) UpsertStat(ctx context.Context, input NewStat) (Stat, error) {
-	return Stat{}, fmt.Errorf("not implemented")
+func (r *mutationResolver) UpsertStat(ctx context.Context, input NewStat) (*Stat, error) {
+	return nil, fmt.Errorf("not implemented")
 }
 
 func (r *mutationResolver) InsertLog(ctx context.Context, input NewLog) (*Log, error) {
@@ -210,14 +212,14 @@ func (r *mutationResolver) InsertLog(ctx context.Context, input NewLog) (*Log, e
 	return l, err
 }
 
-func (r *mutationResolver) UpsertPage(ctx context.Context, input EditPage) (Page, error) {
+func (r *mutationResolver) UpsertPage(ctx context.Context, input EditPage) (*Page, error) {
 	var err error
 	p := &Page{}
 
 	if input.ID != nil {
 		p, err = GetPageByID(ctx, *input.ID)
 		if err != nil {
-			return Page{}, err
+			return nil, err
 		}
 	}
 
@@ -239,13 +241,13 @@ func (r *mutationResolver) UpsertPage(ctx context.Context, input EditPage) (Page
 
 	err = p.Save(ctx)
 	if err != nil {
-		return Page{}, err
+		return nil, err
 	}
 
-	return *p, nil
+	return p, nil
 }
 
-func (r *mutationResolver) UpsertTweet(ctx context.Context, input NewTweet) (Tweet, error) {
+func (r *mutationResolver) UpsertTweet(ctx context.Context, input NewTweet) (*Tweet, error) {
 	t := &Tweet{
 		FavoriteCount: input.FavoriteCount,
 		Hashtags:      input.Hashtags,
@@ -254,17 +256,21 @@ func (r *mutationResolver) UpsertTweet(ctx context.Context, input NewTweet) (Twe
 		RetweetCount:  input.RetweetCount,
 		Symbols:       input.Symbols,
 		Text:          input.Text,
-		Urls:          input.Urls,
 		ScreenName:    input.ScreenName,
 		UserMentions:  input.UserMentions,
 	}
 
-	err := t.Save(ctx)
-	if err != nil {
-		return Tweet{}, err
+	t.Urls = [len(input.Urls)]URI{}
+	for k, v := range input.Urls {
+		t.Urls[k] = URI{v}
 	}
 
-	return *t, nil
+	err := t.Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return t, nil
 }
 
 type queryResolver struct{ *Resolver }
@@ -314,7 +320,7 @@ func (r *queryResolver) Links(ctx context.Context, input *Limit) ([]*Link, error
 	return GetLinks(ctx, limit, offset)
 }
 
-func (r *queryResolver) Link(ctx context.Context, id *string, url *string) (*Link, error) {
+func (r *queryResolver) Link(ctx context.Context, id *string, url *URI) (*Link, error) {
 	if id != nil && url != nil {
 		return nil, fmt.Errorf("do not specify an ID and a URI in input")
 	}
