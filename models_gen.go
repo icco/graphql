@@ -9,6 +9,14 @@ import (
 	"time"
 )
 
+type Linkable interface {
+	IsLinkable()
+}
+
+type Searchable interface {
+	IsSearchable()
+}
+
 // Comment is an undefined type reserved for the future.
 type Comment struct {
 	ID string `json:"id"`
@@ -36,8 +44,9 @@ type EditPost struct {
 	Draft    *bool      `json:"draft"`
 }
 
-type Linkable interface {
-	IsLinkable()
+type Limit struct {
+	Limit  *int `json:"limit"`
+	Offset *int `json:"offset"`
 }
 
 type NewGeo struct {
@@ -47,7 +56,7 @@ type NewGeo struct {
 
 type NewLink struct {
 	Title       string     `json:"title"`
-	URI         string     `json:"uri"`
+	URI         URI        `json:"uri"`
 	Description string     `json:"description"`
 	Tags        []string   `json:"tags"`
 	Created     *time.Time `json:"created"`
@@ -73,13 +82,9 @@ type NewTweet struct {
 	RetweetCount  int       `json:"retweet_count"`
 	Symbols       []string  `json:"symbols"`
 	Text          string    `json:"text"`
-	Urls          []string  `json:"urls"`
+	Urls          []URI     `json:"urls"`
 	ScreenName    string    `json:"screen_name"`
 	UserMentions  []string  `json:"user_mentions"`
-}
-
-type Searchable interface {
-	IsSearchable()
 }
 
 // A stat is a key value pair of two interesting strings.
@@ -94,6 +99,11 @@ const (
 	RoleAdmin  Role = "admin"
 	RoleNormal Role = "normal"
 )
+
+var AllRole = []Role{
+	RoleAdmin,
+	RoleNormal,
+}
 
 func (e Role) IsValid() bool {
 	switch e {

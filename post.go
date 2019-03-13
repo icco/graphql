@@ -239,8 +239,8 @@ func (p *Post) HTML() template.HTML {
 }
 
 // URI returns an absolute link to this post.
-func (p *Post) URI() string {
-	return fmt.Sprintf("https://writing.natwelch.com/post/%s", p.ID)
+func (p *Post) URI() URI {
+	return URI{fmt.Sprintf("https://writing.natwelch.com/post/%s", p.ID)}
 }
 
 // Next returns the next post chronologically.

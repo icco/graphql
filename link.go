@@ -13,16 +13,22 @@ import (
 type Link struct {
 	ID          string    `json:"id"`
 	Title       string    `json:"title"`
-	URI         string    `json:"uri"`
+	URI         URI       `json:"uri"`
 	Created     time.Time `json:"created"`
 	Description string    `json:"description"`
-	Screenshot  string    `json:"screenshot"`
+	Screenshot  URI       `json:"screenshot"`
 	Tags        []string  `json:"tags"`
 	Modified    time.Time `json:"modified"`
 }
 
 // Save inserts or updates a link into the database.
 func (l *Link) Save(ctx context.Context) error {
+	if l.Created.IsZero() {
+		l.Created = time.Now()
+	}
+
+	l.Modified = time.Now()
+
 	if _, err := db.ExecContext(
 		ctx,
 		`
@@ -93,6 +99,10 @@ func GetLinks(ctx context.Context, limit *int, offset *int) ([]*Link, error) {
 		err := rows.Scan(&link.ID, &link.Title, &link.URI, &link.Description, &link.Created, &link.Modified, pq.Array(&link.Tags))
 		if err != nil {
 			return nil, err
+		}
+
+		if link.Created.IsZero() {
+			link.Created = time.Now()
 		}
 
 		links = append(links, link)
