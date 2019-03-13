@@ -123,15 +123,15 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Links              func(childComplexity int, limit *int, offset *int) int
+		Links              func(childComplexity int, input *Limit) int
 		Link               func(childComplexity int, id *string, url *string) int
 		Stats              func(childComplexity int, count *int) int
 		Counts             func(childComplexity int) int
 		Whoami             func(childComplexity int) int
-		Tweets             func(childComplexity int, limit *int, offset *int) int
+		Tweets             func(childComplexity int, input *Limit) int
 		Tweet              func(childComplexity int, id string) int
-		TweetsByScreenName func(childComplexity int, screen_name string, limit *int, offset *int) int
-		HomeTimelineUrls   func(childComplexity int, limit *int) int
+		TweetsByScreenName func(childComplexity int, screen_name string, input *Limit) int
+		HomeTimelineUrls   func(childComplexity int, input *Limit) int
 		Drafts             func(childComplexity int, input *Limit) int
 		Posts              func(childComplexity int, input *Limit) int
 		Post               func(childComplexity int, id string) int
@@ -192,15 +192,15 @@ type MutationResolver interface {
 	UpsertPage(ctx context.Context, input EditPage) (Page, error)
 }
 type QueryResolver interface {
-	Links(ctx context.Context, limit *int, offset *int) ([]*Link, error)
+	Links(ctx context.Context, input *Limit) ([]*Link, error)
 	Link(ctx context.Context, id *string, url *string) (*Link, error)
 	Stats(ctx context.Context, count *int) ([]*Stat, error)
 	Counts(ctx context.Context) ([]*Stat, error)
 	Whoami(ctx context.Context) (*User, error)
-	Tweets(ctx context.Context, limit *int, offset *int) ([]*Tweet, error)
+	Tweets(ctx context.Context, input *Limit) ([]*Tweet, error)
 	Tweet(ctx context.Context, id string) (*Tweet, error)
-	TweetsByScreenName(ctx context.Context, screen_name string, limit *int, offset *int) ([]*Tweet, error)
-	HomeTimelineURLs(ctx context.Context, limit *int) ([]*models.SavedURL, error)
+	TweetsByScreenName(ctx context.Context, screen_name string, input *Limit) ([]*Tweet, error)
+	HomeTimelineURLs(ctx context.Context, input *Limit) ([]*models.SavedURL, error)
 	Drafts(ctx context.Context, input *Limit) ([]*Post, error)
 	Posts(ctx context.Context, input *Limit) ([]*Post, error)
 	Post(ctx context.Context, id string) (*Post, error)
@@ -339,12 +339,12 @@ func field_Mutation_upsertPage_args(rawArgs map[string]interface{}) (map[string]
 
 func field_Query_links_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	args := map[string]interface{}{}
-	var arg0 *int
-	if tmp, ok := rawArgs["limit"]; ok {
+	var arg0 *Limit
+	if tmp, ok := rawArgs["input"]; ok {
 		var err error
-		var ptr1 int
+		var ptr1 Limit
 		if tmp != nil {
-			ptr1, err = graphql.UnmarshalInt(tmp)
+			ptr1, err = UnmarshalLimit(tmp)
 			arg0 = &ptr1
 		}
 
@@ -352,21 +352,7 @@ func field_Query_links_args(rawArgs map[string]interface{}) (map[string]interfac
 			return nil, err
 		}
 	}
-	args["limit"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["offset"]; ok {
-		var err error
-		var ptr1 int
-		if tmp != nil {
-			ptr1, err = graphql.UnmarshalInt(tmp)
-			arg1 = &ptr1
-		}
-
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["offset"] = arg1
+	args["input"] = arg0
 	return args, nil
 
 }
@@ -427,12 +413,12 @@ func field_Query_stats_args(rawArgs map[string]interface{}) (map[string]interfac
 
 func field_Query_tweets_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	args := map[string]interface{}{}
-	var arg0 *int
-	if tmp, ok := rawArgs["limit"]; ok {
+	var arg0 *Limit
+	if tmp, ok := rawArgs["input"]; ok {
 		var err error
-		var ptr1 int
+		var ptr1 Limit
 		if tmp != nil {
-			ptr1, err = graphql.UnmarshalInt(tmp)
+			ptr1, err = UnmarshalLimit(tmp)
 			arg0 = &ptr1
 		}
 
@@ -440,21 +426,7 @@ func field_Query_tweets_args(rawArgs map[string]interface{}) (map[string]interfa
 			return nil, err
 		}
 	}
-	args["limit"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["offset"]; ok {
-		var err error
-		var ptr1 int
-		if tmp != nil {
-			ptr1, err = graphql.UnmarshalInt(tmp)
-			arg1 = &ptr1
-		}
-
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["offset"] = arg1
+	args["input"] = arg0
 	return args, nil
 
 }
@@ -485,12 +457,12 @@ func field_Query_tweetsByScreenName_args(rawArgs map[string]interface{}) (map[st
 		}
 	}
 	args["screen_name"] = arg0
-	var arg1 *int
-	if tmp, ok := rawArgs["limit"]; ok {
+	var arg1 *Limit
+	if tmp, ok := rawArgs["input"]; ok {
 		var err error
-		var ptr1 int
+		var ptr1 Limit
 		if tmp != nil {
-			ptr1, err = graphql.UnmarshalInt(tmp)
+			ptr1, err = UnmarshalLimit(tmp)
 			arg1 = &ptr1
 		}
 
@@ -498,33 +470,19 @@ func field_Query_tweetsByScreenName_args(rawArgs map[string]interface{}) (map[st
 			return nil, err
 		}
 	}
-	args["limit"] = arg1
-	var arg2 *int
-	if tmp, ok := rawArgs["offset"]; ok {
-		var err error
-		var ptr1 int
-		if tmp != nil {
-			ptr1, err = graphql.UnmarshalInt(tmp)
-			arg2 = &ptr1
-		}
-
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["offset"] = arg2
+	args["input"] = arg1
 	return args, nil
 
 }
 
 func field_Query_homeTimelineURLs_args(rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	args := map[string]interface{}{}
-	var arg0 *int
-	if tmp, ok := rawArgs["limit"]; ok {
+	var arg0 *Limit
+	if tmp, ok := rawArgs["input"]; ok {
 		var err error
-		var ptr1 int
+		var ptr1 Limit
 		if tmp != nil {
-			ptr1, err = graphql.UnmarshalInt(tmp)
+			ptr1, err = UnmarshalLimit(tmp)
 			arg0 = &ptr1
 		}
 
@@ -532,7 +490,7 @@ func field_Query_homeTimelineURLs_args(rawArgs map[string]interface{}) (map[stri
 			return nil, err
 		}
 	}
-	args["limit"] = arg0
+	args["input"] = arg0
 	return args, nil
 
 }
@@ -1174,7 +1132,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Links(childComplexity, args["limit"].(*int), args["offset"].(*int)), true
+		return e.complexity.Query.Links(childComplexity, args["input"].(*Limit)), true
 
 	case "Query.link":
 		if e.complexity.Query.Link == nil {
@@ -1224,7 +1182,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Tweets(childComplexity, args["limit"].(*int), args["offset"].(*int)), true
+		return e.complexity.Query.Tweets(childComplexity, args["input"].(*Limit)), true
 
 	case "Query.tweet":
 		if e.complexity.Query.Tweet == nil {
@@ -1248,7 +1206,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.TweetsByScreenName(childComplexity, args["screen_name"].(string), args["limit"].(*int), args["offset"].(*int)), true
+		return e.complexity.Query.TweetsByScreenName(childComplexity, args["screen_name"].(string), args["input"].(*Limit)), true
 
 	case "Query.homeTimelineURLs":
 		if e.complexity.Query.HomeTimelineUrls == nil {
@@ -1260,7 +1218,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.HomeTimelineUrls(childComplexity, args["limit"].(*int)), true
+		return e.complexity.Query.HomeTimelineUrls(childComplexity, args["input"].(*Limit)), true
 
 	case "Query.drafts":
 		if e.complexity.Query.Drafts == nil {
@@ -3794,7 +3752,7 @@ func (ec *executionContext) _Query_links(ctx context.Context, field graphql.Coll
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Links(rctx, args["limit"].(*int), args["offset"].(*int))
+		return ec.resolvers.Query().Links(rctx, args["input"].(*Limit))
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -4062,7 +4020,7 @@ func (ec *executionContext) _Query_tweets(ctx context.Context, field graphql.Col
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Tweets(rctx, args["limit"].(*int), args["offset"].(*int))
+		return ec.resolvers.Query().Tweets(rctx, args["input"].(*Limit))
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -4167,7 +4125,7 @@ func (ec *executionContext) _Query_tweetsByScreenName(ctx context.Context, field
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().TweetsByScreenName(rctx, args["screen_name"].(string), args["limit"].(*int), args["offset"].(*int))
+		return ec.resolvers.Query().TweetsByScreenName(rctx, args["screen_name"].(string), args["input"].(*Limit))
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -4237,7 +4195,7 @@ func (ec *executionContext) _Query_homeTimelineURLs(ctx context.Context, field g
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().HomeTimelineURLs(rctx, args["limit"].(*int))
+		return ec.resolvers.Query().HomeTimelineURLs(rctx, args["input"].(*Limit))
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -8030,7 +7988,7 @@ The query type, represents all of the entry points into our object graph.
 """
 type Query {
   "Returns a subset of all links ever, in reverse chronological order, using provided limit and offset."
-  links(limit: Int, offset: Int): [Link]!
+  links(input: Limit): [Link]!
 
   "Returns a single link by id or url."
   link(id: ID, url: URI): Link
@@ -8045,15 +8003,15 @@ type Query {
   whoami: User
 
   "Returns tweets in database."
-  tweets(limit: Int, offset: Int): [Tweet]!
+  tweets(input: Limit): [Tweet]!
 
   "Returns just one tweet."
   tweet(id: ID!): Tweet
 
   "Returns a user's tweets by screen name."
-  tweetsByScreenName(screen_name: String!, limit: Int, offset: Int): [Tweet]!
+  tweetsByScreenName(screen_name: String!, input: Limit): [Tweet]!
 
-  homeTimelineURLs(limit: Int): [TwitterURL]!
+  homeTimelineURLs(input: Limit): [TwitterURL]!
 }
 
 type Mutation {
