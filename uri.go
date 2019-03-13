@@ -14,6 +14,10 @@ func (u *URI) String() string {
 	return u.value
 }
 
+func (u *URI) Scan(v interface{}) error {
+	return u.UnmarshalGQL(v)
+}
+
 func (u *URI) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
