@@ -3,6 +3,7 @@ ENV GO111MODULE=on
 ENV NAT_ENV="production"
 EXPOSE 8080
 WORKDIR /go/src/github.com/icco/graphql
+RUN apk add --no-cache git
 COPY . .
 
 RUN go build -o /go/bin/server ./server
