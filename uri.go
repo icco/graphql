@@ -1,6 +1,7 @@
 package graphql
 
 import (
+	"database/sql/driver"
 	"fmt"
 	"io"
 )
@@ -19,6 +20,11 @@ func (u *URI) Scan(v interface{}) error {
 }
 
 func (u *URI) UnmarshalGQL(v interface{}) error {
+	if v == nil {
+		u.value = ""
+		return nil
+	}
+
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("URI must be strings")
@@ -30,5 +36,9 @@ func (u *URI) UnmarshalGQL(v interface{}) error {
 
 // MarshalGQL implements the graphql.Marshaler interface
 func (u URI) MarshalGQL(w io.Writer) {
-	fmt.Fprintf(w, `%s`, u.String())
+	fmt.Fprintf(w, `"%s"`, u.String())
+}
+
+func (u URI) Value() (driver.Value, error) {
+	return u.value, nil
 }
