@@ -10,7 +10,7 @@ require (
 	github.com/GuiaBolso/darwin v0.0.0-20170210191649-86919dfcf808
 	github.com/Shopify/sarama v1.20.1 // indirect
 	github.com/auth0-community/go-auth0 v1.0.0
-	github.com/census-instrumentation/opencensus-proto v0.2.0 // indirect
+	github.com/census-instrumentation/opencensus-proto v0.1.0
 	github.com/go-chi/chi v4.0.1+incompatible
 	github.com/go-chi/cors v1.0.0
 	github.com/golang/protobuf v1.3.0 // indirect
@@ -26,7 +26,7 @@ require (
 	github.com/sirupsen/logrus v1.4.0
 	github.com/unrolled/render v1.0.0
 	github.com/unrolled/secure v1.0.0
-	github.com/vektah/gqlparser v1.1.0
+	github.com/vektah/gqlparser v1.1.1
 	go.opencensus.io v0.19.0
 	gopkg.in/square/go-jose.v2 v2.3.0
 )
