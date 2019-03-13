@@ -7375,11 +7375,12 @@ func (ec *executionContext) marshalNTwitterURL2ᚕᚖgithubᚗcomᚋiccoᚋcacop
 }
 
 func (ec *executionContext) unmarshalNURI2githubᚗcomᚋiccoᚋgraphqlᚐURI(ctx context.Context, v interface{}) (URI, error) {
-	return ec.unmarshalInputURI(ctx, v)
+	var res URI
+	return res, res.UnmarshalGQL(v)
 }
 
 func (ec *executionContext) marshalNURI2githubᚗcomᚋiccoᚋgraphqlᚐURI(ctx context.Context, sel ast.SelectionSet, v URI) graphql.Marshaler {
-	return ec._URI(ctx, sel, &v)
+	return v
 }
 
 func (ec *executionContext) unmarshalNURI2ᚕgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx context.Context, v interface{}) ([]URI, error) {
@@ -7889,11 +7890,12 @@ func (ec *executionContext) marshalOTwitterURL2ᚖgithubᚗcomᚋiccoᚋcacophon
 }
 
 func (ec *executionContext) unmarshalOURI2githubᚗcomᚋiccoᚋgraphqlᚐURI(ctx context.Context, v interface{}) (URI, error) {
-	return ec.unmarshalInputURI(ctx, v)
+	var res URI
+	return res, res.UnmarshalGQL(v)
 }
 
 func (ec *executionContext) marshalOURI2githubᚗcomᚋiccoᚋgraphqlᚐURI(ctx context.Context, sel ast.SelectionSet, v URI) graphql.Marshaler {
-	return ec._URI(ctx, sel, &v)
+	return v
 }
 
 func (ec *executionContext) unmarshalOURI2ᚕgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx context.Context, v interface{}) ([]URI, error) {
@@ -7937,7 +7939,7 @@ func (ec *executionContext) marshalOURI2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐURI(c
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._URI(ctx, sel, v)
+	return v
 }
 
 func (ec *executionContext) marshalOUser2githubᚗcomᚋiccoᚋgraphqlᚐUser(ctx context.Context, sel ast.SelectionSet, v User) graphql.Marshaler {
