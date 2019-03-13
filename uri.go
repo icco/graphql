@@ -4,3 +4,7 @@ package graphql
 type URI struct {
 	value string
 }
+
+func (u *URI) String() string {
+	return u.value
+}

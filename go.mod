@@ -13,6 +13,7 @@ require (
 	github.com/census-instrumentation/opencensus-proto v0.2.0 // indirect
 	github.com/go-chi/chi v4.0.1+incompatible
 	github.com/go-chi/cors v1.0.0
+	github.com/golang/protobuf v1.3.0 // indirect
 	github.com/google/uuid v1.1.1
 	github.com/gosimple/slug v1.4.2
 	github.com/icco/cacophony v0.0.0-20190208141533-6619033d7424

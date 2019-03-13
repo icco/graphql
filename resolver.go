@@ -160,7 +160,7 @@ func (r *mutationResolver) UpsertLink(ctx context.Context, input NewLink) (*Link
 	l := &Link{}
 	l.Title = input.Title
 	l.Description = input.Description
-	l.URI = URI{input.URI}
+	l.URI = input.URI
 	l.Tags = input.Tags
 
 	if input.Created != nil {
@@ -175,7 +175,7 @@ func (r *mutationResolver) UpsertLink(ctx context.Context, input NewLink) (*Link
 		return nil, err
 	}
 
-	link, err := GetLinkByURI(ctx, l.URI)
+	link, err := GetLinkByURI(ctx, l.URI.String())
 	if err != nil {
 		return nil, err
 	}
@@ -258,11 +258,7 @@ func (r *mutationResolver) UpsertTweet(ctx context.Context, input NewTweet) (*Tw
 		Text:          input.Text,
 		ScreenName:    input.ScreenName,
 		UserMentions:  input.UserMentions,
-	}
-
-	t.Urls = [len(input.Urls)]URI{}
-	for k, v := range input.Urls {
-		t.Urls[k] = URI{v}
+		Urls:          input.Urls,
 	}
 
 	err := t.Save(ctx)
@@ -330,7 +326,7 @@ func (r *queryResolver) Link(ctx context.Context, id *string, url *URI) (*Link, 
 	}
 
 	if url != nil {
-		return GetLinkByURI(ctx, *url)
+		return GetLinkByURI(ctx, url.String())
 	}
 
 	return nil, fmt.Errorf("not valid input")
