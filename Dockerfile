@@ -1,4 +1,4 @@
-FROM golang:1.12
+FROM golang:1.12-alpine
 ENV GO111MODULE=on
 ENV NAT_ENV="production"
 EXPOSE 8080
