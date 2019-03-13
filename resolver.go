@@ -304,7 +304,13 @@ func (r *queryResolver) PrevPost(ctx context.Context, id string) (*Post, error) 
 	return p.Prev(ctx)
 }
 
-func (r *queryResolver) Links(ctx context.Context, limit *int, offset *int) ([]*Link, error) {
+func (r *queryResolver) Links(ctx context.Context, input *Limit) ([]*Link, error) {
+	var limit, offset *int
+	if input != nil {
+		limit = input.Limit
+		offset = input.Offset
+	}
+
 	return GetLinks(ctx, limit, offset)
 }
 
@@ -383,7 +389,12 @@ func (r *queryResolver) Whoami(ctx context.Context) (*User, error) {
 	return GetUserFromContext(ctx), nil
 }
 
-func (r *queryResolver) Tweets(ctx context.Context, limit *int, offset *int) ([]*Tweet, error) {
+func (r *queryResolver) Tweets(ctx context.Context, input *Limit) ([]*Tweet, error) {
+	var limit, offset *int
+	if input != nil {
+		limit = input.Limit
+		offset = input.Offset
+	}
 	return GetTweets(ctx, limit, offset)
 }
 
@@ -391,15 +402,20 @@ func (r *queryResolver) Tweet(ctx context.Context, id string) (*Tweet, error) {
 	return GetTweet(ctx, id)
 }
 
-func (r *queryResolver) TweetsByScreenName(ctx context.Context, screenName string, limit *int, offset *int) ([]*Tweet, error) {
+func (r *queryResolver) TweetsByScreenName(ctx context.Context, screenName string, input *Limit) ([]*Tweet, error) {
+	var limit, offset *int
+	if input != nil {
+		limit = input.Limit
+		offset = input.Offset
+	}
 	return GetTweetsByScreenName(ctx, screenName, limit, offset)
 }
 
-func (r *queryResolver) HomeTimelineURLs(ctx context.Context, limitIn *int) ([]*models.SavedURL, error) {
+func (r *queryResolver) HomeTimelineURLs(ctx context.Context, input *Limit) ([]*models.SavedURL, error) {
 	urls := []*models.SavedURL{}
 	limit := 100
-	if limitIn != nil {
-		limit = *limitIn
+	if input != nil {
+		limit = *input.Limit
 	}
 
 	url := fmt.Sprintf("https://cacophony.natwelch.com/?count=%d", limit)
