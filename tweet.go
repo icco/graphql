@@ -108,8 +108,8 @@ func GetTweets(ctx context.Context, limitIn *int, offsetIn *int) ([]*Tweet, erro
 }
 
 // URI returns a link to this tweet.
-func (t *Tweet) URI() string {
-	return fmt.Sprintf("https://twitter.com/%s/status/%s", t.ScreenName, t.ID)
+func (t *Tweet) URI() URI {
+	return URI{fmt.Sprintf("https://twitter.com/%s/status/%s", t.ScreenName, t.ID)}
 }
 
 // GetTweetsByScreenName returns an array of tweets from the database filtered by screenname.

@@ -13,7 +13,7 @@ import (
 type Link struct {
 	ID          string    `json:"id"`
 	Title       string    `json:"title"`
-	URI         string    `json:"uri"`
+	URI         URI       `json:"uri"`
 	Created     time.Time `json:"created"`
 	Description string    `json:"description"`
 	Screenshot  string    `json:"screenshot"`
