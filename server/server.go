@@ -158,6 +158,7 @@ func main() {
 			handler.CacheSize(512),
 			handler.RequestMiddleware(GqlLoggingMiddleware),
 			handler.Tracer(gqlopencensus.New()),
+			handler.AutomaticPersistentQueriesEnabled(true),
 		))
 
 		r.Post("/photo/new", photoUploadHandler)
