@@ -134,6 +134,7 @@ type ComplexityRoot struct {
 		Tweet              func(childComplexity int, id string) int
 		TweetsByScreenName func(childComplexity int, screenName string, input *Limit) int
 		HomeTimelineURLs   func(childComplexity int, input *Limit) int
+		Time               func(childComplexity int) int
 		Drafts             func(childComplexity int, input *Limit) int
 		Posts              func(childComplexity int, input *Limit) int
 		Post               func(childComplexity int, id string) int
@@ -203,6 +204,7 @@ type QueryResolver interface {
 	Tweet(ctx context.Context, id string) (*Tweet, error)
 	TweetsByScreenName(ctx context.Context, screenName string, input *Limit) ([]*Tweet, error)
 	HomeTimelineURLs(ctx context.Context, input *Limit) ([]*models.SavedURL, error)
+	Time(ctx context.Context) (*time.Time, error)
 	Drafts(ctx context.Context, input *Limit) ([]*Post, error)
 	Posts(ctx context.Context, input *Limit) ([]*Post, error)
 	Post(ctx context.Context, id string) (*Post, error)
@@ -737,6 +739,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.HomeTimelineURLs(childComplexity, args["input"].(*Limit)), true
+
+	case "Query.Time":
+		if e.complexity.Query.Time == nil {
+			break
+		}
+
+		return e.complexity.Query.Time(childComplexity), true
 
 	case "Query.Drafts":
 		if e.complexity.Query.Drafts == nil {
@@ -1359,6 +1368,9 @@ type Query {
   tweetsByScreenName(screen_name: String!, input: Limit): [Tweet]!
 
   homeTimelineURLs(input: Limit): [TwitterURL]!
+
+  "The current server time."
+  time: Time!
 }
 
 type Mutation {
@@ -3524,6 +3536,32 @@ func (ec *executionContext) _Query_homeTimelineURLs(ctx context.Context, field g
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return ec.marshalNTwitterURL2ᚕᚖgithubᚗcomᚋiccoᚋcacophonyᚋmodelsᚐSavedURL(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_time(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Query",
+		Field:  field,
+		Args:   nil,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Time(rctx)
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_drafts(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
@@ -6257,6 +6295,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "time":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_time(ctx, field)
+				if res == graphql.Null {
+					invalid = true
+				}
+				return res
+			})
 		case "drafts":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -7284,6 +7336,24 @@ func (ec *executionContext) marshalNTime2timeᚐTime(ctx context.Context, sel as
 		return graphql.Null
 	}
 	return graphql.MarshalTime(v)
+}
+
+func (ec *executionContext) unmarshalNTime2ᚖtimeᚐTime(ctx context.Context, v interface{}) (*time.Time, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalNTime2timeᚐTime(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalNTime2ᚖtimeᚐTime(ctx context.Context, sel ast.SelectionSet, v *time.Time) graphql.Marshaler {
+	if v == nil {
+		if !ec.HasError(graphql.GetResolverContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec.marshalNTime2timeᚐTime(ctx, sel, *v)
 }
 
 func (ec *executionContext) marshalNTweet2githubᚗcomᚋiccoᚋgraphqlᚐTweet(ctx context.Context, sel ast.SelectionSet, v Tweet) graphql.Marshaler {

@@ -159,6 +159,9 @@ type Query {
   tweetsByScreenName(screen_name: String!, input: Limit): [Tweet]!
 
   homeTimelineURLs(input: Limit): [TwitterURL]!
+
+  "The current server time."
+  time: Time!
 }
 
 type Mutation {

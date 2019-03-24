@@ -459,6 +459,11 @@ func (r *queryResolver) Logs(ctx context.Context, uid *string) ([]*Log, error) {
 	return UserLogs(ctx, u)
 }
 
+func (r *queryResolver) Time(ctx context.Context) (*time.Time, error) {
+	now := time.Now()
+	return &now, nil
+}
+
 func (r *queryResolver) GetPageByID(ctx context.Context, id string) (*Page, error) {
 	return GetPageByID(ctx, id)
 }
