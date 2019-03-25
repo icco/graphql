@@ -195,6 +195,13 @@ var (
       SELECT set_limit(0.6);
       `,
 		},
+		{
+			Version:     14,
+			Description: "Add trgm index",
+			Script: `
+      CREATE INDEX content_gin_idx ON posts USING GIN(content gin_trgm_ops);
+      `,
+		},
 	}
 )
 
