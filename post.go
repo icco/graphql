@@ -286,6 +286,8 @@ func (p *Post) ReadTime() int32 {
 // graphql.
 func (p *Post) IsLinkable() {}
 
+// Related returns an array of related posts. It is quite slow in comparison to
+// other queries.
 func (p *Post) Related(ctx context.Context, input *Limit) ([]*Post, error) {
 	limit := 3
 	offset := 0
