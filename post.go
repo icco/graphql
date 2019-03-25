@@ -287,7 +287,29 @@ func (p *Post) ReadTime() int32 {
 func (p *Post) IsLinkable() {}
 
 func (p *Post) Related(ctx context.Context, input *Limit) ([]*Post, error) {
-	return []*Post{}, nil
+	query := "SELECT SIMILARITY($1, content) AS sim, id FROM posts ORDER BY sim DESC"
+	rows, err := db.QueryContext(ctx, query, p.Content)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	posts := make([]*Post, 0)
+	for rows.Next() {
+		var id string
+		var sim float64
+		err := rows.Scan(sim, id)
+		if err != nil {
+			return nil, err
+		}
+		post, err := GetPostString(ctx, id)
+		if err != nil {
+			return nil, err
+		}
+		posts = append(posts, post)
+	}
+
+	return posts, nil
 }
 
 // Posts returns some posts.
