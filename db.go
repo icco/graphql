@@ -187,6 +187,14 @@ var (
       );
       `,
 		},
+		{
+			Version:     13,
+			Description: "Add trgm",
+			Script: `
+      CREATE EXTENSION pg_trgm;
+      SELECT set_limit(0.6);
+      `,
+		},
 	}
 )
 
