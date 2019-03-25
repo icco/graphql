@@ -122,6 +122,7 @@ type ComplexityRoot struct {
 		URI      func(childComplexity int) int
 		Next     func(childComplexity int) int
 		Prev     func(childComplexity int) int
+		Related  func(childComplexity int, input *Limit) int
 	}
 
 	Query struct {
@@ -641,6 +642,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Post.Prev(childComplexity), true
+
+	case "Post.Related":
+		if e.complexity.Post.Related == nil {
+			break
+		}
+
+		args, err := ec.field_Post_related_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Post.Related(childComplexity, args["input"].(*Limit)), true
 
 	case "Query.Links":
 		if e.complexity.Query.Links == nil {
@@ -1164,6 +1177,9 @@ type Post implements Linkable {
 
   next: Post
   prev: Post
+
+  "A list of related posts. Maximum returned will be 10."
+  related(input: Limit): [Post]!
 }
 
 input EditPost {
@@ -1574,6 +1590,20 @@ func (ec *executionContext) field_Mutation_upsertTweet_args(ctx context.Context,
 	var arg0 NewTweet
 	if tmp, ok := rawArgs["input"]; ok {
 		arg0, err = ec.unmarshalNNewTweet2githubᚗcomᚋiccoᚋgraphqlᚐNewTweet(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Post_related_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *Limit
+	if tmp, ok := rawArgs["input"]; ok {
+		arg0, err = ec.unmarshalOLimit2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐLimit(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -3262,6 +3292,39 @@ func (ec *executionContext) _Post_prev(ctx context.Context, field graphql.Collec
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return ec.marshalOPost2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐPost(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Post_related(ctx context.Context, field graphql.CollectedField, obj *Post) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object: "Post",
+		Field:  field,
+		Args:   nil,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Post_related_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Related(ctx, args["input"].(*Limit))
+	})
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*Post)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNPost2ᚕᚖgithubᚗcomᚋiccoᚋgraphqlᚐPost(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_links(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
@@ -6150,6 +6213,20 @@ func (ec *executionContext) _Post(ctx context.Context, sel ast.SelectionSet, obj
 					}
 				}()
 				res = ec._Post_prev(ctx, field, obj)
+				return res
+			})
+		case "related":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Post_related(ctx, field, obj)
+				if res == graphql.Null {
+					invalid = true
+				}
 				return res
 			})
 		default:
