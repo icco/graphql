@@ -286,6 +286,48 @@ func (p *Post) ReadTime() int32 {
 // graphql.
 func (p *Post) IsLinkable() {}
 
+// Related returns an array of related posts. It is quite slow in comparison to
+// other queries.
+func (p *Post) Related(ctx context.Context, input *Limit) ([]*Post, error) {
+	limit := 3
+	offset := 0
+	if input != nil {
+		i := *input
+		if i.Limit != nil {
+			limit = *i.Limit
+		}
+
+		if i.Offset != nil {
+			offset = *i.Offset
+		}
+	}
+
+	query := "SELECT SIMILARITY($1, content) AS sim, id FROM posts WHERE id != $2 ORDER BY sim DESC LIMIT $3 OFFSET $4"
+
+	rows, err := db.QueryContext(ctx, query, p.Content, p.ID, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	posts := make([]*Post, 0)
+	for rows.Next() {
+		var id string
+		var sim float64
+		err := rows.Scan(&sim, &id)
+		if err != nil {
+			return nil, err
+		}
+		post, err := GetPostString(ctx, id)
+		if err != nil {
+			return nil, err
+		}
+		posts = append(posts, post)
+	}
+
+	return posts, nil
+}
+
 // Posts returns some posts.
 func Posts(ctx context.Context, limit *int, offset *int) ([]*Post, error) {
 	rows, err := db.QueryContext(ctx, "SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE draft = false ORDER BY date DESC LIMIT $1 OFFSET $2", limit, offset)

@@ -30,6 +30,9 @@ type Post implements Linkable {
 
   next: Post
   prev: Post
+
+  "A list of related posts. Maximum returned will be 10."
+  related(input: Limit): [Post]!
 }
 
 input EditPost {
