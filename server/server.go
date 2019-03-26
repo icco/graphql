@@ -204,7 +204,7 @@ func cronHandler(w http.ResponseWriter, r *http.Request) {
 		perPage := 10
 
 		for i := 0; err == nil || len(posts) > 0; i += perPage {
-			posts, err = graphql.Posts(ctx, &perPage, &i)
+			posts, err = graphql.Posts(ctx, perPage, i)
 			if err == nil {
 				for _, p := range posts {
 					err = p.Save(ctx)
