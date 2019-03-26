@@ -276,11 +276,19 @@ func (r *queryResolver) Drafts(ctx context.Context, input *Limit) ([]*Post, erro
 }
 
 func (r *queryResolver) Posts(ctx context.Context, input *Limit) ([]*Post, error) {
-	var limit, offset *int
+	limit := 10
+	offset := 0
 	if input != nil {
-		limit = input.Limit
-		offset = input.Offset
+		i := *input
+		if i.Limit != nil {
+			limit = *i.Limit
+		}
+
+		if i.Offset != nil {
+			offset = *i.Offset
+		}
 	}
+
 	return Posts(ctx, limit, offset)
 }
 
