@@ -12,7 +12,6 @@ import (
 	"contrib.go.opencensus.io/exporter/stackdriver/propagation"
 	"github.com/99designs/gqlgen-contrib/gqlapollotracing"
 	"github.com/99designs/gqlgen-contrib/gqlopencensus"
-	"github.com/99designs/gqlgen-contrib/prometheus"
 	gql "github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/handler"
 	"github.com/go-chi/chi"
@@ -92,8 +91,6 @@ func main() {
 
 	isDev := os.Getenv("NAT_ENV") != "production"
 
-	prometheus.Register()
-
 	r := chi.NewRouter()
 
 	r.Use(middleware.RequestID)
@@ -163,8 +160,6 @@ func main() {
 			handler.CacheSize(512),
 			handler.RequestMiddleware(GqlLoggingMiddleware),
 			handler.RequestMiddleware(gqlapollotracing.RequestMiddleware()),
-			handler.RequestMiddleware(prometheus.RequestMiddleware()),
-			handler.ResolverMiddleware(prometheus.ResolverMiddleware()),
 			handler.Tracer(gqlapollotracing.NewTracer()),
 			handler.Tracer(gqlopencensus.New()),
 		))
