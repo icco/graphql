@@ -10,6 +10,7 @@ import (
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	"contrib.go.opencensus.io/exporter/stackdriver/monitoredresource"
 	"contrib.go.opencensus.io/exporter/stackdriver/propagation"
+	"github.com/99designs/gqlgen-contrib/gqlapollotracing"
 	"github.com/99designs/gqlgen-contrib/gqlopencensus"
 	gql "github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/handler"
@@ -63,6 +64,9 @@ func main() {
 	}
 	log.Printf("Starting up on http://localhost:%s", port)
 
+	var trcr gql.Tracer
+	trcr = gqlapollotracing.NewTracer()
+
 	if os.Getenv("ENABLE_STACKDRIVER") != "" {
 		labels := &stackdriver.Labels{}
 		labels.Set("app", "graphql", "The name of the current app.")
@@ -85,6 +89,8 @@ func main() {
 		trace.ApplyConfig(trace.Config{
 			DefaultSampler: trace.ProbabilitySampler(0.1),
 		})
+
+		trcr = gqlopencensus.New()
 	}
 
 	isDev := os.Getenv("NAT_ENV") != "production"
@@ -157,7 +163,8 @@ func main() {
 			}),
 			handler.CacheSize(512),
 			handler.RequestMiddleware(GqlLoggingMiddleware),
-			handler.Tracer(gqlopencensus.New()),
+			handler.RequestMiddleware(gqlapollotracing.RequestMiddleware()),
+			handler.Tracer(trcr),
 		))
 
 		r.Post("/photo/new", photoUploadHandler)
