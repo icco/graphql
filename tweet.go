@@ -72,17 +72,7 @@ func GetTweet(ctx context.Context, id string) (*Tweet, error) {
 }
 
 // GetTweets returns an array of tweets from the database.
-func GetTweets(ctx context.Context, limitIn *int, offsetIn *int) ([]*Tweet, error) {
-	limit := 10
-	if limitIn != nil {
-		limit = *limitIn
-	}
-
-	offset := 0
-	if offsetIn != nil {
-		offset = *offsetIn
-	}
-
+func GetTweets(ctx context.Context, limit, offset int) ([]*Tweet, error) {
 	rows, err := db.QueryContext(ctx, "SELECT id, text, hashtags, symbols, user_mentions, urls, screen_name, favorites, retweets, posted FROM tweets ORDER BY posted DESC LIMIT $1 OFFSET $2", limit, offset)
 	if err != nil {
 		return nil, err
@@ -113,17 +103,7 @@ func (t *Tweet) URI() URI {
 }
 
 // GetTweetsByScreenName returns an array of tweets from the database filtered by screenname.
-func GetTweetsByScreenName(ctx context.Context, screenName string, limitIn *int, offsetIn *int) ([]*Tweet, error) {
-	limit := 10
-	if limitIn != nil {
-		limit = *limitIn
-	}
-
-	offset := 0
-	if offsetIn != nil {
-		offset = *offsetIn
-	}
-
+func GetTweetsByScreenName(ctx context.Context, screenName string, limit, offset int) ([]*Tweet, error) {
 	rows, err := db.QueryContext(ctx, "SELECT id, text, hashtags, symbols, user_mentions, urls, screen_name, favorites, retweets, posted FROM tweets WHERE screen_name = $3 ORDER BY posted DESC LIMIT $1 OFFSET $2", limit, offset, screenName)
 	if err != nil {
 		return nil, err

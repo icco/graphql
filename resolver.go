@@ -31,6 +31,25 @@ func GetUserFromContext(ctx context.Context) *User {
 	return u
 }
 
+// ParseLimit turns a limit and applies defaults into a pair of ints.
+func ParseLimit(lim *Limit, defaultLimit, defaultOffset int) (int, int) {
+	limit := defaultLimit
+	offset := defaultOffset
+
+	if lim != nil {
+		i := *lim
+		if i.Limit != nil {
+			limit = *i.Limit
+		}
+
+		if i.Offset != nil {
+			offset = *i.Offset
+		}
+	}
+
+	return limit, offset
+}
+
 // WithUser puts a user in the context.
 func WithUser(ctx context.Context, u *User) context.Context {
 	return context.WithValue(ctx, userCtxKey, u)
@@ -272,35 +291,13 @@ func (r *mutationResolver) UpsertTweet(ctx context.Context, input NewTweet) (*Tw
 type queryResolver struct{ *Resolver }
 
 func (r *queryResolver) Drafts(ctx context.Context, input *Limit) ([]*Post, error) {
-	limit := 10
-	offset := 0
-	if input != nil {
-		i := *input
-		if i.Limit != nil {
-			limit = *i.Limit
-		}
-
-		if i.Offset != nil {
-			offset = *i.Offset
-		}
-	}
+	limit, offset := ParseLimit(input, 10, 0)
 
 	return Drafts(ctx, limit, offset)
 }
 
 func (r *queryResolver) Posts(ctx context.Context, input *Limit) ([]*Post, error) {
-	limit := 10
-	offset := 0
-	if input != nil {
-		i := *input
-		if i.Limit != nil {
-			limit = *i.Limit
-		}
-
-		if i.Offset != nil {
-			offset = *i.Offset
-		}
-	}
+	limit, offset := ParseLimit(input, 10, 0)
 
 	return Posts(ctx, limit, offset)
 }
@@ -328,18 +325,7 @@ func (r *queryResolver) PrevPost(ctx context.Context, id string) (*Post, error) 
 }
 
 func (r *queryResolver) Links(ctx context.Context, input *Limit) ([]*Link, error) {
-	limit := 10
-	offset := 0
-	if input != nil {
-		i := *input
-		if i.Limit != nil {
-			limit = *i.Limit
-		}
-
-		if i.Offset != nil {
-			offset = *i.Offset
-		}
-	}
+	limit, offset := ParseLimit(input, 10, 0)
 
 	return GetLinks(ctx, limit, offset)
 }
@@ -420,18 +406,7 @@ func (r *queryResolver) Whoami(ctx context.Context) (*User, error) {
 }
 
 func (r *queryResolver) Tweets(ctx context.Context, input *Limit) ([]*Tweet, error) {
-	limit := 10
-	offset := 0
-	if input != nil {
-		i := *input
-		if i.Limit != nil {
-			limit = *i.Limit
-		}
-
-		if i.Offset != nil {
-			offset = *i.Offset
-		}
-	}
+	limit, offset := ParseLimit(input, 10, 0)
 
 	return GetTweets(ctx, limit, offset)
 }
@@ -441,23 +416,13 @@ func (r *queryResolver) Tweet(ctx context.Context, id string) (*Tweet, error) {
 }
 
 func (r *queryResolver) TweetsByScreenName(ctx context.Context, screenName string, input *Limit) ([]*Tweet, error) {
+	limit, offset := ParseLimit(input, 10, 0)
 	return GetTweetsByScreenName(ctx, screenName, limit, offset)
 }
 
 func (r *queryResolver) HomeTimelineURLs(ctx context.Context, input *Limit) ([]*models.SavedURL, error) {
 	urls := []*models.SavedURL{}
-	limit := 100
-	offset := 0
-	if input != nil {
-		i := *input
-		if i.Limit != nil {
-			limit = *i.Limit
-		}
-
-		if i.Offset != nil {
-			offset = *i.Offset
-		}
-	}
+	limit, offset := ParseLimit(input, 100, 0)
 
 	url := fmt.Sprintf("https://cacophony.natwelch.com/?count=%d&offset=%d", limit, offset)
 	req, err := http.NewRequest("GET", url, nil)

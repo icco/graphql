@@ -125,7 +125,7 @@ func AllTags(ctx context.Context) ([]string, error) {
 }
 
 // Drafts is a simple wrapper around Posts that does return drafts.
-func Drafts(ctx context.Context) ([]*Post, error) {
+func Drafts(ctx context.Context, _, _ int) ([]*Post, error) {
 	return AllPosts(ctx, true)
 }
 
