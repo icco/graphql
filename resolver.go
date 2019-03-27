@@ -272,7 +272,20 @@ func (r *mutationResolver) UpsertTweet(ctx context.Context, input NewTweet) (*Tw
 type queryResolver struct{ *Resolver }
 
 func (r *queryResolver) Drafts(ctx context.Context, input *Limit) ([]*Post, error) {
-	return Drafts(ctx)
+	limit := 10
+	offset := 0
+	if input != nil {
+		i := *input
+		if i.Limit != nil {
+			limit = *i.Limit
+		}
+
+		if i.Offset != nil {
+			offset = *i.Offset
+		}
+	}
+
+	return Drafts(ctx, limit, offset)
 }
 
 func (r *queryResolver) Posts(ctx context.Context, input *Limit) ([]*Post, error) {
@@ -315,10 +328,17 @@ func (r *queryResolver) PrevPost(ctx context.Context, id string) (*Post, error) 
 }
 
 func (r *queryResolver) Links(ctx context.Context, input *Limit) ([]*Link, error) {
-	var limit, offset *int
+	limit := 10
+	offset := 0
 	if input != nil {
-		limit = input.Limit
-		offset = input.Offset
+		i := *input
+		if i.Limit != nil {
+			limit = *i.Limit
+		}
+
+		if i.Offset != nil {
+			offset = *i.Offset
+		}
 	}
 
 	return GetLinks(ctx, limit, offset)
@@ -400,11 +420,19 @@ func (r *queryResolver) Whoami(ctx context.Context) (*User, error) {
 }
 
 func (r *queryResolver) Tweets(ctx context.Context, input *Limit) ([]*Tweet, error) {
-	var limit, offset *int
+	limit := 10
+	offset := 0
 	if input != nil {
-		limit = input.Limit
-		offset = input.Offset
+		i := *input
+		if i.Limit != nil {
+			limit = *i.Limit
+		}
+
+		if i.Offset != nil {
+			offset = *i.Offset
+		}
 	}
+
 	return GetTweets(ctx, limit, offset)
 }
 
@@ -413,22 +441,25 @@ func (r *queryResolver) Tweet(ctx context.Context, id string) (*Tweet, error) {
 }
 
 func (r *queryResolver) TweetsByScreenName(ctx context.Context, screenName string, input *Limit) ([]*Tweet, error) {
-	var limit, offset *int
-	if input != nil {
-		limit = input.Limit
-		offset = input.Offset
-	}
 	return GetTweetsByScreenName(ctx, screenName, limit, offset)
 }
 
 func (r *queryResolver) HomeTimelineURLs(ctx context.Context, input *Limit) ([]*models.SavedURL, error) {
 	urls := []*models.SavedURL{}
 	limit := 100
+	offset := 0
 	if input != nil {
-		limit = *input.Limit
+		i := *input
+		if i.Limit != nil {
+			limit = *i.Limit
+		}
+
+		if i.Offset != nil {
+			offset = *i.Offset
+		}
 	}
 
-	url := fmt.Sprintf("https://cacophony.natwelch.com/?count=%d", limit)
+	url := fmt.Sprintf("https://cacophony.natwelch.com/?count=%d&offset=%d", limit, offset)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return urls, err
