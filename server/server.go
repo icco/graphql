@@ -64,9 +64,6 @@ func main() {
 	}
 	log.Printf("Starting up on http://localhost:%s", port)
 
-	var trcr gql.Tracer
-	trcr = gqlapollotracing.NewTracer()
-
 	if os.Getenv("ENABLE_STACKDRIVER") != "" {
 		labels := &stackdriver.Labels{}
 		labels.Set("app", "graphql", "The name of the current app.")
@@ -90,7 +87,6 @@ func main() {
 			DefaultSampler: trace.ProbabilitySampler(0.1),
 		})
 
-		trcr = gqlopencensus.New()
 	}
 
 	isDev := os.Getenv("NAT_ENV") != "production"
@@ -164,7 +160,8 @@ func main() {
 			handler.CacheSize(512),
 			handler.RequestMiddleware(GqlLoggingMiddleware),
 			handler.RequestMiddleware(gqlapollotracing.RequestMiddleware()),
-			handler.Tracer(trcr),
+			handler.Tracer(gqlapollotracing.NewTracer()),
+			handler.Tracer(gqlopencensus.New()),
 		))
 
 		r.Post("/photo/new", photoUploadHandler)
