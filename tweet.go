@@ -59,14 +59,18 @@ func (t *Tweet) IsLinkable() {}
 // GetTweet returns a single tweet by id.
 func GetTweet(ctx context.Context, id string) (*Tweet, error) {
 	var tweet Tweet
+	uris := []string{}
 	row := db.QueryRowContext(ctx, "SELECT id, text, hashtags, symbols, user_mentions, urls, screen_name, favorites, retweets, posted FROM tweets WHERE id = $1", id)
-	err := row.Scan(&tweet.ID, &tweet.Text, pq.Array(&tweet.Hashtags), pq.Array(&tweet.Symbols), pq.Array(&tweet.UserMentions), pq.Array(&tweet.Urls), &tweet.ScreenName, &tweet.FavoriteCount, &tweet.RetweetCount, &tweet.Posted)
+	err := row.Scan(&tweet.ID, &tweet.Text, pq.Array(&tweet.Hashtags), pq.Array(&tweet.Symbols), pq.Array(&tweet.UserMentions), pq.Array(&uris), &tweet.ScreenName, &tweet.FavoriteCount, &tweet.RetweetCount, &tweet.Posted)
 	switch {
 	case err == sql.ErrNoRows:
 		return nil, fmt.Errorf("No tweet %s", id)
 	case err != nil:
 		return nil, fmt.Errorf("Error running get query: %+v", err)
 	default:
+		for _, v := range uris {
+			tweet.Urls = append(tweet.Urls, URI{v})
+		}
 		return &tweet, nil
 	}
 }
@@ -117,10 +121,15 @@ func GetTweetsByScreenName(ctx context.Context, screenName string, limit, offset
 
 	tweets := make([]*Tweet, 0)
 	for rows.Next() {
+		uris := []string{}
 		tweet := new(Tweet)
-		err := rows.Scan(&tweet.ID, &tweet.Text, pq.Array(&tweet.Hashtags), pq.Array(&tweet.Symbols), pq.Array(&tweet.UserMentions), pq.Array(&tweet.Urls), &tweet.ScreenName, &tweet.FavoriteCount, &tweet.RetweetCount, &tweet.Posted)
+		err := rows.Scan(&tweet.ID, &tweet.Text, pq.Array(&tweet.Hashtags), pq.Array(&tweet.Symbols), pq.Array(&tweet.UserMentions), pq.Array(&uris), &tweet.ScreenName, &tweet.FavoriteCount, &tweet.RetweetCount, &tweet.Posted)
 		if err != nil {
 			return nil, err
+		}
+
+		for _, v := range uris {
+			tweet.Urls = append(tweet.Urls, URI{v})
 		}
 
 		tweets = append(tweets, tweet)
