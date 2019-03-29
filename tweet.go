@@ -81,10 +81,15 @@ func GetTweets(ctx context.Context, limit, offset int) ([]*Tweet, error) {
 
 	tweets := make([]*Tweet, 0)
 	for rows.Next() {
+		uris := []string{}
 		tweet := new(Tweet)
-		err := rows.Scan(&tweet.ID, &tweet.Text, pq.Array(&tweet.Hashtags), pq.Array(&tweet.Symbols), pq.Array(&tweet.UserMentions), pq.Array(&tweet.Urls), &tweet.ScreenName, &tweet.FavoriteCount, &tweet.RetweetCount, &tweet.Posted)
+		err := rows.Scan(&tweet.ID, &tweet.Text, pq.Array(&tweet.Hashtags), pq.Array(&tweet.Symbols), pq.Array(&tweet.UserMentions), pq.Array(&uris), &tweet.ScreenName, &tweet.FavoriteCount, &tweet.RetweetCount, &tweet.Posted)
 		if err != nil {
 			return nil, err
+		}
+
+		for _, v := range uris {
+			tweet.Urls = append(tweet.Urls, URI{v})
 		}
 
 		tweets = append(tweets, tweet)
