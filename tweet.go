@@ -69,7 +69,7 @@ func GetTweet(ctx context.Context, id string) (*Tweet, error) {
 		return nil, fmt.Errorf("Error running get query: %+v", err)
 	default:
 		for _, v := range uris {
-			tweet.Urls = append(tweet.Urls, URI{v})
+			tweet.Urls = append(tweet.Urls, NewURI(v))
 		}
 		return &tweet, nil
 	}
@@ -93,7 +93,7 @@ func GetTweets(ctx context.Context, limit, offset int) ([]*Tweet, error) {
 		}
 
 		for _, v := range uris {
-			tweet.Urls = append(tweet.Urls, URI{v})
+			tweet.Urls = append(tweet.Urls, NewURI(v))
 		}
 
 		tweets = append(tweets, tweet)
@@ -108,7 +108,7 @@ func GetTweets(ctx context.Context, limit, offset int) ([]*Tweet, error) {
 
 // URI returns a link to this tweet.
 func (t *Tweet) URI() URI {
-	return URI{fmt.Sprintf("https://twitter.com/%s/status/%s", t.ScreenName, t.ID)}
+	return NewURI(fmt.Sprintf("https://twitter.com/%s/status/%s", t.ScreenName, t.ID))
 }
 
 // GetTweetsByScreenName returns an array of tweets from the database filtered by screenname.
@@ -129,7 +129,7 @@ func GetTweetsByScreenName(ctx context.Context, screenName string, limit, offset
 		}
 
 		for _, v := range uris {
-			tweet.Urls = append(tweet.Urls, URI{v})
+			tweet.Urls = append(tweet.Urls, NewURI(v))
 		}
 
 		tweets = append(tweets, tweet)

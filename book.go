@@ -62,5 +62,5 @@ WHERE books.id = $1;
 
 // URI returns an absolute link to this book.
 func (b *Book) URI() URI {
-	return URI{fmt.Sprintf("https://www.goodreads.com/book/show/%s", b.GoodreadsID)}
+	return NewURI(fmt.Sprintf("https://www.goodreads.com/book/show/%s", b.GoodreadsID))
 }
