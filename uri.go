@@ -61,7 +61,7 @@ func (u URI) Value() (driver.Value, error) {
 }
 
 func (u URI) MarshalJSON() ([]byte, error) {
-	return []byte(u.String()), nil
+	return []byte(fmt.Sprintf(`"%s"`, u.String())), nil
 }
 
 func (u *URI) UnmarshalJSON(value []byte) error {
