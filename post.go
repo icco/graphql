@@ -337,7 +337,53 @@ func (p *Post) Related(ctx context.Context, input *Limit) ([]*Post, error) {
 		posts = append(posts, post)
 	}
 
+	if len(posts) < limit {
+		existing := []int64{}
+		for _, p := range posts {
+			existing = append(existing, p.IntID())
+		}
+
+		addPosts, err := GetRandomPosts(ctx, limit-len(posts), existing)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, v := range addPosts {
+			posts = append(posts, v)
+		}
+	}
+
 	return posts, nil
+}
+
+func GetRandomPosts(ctx context.Context, limit int, notIn []int64) ([]*Post, error) {
+	query := `SELECT id, title, content, date, created_at, modified_at, tags, draft
+  FROM posts
+  WHERE draft = false
+    AND id <> ALL($1)
+  ORDER BY random() DESC LIMIT $2`
+
+	rows, err := db.QueryContext(ctx, query, pq.Array(notIn), limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	posts := make([]*Post, 0)
+	for rows.Next() {
+		post := new(Post)
+		err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.Datetime, &post.Created, &post.Modified, pq.Array(&post.Tags), &post.Draft)
+		if err != nil {
+			return nil, err
+		}
+		posts = append(posts, post)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return posts, nil
+
 }
 
 // Posts returns some posts.
