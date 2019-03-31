@@ -35,9 +35,15 @@ func (u *URI) UnmarshalGQL(v interface{}) error {
 		return nil
 	}
 
+	in, ok := v.(URI)
+	if ok {
+		u.raw = in.String()
+		return nil
+	}
+
 	str, ok := v.(string)
 	if !ok {
-		return fmt.Errorf("URI must be strings")
+		return fmt.Errorf("URI must be a string")
 	}
 	u.raw = str
 
