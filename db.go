@@ -202,6 +202,13 @@ var (
       CREATE INDEX content_gin_idx ON posts USING GIN(content gin_trgm_ops);
       `,
 		},
+		{
+			Version:     15,
+			Description: "Add second trgm index",
+			Script: `
+      CREATE INDEX title_gin_idx ON posts USING GIN(title gin_trgm_ops);
+      `,
+		},
 	}
 )
 

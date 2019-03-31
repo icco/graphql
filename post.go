@@ -309,14 +309,14 @@ func (p *Post) Related(ctx context.Context, input *Limit) ([]*Post, error) {
 
 	// From https://www.postgresql.org/docs/9.6/pgtrgm.html
 	query := `
-  SELECT SIMILARITY($1, content) AS sim, id
+  SELECT SIMILARITY($1, title) AS sim, id
   FROM posts
   WHERE id != $2
-    AND content % $1
+    AND title % $1
   ORDER BY sim DESC
   LIMIT $3 OFFSET $4`
 
-	rows, err := db.QueryContext(ctx, query, p.Content, p.ID, limit, offset)
+	rows, err := db.QueryContext(ctx, query, p.Title, p.ID, limit, offset)
 	if err != nil {
 		return nil, err
 	}
