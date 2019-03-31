@@ -59,3 +59,12 @@ func (u URI) MarshalGQL(w io.Writer) {
 func (u URI) Value() (driver.Value, error) {
 	return u.raw, nil
 }
+
+func (u URI) MarshalJSON() ([]byte, error) {
+	return []byte(u.String()), nil
+}
+
+func (u *URI) UnmarshalJSON(value []byte) error {
+	u.raw = string(value)
+	return nil
+}
