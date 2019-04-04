@@ -50,8 +50,8 @@ type DirectiveRoot struct {
 type ComplexityRoot struct {
 	Book struct {
 		ID    func(childComplexity int) int
-		URI   func(childComplexity int) int
 		Title func(childComplexity int) int
+		URI   func(childComplexity int) int
 	}
 
 	Comment struct {
@@ -64,89 +64,89 @@ type ComplexityRoot struct {
 	}
 
 	Link struct {
-		ID          func(childComplexity int) int
-		Title       func(childComplexity int) int
-		URI         func(childComplexity int) int
 		Created     func(childComplexity int) int
 		Description func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Modified    func(childComplexity int) int
 		Screenshot  func(childComplexity int) int
 		Tags        func(childComplexity int) int
-		Modified    func(childComplexity int) int
+		Title       func(childComplexity int) int
+		URI         func(childComplexity int) int
 	}
 
 	Log struct {
-		ID          func(childComplexity int) int
 		Code        func(childComplexity int) int
 		Datetime    func(childComplexity int) int
 		Description func(childComplexity int) int
+		ID          func(childComplexity int) int
 		Location    func(childComplexity int) int
 		Project     func(childComplexity int) int
 		User        func(childComplexity int) int
 	}
 
 	Mutation struct {
-		UpsertBook  func(childComplexity int, input EditBook) int
-		UpsertLink  func(childComplexity int, input NewLink) int
-		UpsertStat  func(childComplexity int, input NewStat) int
-		UpsertTweet func(childComplexity int, input NewTweet) int
 		CreatePost  func(childComplexity int, input EditPost) int
 		EditPost    func(childComplexity int, input EditPost) int
 		InsertLog   func(childComplexity int, input NewLog) int
+		UpsertBook  func(childComplexity int, input EditBook) int
+		UpsertLink  func(childComplexity int, input NewLink) int
 		UpsertPage  func(childComplexity int, input EditPage) int
+		UpsertStat  func(childComplexity int, input NewStat) int
+		UpsertTweet func(childComplexity int, input NewTweet) int
 	}
 
 	Page struct {
-		ID       func(childComplexity int) int
-		Slug     func(childComplexity int) int
-		Title    func(childComplexity int) int
-		Content  func(childComplexity int) int
 		Category func(childComplexity int) int
-		Tags     func(childComplexity int) int
-		User     func(childComplexity int) int
+		Content  func(childComplexity int) int
 		Created  func(childComplexity int) int
+		ID       func(childComplexity int) int
 		Modified func(childComplexity int) int
+		Slug     func(childComplexity int) int
+		Tags     func(childComplexity int) int
+		Title    func(childComplexity int) int
+		User     func(childComplexity int) int
 	}
 
 	Post struct {
-		ID       func(childComplexity int) int
-		Title    func(childComplexity int) int
 		Content  func(childComplexity int) int
-		Summary  func(childComplexity int) int
-		ReadTime func(childComplexity int) int
-		Datetime func(childComplexity int) int
 		Created  func(childComplexity int) int
-		Modified func(childComplexity int) int
+		Datetime func(childComplexity int) int
 		Draft    func(childComplexity int) int
-		Tags     func(childComplexity int) int
+		ID       func(childComplexity int) int
 		Links    func(childComplexity int) int
-		URI      func(childComplexity int) int
+		Modified func(childComplexity int) int
 		Next     func(childComplexity int) int
 		Prev     func(childComplexity int) int
+		ReadTime func(childComplexity int) int
 		Related  func(childComplexity int, input *Limit) int
+		Summary  func(childComplexity int) int
+		Tags     func(childComplexity int) int
+		Title    func(childComplexity int) int
+		URI      func(childComplexity int) int
 	}
 
 	Query struct {
-		Links              func(childComplexity int, input *Limit) int
-		Link               func(childComplexity int, id *string, url *URI) int
-		Stats              func(childComplexity int, count *int) int
 		Counts             func(childComplexity int) int
-		Whoami             func(childComplexity int) int
-		Tweets             func(childComplexity int, input *Limit) int
-		Tweet              func(childComplexity int, id string) int
-		TweetsByScreenName func(childComplexity int, screenName string, input *Limit) int
-		HomeTimelineURLs   func(childComplexity int, input *Limit) int
-		Time               func(childComplexity int) int
 		Drafts             func(childComplexity int, input *Limit) int
-		Posts              func(childComplexity int, input *Limit) int
-		Post               func(childComplexity int, id string) int
-		NextPost           func(childComplexity int, id string) int
-		PrevPost           func(childComplexity int, id string) int
-		PostsByTag         func(childComplexity int, id string) int
-		Tags               func(childComplexity int) int
-		Logs               func(childComplexity int, userID *string) int
 		GetPageByID        func(childComplexity int, id string) int
 		GetPageBySlug      func(childComplexity int, slug string) int
 		GetPages           func(childComplexity int) int
+		HomeTimelineURLs   func(childComplexity int, input *Limit) int
+		Link               func(childComplexity int, id *string, url *URI) int
+		Links              func(childComplexity int, input *Limit) int
+		Logs               func(childComplexity int, userID *string) int
+		NextPost           func(childComplexity int, id string) int
+		Post               func(childComplexity int, id string) int
+		Posts              func(childComplexity int, input *Limit) int
+		PostsByTag         func(childComplexity int, id string) int
+		PrevPost           func(childComplexity int, id string) int
+		Stats              func(childComplexity int, count *int) int
+		Tags               func(childComplexity int) int
+		Time               func(childComplexity int) int
+		Tweet              func(childComplexity int, id string) int
+		Tweets             func(childComplexity int, input *Limit) int
+		TweetsByScreenName func(childComplexity int, screenName string, input *Limit) int
+		Whoami             func(childComplexity int) int
 	}
 
 	Stat struct {
@@ -155,33 +155,33 @@ type ComplexityRoot struct {
 	}
 
 	Tweet struct {
-		ID            func(childComplexity int) int
-		Text          func(childComplexity int) int
-		Hashtags      func(childComplexity int) int
-		Symbols       func(childComplexity int) int
-		UserMentions  func(childComplexity int) int
-		Urls          func(childComplexity int) int
-		ScreenName    func(childComplexity int) int
 		FavoriteCount func(childComplexity int) int
-		RetweetCount  func(childComplexity int) int
+		Hashtags      func(childComplexity int) int
+		ID            func(childComplexity int) int
 		Posted        func(childComplexity int) int
+		RetweetCount  func(childComplexity int) int
+		ScreenName    func(childComplexity int) int
+		Symbols       func(childComplexity int) int
+		Text          func(childComplexity int) int
 		URI           func(childComplexity int) int
+		Urls          func(childComplexity int) int
+		UserMentions  func(childComplexity int) int
 	}
 
 	TwitterURL struct {
-		Link       func(childComplexity int) int
-		TweetIDs   func(childComplexity int) int
 		CreatedAt  func(childComplexity int) int
+		Link       func(childComplexity int) int
 		ModifiedAt func(childComplexity int) int
+		TweetIDs   func(childComplexity int) int
 		Tweets     func(childComplexity int) int
 	}
 
 	User struct {
-		ID       func(childComplexity int) int
-		Role     func(childComplexity int) int
 		APIKey   func(childComplexity int) int
 		Created  func(childComplexity int) int
+		ID       func(childComplexity int) int
 		Modified func(childComplexity int) int
+		Role     func(childComplexity int) int
 	}
 }
 
@@ -246,19 +246,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Book.ID(childComplexity), true
 
-	case "Book.URI":
-		if e.complexity.Book.URI == nil {
-			break
-		}
-
-		return e.complexity.Book.URI(childComplexity), true
-
 	case "Book.Title":
 		if e.complexity.Book.Title == nil {
 			break
 		}
 
 		return e.complexity.Book.Title(childComplexity), true
+
+	case "Book.URI":
+		if e.complexity.Book.URI == nil {
+			break
+		}
+
+		return e.complexity.Book.URI(childComplexity), true
 
 	case "Comment.ID":
 		if e.complexity.Comment.ID == nil {
@@ -281,27 +281,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Geo.Long(childComplexity), true
 
-	case "Link.ID":
-		if e.complexity.Link.ID == nil {
-			break
-		}
-
-		return e.complexity.Link.ID(childComplexity), true
-
-	case "Link.Title":
-		if e.complexity.Link.Title == nil {
-			break
-		}
-
-		return e.complexity.Link.Title(childComplexity), true
-
-	case "Link.URI":
-		if e.complexity.Link.URI == nil {
-			break
-		}
-
-		return e.complexity.Link.URI(childComplexity), true
-
 	case "Link.Created":
 		if e.complexity.Link.Created == nil {
 			break
@@ -315,6 +294,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Link.Description(childComplexity), true
+
+	case "Link.ID":
+		if e.complexity.Link.ID == nil {
+			break
+		}
+
+		return e.complexity.Link.ID(childComplexity), true
+
+	case "Link.Modified":
+		if e.complexity.Link.Modified == nil {
+			break
+		}
+
+		return e.complexity.Link.Modified(childComplexity), true
 
 	case "Link.Screenshot":
 		if e.complexity.Link.Screenshot == nil {
@@ -330,19 +323,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Link.Tags(childComplexity), true
 
-	case "Link.Modified":
-		if e.complexity.Link.Modified == nil {
+	case "Link.Title":
+		if e.complexity.Link.Title == nil {
 			break
 		}
 
-		return e.complexity.Link.Modified(childComplexity), true
+		return e.complexity.Link.Title(childComplexity), true
 
-	case "Log.ID":
-		if e.complexity.Log.ID == nil {
+	case "Link.URI":
+		if e.complexity.Link.URI == nil {
 			break
 		}
 
-		return e.complexity.Log.ID(childComplexity), true
+		return e.complexity.Link.URI(childComplexity), true
 
 	case "Log.Code":
 		if e.complexity.Log.Code == nil {
@@ -365,6 +358,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Log.Description(childComplexity), true
 
+	case "Log.ID":
+		if e.complexity.Log.ID == nil {
+			break
+		}
+
+		return e.complexity.Log.ID(childComplexity), true
+
 	case "Log.Location":
 		if e.complexity.Log.Location == nil {
 			break
@@ -385,54 +385,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Log.User(childComplexity), true
-
-	case "Mutation.UpsertBook":
-		if e.complexity.Mutation.UpsertBook == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_upsertBook_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.UpsertBook(childComplexity, args["input"].(EditBook)), true
-
-	case "Mutation.UpsertLink":
-		if e.complexity.Mutation.UpsertLink == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_upsertLink_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.UpsertLink(childComplexity, args["input"].(NewLink)), true
-
-	case "Mutation.UpsertStat":
-		if e.complexity.Mutation.UpsertStat == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_upsertStat_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.UpsertStat(childComplexity, args["input"].(NewStat)), true
-
-	case "Mutation.UpsertTweet":
-		if e.complexity.Mutation.UpsertTweet == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_upsertTweet_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.UpsertTweet(childComplexity, args["input"].(NewTweet)), true
 
 	case "Mutation.CreatePost":
 		if e.complexity.Mutation.CreatePost == nil {
@@ -470,6 +422,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.InsertLog(childComplexity, args["input"].(NewLog)), true
 
+	case "Mutation.UpsertBook":
+		if e.complexity.Mutation.UpsertBook == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_upsertBook_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpsertBook(childComplexity, args["input"].(EditBook)), true
+
+	case "Mutation.UpsertLink":
+		if e.complexity.Mutation.UpsertLink == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_upsertLink_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpsertLink(childComplexity, args["input"].(NewLink)), true
+
 	case "Mutation.UpsertPage":
 		if e.complexity.Mutation.UpsertPage == nil {
 			break
@@ -482,33 +458,29 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpsertPage(childComplexity, args["input"].(EditPage)), true
 
-	case "Page.ID":
-		if e.complexity.Page.ID == nil {
+	case "Mutation.UpsertStat":
+		if e.complexity.Mutation.UpsertStat == nil {
 			break
 		}
 
-		return e.complexity.Page.ID(childComplexity), true
+		args, err := ec.field_Mutation_upsertStat_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
 
-	case "Page.Slug":
-		if e.complexity.Page.Slug == nil {
+		return e.complexity.Mutation.UpsertStat(childComplexity, args["input"].(NewStat)), true
+
+	case "Mutation.UpsertTweet":
+		if e.complexity.Mutation.UpsertTweet == nil {
 			break
 		}
 
-		return e.complexity.Page.Slug(childComplexity), true
-
-	case "Page.Title":
-		if e.complexity.Page.Title == nil {
-			break
+		args, err := ec.field_Mutation_upsertTweet_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
 		}
 
-		return e.complexity.Page.Title(childComplexity), true
-
-	case "Page.Content":
-		if e.complexity.Page.Content == nil {
-			break
-		}
-
-		return e.complexity.Page.Content(childComplexity), true
+		return e.complexity.Mutation.UpsertTweet(childComplexity, args["input"].(NewTweet)), true
 
 	case "Page.Category":
 		if e.complexity.Page.Category == nil {
@@ -517,19 +489,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Page.Category(childComplexity), true
 
-	case "Page.Tags":
-		if e.complexity.Page.Tags == nil {
+	case "Page.Content":
+		if e.complexity.Page.Content == nil {
 			break
 		}
 
-		return e.complexity.Page.Tags(childComplexity), true
-
-	case "Page.User":
-		if e.complexity.Page.User == nil {
-			break
-		}
-
-		return e.complexity.Page.User(childComplexity), true
+		return e.complexity.Page.Content(childComplexity), true
 
 	case "Page.Created":
 		if e.complexity.Page.Created == nil {
@@ -538,6 +503,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Page.Created(childComplexity), true
 
+	case "Page.ID":
+		if e.complexity.Page.ID == nil {
+			break
+		}
+
+		return e.complexity.Page.ID(childComplexity), true
+
 	case "Page.Modified":
 		if e.complexity.Page.Modified == nil {
 			break
@@ -545,19 +517,33 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Page.Modified(childComplexity), true
 
-	case "Post.ID":
-		if e.complexity.Post.ID == nil {
+	case "Page.Slug":
+		if e.complexity.Page.Slug == nil {
 			break
 		}
 
-		return e.complexity.Post.ID(childComplexity), true
+		return e.complexity.Page.Slug(childComplexity), true
 
-	case "Post.Title":
-		if e.complexity.Post.Title == nil {
+	case "Page.Tags":
+		if e.complexity.Page.Tags == nil {
 			break
 		}
 
-		return e.complexity.Post.Title(childComplexity), true
+		return e.complexity.Page.Tags(childComplexity), true
+
+	case "Page.Title":
+		if e.complexity.Page.Title == nil {
+			break
+		}
+
+		return e.complexity.Page.Title(childComplexity), true
+
+	case "Page.User":
+		if e.complexity.Page.User == nil {
+			break
+		}
+
+		return e.complexity.Page.User(childComplexity), true
 
 	case "Post.Content":
 		if e.complexity.Post.Content == nil {
@@ -566,19 +552,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Post.Content(childComplexity), true
 
-	case "Post.Summary":
-		if e.complexity.Post.Summary == nil {
+	case "Post.Created":
+		if e.complexity.Post.Created == nil {
 			break
 		}
 
-		return e.complexity.Post.Summary(childComplexity), true
-
-	case "Post.ReadTime":
-		if e.complexity.Post.ReadTime == nil {
-			break
-		}
-
-		return e.complexity.Post.ReadTime(childComplexity), true
+		return e.complexity.Post.Created(childComplexity), true
 
 	case "Post.Datetime":
 		if e.complexity.Post.Datetime == nil {
@@ -587,20 +566,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Post.Datetime(childComplexity), true
 
-	case "Post.Created":
-		if e.complexity.Post.Created == nil {
-			break
-		}
-
-		return e.complexity.Post.Created(childComplexity), true
-
-	case "Post.Modified":
-		if e.complexity.Post.Modified == nil {
-			break
-		}
-
-		return e.complexity.Post.Modified(childComplexity), true
-
 	case "Post.Draft":
 		if e.complexity.Post.Draft == nil {
 			break
@@ -608,12 +573,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Post.Draft(childComplexity), true
 
-	case "Post.Tags":
-		if e.complexity.Post.Tags == nil {
+	case "Post.ID":
+		if e.complexity.Post.ID == nil {
 			break
 		}
 
-		return e.complexity.Post.Tags(childComplexity), true
+		return e.complexity.Post.ID(childComplexity), true
 
 	case "Post.Links":
 		if e.complexity.Post.Links == nil {
@@ -622,12 +587,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Post.Links(childComplexity), true
 
-	case "Post.URI":
-		if e.complexity.Post.URI == nil {
+	case "Post.Modified":
+		if e.complexity.Post.Modified == nil {
 			break
 		}
 
-		return e.complexity.Post.URI(childComplexity), true
+		return e.complexity.Post.Modified(childComplexity), true
 
 	case "Post.Next":
 		if e.complexity.Post.Next == nil {
@@ -643,6 +608,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Post.Prev(childComplexity), true
 
+	case "Post.ReadTime":
+		if e.complexity.Post.ReadTime == nil {
+			break
+		}
+
+		return e.complexity.Post.ReadTime(childComplexity), true
+
 	case "Post.Related":
 		if e.complexity.Post.Related == nil {
 			break
@@ -655,41 +627,33 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Post.Related(childComplexity, args["input"].(*Limit)), true
 
-	case "Query.Links":
-		if e.complexity.Query.Links == nil {
+	case "Post.Summary":
+		if e.complexity.Post.Summary == nil {
 			break
 		}
 
-		args, err := ec.field_Query_links_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
+		return e.complexity.Post.Summary(childComplexity), true
 
-		return e.complexity.Query.Links(childComplexity, args["input"].(*Limit)), true
-
-	case "Query.Link":
-		if e.complexity.Query.Link == nil {
+	case "Post.Tags":
+		if e.complexity.Post.Tags == nil {
 			break
 		}
 
-		args, err := ec.field_Query_link_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
+		return e.complexity.Post.Tags(childComplexity), true
 
-		return e.complexity.Query.Link(childComplexity, args["id"].(*string), args["url"].(*URI)), true
-
-	case "Query.Stats":
-		if e.complexity.Query.Stats == nil {
+	case "Post.Title":
+		if e.complexity.Post.Title == nil {
 			break
 		}
 
-		args, err := ec.field_Query_stats_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
+		return e.complexity.Post.Title(childComplexity), true
+
+	case "Post.URI":
+		if e.complexity.Post.URI == nil {
+			break
 		}
 
-		return e.complexity.Query.Stats(childComplexity, args["count"].(*int)), true
+		return e.complexity.Post.URI(childComplexity), true
 
 	case "Query.Counts":
 		if e.complexity.Query.Counts == nil {
@@ -697,68 +661,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Counts(childComplexity), true
-
-	case "Query.Whoami":
-		if e.complexity.Query.Whoami == nil {
-			break
-		}
-
-		return e.complexity.Query.Whoami(childComplexity), true
-
-	case "Query.Tweets":
-		if e.complexity.Query.Tweets == nil {
-			break
-		}
-
-		args, err := ec.field_Query_tweets_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.Tweets(childComplexity, args["input"].(*Limit)), true
-
-	case "Query.Tweet":
-		if e.complexity.Query.Tweet == nil {
-			break
-		}
-
-		args, err := ec.field_Query_tweet_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.Tweet(childComplexity, args["id"].(string)), true
-
-	case "Query.TweetsByScreenName":
-		if e.complexity.Query.TweetsByScreenName == nil {
-			break
-		}
-
-		args, err := ec.field_Query_tweetsByScreenName_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.TweetsByScreenName(childComplexity, args["screen_name"].(string), args["input"].(*Limit)), true
-
-	case "Query.HomeTimelineURLs":
-		if e.complexity.Query.HomeTimelineURLs == nil {
-			break
-		}
-
-		args, err := ec.field_Query_homeTimelineURLs_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.HomeTimelineURLs(childComplexity, args["input"].(*Limit)), true
-
-	case "Query.Time":
-		if e.complexity.Query.Time == nil {
-			break
-		}
-
-		return e.complexity.Query.Time(childComplexity), true
 
 	case "Query.Drafts":
 		if e.complexity.Query.Drafts == nil {
@@ -771,85 +673,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Drafts(childComplexity, args["input"].(*Limit)), true
-
-	case "Query.Posts":
-		if e.complexity.Query.Posts == nil {
-			break
-		}
-
-		args, err := ec.field_Query_posts_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.Posts(childComplexity, args["input"].(*Limit)), true
-
-	case "Query.Post":
-		if e.complexity.Query.Post == nil {
-			break
-		}
-
-		args, err := ec.field_Query_post_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.Post(childComplexity, args["id"].(string)), true
-
-	case "Query.NextPost":
-		if e.complexity.Query.NextPost == nil {
-			break
-		}
-
-		args, err := ec.field_Query_nextPost_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.NextPost(childComplexity, args["id"].(string)), true
-
-	case "Query.PrevPost":
-		if e.complexity.Query.PrevPost == nil {
-			break
-		}
-
-		args, err := ec.field_Query_prevPost_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.PrevPost(childComplexity, args["id"].(string)), true
-
-	case "Query.PostsByTag":
-		if e.complexity.Query.PostsByTag == nil {
-			break
-		}
-
-		args, err := ec.field_Query_postsByTag_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.PostsByTag(childComplexity, args["id"].(string)), true
-
-	case "Query.Tags":
-		if e.complexity.Query.Tags == nil {
-			break
-		}
-
-		return e.complexity.Query.Tags(childComplexity), true
-
-	case "Query.Logs":
-		if e.complexity.Query.Logs == nil {
-			break
-		}
-
-		args, err := ec.field_Query_logs_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.Logs(childComplexity, args["user_id"].(*string)), true
 
 	case "Query.GetPageByID":
 		if e.complexity.Query.GetPageByID == nil {
@@ -882,6 +705,183 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetPages(childComplexity), true
 
+	case "Query.HomeTimelineURLs":
+		if e.complexity.Query.HomeTimelineURLs == nil {
+			break
+		}
+
+		args, err := ec.field_Query_homeTimelineURLs_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.HomeTimelineURLs(childComplexity, args["input"].(*Limit)), true
+
+	case "Query.Link":
+		if e.complexity.Query.Link == nil {
+			break
+		}
+
+		args, err := ec.field_Query_link_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Link(childComplexity, args["id"].(*string), args["url"].(*URI)), true
+
+	case "Query.Links":
+		if e.complexity.Query.Links == nil {
+			break
+		}
+
+		args, err := ec.field_Query_links_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Links(childComplexity, args["input"].(*Limit)), true
+
+	case "Query.Logs":
+		if e.complexity.Query.Logs == nil {
+			break
+		}
+
+		args, err := ec.field_Query_logs_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Logs(childComplexity, args["user_id"].(*string)), true
+
+	case "Query.NextPost":
+		if e.complexity.Query.NextPost == nil {
+			break
+		}
+
+		args, err := ec.field_Query_nextPost_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.NextPost(childComplexity, args["id"].(string)), true
+
+	case "Query.Post":
+		if e.complexity.Query.Post == nil {
+			break
+		}
+
+		args, err := ec.field_Query_post_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Post(childComplexity, args["id"].(string)), true
+
+	case "Query.Posts":
+		if e.complexity.Query.Posts == nil {
+			break
+		}
+
+		args, err := ec.field_Query_posts_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Posts(childComplexity, args["input"].(*Limit)), true
+
+	case "Query.PostsByTag":
+		if e.complexity.Query.PostsByTag == nil {
+			break
+		}
+
+		args, err := ec.field_Query_postsByTag_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.PostsByTag(childComplexity, args["id"].(string)), true
+
+	case "Query.PrevPost":
+		if e.complexity.Query.PrevPost == nil {
+			break
+		}
+
+		args, err := ec.field_Query_prevPost_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.PrevPost(childComplexity, args["id"].(string)), true
+
+	case "Query.Stats":
+		if e.complexity.Query.Stats == nil {
+			break
+		}
+
+		args, err := ec.field_Query_stats_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Stats(childComplexity, args["count"].(*int)), true
+
+	case "Query.Tags":
+		if e.complexity.Query.Tags == nil {
+			break
+		}
+
+		return e.complexity.Query.Tags(childComplexity), true
+
+	case "Query.Time":
+		if e.complexity.Query.Time == nil {
+			break
+		}
+
+		return e.complexity.Query.Time(childComplexity), true
+
+	case "Query.Tweet":
+		if e.complexity.Query.Tweet == nil {
+			break
+		}
+
+		args, err := ec.field_Query_tweet_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Tweet(childComplexity, args["id"].(string)), true
+
+	case "Query.Tweets":
+		if e.complexity.Query.Tweets == nil {
+			break
+		}
+
+		args, err := ec.field_Query_tweets_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Tweets(childComplexity, args["input"].(*Limit)), true
+
+	case "Query.TweetsByScreenName":
+		if e.complexity.Query.TweetsByScreenName == nil {
+			break
+		}
+
+		args, err := ec.field_Query_tweetsByScreenName_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.TweetsByScreenName(childComplexity, args["screen_name"].(string), args["input"].(*Limit)), true
+
+	case "Query.Whoami":
+		if e.complexity.Query.Whoami == nil {
+			break
+		}
+
+		return e.complexity.Query.Whoami(childComplexity), true
+
 	case "Stat.Key":
 		if e.complexity.Stat.Key == nil {
 			break
@@ -896,19 +896,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Stat.Value(childComplexity), true
 
-	case "Tweet.ID":
-		if e.complexity.Tweet.ID == nil {
+	case "Tweet.FavoriteCount":
+		if e.complexity.Tweet.FavoriteCount == nil {
 			break
 		}
 
-		return e.complexity.Tweet.ID(childComplexity), true
-
-	case "Tweet.Text":
-		if e.complexity.Tweet.Text == nil {
-			break
-		}
-
-		return e.complexity.Tweet.Text(childComplexity), true
+		return e.complexity.Tweet.FavoriteCount(childComplexity), true
 
 	case "Tweet.Hashtags":
 		if e.complexity.Tweet.Hashtags == nil {
@@ -917,47 +910,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Tweet.Hashtags(childComplexity), true
 
-	case "Tweet.Symbols":
-		if e.complexity.Tweet.Symbols == nil {
+	case "Tweet.ID":
+		if e.complexity.Tweet.ID == nil {
 			break
 		}
 
-		return e.complexity.Tweet.Symbols(childComplexity), true
-
-	case "Tweet.UserMentions":
-		if e.complexity.Tweet.UserMentions == nil {
-			break
-		}
-
-		return e.complexity.Tweet.UserMentions(childComplexity), true
-
-	case "Tweet.Urls":
-		if e.complexity.Tweet.Urls == nil {
-			break
-		}
-
-		return e.complexity.Tweet.Urls(childComplexity), true
-
-	case "Tweet.ScreenName":
-		if e.complexity.Tweet.ScreenName == nil {
-			break
-		}
-
-		return e.complexity.Tweet.ScreenName(childComplexity), true
-
-	case "Tweet.FavoriteCount":
-		if e.complexity.Tweet.FavoriteCount == nil {
-			break
-		}
-
-		return e.complexity.Tweet.FavoriteCount(childComplexity), true
-
-	case "Tweet.RetweetCount":
-		if e.complexity.Tweet.RetweetCount == nil {
-			break
-		}
-
-		return e.complexity.Tweet.RetweetCount(childComplexity), true
+		return e.complexity.Tweet.ID(childComplexity), true
 
 	case "Tweet.Posted":
 		if e.complexity.Tweet.Posted == nil {
@@ -966,6 +924,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Tweet.Posted(childComplexity), true
 
+	case "Tweet.RetweetCount":
+		if e.complexity.Tweet.RetweetCount == nil {
+			break
+		}
+
+		return e.complexity.Tweet.RetweetCount(childComplexity), true
+
+	case "Tweet.ScreenName":
+		if e.complexity.Tweet.ScreenName == nil {
+			break
+		}
+
+		return e.complexity.Tweet.ScreenName(childComplexity), true
+
+	case "Tweet.Symbols":
+		if e.complexity.Tweet.Symbols == nil {
+			break
+		}
+
+		return e.complexity.Tweet.Symbols(childComplexity), true
+
+	case "Tweet.Text":
+		if e.complexity.Tweet.Text == nil {
+			break
+		}
+
+		return e.complexity.Tweet.Text(childComplexity), true
+
 	case "Tweet.URI":
 		if e.complexity.Tweet.URI == nil {
 			break
@@ -973,19 +959,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Tweet.URI(childComplexity), true
 
-	case "TwitterURL.Link":
-		if e.complexity.TwitterURL.Link == nil {
+	case "Tweet.Urls":
+		if e.complexity.Tweet.Urls == nil {
 			break
 		}
 
-		return e.complexity.TwitterURL.Link(childComplexity), true
+		return e.complexity.Tweet.Urls(childComplexity), true
 
-	case "TwitterURL.TweetIDs":
-		if e.complexity.TwitterURL.TweetIDs == nil {
+	case "Tweet.UserMentions":
+		if e.complexity.Tweet.UserMentions == nil {
 			break
 		}
 
-		return e.complexity.TwitterURL.TweetIDs(childComplexity), true
+		return e.complexity.Tweet.UserMentions(childComplexity), true
 
 	case "TwitterURL.CreatedAt":
 		if e.complexity.TwitterURL.CreatedAt == nil {
@@ -994,6 +980,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.TwitterURL.CreatedAt(childComplexity), true
 
+	case "TwitterURL.Link":
+		if e.complexity.TwitterURL.Link == nil {
+			break
+		}
+
+		return e.complexity.TwitterURL.Link(childComplexity), true
+
 	case "TwitterURL.ModifiedAt":
 		if e.complexity.TwitterURL.ModifiedAt == nil {
 			break
@@ -1001,26 +994,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.TwitterURL.ModifiedAt(childComplexity), true
 
+	case "TwitterURL.TweetIDs":
+		if e.complexity.TwitterURL.TweetIDs == nil {
+			break
+		}
+
+		return e.complexity.TwitterURL.TweetIDs(childComplexity), true
+
 	case "TwitterURL.Tweets":
 		if e.complexity.TwitterURL.Tweets == nil {
 			break
 		}
 
 		return e.complexity.TwitterURL.Tweets(childComplexity), true
-
-	case "User.ID":
-		if e.complexity.User.ID == nil {
-			break
-		}
-
-		return e.complexity.User.ID(childComplexity), true
-
-	case "User.Role":
-		if e.complexity.User.Role == nil {
-			break
-		}
-
-		return e.complexity.User.Role(childComplexity), true
 
 	case "User.APIKey":
 		if e.complexity.User.APIKey == nil {
@@ -1036,12 +1022,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Created(childComplexity), true
 
+	case "User.ID":
+		if e.complexity.User.ID == nil {
+			break
+		}
+
+		return e.complexity.User.ID(childComplexity), true
+
 	case "User.Modified":
 		if e.complexity.User.Modified == nil {
 			break
 		}
 
 		return e.complexity.User.Modified(childComplexity), true
+
+	case "User.Role":
+		if e.complexity.User.Role == nil {
+			break
+		}
+
+		return e.complexity.User.Role(childComplexity), true
 
 	}
 	return 0, false
@@ -1902,9 +1902,10 @@ func (ec *executionContext) _Book_id(ctx context.Context, field graphql.Collecte
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Book",
-		Field:  field,
-		Args:   nil,
+		Object:   "Book",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -1928,9 +1929,10 @@ func (ec *executionContext) _Book_uri(ctx context.Context, field graphql.Collect
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Book",
-		Field:  field,
-		Args:   nil,
+		Object:   "Book",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -1954,9 +1956,10 @@ func (ec *executionContext) _Book_title(ctx context.Context, field graphql.Colle
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Book",
-		Field:  field,
-		Args:   nil,
+		Object:   "Book",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -1980,9 +1983,10 @@ func (ec *executionContext) _Comment_id(ctx context.Context, field graphql.Colle
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Comment",
-		Field:  field,
-		Args:   nil,
+		Object:   "Comment",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2006,9 +2010,10 @@ func (ec *executionContext) _Geo_lat(ctx context.Context, field graphql.Collecte
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Geo",
-		Field:  field,
-		Args:   nil,
+		Object:   "Geo",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2032,9 +2037,10 @@ func (ec *executionContext) _Geo_long(ctx context.Context, field graphql.Collect
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Geo",
-		Field:  field,
-		Args:   nil,
+		Object:   "Geo",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2058,9 +2064,10 @@ func (ec *executionContext) _Link_id(ctx context.Context, field graphql.Collecte
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Link",
-		Field:  field,
-		Args:   nil,
+		Object:   "Link",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2084,9 +2091,10 @@ func (ec *executionContext) _Link_title(ctx context.Context, field graphql.Colle
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Link",
-		Field:  field,
-		Args:   nil,
+		Object:   "Link",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2110,9 +2118,10 @@ func (ec *executionContext) _Link_uri(ctx context.Context, field graphql.Collect
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Link",
-		Field:  field,
-		Args:   nil,
+		Object:   "Link",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2136,9 +2145,10 @@ func (ec *executionContext) _Link_created(ctx context.Context, field graphql.Col
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Link",
-		Field:  field,
-		Args:   nil,
+		Object:   "Link",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2162,9 +2172,10 @@ func (ec *executionContext) _Link_description(ctx context.Context, field graphql
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Link",
-		Field:  field,
-		Args:   nil,
+		Object:   "Link",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2188,9 +2199,10 @@ func (ec *executionContext) _Link_screenshot(ctx context.Context, field graphql.
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Link",
-		Field:  field,
-		Args:   nil,
+		Object:   "Link",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2214,9 +2226,10 @@ func (ec *executionContext) _Link_tags(ctx context.Context, field graphql.Collec
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Link",
-		Field:  field,
-		Args:   nil,
+		Object:   "Link",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2240,9 +2253,10 @@ func (ec *executionContext) _Link_modified(ctx context.Context, field graphql.Co
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Link",
-		Field:  field,
-		Args:   nil,
+		Object:   "Link",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2266,9 +2280,10 @@ func (ec *executionContext) _Log_id(ctx context.Context, field graphql.Collected
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Log",
-		Field:  field,
-		Args:   nil,
+		Object:   "Log",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2292,9 +2307,10 @@ func (ec *executionContext) _Log_code(ctx context.Context, field graphql.Collect
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Log",
-		Field:  field,
-		Args:   nil,
+		Object:   "Log",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2318,9 +2334,10 @@ func (ec *executionContext) _Log_datetime(ctx context.Context, field graphql.Col
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Log",
-		Field:  field,
-		Args:   nil,
+		Object:   "Log",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2344,9 +2361,10 @@ func (ec *executionContext) _Log_description(ctx context.Context, field graphql.
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Log",
-		Field:  field,
-		Args:   nil,
+		Object:   "Log",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2370,9 +2388,10 @@ func (ec *executionContext) _Log_location(ctx context.Context, field graphql.Col
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Log",
-		Field:  field,
-		Args:   nil,
+		Object:   "Log",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2393,9 +2412,10 @@ func (ec *executionContext) _Log_project(ctx context.Context, field graphql.Coll
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Log",
-		Field:  field,
-		Args:   nil,
+		Object:   "Log",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2419,9 +2439,10 @@ func (ec *executionContext) _Log_user(ctx context.Context, field graphql.Collect
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Log",
-		Field:  field,
-		Args:   nil,
+		Object:   "Log",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2445,9 +2466,10 @@ func (ec *executionContext) _Mutation_upsertBook(ctx context.Context, field grap
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Mutation",
-		Field:  field,
-		Args:   nil,
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -2478,9 +2500,10 @@ func (ec *executionContext) _Mutation_upsertLink(ctx context.Context, field grap
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Mutation",
-		Field:  field,
-		Args:   nil,
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -2511,9 +2534,10 @@ func (ec *executionContext) _Mutation_upsertStat(ctx context.Context, field grap
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Mutation",
-		Field:  field,
-		Args:   nil,
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -2544,9 +2568,10 @@ func (ec *executionContext) _Mutation_upsertTweet(ctx context.Context, field gra
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Mutation",
-		Field:  field,
-		Args:   nil,
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -2577,9 +2602,10 @@ func (ec *executionContext) _Mutation_createPost(ctx context.Context, field grap
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Mutation",
-		Field:  field,
-		Args:   nil,
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -2610,9 +2636,10 @@ func (ec *executionContext) _Mutation_editPost(ctx context.Context, field graphq
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Mutation",
-		Field:  field,
-		Args:   nil,
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -2643,9 +2670,10 @@ func (ec *executionContext) _Mutation_insertLog(ctx context.Context, field graph
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Mutation",
-		Field:  field,
-		Args:   nil,
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -2673,9 +2701,10 @@ func (ec *executionContext) _Mutation_upsertPage(ctx context.Context, field grap
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Mutation",
-		Field:  field,
-		Args:   nil,
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -2706,9 +2735,10 @@ func (ec *executionContext) _Page_id(ctx context.Context, field graphql.Collecte
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Page",
-		Field:  field,
-		Args:   nil,
+		Object:   "Page",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2732,9 +2762,10 @@ func (ec *executionContext) _Page_slug(ctx context.Context, field graphql.Collec
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Page",
-		Field:  field,
-		Args:   nil,
+		Object:   "Page",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2758,9 +2789,10 @@ func (ec *executionContext) _Page_title(ctx context.Context, field graphql.Colle
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Page",
-		Field:  field,
-		Args:   nil,
+		Object:   "Page",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2784,9 +2816,10 @@ func (ec *executionContext) _Page_content(ctx context.Context, field graphql.Col
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Page",
-		Field:  field,
-		Args:   nil,
+		Object:   "Page",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2810,9 +2843,10 @@ func (ec *executionContext) _Page_category(ctx context.Context, field graphql.Co
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Page",
-		Field:  field,
-		Args:   nil,
+		Object:   "Page",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2836,9 +2870,10 @@ func (ec *executionContext) _Page_tags(ctx context.Context, field graphql.Collec
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Page",
-		Field:  field,
-		Args:   nil,
+		Object:   "Page",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2862,9 +2897,10 @@ func (ec *executionContext) _Page_user(ctx context.Context, field graphql.Collec
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Page",
-		Field:  field,
-		Args:   nil,
+		Object:   "Page",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2888,9 +2924,10 @@ func (ec *executionContext) _Page_created(ctx context.Context, field graphql.Col
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Page",
-		Field:  field,
-		Args:   nil,
+		Object:   "Page",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2914,9 +2951,10 @@ func (ec *executionContext) _Page_modified(ctx context.Context, field graphql.Co
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Page",
-		Field:  field,
-		Args:   nil,
+		Object:   "Page",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2940,9 +2978,10 @@ func (ec *executionContext) _Post_id(ctx context.Context, field graphql.Collecte
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Field:  field,
-		Args:   nil,
+		Object:   "Post",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2966,9 +3005,10 @@ func (ec *executionContext) _Post_title(ctx context.Context, field graphql.Colle
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Field:  field,
-		Args:   nil,
+		Object:   "Post",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -2992,9 +3032,10 @@ func (ec *executionContext) _Post_content(ctx context.Context, field graphql.Col
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Field:  field,
-		Args:   nil,
+		Object:   "Post",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -3018,9 +3059,10 @@ func (ec *executionContext) _Post_summary(ctx context.Context, field graphql.Col
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Field:  field,
-		Args:   nil,
+		Object:   "Post",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -3044,9 +3086,10 @@ func (ec *executionContext) _Post_readtime(ctx context.Context, field graphql.Co
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Field:  field,
-		Args:   nil,
+		Object:   "Post",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -3070,9 +3113,10 @@ func (ec *executionContext) _Post_datetime(ctx context.Context, field graphql.Co
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Field:  field,
-		Args:   nil,
+		Object:   "Post",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -3096,9 +3140,10 @@ func (ec *executionContext) _Post_created(ctx context.Context, field graphql.Col
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Field:  field,
-		Args:   nil,
+		Object:   "Post",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -3122,9 +3167,10 @@ func (ec *executionContext) _Post_modified(ctx context.Context, field graphql.Co
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Field:  field,
-		Args:   nil,
+		Object:   "Post",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -3148,9 +3194,10 @@ func (ec *executionContext) _Post_draft(ctx context.Context, field graphql.Colle
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Field:  field,
-		Args:   nil,
+		Object:   "Post",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -3174,9 +3221,10 @@ func (ec *executionContext) _Post_tags(ctx context.Context, field graphql.Collec
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Field:  field,
-		Args:   nil,
+		Object:   "Post",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -3200,9 +3248,10 @@ func (ec *executionContext) _Post_links(ctx context.Context, field graphql.Colle
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Field:  field,
-		Args:   nil,
+		Object:   "Post",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -3226,9 +3275,10 @@ func (ec *executionContext) _Post_uri(ctx context.Context, field graphql.Collect
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Field:  field,
-		Args:   nil,
+		Object:   "Post",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -3252,9 +3302,10 @@ func (ec *executionContext) _Post_next(ctx context.Context, field graphql.Collec
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Field:  field,
-		Args:   nil,
+		Object:   "Post",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -3275,9 +3326,10 @@ func (ec *executionContext) _Post_prev(ctx context.Context, field graphql.Collec
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Field:  field,
-		Args:   nil,
+		Object:   "Post",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -3298,9 +3350,10 @@ func (ec *executionContext) _Post_related(ctx context.Context, field graphql.Col
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Post",
-		Field:  field,
-		Args:   nil,
+		Object:   "Post",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -3331,9 +3384,10 @@ func (ec *executionContext) _Query_links(ctx context.Context, field graphql.Coll
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Field:  field,
-		Args:   nil,
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -3364,9 +3418,10 @@ func (ec *executionContext) _Query_link(ctx context.Context, field graphql.Colle
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Field:  field,
-		Args:   nil,
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -3394,9 +3449,10 @@ func (ec *executionContext) _Query_stats(ctx context.Context, field graphql.Coll
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Field:  field,
-		Args:   nil,
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -3427,9 +3483,10 @@ func (ec *executionContext) _Query_counts(ctx context.Context, field graphql.Col
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Field:  field,
-		Args:   nil,
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -3453,9 +3510,10 @@ func (ec *executionContext) _Query_whoami(ctx context.Context, field graphql.Col
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Field:  field,
-		Args:   nil,
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -3476,9 +3534,10 @@ func (ec *executionContext) _Query_tweets(ctx context.Context, field graphql.Col
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Field:  field,
-		Args:   nil,
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -3509,9 +3568,10 @@ func (ec *executionContext) _Query_tweet(ctx context.Context, field graphql.Coll
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Field:  field,
-		Args:   nil,
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -3539,9 +3599,10 @@ func (ec *executionContext) _Query_tweetsByScreenName(ctx context.Context, field
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Field:  field,
-		Args:   nil,
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -3572,9 +3633,10 @@ func (ec *executionContext) _Query_homeTimelineURLs(ctx context.Context, field g
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Field:  field,
-		Args:   nil,
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -3605,9 +3667,10 @@ func (ec *executionContext) _Query_time(ctx context.Context, field graphql.Colle
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Field:  field,
-		Args:   nil,
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -3631,9 +3694,10 @@ func (ec *executionContext) _Query_drafts(ctx context.Context, field graphql.Col
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Field:  field,
-		Args:   nil,
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -3664,9 +3728,10 @@ func (ec *executionContext) _Query_posts(ctx context.Context, field graphql.Coll
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Field:  field,
-		Args:   nil,
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -3697,9 +3762,10 @@ func (ec *executionContext) _Query_post(ctx context.Context, field graphql.Colle
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Field:  field,
-		Args:   nil,
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -3727,9 +3793,10 @@ func (ec *executionContext) _Query_nextPost(ctx context.Context, field graphql.C
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Field:  field,
-		Args:   nil,
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -3757,9 +3824,10 @@ func (ec *executionContext) _Query_prevPost(ctx context.Context, field graphql.C
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Field:  field,
-		Args:   nil,
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -3787,9 +3855,10 @@ func (ec *executionContext) _Query_postsByTag(ctx context.Context, field graphql
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Field:  field,
-		Args:   nil,
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -3820,9 +3889,10 @@ func (ec *executionContext) _Query_tags(ctx context.Context, field graphql.Colle
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Field:  field,
-		Args:   nil,
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -3846,9 +3916,10 @@ func (ec *executionContext) _Query_logs(ctx context.Context, field graphql.Colle
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Field:  field,
-		Args:   nil,
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -3879,9 +3950,10 @@ func (ec *executionContext) _Query_getPageByID(ctx context.Context, field graphq
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Field:  field,
-		Args:   nil,
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -3909,9 +3981,10 @@ func (ec *executionContext) _Query_getPageBySlug(ctx context.Context, field grap
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Field:  field,
-		Args:   nil,
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -3939,9 +4012,10 @@ func (ec *executionContext) _Query_getPages(ctx context.Context, field graphql.C
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Field:  field,
-		Args:   nil,
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -3965,9 +4039,10 @@ func (ec *executionContext) _Query___type(ctx context.Context, field graphql.Col
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Field:  field,
-		Args:   nil,
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -3995,9 +4070,10 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Query",
-		Field:  field,
-		Args:   nil,
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4018,9 +4094,10 @@ func (ec *executionContext) _Stat_key(ctx context.Context, field graphql.Collect
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Stat",
-		Field:  field,
-		Args:   nil,
+		Object:   "Stat",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4044,9 +4121,10 @@ func (ec *executionContext) _Stat_value(ctx context.Context, field graphql.Colle
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Stat",
-		Field:  field,
-		Args:   nil,
+		Object:   "Stat",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4070,9 +4148,10 @@ func (ec *executionContext) _Tweet_id(ctx context.Context, field graphql.Collect
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Tweet",
-		Field:  field,
-		Args:   nil,
+		Object:   "Tweet",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4096,9 +4175,10 @@ func (ec *executionContext) _Tweet_text(ctx context.Context, field graphql.Colle
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Tweet",
-		Field:  field,
-		Args:   nil,
+		Object:   "Tweet",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4122,9 +4202,10 @@ func (ec *executionContext) _Tweet_hashtags(ctx context.Context, field graphql.C
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Tweet",
-		Field:  field,
-		Args:   nil,
+		Object:   "Tweet",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4148,9 +4229,10 @@ func (ec *executionContext) _Tweet_symbols(ctx context.Context, field graphql.Co
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Tweet",
-		Field:  field,
-		Args:   nil,
+		Object:   "Tweet",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4174,9 +4256,10 @@ func (ec *executionContext) _Tweet_user_mentions(ctx context.Context, field grap
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Tweet",
-		Field:  field,
-		Args:   nil,
+		Object:   "Tweet",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4200,9 +4283,10 @@ func (ec *executionContext) _Tweet_urls(ctx context.Context, field graphql.Colle
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Tweet",
-		Field:  field,
-		Args:   nil,
+		Object:   "Tweet",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4226,9 +4310,10 @@ func (ec *executionContext) _Tweet_screen_name(ctx context.Context, field graphq
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Tweet",
-		Field:  field,
-		Args:   nil,
+		Object:   "Tweet",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4252,9 +4337,10 @@ func (ec *executionContext) _Tweet_favorite_count(ctx context.Context, field gra
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Tweet",
-		Field:  field,
-		Args:   nil,
+		Object:   "Tweet",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4278,9 +4364,10 @@ func (ec *executionContext) _Tweet_retweet_count(ctx context.Context, field grap
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Tweet",
-		Field:  field,
-		Args:   nil,
+		Object:   "Tweet",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4304,9 +4391,10 @@ func (ec *executionContext) _Tweet_posted(ctx context.Context, field graphql.Col
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Tweet",
-		Field:  field,
-		Args:   nil,
+		Object:   "Tweet",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4330,9 +4418,10 @@ func (ec *executionContext) _Tweet_uri(ctx context.Context, field graphql.Collec
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "Tweet",
-		Field:  field,
-		Args:   nil,
+		Object:   "Tweet",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4356,9 +4445,10 @@ func (ec *executionContext) _TwitterURL_link(ctx context.Context, field graphql.
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "TwitterURL",
-		Field:  field,
-		Args:   nil,
+		Object:   "TwitterURL",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4379,9 +4469,10 @@ func (ec *executionContext) _TwitterURL_tweetIDs(ctx context.Context, field grap
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "TwitterURL",
-		Field:  field,
-		Args:   nil,
+		Object:   "TwitterURL",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4405,9 +4496,10 @@ func (ec *executionContext) _TwitterURL_createdAt(ctx context.Context, field gra
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "TwitterURL",
-		Field:  field,
-		Args:   nil,
+		Object:   "TwitterURL",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4431,9 +4523,10 @@ func (ec *executionContext) _TwitterURL_modifiedAt(ctx context.Context, field gr
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "TwitterURL",
-		Field:  field,
-		Args:   nil,
+		Object:   "TwitterURL",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4457,9 +4550,10 @@ func (ec *executionContext) _TwitterURL_tweets(ctx context.Context, field graphq
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "TwitterURL",
-		Field:  field,
-		Args:   nil,
+		Object:   "TwitterURL",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4483,9 +4577,10 @@ func (ec *executionContext) _User_id(ctx context.Context, field graphql.Collecte
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "User",
-		Field:  field,
-		Args:   nil,
+		Object:   "User",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4509,9 +4604,10 @@ func (ec *executionContext) _User_role(ctx context.Context, field graphql.Collec
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "User",
-		Field:  field,
-		Args:   nil,
+		Object:   "User",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4535,9 +4631,10 @@ func (ec *executionContext) _User_apikey(ctx context.Context, field graphql.Coll
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "User",
-		Field:  field,
-		Args:   nil,
+		Object:   "User",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4561,9 +4658,10 @@ func (ec *executionContext) _User_created(ctx context.Context, field graphql.Col
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "User",
-		Field:  field,
-		Args:   nil,
+		Object:   "User",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4587,9 +4685,10 @@ func (ec *executionContext) _User_modified(ctx context.Context, field graphql.Co
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "User",
-		Field:  field,
-		Args:   nil,
+		Object:   "User",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4613,9 +4712,10 @@ func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__Directive",
-		Field:  field,
-		Args:   nil,
+		Object:   "__Directive",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4639,9 +4739,10 @@ func (ec *executionContext) ___Directive_description(ctx context.Context, field 
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__Directive",
-		Field:  field,
-		Args:   nil,
+		Object:   "__Directive",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4662,9 +4763,10 @@ func (ec *executionContext) ___Directive_locations(ctx context.Context, field gr
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__Directive",
-		Field:  field,
-		Args:   nil,
+		Object:   "__Directive",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4688,9 +4790,10 @@ func (ec *executionContext) ___Directive_args(ctx context.Context, field graphql
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__Directive",
-		Field:  field,
-		Args:   nil,
+		Object:   "__Directive",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4714,9 +4817,10 @@ func (ec *executionContext) ___EnumValue_name(ctx context.Context, field graphql
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__EnumValue",
-		Field:  field,
-		Args:   nil,
+		Object:   "__EnumValue",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4740,9 +4844,10 @@ func (ec *executionContext) ___EnumValue_description(ctx context.Context, field 
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__EnumValue",
-		Field:  field,
-		Args:   nil,
+		Object:   "__EnumValue",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4763,9 +4868,10 @@ func (ec *executionContext) ___EnumValue_isDeprecated(ctx context.Context, field
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__EnumValue",
-		Field:  field,
-		Args:   nil,
+		Object:   "__EnumValue",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4789,9 +4895,10 @@ func (ec *executionContext) ___EnumValue_deprecationReason(ctx context.Context, 
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__EnumValue",
-		Field:  field,
-		Args:   nil,
+		Object:   "__EnumValue",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4812,9 +4919,10 @@ func (ec *executionContext) ___Field_name(ctx context.Context, field graphql.Col
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__Field",
-		Field:  field,
-		Args:   nil,
+		Object:   "__Field",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4838,9 +4946,10 @@ func (ec *executionContext) ___Field_description(ctx context.Context, field grap
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__Field",
-		Field:  field,
-		Args:   nil,
+		Object:   "__Field",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4861,9 +4970,10 @@ func (ec *executionContext) ___Field_args(ctx context.Context, field graphql.Col
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__Field",
-		Field:  field,
-		Args:   nil,
+		Object:   "__Field",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4887,9 +4997,10 @@ func (ec *executionContext) ___Field_type(ctx context.Context, field graphql.Col
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__Field",
-		Field:  field,
-		Args:   nil,
+		Object:   "__Field",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4913,9 +5024,10 @@ func (ec *executionContext) ___Field_isDeprecated(ctx context.Context, field gra
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__Field",
-		Field:  field,
-		Args:   nil,
+		Object:   "__Field",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4939,9 +5051,10 @@ func (ec *executionContext) ___Field_deprecationReason(ctx context.Context, fiel
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__Field",
-		Field:  field,
-		Args:   nil,
+		Object:   "__Field",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4962,9 +5075,10 @@ func (ec *executionContext) ___InputValue_name(ctx context.Context, field graphq
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__InputValue",
-		Field:  field,
-		Args:   nil,
+		Object:   "__InputValue",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -4988,9 +5102,10 @@ func (ec *executionContext) ___InputValue_description(ctx context.Context, field
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__InputValue",
-		Field:  field,
-		Args:   nil,
+		Object:   "__InputValue",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -5011,9 +5126,10 @@ func (ec *executionContext) ___InputValue_type(ctx context.Context, field graphq
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__InputValue",
-		Field:  field,
-		Args:   nil,
+		Object:   "__InputValue",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -5037,9 +5153,10 @@ func (ec *executionContext) ___InputValue_defaultValue(ctx context.Context, fiel
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__InputValue",
-		Field:  field,
-		Args:   nil,
+		Object:   "__InputValue",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -5060,9 +5177,10 @@ func (ec *executionContext) ___Schema_types(ctx context.Context, field graphql.C
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__Schema",
-		Field:  field,
-		Args:   nil,
+		Object:   "__Schema",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -5086,9 +5204,10 @@ func (ec *executionContext) ___Schema_queryType(ctx context.Context, field graph
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__Schema",
-		Field:  field,
-		Args:   nil,
+		Object:   "__Schema",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -5112,9 +5231,10 @@ func (ec *executionContext) ___Schema_mutationType(ctx context.Context, field gr
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__Schema",
-		Field:  field,
-		Args:   nil,
+		Object:   "__Schema",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -5135,9 +5255,10 @@ func (ec *executionContext) ___Schema_subscriptionType(ctx context.Context, fiel
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__Schema",
-		Field:  field,
-		Args:   nil,
+		Object:   "__Schema",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -5158,9 +5279,10 @@ func (ec *executionContext) ___Schema_directives(ctx context.Context, field grap
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__Schema",
-		Field:  field,
-		Args:   nil,
+		Object:   "__Schema",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -5184,9 +5306,10 @@ func (ec *executionContext) ___Type_kind(ctx context.Context, field graphql.Coll
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__Type",
-		Field:  field,
-		Args:   nil,
+		Object:   "__Type",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -5210,9 +5333,10 @@ func (ec *executionContext) ___Type_name(ctx context.Context, field graphql.Coll
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__Type",
-		Field:  field,
-		Args:   nil,
+		Object:   "__Type",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -5233,9 +5357,10 @@ func (ec *executionContext) ___Type_description(ctx context.Context, field graph
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__Type",
-		Field:  field,
-		Args:   nil,
+		Object:   "__Type",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -5256,9 +5381,10 @@ func (ec *executionContext) ___Type_fields(ctx context.Context, field graphql.Co
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__Type",
-		Field:  field,
-		Args:   nil,
+		Object:   "__Type",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -5286,9 +5412,10 @@ func (ec *executionContext) ___Type_interfaces(ctx context.Context, field graphq
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__Type",
-		Field:  field,
-		Args:   nil,
+		Object:   "__Type",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -5309,9 +5436,10 @@ func (ec *executionContext) ___Type_possibleTypes(ctx context.Context, field gra
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__Type",
-		Field:  field,
-		Args:   nil,
+		Object:   "__Type",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -5332,9 +5460,10 @@ func (ec *executionContext) ___Type_enumValues(ctx context.Context, field graphq
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__Type",
-		Field:  field,
-		Args:   nil,
+		Object:   "__Type",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	rawArgs := field.ArgumentMap(ec.Variables)
@@ -5362,9 +5491,10 @@ func (ec *executionContext) ___Type_inputFields(ctx context.Context, field graph
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__Type",
-		Field:  field,
-		Args:   nil,
+		Object:   "__Type",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -5385,9 +5515,10 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
 	rctx := &graphql.ResolverContext{
-		Object: "__Type",
-		Field:  field,
-		Args:   nil,
+		Object:   "__Type",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
@@ -7965,6 +8096,9 @@ func (ec *executionContext) unmarshalOString2ᚕstring(ctx context.Context, v in
 }
 
 func (ec *executionContext) marshalOString2ᚕstring(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
 	ret := make(graphql.Array, len(v))
 	for i := range v {
 		ret[i] = ec.marshalNString2string(ctx, sel, v[i])
@@ -8066,6 +8200,9 @@ func (ec *executionContext) unmarshalOURI2ᚕgithubᚗcomᚋiccoᚋgraphqlᚐURI
 }
 
 func (ec *executionContext) marshalOURI2ᚕgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx context.Context, sel ast.SelectionSet, v []URI) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
 	ret := make(graphql.Array, len(v))
 	for i := range v {
 		ret[i] = ec.marshalNURI2githubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, sel, v[i])
@@ -8101,6 +8238,9 @@ func (ec *executionContext) marshalOUser2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐUser
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValue(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -8138,6 +8278,9 @@ func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgq
 }
 
 func (ec *executionContext) marshalO__Field2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐField(ctx context.Context, sel ast.SelectionSet, v []introspection.Field) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -8175,6 +8318,9 @@ func (ec *executionContext) marshalO__Field2ᚕgithubᚗcomᚋ99designsᚋgqlgen
 }
 
 func (ec *executionContext) marshalO__InputValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐInputValue(ctx context.Context, sel ast.SelectionSet, v []introspection.InputValue) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -8227,6 +8373,9 @@ func (ec *executionContext) marshalO__Type2githubᚗcomᚋ99designsᚋgqlgenᚋg
 }
 
 func (ec *executionContext) marshalO__Type2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐType(ctx context.Context, sel ast.SelectionSet, v []introspection.Type) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
