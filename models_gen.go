@@ -17,10 +17,19 @@ type Searchable interface {
 	IsSearchable()
 }
 
-// Comment is an undefined type reserved for the future.
+// Comment is a comment on a post.
 type Comment struct {
-	ID string `json:"id"`
+	ID       string    `json:"id"`
+	Post     *Post     `json:"post"`
+	Author   User      `json:"author"`
+	Content  string    `json:"content"`
+	Created  time.Time `json:"created"`
+	Modified time.Time `json:"modified"`
+	// uri returns an absolute link to this comment.
+	URI URI `json:"uri"`
 }
+
+func (Comment) IsLinkable() {}
 
 type EditBook struct {
 	ID          *string `json:"id"`

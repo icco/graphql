@@ -1,8 +1,16 @@
 """
-Comment is an undefined type reserved for the future.
+Comment is a comment on a post.
 """
-type Comment {
+type Comment implements Linkable {
   id: ID!
+  post: Post
+  author: User!
+  content: String!
+  created: Time!
+  modified: Time!
+
+  "uri returns an absolute link to this comment."
+  uri: URI!
 }
 
 """
