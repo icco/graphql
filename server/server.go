@@ -6,7 +6,9 @@ import (
 	"html/template"
 	"net/http"
 	"os"
+	"strings"
 
+	"cloud.google.com/go/compute/metadata"
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	"contrib.go.opencensus.io/exporter/stackdriver/monitoredresource"
 	"contrib.go.opencensus.io/exporter/stackdriver/propagation"
@@ -69,7 +71,7 @@ func main() {
 		labels.Set("app", "graphql", "The name of the current app.")
 		sd, err := stackdriver.NewExporter(stackdriver.Options{
 			ProjectID:               "icco-cloud",
-			MonitoredResource:       monitoredresource.Autodetect(),
+			MonitoredResource:       getGCPMetadata(),
 			DefaultMonitoringLabels: labels,
 			OnError: func(err error) {
 				log.WithError(err).Error("couldn't upload to stackdriver")
@@ -245,4 +247,40 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.WithError(err).Error("could not render json")
 	}
+}
+
+func getGCPMetadata() *monitoredresource.GKEContainer {
+	var err error
+	gm := &monitoredresource.GKEContainer{}
+	gm.InstanceID, err = metadata.InstanceID()
+	if err != nil {
+		log.WithError(err).Info("could not get gke data")
+		return gm
+	}
+
+	gm.ProjectID, err = metadata.ProjectID()
+	if err != nil {
+		log.WithError(err).Info("could not get gke data")
+		return gm
+	}
+
+	gm.Zone, err = metadata.Zone()
+	if err != nil {
+		log.WithError(err).Info("could not get gke data")
+		return gm
+	}
+
+	clusterName, err := metadata.InstanceAttributeValue("cluster-name")
+	gm.ClusterName = strings.TrimSpace(clusterName)
+	if err != nil {
+		log.WithError(err).Info("could not get gke data")
+		return gm
+	}
+
+	gm.NamespaceID = os.Getenv("NAMESPACE")
+	gm.ContainerName = os.Getenv("CONTAINER_NAME")
+	gm.PodID = os.Getenv("HOSTNAME")
+	gm.LoggingMonitoringV2Enabled = true
+
+	return gm
 }
