@@ -173,7 +173,11 @@ func main() {
 		Handler:     r,
 		Propagation: &propagation.HTTPFormat{},
 	}
-	if err := view.Register(ochttp.DefaultServerViews...); err != nil {
+	if err := view.Register([]*view.View{
+		ochttp.ServerRequestCountView,
+		ochttp.ServerLatencyView,
+		ochttp.ServerResponseCountByStatusCode,
+	}...); err != nil {
 		log.Fatal("Failed to register ochttp.DefaultServerViews")
 	}
 
