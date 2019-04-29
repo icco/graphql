@@ -2,6 +2,7 @@ package graphql
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -45,6 +46,10 @@ func (l *Log) Save(ctx context.Context) error {
 		return err
 	}
 
+	if l.User.Empty() {
+		return fmt.Errorf("no user specified")
+	}
+
 	if _, err := db.ExecContext(
 		ctx,
 		`
@@ -85,6 +90,10 @@ func (l *Log) SetUser(ctx context.Context, id string) error {
 
 // UserLogs gets all logs for a User.
 func UserLogs(ctx context.Context, u *User) ([]*Log, error) {
+	if u == nil {
+		return nil, fmt.Errorf("no user specified")
+	}
+
 	rows, err := db.QueryContext(
 		ctx,
 		"SELECT id, code, datetime, description, ST_AsBinary(location), project, user_id, created_at, modified_at FROM logs WHERE user_id = $1 ORDER BY datetime DESC",

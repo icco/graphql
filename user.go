@@ -16,6 +16,10 @@ type User struct {
 	Modified time.Time
 }
 
+func (u User) Empty() bool {
+	return u.ID == ""
+}
+
 // Save is an upsert based operation for User.
 func (u *User) Save(ctx context.Context) error {
 	_, err := db.ExecContext(ctx,
