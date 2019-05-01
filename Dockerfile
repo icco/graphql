@@ -11,6 +11,6 @@ WORKDIR /go/src/github.com/icco/graphql
 RUN apk add --no-cache git
 COPY . .
 
-RUN go build -o /go/bin/server ./server
+RUN go build -v -o /go/bin/server ./server
 
 CMD ["/go/bin/server"]
