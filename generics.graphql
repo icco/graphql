@@ -94,6 +94,11 @@ Time is a datetime scalar with timezone.
 scalar Time
 
 """
+Duration is float of seconds that something took.
+"""
+scalar Duration
+
+"""
 A URI is a url or url like thing.
 """
 scalar URI

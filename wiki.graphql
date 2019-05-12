@@ -9,6 +9,7 @@ type Log {
   location: Geo
   project: String!
   user: User!
+  duration: Duration
 }
 
 """
@@ -47,6 +48,7 @@ input NewLog {
   description: String
   location: NewGeo
   project: String!
+  duration: String
 }
 
 input NewGeo {
