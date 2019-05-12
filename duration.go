@@ -14,13 +14,19 @@ type Duration struct {
 	raw float64
 }
 
+// NewDuration creates a new Duration.
 func NewDuration(raw float64) Duration {
 	d := Duration{}
 	d.raw = raw
 	return d
 }
 
-func ParseDurationString(dur string) Duration {
+// ParseDurationFromString takes a duration string and turns it into a
+// duration. A duration string is a possibly signed sequence of decimal
+// numbers, each with optional fraction and a unit suffix, such as "300ms",
+// "-1.5h" or "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s",
+// "m", "h".
+func ParseDurationFromString(dur string) Duration {
 	i, err := time.ParseDuration(dur)
 	if err != nil {
 		log.WithError(err).Error("could not parse duration")

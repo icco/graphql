@@ -227,6 +227,10 @@ func (r *mutationResolver) InsertLog(ctx context.Context, input NewLog) (*Log, e
 		}
 	}
 
+	if input.Duration != nil {
+		l.Duration = ParseDurationFromString(*input.Duration)
+	}
+
 	err := l.Save(ctx)
 	return l, err
 }
