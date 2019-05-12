@@ -36,6 +36,7 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	Log() LogResolver
 	Mutation() MutationResolver
 	Query() QueryResolver
 	TwitterURL() TwitterURLResolver
@@ -78,6 +79,7 @@ type ComplexityRoot struct {
 		Code        func(childComplexity int) int
 		Datetime    func(childComplexity int) int
 		Description func(childComplexity int) int
+		Duration    func(childComplexity int) int
 		ID          func(childComplexity int) int
 		Location    func(childComplexity int) int
 		Project     func(childComplexity int) int
@@ -185,6 +187,9 @@ type ComplexityRoot struct {
 	}
 }
 
+type LogResolver interface {
+	Duration(ctx context.Context, obj *Log) (*string, error)
+}
 type MutationResolver interface {
 	UpsertBook(ctx context.Context, input EditBook) (*Book, error)
 	UpsertLink(ctx context.Context, input NewLink) (*Link, error)
@@ -357,6 +362,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Log.Description(childComplexity), true
+
+	case "Log.Duration":
+		if e.complexity.Log.Duration == nil {
+			break
+		}
+
+		return e.complexity.Log.Duration(childComplexity), true
 
 	case "Log.ID":
 		if e.complexity.Log.ID == nil {
@@ -1319,6 +1331,11 @@ Time is a datetime scalar with timezone.
 scalar Time
 
 """
+Duration is float of seconds that something took.
+"""
+scalar Duration
+
+"""
 A URI is a url or url like thing.
 """
 scalar URI
@@ -1407,6 +1424,7 @@ type Log {
   location: Geo
   project: String!
   user: User!
+  duration: Duration
 }
 
 """
@@ -1445,6 +1463,7 @@ input NewLog {
   description: String
   location: NewGeo
   project: String!
+  duration: String
 }
 
 input NewGeo {
@@ -2460,6 +2479,30 @@ func (ec *executionContext) _Log_user(ctx context.Context, field graphql.Collect
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return ec.marshalNUser2githubᚗcomᚋiccoᚋgraphqlᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Log_duration(ctx context.Context, field graphql.CollectedField, obj *Log) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Log",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Log().Duration(rctx, obj)
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalODuration2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_upsertBook(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
@@ -5773,6 +5816,12 @@ func (ec *executionContext) unmarshalInputNewLog(ctx context.Context, v interfac
 			if err != nil {
 				return it, err
 			}
+		case "duration":
+			var err error
+			it.Duration, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -6112,6 +6161,17 @@ func (ec *executionContext) _Log(ctx context.Context, sel ast.SelectionSet, obj 
 			if out.Values[i] == graphql.Null {
 				invalid = true
 			}
+		case "duration":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Log_duration(ctx, field, obj)
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -7929,6 +7989,29 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 		return graphql.Null
 	}
 	return ec.marshalOBoolean2bool(ctx, sel, *v)
+}
+
+func (ec *executionContext) unmarshalODuration2string(ctx context.Context, v interface{}) (string, error) {
+	return graphql.UnmarshalString(v)
+}
+
+func (ec *executionContext) marshalODuration2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+	return graphql.MarshalString(v)
+}
+
+func (ec *executionContext) unmarshalODuration2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalODuration2string(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalODuration2ᚖstring(ctx context.Context, sel ast.SelectionSet, v *string) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec.marshalODuration2string(ctx, sel, *v)
 }
 
 func (ec *executionContext) marshalOGeo2githubᚗcomᚋiccoᚋgraphqlᚐGeo(ctx context.Context, sel ast.SelectionSet, v Geo) graphql.Marshaler {
