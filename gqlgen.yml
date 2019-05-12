@@ -33,3 +33,5 @@ models:
     model: github.com/icco/graphql.User
   URI:
     model: github.com/icco/graphql.URI
+  Duration:
+    model: github.com/icco/graphql.Duration
