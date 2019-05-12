@@ -356,6 +356,7 @@ func (p *Post) Related(ctx context.Context, input *Limit) ([]*Post, error) {
 	return posts, nil
 }
 
+// GetRandomPosts returns a random selection of posts.
 func GetRandomPosts(ctx context.Context, limit int, notIn []int64) ([]*Post, error) {
 	query := `SELECT id, title, content, date, created_at, modified_at, tags, draft
   FROM posts
