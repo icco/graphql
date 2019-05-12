@@ -4,6 +4,8 @@ import (
 	"database/sql/driver"
 	"fmt"
 	"io"
+	"strconv"
+	"time"
 )
 
 // Duration is a float64 representation of a Duration.
@@ -15,11 +17,17 @@ type Duration struct {
 func NewDuration(raw float64) Duration {
 	d := Duration{}
 	d.raw = raw
-	return u
+	return d
 }
 
 func ParseDurationString(dur string) Duration {
+	i, err := time.ParseDuration(dur)
+	if err != nil {
+		log.WithError(err).Error("could not parse duration")
+		return NewDuration(0)
+	}
 
+	return NewDuration(i.Seconds())
 }
 
 // float64 returns the value
@@ -35,7 +43,7 @@ func (d *Duration) Scan(v interface{}) error {
 // UnmarshalGQL implements the graphql.Marshaler interface
 func (d *Duration) UnmarshalGQL(v interface{}) error {
 	if v == nil {
-		d.raw = ""
+		d.raw = 0
 		return nil
 	}
 
@@ -69,6 +77,11 @@ func (d Duration) MarshalJSON() ([]byte, error) {
 }
 
 func (d *Duration) UnmarshalJSON(value []byte) error {
-	d.raw = float64(value)
+	f, err := strconv.ParseFloat(string(value), 64)
+	if err != nil {
+		return err
+	}
+
+	d.raw = f
 	return nil
 }
