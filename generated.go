@@ -78,6 +78,7 @@ type ComplexityRoot struct {
 		Code        func(childComplexity int) int
 		Datetime    func(childComplexity int) int
 		Description func(childComplexity int) int
+		Duration    func(childComplexity int) int
 		ID          func(childComplexity int) int
 		Location    func(childComplexity int) int
 		Project     func(childComplexity int) int
@@ -357,6 +358,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Log.Description(childComplexity), true
+
+	case "Log.Duration":
+		if e.complexity.Log.Duration == nil {
+			break
+		}
+
+		return e.complexity.Log.Duration(childComplexity), true
 
 	case "Log.ID":
 		if e.complexity.Log.ID == nil {
@@ -1319,6 +1327,11 @@ Time is a datetime scalar with timezone.
 scalar Time
 
 """
+Duration is float of seconds that something took.
+"""
+scalar Duration
+
+"""
 A URI is a url or url like thing.
 """
 scalar URI
@@ -1407,6 +1420,7 @@ type Log {
   location: Geo
   project: String!
   user: User!
+  duration: Duration
 }
 
 """
@@ -1445,6 +1459,7 @@ input NewLog {
   description: String
   location: NewGeo
   project: String!
+  duration: String
 }
 
 input NewGeo {
@@ -2460,6 +2475,30 @@ func (ec *executionContext) _Log_user(ctx context.Context, field graphql.Collect
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return ec.marshalNUser2githubᚗcomᚋiccoᚋgraphqlᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Log_duration(ctx context.Context, field graphql.CollectedField, obj *Log) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Log",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Duration, nil
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(Duration)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalODuration2githubᚗcomᚋiccoᚋgraphqlᚐDuration(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_upsertBook(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
@@ -5773,6 +5812,12 @@ func (ec *executionContext) unmarshalInputNewLog(ctx context.Context, v interfac
 			if err != nil {
 				return it, err
 			}
+		case "duration":
+			var err error
+			it.Duration, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -6112,6 +6157,8 @@ func (ec *executionContext) _Log(ctx context.Context, sel ast.SelectionSet, obj 
 			if out.Values[i] == graphql.Null {
 				invalid = true
 			}
+		case "duration":
+			out.Values[i] = ec._Log_duration(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -7929,6 +7976,15 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 		return graphql.Null
 	}
 	return ec.marshalOBoolean2bool(ctx, sel, *v)
+}
+
+func (ec *executionContext) unmarshalODuration2githubᚗcomᚋiccoᚋgraphqlᚐDuration(ctx context.Context, v interface{}) (Duration, error) {
+	var res Duration
+	return res, res.UnmarshalGQL(v)
+}
+
+func (ec *executionContext) marshalODuration2githubᚗcomᚋiccoᚋgraphqlᚐDuration(ctx context.Context, sel ast.SelectionSet, v Duration) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) marshalOGeo2githubᚗcomᚋiccoᚋgraphqlᚐGeo(ctx context.Context, sel ast.SelectionSet, v Geo) graphql.Marshaler {

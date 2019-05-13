@@ -67,6 +67,7 @@ type NewLog struct {
 	Description *string `json:"description"`
 	Location    *NewGeo `json:"location"`
 	Project     string  `json:"project"`
+	Duration    *string `json:"duration"`
 }
 
 type NewStat struct {

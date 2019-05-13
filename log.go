@@ -17,6 +17,7 @@ type Log struct {
 	Location    *Geo      `json:"location"`
 	Project     string    `json:"project"`
 	User        User      `json:"user"`
+	Duration    Duration  `json:"duration"`
 	Created     time.Time
 	Modified    time.Time
 }
