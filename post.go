@@ -313,6 +313,7 @@ func (p *Post) Related(ctx context.Context, input *Limit) ([]*Post, error) {
   FROM posts
   WHERE id != $2
     AND title % $1
+    AND draft = false
   ORDER BY sim DESC
   LIMIT $3 OFFSET $4`
 
