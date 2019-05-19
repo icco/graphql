@@ -390,7 +390,15 @@ func GetRandomPosts(ctx context.Context, limit int, notIn []int64) ([]*Post, err
 
 // Posts returns some posts.
 func Posts(ctx context.Context, limit int, offset int) ([]*Post, error) {
-	rows, err := db.QueryContext(ctx, "SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE draft = false ORDER BY date DESC LIMIT $1 OFFSET $2", limit, offset)
+	query := `
+SELECT id, title, content, date, created_at, modified_at, tags, draft
+FROM posts
+WHERE draft = false
+  AND date <= NOW()
+ORDER BY date DESC
+LIMIT $1 OFFSET $2
+`
+	rows, err := db.QueryContext(ctx, query, limit, offset)
 	if err != nil {
 		return nil, err
 	}
