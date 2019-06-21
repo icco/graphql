@@ -61,7 +61,7 @@ WHERE books.id = $1;
 }
 
 // URI returns an absolute link to this book.
-func (b *Book) URI() URI {
+func (b *Book) URI() *URI {
 	return NewURI(fmt.Sprintf("https://www.goodreads.com/book/show/%s", b.GoodreadsID))
 }
 

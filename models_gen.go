@@ -83,7 +83,7 @@ type NewTweet struct {
 	RetweetCount  int       `json:"retweet_count"`
 	Symbols       []string  `json:"symbols"`
 	Text          string    `json:"text"`
-	Urls          []URI     `json:"urls"`
+	Urls          []*URI    `json:"urls"`
 	ScreenName    string    `json:"screen_name"`
 	UserMentions  []string  `json:"user_mentions"`
 }

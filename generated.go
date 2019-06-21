@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"strconv"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -242,161 +243,161 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
-	case "Book.ID":
+	case "Book.id":
 		if e.complexity.Book.ID == nil {
 			break
 		}
 
 		return e.complexity.Book.ID(childComplexity), true
 
-	case "Book.Title":
+	case "Book.title":
 		if e.complexity.Book.Title == nil {
 			break
 		}
 
 		return e.complexity.Book.Title(childComplexity), true
 
-	case "Book.URI":
+	case "Book.uri":
 		if e.complexity.Book.URI == nil {
 			break
 		}
 
 		return e.complexity.Book.URI(childComplexity), true
 
-	case "Comment.ID":
+	case "Comment.id":
 		if e.complexity.Comment.ID == nil {
 			break
 		}
 
 		return e.complexity.Comment.ID(childComplexity), true
 
-	case "Geo.Lat":
+	case "Geo.lat":
 		if e.complexity.Geo.Lat == nil {
 			break
 		}
 
 		return e.complexity.Geo.Lat(childComplexity), true
 
-	case "Geo.Long":
+	case "Geo.long":
 		if e.complexity.Geo.Long == nil {
 			break
 		}
 
 		return e.complexity.Geo.Long(childComplexity), true
 
-	case "Link.Created":
+	case "Link.created":
 		if e.complexity.Link.Created == nil {
 			break
 		}
 
 		return e.complexity.Link.Created(childComplexity), true
 
-	case "Link.Description":
+	case "Link.description":
 		if e.complexity.Link.Description == nil {
 			break
 		}
 
 		return e.complexity.Link.Description(childComplexity), true
 
-	case "Link.ID":
+	case "Link.id":
 		if e.complexity.Link.ID == nil {
 			break
 		}
 
 		return e.complexity.Link.ID(childComplexity), true
 
-	case "Link.Modified":
+	case "Link.modified":
 		if e.complexity.Link.Modified == nil {
 			break
 		}
 
 		return e.complexity.Link.Modified(childComplexity), true
 
-	case "Link.Screenshot":
+	case "Link.screenshot":
 		if e.complexity.Link.Screenshot == nil {
 			break
 		}
 
 		return e.complexity.Link.Screenshot(childComplexity), true
 
-	case "Link.Tags":
+	case "Link.tags":
 		if e.complexity.Link.Tags == nil {
 			break
 		}
 
 		return e.complexity.Link.Tags(childComplexity), true
 
-	case "Link.Title":
+	case "Link.title":
 		if e.complexity.Link.Title == nil {
 			break
 		}
 
 		return e.complexity.Link.Title(childComplexity), true
 
-	case "Link.URI":
+	case "Link.uri":
 		if e.complexity.Link.URI == nil {
 			break
 		}
 
 		return e.complexity.Link.URI(childComplexity), true
 
-	case "Log.Code":
+	case "Log.code":
 		if e.complexity.Log.Code == nil {
 			break
 		}
 
 		return e.complexity.Log.Code(childComplexity), true
 
-	case "Log.Datetime":
+	case "Log.datetime":
 		if e.complexity.Log.Datetime == nil {
 			break
 		}
 
 		return e.complexity.Log.Datetime(childComplexity), true
 
-	case "Log.Description":
+	case "Log.description":
 		if e.complexity.Log.Description == nil {
 			break
 		}
 
 		return e.complexity.Log.Description(childComplexity), true
 
-	case "Log.Duration":
+	case "Log.duration":
 		if e.complexity.Log.Duration == nil {
 			break
 		}
 
 		return e.complexity.Log.Duration(childComplexity), true
 
-	case "Log.ID":
+	case "Log.id":
 		if e.complexity.Log.ID == nil {
 			break
 		}
 
 		return e.complexity.Log.ID(childComplexity), true
 
-	case "Log.Location":
+	case "Log.location":
 		if e.complexity.Log.Location == nil {
 			break
 		}
 
 		return e.complexity.Log.Location(childComplexity), true
 
-	case "Log.Project":
+	case "Log.project":
 		if e.complexity.Log.Project == nil {
 			break
 		}
 
 		return e.complexity.Log.Project(childComplexity), true
 
-	case "Log.User":
+	case "Log.user":
 		if e.complexity.Log.User == nil {
 			break
 		}
 
 		return e.complexity.Log.User(childComplexity), true
 
-	case "Mutation.CreatePost":
+	case "Mutation.createPost":
 		if e.complexity.Mutation.CreatePost == nil {
 			break
 		}
@@ -408,7 +409,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreatePost(childComplexity, args["input"].(EditPost)), true
 
-	case "Mutation.EditPost":
+	case "Mutation.editPost":
 		if e.complexity.Mutation.EditPost == nil {
 			break
 		}
@@ -420,7 +421,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.EditPost(childComplexity, args["input"].(EditPost)), true
 
-	case "Mutation.InsertLog":
+	case "Mutation.insertLog":
 		if e.complexity.Mutation.InsertLog == nil {
 			break
 		}
@@ -432,7 +433,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.InsertLog(childComplexity, args["input"].(NewLog)), true
 
-	case "Mutation.UpsertBook":
+	case "Mutation.upsertBook":
 		if e.complexity.Mutation.UpsertBook == nil {
 			break
 		}
@@ -444,7 +445,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpsertBook(childComplexity, args["input"].(EditBook)), true
 
-	case "Mutation.UpsertLink":
+	case "Mutation.upsertLink":
 		if e.complexity.Mutation.UpsertLink == nil {
 			break
 		}
@@ -456,7 +457,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpsertLink(childComplexity, args["input"].(NewLink)), true
 
-	case "Mutation.UpsertPage":
+	case "Mutation.upsertPage":
 		if e.complexity.Mutation.UpsertPage == nil {
 			break
 		}
@@ -468,7 +469,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpsertPage(childComplexity, args["input"].(EditPage)), true
 
-	case "Mutation.UpsertStat":
+	case "Mutation.upsertStat":
 		if e.complexity.Mutation.UpsertStat == nil {
 			break
 		}
@@ -480,7 +481,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpsertStat(childComplexity, args["input"].(NewStat)), true
 
-	case "Mutation.UpsertTweet":
+	case "Mutation.upsertTweet":
 		if e.complexity.Mutation.UpsertTweet == nil {
 			break
 		}
@@ -492,140 +493,140 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpsertTweet(childComplexity, args["input"].(NewTweet)), true
 
-	case "Page.Category":
+	case "Page.category":
 		if e.complexity.Page.Category == nil {
 			break
 		}
 
 		return e.complexity.Page.Category(childComplexity), true
 
-	case "Page.Content":
+	case "Page.content":
 		if e.complexity.Page.Content == nil {
 			break
 		}
 
 		return e.complexity.Page.Content(childComplexity), true
 
-	case "Page.Created":
+	case "Page.created":
 		if e.complexity.Page.Created == nil {
 			break
 		}
 
 		return e.complexity.Page.Created(childComplexity), true
 
-	case "Page.ID":
+	case "Page.id":
 		if e.complexity.Page.ID == nil {
 			break
 		}
 
 		return e.complexity.Page.ID(childComplexity), true
 
-	case "Page.Modified":
+	case "Page.modified":
 		if e.complexity.Page.Modified == nil {
 			break
 		}
 
 		return e.complexity.Page.Modified(childComplexity), true
 
-	case "Page.Slug":
+	case "Page.slug":
 		if e.complexity.Page.Slug == nil {
 			break
 		}
 
 		return e.complexity.Page.Slug(childComplexity), true
 
-	case "Page.Tags":
+	case "Page.tags":
 		if e.complexity.Page.Tags == nil {
 			break
 		}
 
 		return e.complexity.Page.Tags(childComplexity), true
 
-	case "Page.Title":
+	case "Page.title":
 		if e.complexity.Page.Title == nil {
 			break
 		}
 
 		return e.complexity.Page.Title(childComplexity), true
 
-	case "Page.User":
+	case "Page.user":
 		if e.complexity.Page.User == nil {
 			break
 		}
 
 		return e.complexity.Page.User(childComplexity), true
 
-	case "Post.Content":
+	case "Post.content":
 		if e.complexity.Post.Content == nil {
 			break
 		}
 
 		return e.complexity.Post.Content(childComplexity), true
 
-	case "Post.Created":
+	case "Post.created":
 		if e.complexity.Post.Created == nil {
 			break
 		}
 
 		return e.complexity.Post.Created(childComplexity), true
 
-	case "Post.Datetime":
+	case "Post.datetime":
 		if e.complexity.Post.Datetime == nil {
 			break
 		}
 
 		return e.complexity.Post.Datetime(childComplexity), true
 
-	case "Post.Draft":
+	case "Post.draft":
 		if e.complexity.Post.Draft == nil {
 			break
 		}
 
 		return e.complexity.Post.Draft(childComplexity), true
 
-	case "Post.ID":
+	case "Post.id":
 		if e.complexity.Post.ID == nil {
 			break
 		}
 
 		return e.complexity.Post.ID(childComplexity), true
 
-	case "Post.Links":
+	case "Post.links":
 		if e.complexity.Post.Links == nil {
 			break
 		}
 
 		return e.complexity.Post.Links(childComplexity), true
 
-	case "Post.Modified":
+	case "Post.modified":
 		if e.complexity.Post.Modified == nil {
 			break
 		}
 
 		return e.complexity.Post.Modified(childComplexity), true
 
-	case "Post.Next":
+	case "Post.next":
 		if e.complexity.Post.Next == nil {
 			break
 		}
 
 		return e.complexity.Post.Next(childComplexity), true
 
-	case "Post.Prev":
+	case "Post.prev":
 		if e.complexity.Post.Prev == nil {
 			break
 		}
 
 		return e.complexity.Post.Prev(childComplexity), true
 
-	case "Post.ReadTime":
+	case "Post.readtime":
 		if e.complexity.Post.ReadTime == nil {
 			break
 		}
 
 		return e.complexity.Post.ReadTime(childComplexity), true
 
-	case "Post.Related":
+	case "Post.related":
 		if e.complexity.Post.Related == nil {
 			break
 		}
@@ -637,35 +638,35 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Post.Related(childComplexity, args["input"].(*Limit)), true
 
-	case "Post.Summary":
+	case "Post.summary":
 		if e.complexity.Post.Summary == nil {
 			break
 		}
 
 		return e.complexity.Post.Summary(childComplexity), true
 
-	case "Post.Tags":
+	case "Post.tags":
 		if e.complexity.Post.Tags == nil {
 			break
 		}
 
 		return e.complexity.Post.Tags(childComplexity), true
 
-	case "Post.Title":
+	case "Post.title":
 		if e.complexity.Post.Title == nil {
 			break
 		}
 
 		return e.complexity.Post.Title(childComplexity), true
 
-	case "Post.URI":
+	case "Post.uri":
 		if e.complexity.Post.URI == nil {
 			break
 		}
 
 		return e.complexity.Post.URI(childComplexity), true
 
-	case "Query.Books":
+	case "Query.books":
 		if e.complexity.Query.Books == nil {
 			break
 		}
@@ -677,14 +678,14 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Books(childComplexity, args["input"].(*Limit)), true
 
-	case "Query.Counts":
+	case "Query.counts":
 		if e.complexity.Query.Counts == nil {
 			break
 		}
 
 		return e.complexity.Query.Counts(childComplexity), true
 
-	case "Query.Drafts":
+	case "Query.drafts":
 		if e.complexity.Query.Drafts == nil {
 			break
 		}
@@ -696,7 +697,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Drafts(childComplexity, args["input"].(*Limit)), true
 
-	case "Query.GetPageByID":
+	case "Query.getPageByID":
 		if e.complexity.Query.GetPageByID == nil {
 			break
 		}
@@ -708,7 +709,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetPageByID(childComplexity, args["id"].(string)), true
 
-	case "Query.GetPageBySlug":
+	case "Query.getPageBySlug":
 		if e.complexity.Query.GetPageBySlug == nil {
 			break
 		}
@@ -720,14 +721,14 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetPageBySlug(childComplexity, args["slug"].(string)), true
 
-	case "Query.GetPages":
+	case "Query.getPages":
 		if e.complexity.Query.GetPages == nil {
 			break
 		}
 
 		return e.complexity.Query.GetPages(childComplexity), true
 
-	case "Query.HomeTimelineURLs":
+	case "Query.homeTimelineURLs":
 		if e.complexity.Query.HomeTimelineURLs == nil {
 			break
 		}
@@ -739,7 +740,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.HomeTimelineURLs(childComplexity, args["input"].(*Limit)), true
 
-	case "Query.Link":
+	case "Query.link":
 		if e.complexity.Query.Link == nil {
 			break
 		}
@@ -751,7 +752,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Link(childComplexity, args["id"].(*string), args["url"].(*URI)), true
 
-	case "Query.Links":
+	case "Query.links":
 		if e.complexity.Query.Links == nil {
 			break
 		}
@@ -763,7 +764,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Links(childComplexity, args["input"].(*Limit)), true
 
-	case "Query.Logs":
+	case "Query.logs":
 		if e.complexity.Query.Logs == nil {
 			break
 		}
@@ -775,7 +776,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Logs(childComplexity, args["user_id"].(*string)), true
 
-	case "Query.NextPost":
+	case "Query.nextPost":
 		if e.complexity.Query.NextPost == nil {
 			break
 		}
@@ -787,7 +788,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.NextPost(childComplexity, args["id"].(string)), true
 
-	case "Query.Post":
+	case "Query.post":
 		if e.complexity.Query.Post == nil {
 			break
 		}
@@ -799,7 +800,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Post(childComplexity, args["id"].(string)), true
 
-	case "Query.Posts":
+	case "Query.posts":
 		if e.complexity.Query.Posts == nil {
 			break
 		}
@@ -811,7 +812,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Posts(childComplexity, args["input"].(*Limit)), true
 
-	case "Query.PostsByTag":
+	case "Query.postsByTag":
 		if e.complexity.Query.PostsByTag == nil {
 			break
 		}
@@ -823,7 +824,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.PostsByTag(childComplexity, args["id"].(string)), true
 
-	case "Query.PrevPost":
+	case "Query.prevPost":
 		if e.complexity.Query.PrevPost == nil {
 			break
 		}
@@ -835,7 +836,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.PrevPost(childComplexity, args["id"].(string)), true
 
-	case "Query.Stats":
+	case "Query.stats":
 		if e.complexity.Query.Stats == nil {
 			break
 		}
@@ -847,21 +848,21 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Stats(childComplexity, args["count"].(*int)), true
 
-	case "Query.Tags":
+	case "Query.tags":
 		if e.complexity.Query.Tags == nil {
 			break
 		}
 
 		return e.complexity.Query.Tags(childComplexity), true
 
-	case "Query.Time":
+	case "Query.time":
 		if e.complexity.Query.Time == nil {
 			break
 		}
 
 		return e.complexity.Query.Time(childComplexity), true
 
-	case "Query.Tweet":
+	case "Query.tweet":
 		if e.complexity.Query.Tweet == nil {
 			break
 		}
@@ -873,7 +874,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Tweet(childComplexity, args["id"].(string)), true
 
-	case "Query.Tweets":
+	case "Query.tweets":
 		if e.complexity.Query.Tweets == nil {
 			break
 		}
@@ -885,7 +886,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Tweets(childComplexity, args["input"].(*Limit)), true
 
-	case "Query.TweetsByScreenName":
+	case "Query.tweetsByScreenName":
 		if e.complexity.Query.TweetsByScreenName == nil {
 			break
 		}
@@ -897,168 +898,168 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.TweetsByScreenName(childComplexity, args["screen_name"].(string), args["input"].(*Limit)), true
 
-	case "Query.Whoami":
+	case "Query.whoami":
 		if e.complexity.Query.Whoami == nil {
 			break
 		}
 
 		return e.complexity.Query.Whoami(childComplexity), true
 
-	case "Stat.Key":
+	case "Stat.key":
 		if e.complexity.Stat.Key == nil {
 			break
 		}
 
 		return e.complexity.Stat.Key(childComplexity), true
 
-	case "Stat.Value":
+	case "Stat.value":
 		if e.complexity.Stat.Value == nil {
 			break
 		}
 
 		return e.complexity.Stat.Value(childComplexity), true
 
-	case "Tweet.FavoriteCount":
+	case "Tweet.favorite_count":
 		if e.complexity.Tweet.FavoriteCount == nil {
 			break
 		}
 
 		return e.complexity.Tweet.FavoriteCount(childComplexity), true
 
-	case "Tweet.Hashtags":
+	case "Tweet.hashtags":
 		if e.complexity.Tweet.Hashtags == nil {
 			break
 		}
 
 		return e.complexity.Tweet.Hashtags(childComplexity), true
 
-	case "Tweet.ID":
+	case "Tweet.id":
 		if e.complexity.Tweet.ID == nil {
 			break
 		}
 
 		return e.complexity.Tweet.ID(childComplexity), true
 
-	case "Tweet.Posted":
+	case "Tweet.posted":
 		if e.complexity.Tweet.Posted == nil {
 			break
 		}
 
 		return e.complexity.Tweet.Posted(childComplexity), true
 
-	case "Tweet.RetweetCount":
+	case "Tweet.retweet_count":
 		if e.complexity.Tweet.RetweetCount == nil {
 			break
 		}
 
 		return e.complexity.Tweet.RetweetCount(childComplexity), true
 
-	case "Tweet.ScreenName":
+	case "Tweet.screen_name":
 		if e.complexity.Tweet.ScreenName == nil {
 			break
 		}
 
 		return e.complexity.Tweet.ScreenName(childComplexity), true
 
-	case "Tweet.Symbols":
+	case "Tweet.symbols":
 		if e.complexity.Tweet.Symbols == nil {
 			break
 		}
 
 		return e.complexity.Tweet.Symbols(childComplexity), true
 
-	case "Tweet.Text":
+	case "Tweet.text":
 		if e.complexity.Tweet.Text == nil {
 			break
 		}
 
 		return e.complexity.Tweet.Text(childComplexity), true
 
-	case "Tweet.URI":
+	case "Tweet.uri":
 		if e.complexity.Tweet.URI == nil {
 			break
 		}
 
 		return e.complexity.Tweet.URI(childComplexity), true
 
-	case "Tweet.Urls":
+	case "Tweet.urls":
 		if e.complexity.Tweet.Urls == nil {
 			break
 		}
 
 		return e.complexity.Tweet.Urls(childComplexity), true
 
-	case "Tweet.UserMentions":
+	case "Tweet.user_mentions":
 		if e.complexity.Tweet.UserMentions == nil {
 			break
 		}
 
 		return e.complexity.Tweet.UserMentions(childComplexity), true
 
-	case "TwitterURL.CreatedAt":
+	case "TwitterURL.createdAt":
 		if e.complexity.TwitterURL.CreatedAt == nil {
 			break
 		}
 
 		return e.complexity.TwitterURL.CreatedAt(childComplexity), true
 
-	case "TwitterURL.Link":
+	case "TwitterURL.link":
 		if e.complexity.TwitterURL.Link == nil {
 			break
 		}
 
 		return e.complexity.TwitterURL.Link(childComplexity), true
 
-	case "TwitterURL.ModifiedAt":
+	case "TwitterURL.modifiedAt":
 		if e.complexity.TwitterURL.ModifiedAt == nil {
 			break
 		}
 
 		return e.complexity.TwitterURL.ModifiedAt(childComplexity), true
 
-	case "TwitterURL.TweetIDs":
+	case "TwitterURL.tweetIDs":
 		if e.complexity.TwitterURL.TweetIDs == nil {
 			break
 		}
 
 		return e.complexity.TwitterURL.TweetIDs(childComplexity), true
 
-	case "TwitterURL.Tweets":
+	case "TwitterURL.tweets":
 		if e.complexity.TwitterURL.Tweets == nil {
 			break
 		}
 
 		return e.complexity.TwitterURL.Tweets(childComplexity), true
 
-	case "User.APIKey":
+	case "User.apikey":
 		if e.complexity.User.APIKey == nil {
 			break
 		}
 
 		return e.complexity.User.APIKey(childComplexity), true
 
-	case "User.Created":
+	case "User.created":
 		if e.complexity.User.Created == nil {
 			break
 		}
 
 		return e.complexity.User.Created(childComplexity), true
 
-	case "User.ID":
+	case "User.id":
 		if e.complexity.User.ID == nil {
 			break
 		}
 
 		return e.complexity.User.ID(childComplexity), true
 
-	case "User.Modified":
+	case "User.modified":
 		if e.complexity.User.Modified == nil {
 			break
 		}
 
 		return e.complexity.User.Modified(childComplexity), true
 
-	case "User.Role":
+	case "User.role":
 		if e.complexity.User.Role == nil {
 			break
 		}
@@ -5963,7 +5964,7 @@ func (ec *executionContext) unmarshalInputNewTweet(ctx context.Context, v interf
 			}
 		case "urls":
 			var err error
-			it.Urls, err = ec.unmarshalOURI2ᚕgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, v)
+			it.Urls, err = ec.unmarshalOURI2ᚕᚖgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -6024,10 +6025,10 @@ func (ec *executionContext) _Searchable(ctx context.Context, sel ast.SelectionSe
 var bookImplementors = []string{"Book", "Linkable"}
 
 func (ec *executionContext) _Book(ctx context.Context, sel ast.SelectionSet, obj *Book) graphql.Marshaler {
-	fields := graphql.CollectFields(ctx, sel, bookImplementors)
+	fields := graphql.CollectFields(ec.RequestContext, sel, bookImplementors)
 
 	out := graphql.NewFieldSet(fields)
-	invalid := false
+	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
@@ -6035,24 +6036,24 @@ func (ec *executionContext) _Book(ctx context.Context, sel ast.SelectionSet, obj
 		case "id":
 			out.Values[i] = ec._Book_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "uri":
 			out.Values[i] = ec._Book_uri(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "title":
 			out.Values[i] = ec._Book_title(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
 	out.Dispatch()
-	if invalid {
+	if invalids > 0 {
 		return graphql.Null
 	}
 	return out
@@ -6061,10 +6062,10 @@ func (ec *executionContext) _Book(ctx context.Context, sel ast.SelectionSet, obj
 var commentImplementors = []string{"Comment"}
 
 func (ec *executionContext) _Comment(ctx context.Context, sel ast.SelectionSet, obj *Comment) graphql.Marshaler {
-	fields := graphql.CollectFields(ctx, sel, commentImplementors)
+	fields := graphql.CollectFields(ec.RequestContext, sel, commentImplementors)
 
 	out := graphql.NewFieldSet(fields)
-	invalid := false
+	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
@@ -6072,14 +6073,14 @@ func (ec *executionContext) _Comment(ctx context.Context, sel ast.SelectionSet, 
 		case "id":
 			out.Values[i] = ec._Comment_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
 	out.Dispatch()
-	if invalid {
+	if invalids > 0 {
 		return graphql.Null
 	}
 	return out
@@ -6088,10 +6089,10 @@ func (ec *executionContext) _Comment(ctx context.Context, sel ast.SelectionSet, 
 var geoImplementors = []string{"Geo"}
 
 func (ec *executionContext) _Geo(ctx context.Context, sel ast.SelectionSet, obj *Geo) graphql.Marshaler {
-	fields := graphql.CollectFields(ctx, sel, geoImplementors)
+	fields := graphql.CollectFields(ec.RequestContext, sel, geoImplementors)
 
 	out := graphql.NewFieldSet(fields)
-	invalid := false
+	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
@@ -6099,19 +6100,19 @@ func (ec *executionContext) _Geo(ctx context.Context, sel ast.SelectionSet, obj 
 		case "lat":
 			out.Values[i] = ec._Geo_lat(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "long":
 			out.Values[i] = ec._Geo_long(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
 	out.Dispatch()
-	if invalid {
+	if invalids > 0 {
 		return graphql.Null
 	}
 	return out
@@ -6120,10 +6121,10 @@ func (ec *executionContext) _Geo(ctx context.Context, sel ast.SelectionSet, obj 
 var linkImplementors = []string{"Link", "Linkable"}
 
 func (ec *executionContext) _Link(ctx context.Context, sel ast.SelectionSet, obj *Link) graphql.Marshaler {
-	fields := graphql.CollectFields(ctx, sel, linkImplementors)
+	fields := graphql.CollectFields(ec.RequestContext, sel, linkImplementors)
 
 	out := graphql.NewFieldSet(fields)
-	invalid := false
+	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
@@ -6131,49 +6132,49 @@ func (ec *executionContext) _Link(ctx context.Context, sel ast.SelectionSet, obj
 		case "id":
 			out.Values[i] = ec._Link_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "title":
 			out.Values[i] = ec._Link_title(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "uri":
 			out.Values[i] = ec._Link_uri(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "created":
 			out.Values[i] = ec._Link_created(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "description":
 			out.Values[i] = ec._Link_description(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "screenshot":
 			out.Values[i] = ec._Link_screenshot(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "tags":
 			out.Values[i] = ec._Link_tags(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "modified":
 			out.Values[i] = ec._Link_modified(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
 	out.Dispatch()
-	if invalid {
+	if invalids > 0 {
 		return graphql.Null
 	}
 	return out
@@ -6182,10 +6183,10 @@ func (ec *executionContext) _Link(ctx context.Context, sel ast.SelectionSet, obj
 var logImplementors = []string{"Log"}
 
 func (ec *executionContext) _Log(ctx context.Context, sel ast.SelectionSet, obj *Log) graphql.Marshaler {
-	fields := graphql.CollectFields(ctx, sel, logImplementors)
+	fields := graphql.CollectFields(ec.RequestContext, sel, logImplementors)
 
 	out := graphql.NewFieldSet(fields)
-	invalid := false
+	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
@@ -6193,34 +6194,34 @@ func (ec *executionContext) _Log(ctx context.Context, sel ast.SelectionSet, obj 
 		case "id":
 			out.Values[i] = ec._Log_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "code":
 			out.Values[i] = ec._Log_code(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "datetime":
 			out.Values[i] = ec._Log_datetime(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "description":
 			out.Values[i] = ec._Log_description(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "location":
 			out.Values[i] = ec._Log_location(ctx, field, obj)
 		case "project":
 			out.Values[i] = ec._Log_project(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "user":
 			out.Values[i] = ec._Log_user(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "duration":
 			out.Values[i] = ec._Log_duration(ctx, field, obj)
@@ -6229,7 +6230,7 @@ func (ec *executionContext) _Log(ctx context.Context, sel ast.SelectionSet, obj 
 		}
 	}
 	out.Dispatch()
-	if invalid {
+	if invalids > 0 {
 		return graphql.Null
 	}
 	return out
@@ -6238,14 +6239,14 @@ func (ec *executionContext) _Log(ctx context.Context, sel ast.SelectionSet, obj 
 var mutationImplementors = []string{"Mutation"}
 
 func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
-	fields := graphql.CollectFields(ctx, sel, mutationImplementors)
+	fields := graphql.CollectFields(ec.RequestContext, sel, mutationImplementors)
 
 	ctx = graphql.WithResolverContext(ctx, &graphql.ResolverContext{
 		Object: "Mutation",
 	})
 
 	out := graphql.NewFieldSet(fields)
-	invalid := false
+	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
@@ -6253,46 +6254,46 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "upsertBook":
 			out.Values[i] = ec._Mutation_upsertBook(ctx, field)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "upsertLink":
 			out.Values[i] = ec._Mutation_upsertLink(ctx, field)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "upsertStat":
 			out.Values[i] = ec._Mutation_upsertStat(ctx, field)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "upsertTweet":
 			out.Values[i] = ec._Mutation_upsertTweet(ctx, field)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "createPost":
 			out.Values[i] = ec._Mutation_createPost(ctx, field)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "editPost":
 			out.Values[i] = ec._Mutation_editPost(ctx, field)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "insertLog":
 			out.Values[i] = ec._Mutation_insertLog(ctx, field)
 		case "upsertPage":
 			out.Values[i] = ec._Mutation_upsertPage(ctx, field)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
 	out.Dispatch()
-	if invalid {
+	if invalids > 0 {
 		return graphql.Null
 	}
 	return out
@@ -6301,10 +6302,10 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 var pageImplementors = []string{"Page"}
 
 func (ec *executionContext) _Page(ctx context.Context, sel ast.SelectionSet, obj *Page) graphql.Marshaler {
-	fields := graphql.CollectFields(ctx, sel, pageImplementors)
+	fields := graphql.CollectFields(ec.RequestContext, sel, pageImplementors)
 
 	out := graphql.NewFieldSet(fields)
-	invalid := false
+	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
@@ -6312,54 +6313,54 @@ func (ec *executionContext) _Page(ctx context.Context, sel ast.SelectionSet, obj
 		case "id":
 			out.Values[i] = ec._Page_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "slug":
 			out.Values[i] = ec._Page_slug(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "title":
 			out.Values[i] = ec._Page_title(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "content":
 			out.Values[i] = ec._Page_content(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "category":
 			out.Values[i] = ec._Page_category(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "tags":
 			out.Values[i] = ec._Page_tags(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "user":
 			out.Values[i] = ec._Page_user(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "created":
 			out.Values[i] = ec._Page_created(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "modified":
 			out.Values[i] = ec._Page_modified(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
 	out.Dispatch()
-	if invalid {
+	if invalids > 0 {
 		return graphql.Null
 	}
 	return out
@@ -6368,10 +6369,10 @@ func (ec *executionContext) _Page(ctx context.Context, sel ast.SelectionSet, obj
 var postImplementors = []string{"Post", "Linkable"}
 
 func (ec *executionContext) _Post(ctx context.Context, sel ast.SelectionSet, obj *Post) graphql.Marshaler {
-	fields := graphql.CollectFields(ctx, sel, postImplementors)
+	fields := graphql.CollectFields(ec.RequestContext, sel, postImplementors)
 
 	out := graphql.NewFieldSet(fields)
-	invalid := false
+	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
@@ -6379,62 +6380,62 @@ func (ec *executionContext) _Post(ctx context.Context, sel ast.SelectionSet, obj
 		case "id":
 			out.Values[i] = ec._Post_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "title":
 			out.Values[i] = ec._Post_title(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "content":
 			out.Values[i] = ec._Post_content(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "summary":
 			out.Values[i] = ec._Post_summary(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "readtime":
 			out.Values[i] = ec._Post_readtime(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "datetime":
 			out.Values[i] = ec._Post_datetime(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "created":
 			out.Values[i] = ec._Post_created(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "modified":
 			out.Values[i] = ec._Post_modified(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "draft":
 			out.Values[i] = ec._Post_draft(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "tags":
 			out.Values[i] = ec._Post_tags(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "links":
 			out.Values[i] = ec._Post_links(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "uri":
 			out.Values[i] = ec._Post_uri(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "next":
 			field := field
@@ -6468,7 +6469,7 @@ func (ec *executionContext) _Post(ctx context.Context, sel ast.SelectionSet, obj
 				}()
 				res = ec._Post_related(ctx, field, obj)
 				if res == graphql.Null {
-					invalid = true
+					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
@@ -6477,7 +6478,7 @@ func (ec *executionContext) _Post(ctx context.Context, sel ast.SelectionSet, obj
 		}
 	}
 	out.Dispatch()
-	if invalid {
+	if invalids > 0 {
 		return graphql.Null
 	}
 	return out
@@ -6486,14 +6487,14 @@ func (ec *executionContext) _Post(ctx context.Context, sel ast.SelectionSet, obj
 var queryImplementors = []string{"Query"}
 
 func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
-	fields := graphql.CollectFields(ctx, sel, queryImplementors)
+	fields := graphql.CollectFields(ec.RequestContext, sel, queryImplementors)
 
 	ctx = graphql.WithResolverContext(ctx, &graphql.ResolverContext{
 		Object: "Query",
 	})
 
 	out := graphql.NewFieldSet(fields)
-	invalid := false
+	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
@@ -6508,7 +6509,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}()
 				res = ec._Query_books(ctx, field)
 				if res == graphql.Null {
-					invalid = true
+					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
@@ -6522,7 +6523,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}()
 				res = ec._Query_links(ctx, field)
 				if res == graphql.Null {
-					invalid = true
+					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
@@ -6547,7 +6548,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}()
 				res = ec._Query_stats(ctx, field)
 				if res == graphql.Null {
-					invalid = true
+					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
@@ -6561,7 +6562,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}()
 				res = ec._Query_counts(ctx, field)
 				if res == graphql.Null {
-					invalid = true
+					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
@@ -6586,7 +6587,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}()
 				res = ec._Query_tweets(ctx, field)
 				if res == graphql.Null {
-					invalid = true
+					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
@@ -6611,7 +6612,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}()
 				res = ec._Query_tweetsByScreenName(ctx, field)
 				if res == graphql.Null {
-					invalid = true
+					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
@@ -6625,7 +6626,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}()
 				res = ec._Query_homeTimelineURLs(ctx, field)
 				if res == graphql.Null {
-					invalid = true
+					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
@@ -6639,7 +6640,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}()
 				res = ec._Query_time(ctx, field)
 				if res == graphql.Null {
-					invalid = true
+					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
@@ -6653,7 +6654,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}()
 				res = ec._Query_drafts(ctx, field)
 				if res == graphql.Null {
-					invalid = true
+					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
@@ -6667,7 +6668,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}()
 				res = ec._Query_posts(ctx, field)
 				if res == graphql.Null {
-					invalid = true
+					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
@@ -6714,7 +6715,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}()
 				res = ec._Query_postsByTag(ctx, field)
 				if res == graphql.Null {
-					invalid = true
+					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
@@ -6728,7 +6729,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}()
 				res = ec._Query_tags(ctx, field)
 				if res == graphql.Null {
-					invalid = true
+					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
@@ -6742,7 +6743,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}()
 				res = ec._Query_logs(ctx, field)
 				if res == graphql.Null {
-					invalid = true
+					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
@@ -6778,7 +6779,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}()
 				res = ec._Query_getPages(ctx, field)
 				if res == graphql.Null {
-					invalid = true
+					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
@@ -6791,7 +6792,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		}
 	}
 	out.Dispatch()
-	if invalid {
+	if invalids > 0 {
 		return graphql.Null
 	}
 	return out
@@ -6800,10 +6801,10 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 var statImplementors = []string{"Stat"}
 
 func (ec *executionContext) _Stat(ctx context.Context, sel ast.SelectionSet, obj *Stat) graphql.Marshaler {
-	fields := graphql.CollectFields(ctx, sel, statImplementors)
+	fields := graphql.CollectFields(ec.RequestContext, sel, statImplementors)
 
 	out := graphql.NewFieldSet(fields)
-	invalid := false
+	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
@@ -6811,19 +6812,19 @@ func (ec *executionContext) _Stat(ctx context.Context, sel ast.SelectionSet, obj
 		case "key":
 			out.Values[i] = ec._Stat_key(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "value":
 			out.Values[i] = ec._Stat_value(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
 	out.Dispatch()
-	if invalid {
+	if invalids > 0 {
 		return graphql.Null
 	}
 	return out
@@ -6832,10 +6833,10 @@ func (ec *executionContext) _Stat(ctx context.Context, sel ast.SelectionSet, obj
 var tweetImplementors = []string{"Tweet", "Linkable"}
 
 func (ec *executionContext) _Tweet(ctx context.Context, sel ast.SelectionSet, obj *Tweet) graphql.Marshaler {
-	fields := graphql.CollectFields(ctx, sel, tweetImplementors)
+	fields := graphql.CollectFields(ec.RequestContext, sel, tweetImplementors)
 
 	out := graphql.NewFieldSet(fields)
-	invalid := false
+	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
@@ -6843,64 +6844,64 @@ func (ec *executionContext) _Tweet(ctx context.Context, sel ast.SelectionSet, ob
 		case "id":
 			out.Values[i] = ec._Tweet_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "text":
 			out.Values[i] = ec._Tweet_text(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "hashtags":
 			out.Values[i] = ec._Tweet_hashtags(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "symbols":
 			out.Values[i] = ec._Tweet_symbols(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "user_mentions":
 			out.Values[i] = ec._Tweet_user_mentions(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "urls":
 			out.Values[i] = ec._Tweet_urls(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "screen_name":
 			out.Values[i] = ec._Tweet_screen_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "favorite_count":
 			out.Values[i] = ec._Tweet_favorite_count(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "retweet_count":
 			out.Values[i] = ec._Tweet_retweet_count(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "posted":
 			out.Values[i] = ec._Tweet_posted(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "uri":
 			out.Values[i] = ec._Tweet_uri(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
 	out.Dispatch()
-	if invalid {
+	if invalids > 0 {
 		return graphql.Null
 	}
 	return out
@@ -6909,10 +6910,10 @@ func (ec *executionContext) _Tweet(ctx context.Context, sel ast.SelectionSet, ob
 var twitterURLImplementors = []string{"TwitterURL"}
 
 func (ec *executionContext) _TwitterURL(ctx context.Context, sel ast.SelectionSet, obj *models.SavedURL) graphql.Marshaler {
-	fields := graphql.CollectFields(ctx, sel, twitterURLImplementors)
+	fields := graphql.CollectFields(ec.RequestContext, sel, twitterURLImplementors)
 
 	out := graphql.NewFieldSet(fields)
-	invalid := false
+	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
@@ -6931,17 +6932,17 @@ func (ec *executionContext) _TwitterURL(ctx context.Context, sel ast.SelectionSe
 		case "tweetIDs":
 			out.Values[i] = ec._TwitterURL_tweetIDs(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "createdAt":
 			out.Values[i] = ec._TwitterURL_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "modifiedAt":
 			out.Values[i] = ec._TwitterURL_modifiedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "tweets":
 			field := field
@@ -6953,7 +6954,7 @@ func (ec *executionContext) _TwitterURL(ctx context.Context, sel ast.SelectionSe
 				}()
 				res = ec._TwitterURL_tweets(ctx, field, obj)
 				if res == graphql.Null {
-					invalid = true
+					atomic.AddUint32(&invalids, 1)
 				}
 				return res
 			})
@@ -6962,7 +6963,7 @@ func (ec *executionContext) _TwitterURL(ctx context.Context, sel ast.SelectionSe
 		}
 	}
 	out.Dispatch()
-	if invalid {
+	if invalids > 0 {
 		return graphql.Null
 	}
 	return out
@@ -6971,10 +6972,10 @@ func (ec *executionContext) _TwitterURL(ctx context.Context, sel ast.SelectionSe
 var userImplementors = []string{"User"}
 
 func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj *User) graphql.Marshaler {
-	fields := graphql.CollectFields(ctx, sel, userImplementors)
+	fields := graphql.CollectFields(ec.RequestContext, sel, userImplementors)
 
 	out := graphql.NewFieldSet(fields)
-	invalid := false
+	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
@@ -6982,34 +6983,34 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 		case "id":
 			out.Values[i] = ec._User_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "role":
 			out.Values[i] = ec._User_role(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "apikey":
 			out.Values[i] = ec._User_apikey(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "created":
 			out.Values[i] = ec._User_created(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "modified":
 			out.Values[i] = ec._User_modified(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
 	out.Dispatch()
-	if invalid {
+	if invalids > 0 {
 		return graphql.Null
 	}
 	return out
@@ -7018,10 +7019,10 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 var __DirectiveImplementors = []string{"__Directive"}
 
 func (ec *executionContext) ___Directive(ctx context.Context, sel ast.SelectionSet, obj *introspection.Directive) graphql.Marshaler {
-	fields := graphql.CollectFields(ctx, sel, __DirectiveImplementors)
+	fields := graphql.CollectFields(ec.RequestContext, sel, __DirectiveImplementors)
 
 	out := graphql.NewFieldSet(fields)
-	invalid := false
+	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
@@ -7029,26 +7030,26 @@ func (ec *executionContext) ___Directive(ctx context.Context, sel ast.SelectionS
 		case "name":
 			out.Values[i] = ec.___Directive_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "description":
 			out.Values[i] = ec.___Directive_description(ctx, field, obj)
 		case "locations":
 			out.Values[i] = ec.___Directive_locations(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "args":
 			out.Values[i] = ec.___Directive_args(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
 	out.Dispatch()
-	if invalid {
+	if invalids > 0 {
 		return graphql.Null
 	}
 	return out
@@ -7057,10 +7058,10 @@ func (ec *executionContext) ___Directive(ctx context.Context, sel ast.SelectionS
 var __EnumValueImplementors = []string{"__EnumValue"}
 
 func (ec *executionContext) ___EnumValue(ctx context.Context, sel ast.SelectionSet, obj *introspection.EnumValue) graphql.Marshaler {
-	fields := graphql.CollectFields(ctx, sel, __EnumValueImplementors)
+	fields := graphql.CollectFields(ec.RequestContext, sel, __EnumValueImplementors)
 
 	out := graphql.NewFieldSet(fields)
-	invalid := false
+	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
@@ -7068,14 +7069,14 @@ func (ec *executionContext) ___EnumValue(ctx context.Context, sel ast.SelectionS
 		case "name":
 			out.Values[i] = ec.___EnumValue_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "description":
 			out.Values[i] = ec.___EnumValue_description(ctx, field, obj)
 		case "isDeprecated":
 			out.Values[i] = ec.___EnumValue_isDeprecated(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "deprecationReason":
 			out.Values[i] = ec.___EnumValue_deprecationReason(ctx, field, obj)
@@ -7084,7 +7085,7 @@ func (ec *executionContext) ___EnumValue(ctx context.Context, sel ast.SelectionS
 		}
 	}
 	out.Dispatch()
-	if invalid {
+	if invalids > 0 {
 		return graphql.Null
 	}
 	return out
@@ -7093,10 +7094,10 @@ func (ec *executionContext) ___EnumValue(ctx context.Context, sel ast.SelectionS
 var __FieldImplementors = []string{"__Field"}
 
 func (ec *executionContext) ___Field(ctx context.Context, sel ast.SelectionSet, obj *introspection.Field) graphql.Marshaler {
-	fields := graphql.CollectFields(ctx, sel, __FieldImplementors)
+	fields := graphql.CollectFields(ec.RequestContext, sel, __FieldImplementors)
 
 	out := graphql.NewFieldSet(fields)
-	invalid := false
+	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
@@ -7104,24 +7105,24 @@ func (ec *executionContext) ___Field(ctx context.Context, sel ast.SelectionSet, 
 		case "name":
 			out.Values[i] = ec.___Field_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "description":
 			out.Values[i] = ec.___Field_description(ctx, field, obj)
 		case "args":
 			out.Values[i] = ec.___Field_args(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "type":
 			out.Values[i] = ec.___Field_type(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "isDeprecated":
 			out.Values[i] = ec.___Field_isDeprecated(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "deprecationReason":
 			out.Values[i] = ec.___Field_deprecationReason(ctx, field, obj)
@@ -7130,7 +7131,7 @@ func (ec *executionContext) ___Field(ctx context.Context, sel ast.SelectionSet, 
 		}
 	}
 	out.Dispatch()
-	if invalid {
+	if invalids > 0 {
 		return graphql.Null
 	}
 	return out
@@ -7139,10 +7140,10 @@ func (ec *executionContext) ___Field(ctx context.Context, sel ast.SelectionSet, 
 var __InputValueImplementors = []string{"__InputValue"}
 
 func (ec *executionContext) ___InputValue(ctx context.Context, sel ast.SelectionSet, obj *introspection.InputValue) graphql.Marshaler {
-	fields := graphql.CollectFields(ctx, sel, __InputValueImplementors)
+	fields := graphql.CollectFields(ec.RequestContext, sel, __InputValueImplementors)
 
 	out := graphql.NewFieldSet(fields)
-	invalid := false
+	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
@@ -7150,14 +7151,14 @@ func (ec *executionContext) ___InputValue(ctx context.Context, sel ast.Selection
 		case "name":
 			out.Values[i] = ec.___InputValue_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "description":
 			out.Values[i] = ec.___InputValue_description(ctx, field, obj)
 		case "type":
 			out.Values[i] = ec.___InputValue_type(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "defaultValue":
 			out.Values[i] = ec.___InputValue_defaultValue(ctx, field, obj)
@@ -7166,7 +7167,7 @@ func (ec *executionContext) ___InputValue(ctx context.Context, sel ast.Selection
 		}
 	}
 	out.Dispatch()
-	if invalid {
+	if invalids > 0 {
 		return graphql.Null
 	}
 	return out
@@ -7175,10 +7176,10 @@ func (ec *executionContext) ___InputValue(ctx context.Context, sel ast.Selection
 var __SchemaImplementors = []string{"__Schema"}
 
 func (ec *executionContext) ___Schema(ctx context.Context, sel ast.SelectionSet, obj *introspection.Schema) graphql.Marshaler {
-	fields := graphql.CollectFields(ctx, sel, __SchemaImplementors)
+	fields := graphql.CollectFields(ec.RequestContext, sel, __SchemaImplementors)
 
 	out := graphql.NewFieldSet(fields)
-	invalid := false
+	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
@@ -7186,12 +7187,12 @@ func (ec *executionContext) ___Schema(ctx context.Context, sel ast.SelectionSet,
 		case "types":
 			out.Values[i] = ec.___Schema_types(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "queryType":
 			out.Values[i] = ec.___Schema_queryType(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "mutationType":
 			out.Values[i] = ec.___Schema_mutationType(ctx, field, obj)
@@ -7200,14 +7201,14 @@ func (ec *executionContext) ___Schema(ctx context.Context, sel ast.SelectionSet,
 		case "directives":
 			out.Values[i] = ec.___Schema_directives(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
 	out.Dispatch()
-	if invalid {
+	if invalids > 0 {
 		return graphql.Null
 	}
 	return out
@@ -7216,10 +7217,10 @@ func (ec *executionContext) ___Schema(ctx context.Context, sel ast.SelectionSet,
 var __TypeImplementors = []string{"__Type"}
 
 func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, obj *introspection.Type) graphql.Marshaler {
-	fields := graphql.CollectFields(ctx, sel, __TypeImplementors)
+	fields := graphql.CollectFields(ec.RequestContext, sel, __TypeImplementors)
 
 	out := graphql.NewFieldSet(fields)
-	invalid := false
+	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
@@ -7227,7 +7228,7 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 		case "kind":
 			out.Values[i] = ec.___Type_kind(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalid = true
+				invalids++
 			}
 		case "name":
 			out.Values[i] = ec.___Type_name(ctx, field, obj)
@@ -7250,7 +7251,7 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 		}
 	}
 	out.Dispatch()
-	if invalid {
+	if invalids > 0 {
 		return graphql.Null
 	}
 	return out
@@ -7316,7 +7317,13 @@ func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interf
 }
 
 func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.SelectionSet, v bool) graphql.Marshaler {
-	return graphql.MarshalBoolean(v)
+	res := graphql.MarshalBoolean(v)
+	if res == graphql.Null {
+		if !ec.HasError(graphql.GetResolverContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) unmarshalNEditBook2githubᚗcomᚋiccoᚋgraphqlᚐEditBook(ctx context.Context, v interface{}) (EditBook, error) {
@@ -7336,7 +7343,13 @@ func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v inter
 }
 
 func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.SelectionSet, v float64) graphql.Marshaler {
-	return graphql.MarshalFloat(v)
+	res := graphql.MarshalFloat(v)
+	if res == graphql.Null {
+		if !ec.HasError(graphql.GetResolverContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
@@ -7344,7 +7357,13 @@ func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface
 }
 
 func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
-	return graphql.MarshalID(v)
+	res := graphql.MarshalID(v)
+	if res == graphql.Null {
+		if !ec.HasError(graphql.GetResolverContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) unmarshalNID2ᚕstring(ctx context.Context, v interface{}) ([]string, error) {
@@ -7381,7 +7400,13 @@ func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}
 }
 
 func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
-	return graphql.MarshalInt(v)
+	res := graphql.MarshalInt(v)
+	if res == graphql.Null {
+		if !ec.HasError(graphql.GetResolverContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) unmarshalNInt2int32(ctx context.Context, v interface{}) (int32, error) {
@@ -7389,7 +7414,13 @@ func (ec *executionContext) unmarshalNInt2int32(ctx context.Context, v interface
 }
 
 func (ec *executionContext) marshalNInt2int32(ctx context.Context, sel ast.SelectionSet, v int32) graphql.Marshaler {
-	return graphql.MarshalInt32(v)
+	res := graphql.MarshalInt32(v)
+	if res == graphql.Null {
+		if !ec.HasError(graphql.GetResolverContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) marshalNLink2githubᚗcomᚋiccoᚋgraphqlᚐLink(ctx context.Context, sel ast.SelectionSet, v Link) graphql.Marshaler {
@@ -7663,7 +7694,13 @@ func (ec *executionContext) unmarshalNString2string(ctx context.Context, v inter
 }
 
 func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
-	return graphql.MarshalString(v)
+	res := graphql.MarshalString(v)
+	if res == graphql.Null {
+		if !ec.HasError(graphql.GetResolverContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) unmarshalNString2ᚕstring(ctx context.Context, v interface{}) ([]string, error) {
@@ -7700,13 +7737,13 @@ func (ec *executionContext) unmarshalNTime2timeᚐTime(ctx context.Context, v in
 }
 
 func (ec *executionContext) marshalNTime2timeᚐTime(ctx context.Context, sel ast.SelectionSet, v time.Time) graphql.Marshaler {
-	if v.IsZero() {
+	res := graphql.MarshalTime(v)
+	if res == graphql.Null {
 		if !ec.HasError(graphql.GetResolverContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
 		}
-		return graphql.Null
 	}
-	return graphql.MarshalTime(v)
+	return res
 }
 
 func (ec *executionContext) unmarshalNTime2ᚖtimeᚐTime(ctx context.Context, v interface{}) (*time.Time, error) {
@@ -7853,6 +7890,24 @@ func (ec *executionContext) marshalNURI2ᚕgithubᚗcomᚋiccoᚋgraphqlᚐURI(c
 	return ret
 }
 
+func (ec *executionContext) unmarshalNURI2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx context.Context, v interface{}) (*URI, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalNURI2githubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, v)
+	return &res, err
+}
+
+func (ec *executionContext) marshalNURI2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx context.Context, sel ast.SelectionSet, v *URI) graphql.Marshaler {
+	if v == nil {
+		if !ec.HasError(graphql.GetResolverContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return v
+}
+
 func (ec *executionContext) marshalNUser2githubᚗcomᚋiccoᚋgraphqlᚐUser(ctx context.Context, sel ast.SelectionSet, v User) graphql.Marshaler {
 	return ec._User(ctx, sel, &v)
 }
@@ -7903,7 +7958,13 @@ func (ec *executionContext) unmarshalN__DirectiveLocation2string(ctx context.Con
 }
 
 func (ec *executionContext) marshalN__DirectiveLocation2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
-	return graphql.MarshalString(v)
+	res := graphql.MarshalString(v)
+	if res == graphql.Null {
+		if !ec.HasError(graphql.GetResolverContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) unmarshalN__DirectiveLocation2ᚕstring(ctx context.Context, v interface{}) ([]string, error) {
@@ -8068,7 +8129,13 @@ func (ec *executionContext) unmarshalN__TypeKind2string(ctx context.Context, v i
 }
 
 func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
-	return graphql.MarshalString(v)
+	res := graphql.MarshalString(v)
+	if res == graphql.Null {
+		if !ec.HasError(graphql.GetResolverContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) marshalOBook2githubᚗcomᚋiccoᚋgraphqlᚐBook(ctx context.Context, sel ast.SelectionSet, v Book) graphql.Marshaler {
@@ -8310,9 +8377,6 @@ func (ec *executionContext) unmarshalOTime2timeᚐTime(ctx context.Context, v in
 }
 
 func (ec *executionContext) marshalOTime2timeᚐTime(ctx context.Context, sel ast.SelectionSet, v time.Time) graphql.Marshaler {
-	if v.IsZero() {
-		return graphql.Null
-	}
 	return graphql.MarshalTime(v)
 }
 
@@ -8362,7 +8426,7 @@ func (ec *executionContext) marshalOURI2githubᚗcomᚋiccoᚋgraphqlᚐURI(ctx 
 	return v
 }
 
-func (ec *executionContext) unmarshalOURI2ᚕgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx context.Context, v interface{}) ([]URI, error) {
+func (ec *executionContext) unmarshalOURI2ᚕᚖgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx context.Context, v interface{}) ([]*URI, error) {
 	var vSlice []interface{}
 	if v != nil {
 		if tmp1, ok := v.([]interface{}); ok {
@@ -8372,9 +8436,9 @@ func (ec *executionContext) unmarshalOURI2ᚕgithubᚗcomᚋiccoᚋgraphqlᚐURI
 		}
 	}
 	var err error
-	res := make([]URI, len(vSlice))
+	res := make([]*URI, len(vSlice))
 	for i := range vSlice {
-		res[i], err = ec.unmarshalNURI2githubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNURI2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -8382,13 +8446,13 @@ func (ec *executionContext) unmarshalOURI2ᚕgithubᚗcomᚋiccoᚋgraphqlᚐURI
 	return res, nil
 }
 
-func (ec *executionContext) marshalOURI2ᚕgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx context.Context, sel ast.SelectionSet, v []URI) graphql.Marshaler {
+func (ec *executionContext) marshalOURI2ᚕᚖgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx context.Context, sel ast.SelectionSet, v []*URI) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	ret := make(graphql.Array, len(v))
 	for i := range v {
-		ret[i] = ec.marshalNURI2githubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, sel, v[i])
+		ret[i] = ec.marshalNURI2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, sel, v[i])
 	}
 
 	return ret

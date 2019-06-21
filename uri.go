@@ -13,8 +13,8 @@ type URI struct {
 }
 
 // NewURI creates a URI from a string.
-func NewURI(raw string) URI {
-	u := URI{}
+func NewURI(raw string) *URI {
+	u := &URI{}
 	u.raw = raw
 	return u
 }
