@@ -334,7 +334,7 @@ func (r *queryResolver) Links(ctx context.Context, input *Limit) ([]*Link, error
 	return GetLinks(ctx, limit, offset)
 }
 
-func (r *queryResolver) Books(ctx context.Context, input *Limit) ([]*Link, error) {
+func (r *queryResolver) Books(ctx context.Context, input *Limit) ([]*Book, error) {
 	limit, offset := ParseLimit(input, 10, 0)
 
 	return GetBooks(ctx, limit, offset)
