@@ -1265,7 +1265,7 @@ interface Searchable {
 }
 
 interface Linkable {
-  uri: URI!
+  uri: URI
 }
 
 """
@@ -1993,10 +1993,10 @@ func (ec *executionContext) _Book_uri(ctx context.Context, field graphql.Collect
 		}
 		return graphql.Null
 	}
-	res := resTmp.(URI)
+	res := resTmp.(*URI)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNURI2githubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, field.Selections, res)
+	return ec.marshalNURI2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Book_title(ctx context.Context, field graphql.CollectedField, obj *Book) graphql.Marshaler {
@@ -3363,10 +3363,10 @@ func (ec *executionContext) _Post_uri(ctx context.Context, field graphql.Collect
 		}
 		return graphql.Null
 	}
-	res := resTmp.(URI)
+	res := resTmp.(*URI)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNURI2githubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, field.Selections, res)
+	return ec.marshalNURI2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Post_next(ctx context.Context, field graphql.CollectedField, obj *Post) graphql.Marshaler {
@@ -4405,10 +4405,10 @@ func (ec *executionContext) _Tweet_urls(ctx context.Context, field graphql.Colle
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]URI)
+	res := resTmp.([]*URI)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNURI2ᚕgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, field.Selections, res)
+	return ec.marshalNURI2ᚕᚖgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Tweet_screen_name(ctx context.Context, field graphql.CollectedField, obj *Tweet) graphql.Marshaler {
@@ -4540,10 +4540,10 @@ func (ec *executionContext) _Tweet_uri(ctx context.Context, field graphql.Collec
 		}
 		return graphql.Null
 	}
-	res := resTmp.(URI)
+	res := resTmp.(*URI)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNURI2githubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, field.Selections, res)
+	return ec.marshalNURI2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _TwitterURL_link(ctx context.Context, field graphql.CollectedField, obj *models.SavedURL) graphql.Marshaler {
@@ -7861,7 +7861,7 @@ func (ec *executionContext) marshalNURI2githubᚗcomᚋiccoᚋgraphqlᚐURI(ctx 
 	return v
 }
 
-func (ec *executionContext) unmarshalNURI2ᚕgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx context.Context, v interface{}) ([]URI, error) {
+func (ec *executionContext) unmarshalNURI2ᚕᚖgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx context.Context, v interface{}) ([]*URI, error) {
 	var vSlice []interface{}
 	if v != nil {
 		if tmp1, ok := v.([]interface{}); ok {
@@ -7871,9 +7871,9 @@ func (ec *executionContext) unmarshalNURI2ᚕgithubᚗcomᚋiccoᚋgraphqlᚐURI
 		}
 	}
 	var err error
-	res := make([]URI, len(vSlice))
+	res := make([]*URI, len(vSlice))
 	for i := range vSlice {
-		res[i], err = ec.unmarshalNURI2githubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNURI2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -7881,10 +7881,10 @@ func (ec *executionContext) unmarshalNURI2ᚕgithubᚗcomᚋiccoᚋgraphqlᚐURI
 	return res, nil
 }
 
-func (ec *executionContext) marshalNURI2ᚕgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx context.Context, sel ast.SelectionSet, v []URI) graphql.Marshaler {
+func (ec *executionContext) marshalNURI2ᚕᚖgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx context.Context, sel ast.SelectionSet, v []*URI) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	for i := range v {
-		ret[i] = ec.marshalNURI2githubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, sel, v[i])
+		ret[i] = ec.marshalNURI2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, sel, v[i])
 	}
 
 	return ret
