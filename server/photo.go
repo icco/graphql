@@ -52,7 +52,7 @@ func photoUploadHandler(w http.ResponseWriter, r *http.Request) {
 	f := p.URI()
 	err = Renderer.JSON(w, http.StatusOK, map[string]string{
 		"upload": "ok",
-		"file":   (&f).String(),
+		"file":   f.String(),
 	})
 	if err != nil {
 		log.WithError(err).Error("could not render json")

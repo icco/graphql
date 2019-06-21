@@ -334,6 +334,12 @@ func (r *queryResolver) Links(ctx context.Context, input *Limit) ([]*Link, error
 	return GetLinks(ctx, limit, offset)
 }
 
+func (r *queryResolver) Books(ctx context.Context, input *Limit) ([]*Book, error) {
+	limit, offset := ParseLimit(input, 10, 0)
+
+	return GetBooks(ctx, limit, offset)
+}
+
 func (r *queryResolver) Link(ctx context.Context, id *string, url *URI) (*Link, error) {
 	if id != nil && url != nil {
 		return nil, fmt.Errorf("do not specify an ID and a URI in input")

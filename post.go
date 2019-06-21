@@ -239,7 +239,7 @@ func (p *Post) HTML() template.HTML {
 }
 
 // URI returns an absolute link to this post.
-func (p *Post) URI() URI {
+func (p *Post) URI() *URI {
 	return NewURI(fmt.Sprintf("https://writing.natwelch.com/post/%s", p.ID))
 }
 
