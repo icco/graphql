@@ -65,7 +65,7 @@ func (b *Book) URI() URI {
 	return NewURI(fmt.Sprintf("https://www.goodreads.com/book/show/%s", b.GoodreadsID))
 }
 
-// GetLinks returns all links from the database.
+// GetBooks returns all books from the database.
 func GetBooks(ctx context.Context, limit int, offset int) ([]*Book, error) {
 	rows, err := db.QueryContext(ctx, "SELECT id, title, goodreads_id, created_at, modified_at FROM books LIMIT $1 OFFSET $2", limit, offset)
 	if err != nil {

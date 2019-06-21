@@ -12,6 +12,7 @@ type URI struct {
 	raw string
 }
 
+// NewURI creates a URI from a string.
 func NewURI(raw string) URI {
 	u := URI{}
 	u.raw = raw
@@ -60,10 +61,12 @@ func (u URI) Value() (driver.Value, error) {
 	return u.raw, nil
 }
 
+// MarshalJSON implements the encoding/json interface.
 func (u URI) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf(`"%s"`, u.String())), nil
 }
 
+// UnmarshalJSON implements the encoding/json interface.
 func (u *URI) UnmarshalJSON(value []byte) error {
 	u.raw = string(value)
 	return nil
