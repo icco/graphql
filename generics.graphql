@@ -139,6 +139,9 @@ input NewTweet {
 The query type, represents all of the entry points into our object graph.
 """
 type Query {
+  "Returns some books."
+  books(input: Limit): [Book]!
+
   "Returns a subset of all links ever, in reverse chronological order, using provided limit and offset."
   links(input: Limit): [Link]!
 
