@@ -460,17 +460,15 @@ func (r *queryResolver) Tags(ctx context.Context) ([]string, error) {
 	return AllTags(ctx)
 }
 
-func (r *queryResolver) Logs(ctx context.Context, uid *string) ([]*Log, error) {
-	var err error
-	u := GetUserFromContext(ctx)
-	if uid != nil {
-		u, err = GetUser(ctx, *uid)
-		if err != nil {
-			return []*Log{}, err
-		}
-	}
+func (r *queryResolver) Log(ctx context.Context, id string) (*Log, error) {
+	return GetLog(ctx, id)
+}
 
-	return UserLogs(ctx, u)
+func (r *queryResolver) Logs(ctx context.Context, input *Limit) ([]*Log, error) {
+	u := GetUserFromContext(ctx)
+	limit, offset := ParseLimit(input, 25, 0)
+
+	return UserLogs(ctx, u, limit, offset)
 }
 
 func (r *queryResolver) Time(ctx context.Context) (*time.Time, error) {
