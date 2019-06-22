@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/paulmach/orb"
 )
 
 // A Log is a journal entry by an individual.
@@ -112,15 +113,14 @@ func UserLogs(ctx context.Context, u *User, limit int, offset int) ([]*Log, erro
 	logs := make([]*Log, 0)
 	for rows.Next() {
 		l := &Log{}
-		// var p orb.Point
-		var b []byte
+		var p orb.Point
 
 		err := rows.Scan(
 			&l.ID,
 			&l.Code,
 			&l.Datetime,
 			&l.Description,
-			&b, // Change to GeoScanner(&p) once https://github.com/paulmach/orb/issues/21 is fixed
+			GeoScanner(&p),
 			&l.Project,
 			&l.User.ID,
 			&l.Created,
@@ -130,7 +130,7 @@ func UserLogs(ctx context.Context, u *User, limit int, offset int) ([]*Log, erro
 			return nil, err
 		}
 
-		// l.Location = GeoFromOrb(b)
+		l.Location = GeoFromOrb(&p)
 
 		logs = append(logs, l)
 	}
