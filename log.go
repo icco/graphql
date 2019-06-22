@@ -2,6 +2,7 @@ package graphql
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"time"
 
@@ -139,4 +140,36 @@ func UserLogs(ctx context.Context, u *User, limit int, offset int) ([]*Log, erro
 		return nil, err
 	}
 	return logs, nil
+}
+
+// GetLog gets a single Log by ID.
+func GetLog(ctx context.Context, id string) (*Log, error) {
+	l := &Log{}
+	var p orb.Point
+
+	row := db.QueryRowContext(ctx, `
+  SELECT id, code, datetime, description, ST_AsBinary(location), project, user_id, created_at, modified_at
+  FROM logs
+  WHERE id = $1
+  `, id)
+	err := row.Scan(
+		&l.ID,
+		&l.Code,
+		&l.Datetime,
+		&l.Description,
+		GeoScanner(&p),
+		&l.Project,
+		&l.User.ID,
+		&l.Created,
+		&l.Modified,
+	)
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, nil
+	case err != nil:
+		return nil, fmt.Errorf("Error running get query: %+v", err)
+	default:
+		l.Location = GeoFromOrb(&p)
+		return l, nil
+	}
 }

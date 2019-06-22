@@ -465,7 +465,6 @@ func (r *queryResolver) Log(ctx context.Context, id string) (*Log, error) {
 }
 
 func (r *queryResolver) Logs(ctx context.Context, input *Limit) ([]*Log, error) {
-	var err error
 	u := GetUserFromContext(ctx)
 	limit, offset := ParseLimit(input, 25, 0)
 
