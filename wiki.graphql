@@ -57,8 +57,11 @@ input NewGeo {
 }
 
 extend type Query {
-  "Returns all Logs for a user. If no user specified, returns your logs."
-  logs(user_id: String): [Log]! @loggedIn
+  "Returns all Logs for your user."
+  logs(input: Limit): [Log]! @loggedIn
+
+  "Returns a log based on an ID."
+  log(id: ID!): [Log]! @loggedIn
 
   getPageByID(id: ID!): Page
   getPageBySlug(slug: ID!): Page
