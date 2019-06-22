@@ -219,7 +219,7 @@ type QueryResolver interface {
 	PostsByTag(ctx context.Context, id string) ([]*Post, error)
 	Tags(ctx context.Context) ([]string, error)
 	Logs(ctx context.Context, input *Limit) ([]*Log, error)
-	Log(ctx context.Context, id string) ([]*Log, error)
+	Log(ctx context.Context, id string) (*Log, error)
 	GetPageByID(ctx context.Context, id string) (*Page, error)
 	GetPageBySlug(ctx context.Context, slug string) (*Page, error)
 	GetPages(ctx context.Context) ([]*Page, error)
@@ -1504,7 +1504,7 @@ extend type Query {
   logs(input: Limit): [Log]! @loggedIn
 
   "Returns a log based on an ID."
-  log(id: ID!): [Log]! @loggedIn
+  log(id: ID!): Log @loggedIn
 
   getPageByID(id: ID!): Page
   getPageBySlug(slug: ID!): Page
@@ -4105,15 +4105,12 @@ func (ec *executionContext) _Query_log(ctx context.Context, field graphql.Collec
 		return ec.resolvers.Query().Log(rctx, args["id"].(string))
 	})
 	if resTmp == nil {
-		if !ec.HasError(rctx) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.([]*Log)
+	res := resTmp.(*Log)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNLog2ᚕᚖgithubᚗcomᚋiccoᚋgraphqlᚐLog(ctx, field.Selections, res)
+	return ec.marshalOLog2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐLog(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getPageByID(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
@@ -6821,9 +6818,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_log(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
 				return res
 			})
 		case "getPageByID":

@@ -61,7 +61,7 @@ extend type Query {
   logs(input: Limit): [Log]! @loggedIn
 
   "Returns a log based on an ID."
-  log(id: ID!): [Log]! @loggedIn
+  log(id: ID!): Log @loggedIn
 
   getPageByID(id: ID!): Page
   getPageBySlug(slug: ID!): Page
