@@ -137,7 +137,8 @@ type ComplexityRoot struct {
 		HomeTimelineURLs   func(childComplexity int, input *Limit) int
 		Link               func(childComplexity int, id *string, url *URI) int
 		Links              func(childComplexity int, input *Limit) int
-		Logs               func(childComplexity int, userID *string) int
+		Log                func(childComplexity int, id string) int
+		Logs               func(childComplexity int, input *Limit) int
 		NextPost           func(childComplexity int, id string) int
 		Post               func(childComplexity int, id string) int
 		Posts              func(childComplexity int, input *Limit) int
@@ -217,7 +218,8 @@ type QueryResolver interface {
 	PrevPost(ctx context.Context, id string) (*Post, error)
 	PostsByTag(ctx context.Context, id string) ([]*Post, error)
 	Tags(ctx context.Context) ([]string, error)
-	Logs(ctx context.Context, userID *string) ([]*Log, error)
+	Logs(ctx context.Context, input *Limit) ([]*Log, error)
+	Log(ctx context.Context, id string) (*Log, error)
 	GetPageByID(ctx context.Context, id string) (*Page, error)
 	GetPageBySlug(ctx context.Context, slug string) (*Page, error)
 	GetPages(ctx context.Context) ([]*Page, error)
@@ -764,6 +766,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Links(childComplexity, args["input"].(*Limit)), true
 
+	case "Query.log":
+		if e.complexity.Query.Log == nil {
+			break
+		}
+
+		args, err := ec.field_Query_log_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Log(childComplexity, args["id"].(string)), true
+
 	case "Query.logs":
 		if e.complexity.Query.Logs == nil {
 			break
@@ -774,7 +788,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Logs(childComplexity, args["user_id"].(*string)), true
+		return e.complexity.Query.Logs(childComplexity, args["input"].(*Limit)), true
 
 	case "Query.nextPost":
 		if e.complexity.Query.NextPost == nil {
@@ -1486,8 +1500,11 @@ input NewGeo {
 }
 
 extend type Query {
-  "Returns all Logs for a user. If no user specified, returns your logs."
-  logs(user_id: String): [Log]! @loggedIn
+  "Returns all Logs for your user."
+  logs(input: Limit): [Log]! @loggedIn
+
+  "Returns a log based on an ID."
+  log(id: ID!): Log @loggedIn
 
   getPageByID(id: ID!): Page
   getPageBySlug(slug: ID!): Page
@@ -1765,17 +1782,31 @@ func (ec *executionContext) field_Query_links_args(ctx context.Context, rawArgs 
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_logs_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_log_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *string
-	if tmp, ok := rawArgs["user_id"]; ok {
-		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["user_id"] = arg0
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_logs_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *Limit
+	if tmp, ok := rawArgs["input"]; ok {
+		arg0, err = ec.unmarshalOLimit2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐLimit(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -4037,7 +4068,7 @@ func (ec *executionContext) _Query_logs(ctx context.Context, field graphql.Colle
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Logs(rctx, args["user_id"].(*string))
+		return ec.resolvers.Query().Logs(rctx, args["input"].(*Limit))
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -4049,6 +4080,37 @@ func (ec *executionContext) _Query_logs(ctx context.Context, field graphql.Colle
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return ec.marshalNLog2ᚕᚖgithubᚗcomᚋiccoᚋgraphqlᚐLog(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_log(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() { ec.Tracer.EndFieldExecution(ctx) }()
+	rctx := &graphql.ResolverContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_log_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp := ec.FieldMiddleware(ctx, nil, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Log(rctx, args["id"].(string))
+	})
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*Log)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalOLog2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐLog(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_getPageByID(ctx context.Context, field graphql.CollectedField) graphql.Marshaler {
@@ -6745,6 +6807,17 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
+				return res
+			})
+		case "log":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_log(ctx, field)
 				return res
 			})
 		case "getPageByID":
