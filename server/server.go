@@ -235,7 +235,7 @@ func cronHandler(w http.ResponseWriter, r *http.Request) {
 func internalErrorHandler(w http.ResponseWriter, r *http.Request) {
 
 	err := Renderer.JSON(w, http.StatusInternalServerError, map[string]string{
-		"error": "500: An internal server error occured",
+		"error": "500: An internal server error occurred",
 	})
 	if err != nil {
 		log.WithError(err).Error("could not render json")

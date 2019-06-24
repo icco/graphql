@@ -74,7 +74,7 @@ WHERE pages.id = $1;
 	return nil
 }
 
-// Slugify returns a dash seperated string that doesn't have unicode chars.
+// Slugify returns a dash separated string that doesn't have unicode chars.
 func Slugify(title string) string {
 	return slug.Make(title)
 }

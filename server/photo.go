@@ -35,7 +35,7 @@ func photoUploadHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	log.WithField("file_header", header).Debug("recieved file")
+	log.WithField("file_header", header).Debug("received file")
 
 	p := &graphql.Photo{
 		ContentType: header.Header.Get("Content-Type"),
