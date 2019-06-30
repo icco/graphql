@@ -34,6 +34,10 @@ type Photo struct {
 	Modified    time.Time `json:"modified"`
 }
 
+// IsLinkable exists to show that this method implements the Linkable type in
+// graphql.
+func (p *Photo) IsLinkable() {}
+
 // Upload save the photo to GCS, and also makes sure the record is saved to the
 // database.
 func (p *Photo) Upload(ctx context.Context, f io.Reader) error {
