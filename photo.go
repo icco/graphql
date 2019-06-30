@@ -127,5 +127,6 @@ func (p *Photo) Path() string {
 
 // URI returns the URI for this photo.
 func (p *Photo) URI() string {
-	return fmt.Sprintf("https://storage.googleapis.com/%s/%s", StorageBucketName, p.Path())
+	// fmt.Sprintf("https://storage.googleapis.com/%s/%s", StorageBucketName, p.Path())
+	return fmt.Sprintf("https://icco.imgix.net/%s", p.Path())
 }
