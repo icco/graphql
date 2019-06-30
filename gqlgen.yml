@@ -21,6 +21,8 @@ models:
     model: github.com/icco/graphql.Link
   Log:
     model: github.com/icco/graphql.Log
+  Photo:
+    model: github.com/icco/graphql.Photo
   Post:
     model: github.com/icco/graphql.Post
   Page:

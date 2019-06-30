@@ -1,7 +1,7 @@
 """
 A Log is a journal entry by an individual.
 """
-type Log {
+type Log implements Linkable {
   id: ID!
   code: String!
   datetime: Time!
@@ -10,6 +10,7 @@ type Log {
   project: String!
   user: User!
   duration: Duration
+  uri: URI!
 }
 
 """
@@ -23,7 +24,7 @@ type Geo {
 """
 Page is a wiki page.
 """
-type Page {
+type Page implements Linkable {
   id: ID!
   slug: String!
   title: String!
@@ -33,6 +34,16 @@ type Page {
   user: User!
   created: Time!
   modified: Time!
+  uri: URI!
+}
+
+type Photo implements Linkable {
+  id: ID!
+  year: Int!
+  content_type: String!
+  created: Time!
+  modified: Time!
+  uri: URI!
 }
 
 input EditPage {
@@ -66,6 +77,9 @@ extend type Query {
   getPageByID(id: ID!): Page
   getPageBySlug(slug: ID!): Page
   getPages: [Page]!
+
+  "Returns all photos for your user."
+  photos(input: Limit): [Photo]! @loggedIn
 }
 
 extend type Mutation {

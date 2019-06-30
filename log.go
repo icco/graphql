@@ -24,6 +24,12 @@ type Log struct {
 	Modified    time.Time
 }
 
+// URI returns the URI for this log.
+func (p *Photo) URI() *URI {
+	url := fmt.Sprintf("https://etu.natwelch.com/log/%s", ID)
+	return NewURI(url)
+}
+
 // Save inserts or updates a log into the database.
 func (l *Log) Save(ctx context.Context) error {
 	if l.ID == "" {
