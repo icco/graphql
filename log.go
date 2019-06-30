@@ -24,6 +24,16 @@ type Log struct {
 	Modified    time.Time
 }
 
+// IsLinkable exists to show that this method implements the Linkable type in
+// graphql.
+func (l *Log) IsLinkable() {}
+
+// URI returns the URI for this log.
+func (l *Log) URI() *URI {
+	url := fmt.Sprintf("https://etu.natwelch.com/log/%s", l.ID)
+	return NewURI(url)
+}
+
 // Save inserts or updates a log into the database.
 func (l *Log) Save(ctx context.Context) error {
 	if l.ID == "" {
