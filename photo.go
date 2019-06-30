@@ -135,3 +135,47 @@ func (p *Photo) URI() *URI {
 	url = fmt.Sprintf("https://icco.imgix.net/%s", p.Path())
 	return NewURI(url)
 }
+
+// UserPhotos gets all photos for a User.
+func UserPhotos(ctx context.Context, u *User, limit int, offset int) ([]*Photo, error) {
+	if u == nil {
+		return nil, fmt.Errorf("no user specified")
+	}
+
+	rows, err := db.QueryContext(
+		ctx, `
+    SELECT id, year, content_type, user_id, created_at, modified_at
+    FROM photos
+    WHERE user_id = $1
+    ORDER BY datetime DESC
+    LIMIT $2 OFFSET $3
+    `,
+		u.ID, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	photos := make([]*Photo, 0)
+	for rows.Next() {
+		p := &Photo{}
+		err := rows.Scan(
+			&p.ID,
+			&p.Year,
+			&p.ContentType,
+			&p.User.ID,
+			&p.Created,
+			&p.Modified,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		photos = append(photos, p)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return photos, nil
+}

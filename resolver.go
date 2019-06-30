@@ -475,8 +475,7 @@ func (r *queryResolver) Photos(ctx context.Context, input *Limit) ([]*Photo, err
 	u := GetUserFromContext(ctx)
 	limit, offset := ParseLimit(input, 25, 0)
 
-	//return UserPhotos(ctx, u, limit, offset)
-	return nil, nil
+	return UserPhotos(ctx, u, limit, offset)
 }
 
 func (r *queryResolver) Time(ctx context.Context) (*time.Time, error) {
