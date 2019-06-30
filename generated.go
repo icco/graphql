@@ -37,7 +37,6 @@ type Config struct {
 }
 
 type ResolverRoot interface {
-	Log() LogResolver
 	Mutation() MutationResolver
 	Page() PageResolver
 	Query() QueryResolver
@@ -203,9 +202,6 @@ type ComplexityRoot struct {
 	}
 }
 
-type LogResolver interface {
-	URI(ctx context.Context, obj *Log) (*URI, error)
-}
 type MutationResolver interface {
 	UpsertBook(ctx context.Context, input EditBook) (*Book, error)
 	UpsertLink(ctx context.Context, input NewLink) (*Link, error)
@@ -2694,7 +2690,7 @@ func (ec *executionContext) _Log_uri(ctx context.Context, field graphql.Collecte
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp := ec.FieldMiddleware(ctx, obj, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Log().URI(rctx, obj)
+		return obj.URI(), nil
 	})
 	if resTmp == nil {
 		if !ec.HasError(rctx) {
@@ -6629,51 +6625,42 @@ func (ec *executionContext) _Log(ctx context.Context, sel ast.SelectionSet, obj 
 		case "id":
 			out.Values[i] = ec._Log_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				invalids++
 			}
 		case "code":
 			out.Values[i] = ec._Log_code(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				invalids++
 			}
 		case "datetime":
 			out.Values[i] = ec._Log_datetime(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				invalids++
 			}
 		case "description":
 			out.Values[i] = ec._Log_description(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				invalids++
 			}
 		case "location":
 			out.Values[i] = ec._Log_location(ctx, field, obj)
 		case "project":
 			out.Values[i] = ec._Log_project(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				invalids++
 			}
 		case "user":
 			out.Values[i] = ec._Log_user(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+				invalids++
 			}
 		case "duration":
 			out.Values[i] = ec._Log_duration(ctx, field, obj)
 		case "uri":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Log_uri(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
+			out.Values[i] = ec._Log_uri(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

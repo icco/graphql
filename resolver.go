@@ -471,6 +471,14 @@ func (r *queryResolver) Logs(ctx context.Context, input *Limit) ([]*Log, error) 
 	return UserLogs(ctx, u, limit, offset)
 }
 
+func (r *queryResolver) Photos(ctx context.Context, input *Limit) ([]*Photo, error) {
+	u := GetUserFromContext(ctx)
+	limit, offset := ParseLimit(input, 25, 0)
+
+	//return UserPhotos(ctx, u, limit, offset)
+	return nil, nil
+}
+
 func (r *queryResolver) Time(ctx context.Context) (*time.Time, error) {
 	now := time.Now()
 	return &now, nil

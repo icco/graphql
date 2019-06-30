@@ -25,8 +25,8 @@ type Log struct {
 }
 
 // URI returns the URI for this log.
-func (p *Photo) URI() *URI {
-	url := fmt.Sprintf("https://etu.natwelch.com/log/%s", ID)
+func (l *Log) URI() *URI {
+	url := fmt.Sprintf("https://etu.natwelch.com/log/%s", l.ID)
 	return NewURI(url)
 }
 
