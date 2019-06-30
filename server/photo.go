@@ -8,7 +8,7 @@ import (
 
 func photoUploadHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	u := graphql.ForContext(r.Context())
+	u := graphql.GetUserFromContext(r.Context())
 	if u == nil {
 		err := Renderer.JSON(w, http.StatusForbidden, map[string]string{
 			"error": "403: you must be logged in",
@@ -35,7 +35,7 @@ func photoUploadHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	log.WithField("file_header", header).Debug("recieved file")
+	log.WithField("file_header", header).Debug("received file")
 
 	p := &graphql.Photo{
 		ContentType: header.Header.Get("Content-Type"),
@@ -49,9 +49,10 @@ func photoUploadHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	f := p.URI()
 	err = Renderer.JSON(w, http.StatusOK, map[string]string{
 		"upload": "ok",
-		"file":   p.URI(),
+		"file":   f.String(),
 	})
 	if err != nil {
 		log.WithError(err).Error("could not render json")

@@ -9,6 +9,14 @@ import (
 	"time"
 )
 
+type Linkable interface {
+	IsLinkable()
+}
+
+type Searchable interface {
+	IsSearchable()
+}
+
 // Comment is an undefined type reserved for the future.
 type Comment struct {
 	ID string `json:"id"`
@@ -20,15 +28,25 @@ type EditBook struct {
 	GoodreadsID string  `json:"goodreads_id"`
 }
 
-type EditedPost struct {
-	Content  string    `json:"content"`
-	Title    string    `json:"title"`
-	Datetime time.Time `json:"datetime"`
-	Draft    bool      `json:"draft"`
+type EditPage struct {
+	ID       *string `json:"id"`
+	Slug     *string `json:"slug"`
+	Content  string  `json:"content"`
+	Title    string  `json:"title"`
+	Category *string `json:"category"`
 }
 
-type Linkable interface {
-	IsLinkable()
+type EditPost struct {
+	ID       *string    `json:"id"`
+	Content  *string    `json:"content"`
+	Title    *string    `json:"title"`
+	Datetime *time.Time `json:"datetime"`
+	Draft    *bool      `json:"draft"`
+}
+
+type Limit struct {
+	Limit  *int `json:"limit"`
+	Offset *int `json:"offset"`
 }
 
 type NewGeo struct {
@@ -38,7 +56,7 @@ type NewGeo struct {
 
 type NewLink struct {
 	Title       string     `json:"title"`
-	URI         string     `json:"uri"`
+	URI         URI        `json:"uri"`
 	Description string     `json:"description"`
 	Tags        []string   `json:"tags"`
 	Created     *time.Time `json:"created"`
@@ -49,13 +67,7 @@ type NewLog struct {
 	Description *string `json:"description"`
 	Location    *NewGeo `json:"location"`
 	Project     string  `json:"project"`
-}
-
-type NewPost struct {
-	Content  *string    `json:"content"`
-	Title    *string    `json:"title"`
-	Datetime *time.Time `json:"datetime"`
-	Draft    *bool      `json:"draft"`
+	Duration    *string `json:"duration"`
 }
 
 type NewStat struct {
@@ -71,13 +83,9 @@ type NewTweet struct {
 	RetweetCount  int       `json:"retweet_count"`
 	Symbols       []string  `json:"symbols"`
 	Text          string    `json:"text"`
-	Urls          []string  `json:"urls"`
+	Urls          []*URI    `json:"urls"`
 	ScreenName    string    `json:"screen_name"`
 	UserMentions  []string  `json:"user_mentions"`
-}
-
-type Searchable interface {
-	IsSearchable()
 }
 
 // A stat is a key value pair of two interesting strings.
@@ -92,6 +100,11 @@ const (
 	RoleAdmin  Role = "admin"
 	RoleNormal Role = "normal"
 )
+
+var AllRole = []Role{
+	RoleAdmin,
+	RoleNormal,
+}
 
 func (e Role) IsValid() bool {
 	switch e {

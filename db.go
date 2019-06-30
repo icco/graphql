@@ -170,6 +170,45 @@ var (
       );
       `,
 		},
+		{
+			Version:     12,
+			Description: "Add pages table",
+			Script: `
+      CREATE TABLE pages (
+        id TEXT PRIMARY KEY NOT NULL,
+        slug TEXT,
+        title TEXT,
+        content TEXT,
+        category TEXT,
+        tags TEXT[],
+        user_id TEXT,
+        created_at TIMESTAMP WITH TIME ZONE,
+        modified_at TIMESTAMP WITH TIME ZONE
+      );
+      `,
+		},
+		{
+			Version:     13,
+			Description: "Add trgm",
+			Script: `
+      CREATE EXTENSION pg_trgm;
+      SELECT set_limit(0.6);
+      `,
+		},
+		{
+			Version:     14,
+			Description: "Add trgm index",
+			Script: `
+      CREATE INDEX content_gin_idx ON posts USING GIN(content gin_trgm_ops);
+      `,
+		},
+		{
+			Version:     15,
+			Description: "Add second trgm index",
+			Script: `
+      CREATE INDEX title_gin_idx ON posts USING GIN(title gin_trgm_ops);
+      `,
+		},
 	}
 )
 

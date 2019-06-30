@@ -1,0 +1,74 @@
+"""
+A Log is a journal entry by an individual.
+"""
+type Log {
+  id: ID!
+  code: String!
+  datetime: Time!
+  description: String!
+  location: Geo
+  project: String!
+  user: User!
+  duration: Duration
+}
+
+"""
+Geo is a simple type for wrapping a point.
+"""
+type Geo {
+  lat: Float!
+  long: Float!
+}
+
+"""
+Page is a wiki page.
+"""
+type Page {
+  id: ID!
+  slug: String!
+  title: String!
+  content: String!
+  category: String!
+  tags: [String!]!
+  user: User!
+  created: Time!
+  modified: Time!
+}
+
+input EditPage {
+  id: ID
+  slug: String
+  content: String!
+  title: String!
+  category: String
+}
+
+input NewLog {
+  code: String!
+  description: String
+  location: NewGeo
+  project: String!
+  duration: String
+}
+
+input NewGeo {
+  lat: Float!
+  long: Float!
+}
+
+extend type Query {
+  "Returns all Logs for your user."
+  logs(input: Limit): [Log]! @loggedIn
+
+  "Returns a log based on an ID."
+  log(id: ID!): Log @loggedIn
+
+  getPageByID(id: ID!): Page
+  getPageBySlug(slug: ID!): Page
+  getPages: [Page]!
+}
+
+extend type Mutation {
+  insertLog(input: NewLog!): Log @loggedIn
+  upsertPage(input: EditPage!): Page! @loggedIn
+}

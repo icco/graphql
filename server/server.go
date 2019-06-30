@@ -10,6 +10,7 @@ import (
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	"contrib.go.opencensus.io/exporter/stackdriver/monitoredresource"
 	"contrib.go.opencensus.io/exporter/stackdriver/propagation"
+	"github.com/99designs/gqlgen-contrib/gqlapollotracing"
 	"github.com/99designs/gqlgen-contrib/gqlopencensus"
 	gql "github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/handler"
@@ -85,6 +86,7 @@ func main() {
 		trace.ApplyConfig(trace.Config{
 			DefaultSampler: trace.ProbabilitySampler(0.1),
 		})
+
 	}
 
 	isDev := os.Getenv("NAT_ENV") != "production"
@@ -121,6 +123,9 @@ func main() {
 		}).Handler)
 
 		r.Get("/healthz", healthCheckHandler)
+		r.Options("/photo/new", func(w http.ResponseWriter, r *http.Request) {
+			w.Write([]byte(""))
+		})
 	})
 
 	// Everything that does SSL only
@@ -154,8 +159,11 @@ func main() {
 			}),
 			handler.CacheSize(512),
 			handler.RequestMiddleware(GqlLoggingMiddleware),
+			handler.RequestMiddleware(gqlapollotracing.RequestMiddleware()),
+			handler.Tracer(gqlapollotracing.NewTracer()),
 			handler.Tracer(gqlopencensus.New()),
 		))
+
 		r.Post("/photo/new", photoUploadHandler)
 	})
 
@@ -163,7 +171,11 @@ func main() {
 		Handler:     r,
 		Propagation: &propagation.HTTPFormat{},
 	}
-	if err := view.Register(ochttp.DefaultServerViews...); err != nil {
+	if err := view.Register([]*view.View{
+		ochttp.ServerRequestCountView,
+		ochttp.ServerLatencyView,
+		ochttp.ServerResponseCountByStatusCode,
+	}...); err != nil {
 		log.Fatal("Failed to register ochttp.DefaultServerViews")
 	}
 
@@ -200,7 +212,7 @@ func cronHandler(w http.ResponseWriter, r *http.Request) {
 		perPage := 10
 
 		for i := 0; err == nil || len(posts) > 0; i += perPage {
-			posts, err = graphql.Posts(ctx, &perPage, &i)
+			posts, err = graphql.Posts(ctx, perPage, i)
 			if err == nil {
 				for _, p := range posts {
 					err = p.Save(ctx)
@@ -223,7 +235,7 @@ func cronHandler(w http.ResponseWriter, r *http.Request) {
 func internalErrorHandler(w http.ResponseWriter, r *http.Request) {
 
 	err := Renderer.JSON(w, http.StatusInternalServerError, map[string]string{
-		"error": "500: An internal server error occured",
+		"error": "500: An internal server error occurred",
 	})
 	if err != nil {
 		log.WithError(err).Error("could not render json")

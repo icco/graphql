@@ -3,7 +3,8 @@
 # Refer to https://gqlgen.com/config/
 # for detailed .gqlgen.yml documentation.
 
-schema: schema.graphql
+schema:
+- "*.graphql"
 exec:
   filename: generated.go
 model:
@@ -22,9 +23,15 @@ models:
     model: github.com/icco/graphql.Log
   Post:
     model: github.com/icco/graphql.Post
+  Page:
+    model: github.com/icco/graphql.Page
   Tweet:
     model: github.com/icco/graphql.Tweet
   TwitterURL:
     model: github.com/icco/cacophony/models.SavedURL
   User:
     model: github.com/icco/graphql.User
+  URI:
+    model: github.com/icco/graphql.URI
+  Duration:
+    model: github.com/icco/graphql.Duration

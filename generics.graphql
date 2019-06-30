@@ -1,0 +1,180 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+directive @hasRole(role: Role!) on FIELD_DEFINITION
+
+directive @loggedIn on FIELD_DEFINITION
+
+enum Role {
+  admin
+  normal
+}
+
+interface Searchable {
+  summary: String!
+}
+
+interface Linkable {
+  uri: URI
+}
+
+"""
+A link is a link I have save on pinboard or a link in a post.
+"""
+type Link implements Linkable {
+  id: ID!
+  title: String!
+  uri: URI!
+  created: Time!
+  description: String!
+  screenshot: URI!
+  tags: [String!]!
+  modified: Time!
+}
+
+"""
+A stat is a key value pair of two interesting strings.
+"""
+type Stat {
+  key: String!
+  value: String!
+}
+
+"""
+A user is a logged in user.
+"""
+type User {
+  id: ID!
+  role: String!
+  apikey: String!
+  created: Time!
+  modified: Time!
+}
+
+"""
+A Tweet is an archived tweet.
+"""
+type Tweet implements Linkable {
+  id: ID!
+  text: String!
+  hashtags: [String!]!
+  symbols: [String!]!
+  user_mentions: [String!]!
+  urls: [URI!]!
+  screen_name: String!
+  favorite_count: Int!
+  retweet_count: Int!
+  posted: Time!
+  uri: URI!
+}
+
+type TwitterURL {
+  link: URI
+  tweetIDs: [ID!]!
+  createdAt: Time!
+  modifiedAt: Time!
+  tweets: [Tweet]!
+}
+
+
+"""
+A book is a book on Goodreads.
+"""
+type Book implements Linkable {
+  id: ID!
+  uri: URI!
+  title: String!
+}
+
+"""
+Time is a datetime scalar with timezone.
+"""
+scalar Time
+
+"""
+Duration is float of seconds that something took.
+"""
+scalar Duration
+
+"""
+A URI is a url or url like thing.
+"""
+scalar URI
+
+input EditBook {
+  id: ID,
+  title: String,
+  goodreads_id: String!,
+}
+
+input NewLink {
+  title: String!
+  uri: URI!
+  description: String!
+  tags: [String!]!
+  created: Time
+}
+
+input NewStat {
+  key: String!
+  value: String!
+}
+
+input NewTweet {
+  favorite_count: Int!
+  hashtags: [String!]
+  id: ID!
+  posted: Time!
+  retweet_count: Int!
+  symbols: [String!]
+  text: String!
+  urls: [URI!]
+  screen_name: String!
+  user_mentions: [String!]
+}
+
+"""
+The query type, represents all of the entry points into our object graph.
+"""
+type Query {
+  "Returns some books."
+  books(input: Limit): [Book]!
+
+  "Returns a subset of all links ever, in reverse chronological order, using provided limit and offset."
+  links(input: Limit): [Link]!
+
+  "Returns a single link by id or url."
+  link(id: ID, url: URI): Link
+
+  "Returns a number of stats, ordered by most recently updated."
+  stats(count: Int): [Stat]!
+
+  "Returns counts of entries in the database."
+  counts: [Stat]!
+
+  "If logged in, returns a user."
+  whoami: User
+
+  "Returns tweets in database."
+  tweets(input: Limit): [Tweet]!
+
+  "Returns just one tweet."
+  tweet(id: ID!): Tweet
+
+  "Returns a user's tweets by screen name."
+  tweetsByScreenName(screen_name: String!, input: Limit): [Tweet]!
+
+  homeTimelineURLs(input: Limit): [TwitterURL]!
+
+  "The current server time."
+  time: Time!
+}
+
+type Mutation {
+  upsertBook(input: EditBook!): Book! @hasRole(role: admin)
+  upsertLink(input: NewLink!): Link! @hasRole(role: admin)
+  upsertStat(input: NewStat!): Stat! @hasRole(role: admin)
+  upsertTweet(input: NewTweet!): Tweet! @hasRole(role: admin)
+}

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html/template"
 	"math"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -39,6 +40,25 @@ func GetMaxID(ctx context.Context) (int64, error) {
 	return id, nil
 }
 
+// GetPostString gets a post by an ID string.
+func GetPostString(ctx context.Context, id string) (*Post, error) {
+	match, err := regexp.MatchString("^[0-9]+$", id)
+	if err != nil {
+		return nil, err
+	}
+
+	if !match {
+		return nil, fmt.Errorf("No post with id %s", id)
+	}
+
+	i, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	return GetPost(ctx, i)
+}
+
 // GetPost gets a post by ID from the database.
 func GetPost(ctx context.Context, id int64) (*Post, error) {
 	var post Post
@@ -46,7 +66,7 @@ func GetPost(ctx context.Context, id int64) (*Post, error) {
 	err := row.Scan(&post.ID, &post.Title, &post.Content, &post.Datetime, &post.Created, &post.Modified, pq.Array(&post.Tags), &post.Draft)
 	switch {
 	case err == sql.ErrNoRows:
-		return nil, fmt.Errorf("No post with id %d", id)
+		return nil, nil
 	case err != nil:
 		return nil, fmt.Errorf("Error running get query: %+v", err)
 	default:
@@ -105,7 +125,7 @@ func AllTags(ctx context.Context) ([]string, error) {
 }
 
 // Drafts is a simple wrapper around Posts that does return drafts.
-func Drafts(ctx context.Context) ([]*Post, error) {
+func Drafts(ctx context.Context, _, _ int) ([]*Post, error) {
 	return AllPosts(ctx, true)
 }
 
@@ -160,6 +180,10 @@ func (p *Post) Save(ctx context.Context) error {
 		p.Title = fmt.Sprintf("Untitled #%s", p.ID)
 	}
 
+	if p.Datetime.IsZero() {
+		p.Datetime = time.Now()
+	}
+
 	if p.Created.IsZero() {
 		p.Created = time.Now()
 	}
@@ -194,6 +218,16 @@ WHERE posts.id = $1;
 	return nil
 }
 
+// IntID returns this posts ID as an int.
+func (p *Post) IntID() int64 {
+	i, err := strconv.ParseInt(p.ID, 10, 64)
+	if err != nil {
+		return 0
+	}
+
+	return i
+}
+
 // Summary returns the first sentence of a post.
 func (p *Post) Summary() string {
 	return SummarizeText(p.Content)
@@ -205,8 +239,38 @@ func (p *Post) HTML() template.HTML {
 }
 
 // URI returns an absolute link to this post.
-func (p *Post) URI() string {
-	return fmt.Sprintf("https://writing.natwelch.com/post/%s", p.ID)
+func (p *Post) URI() *URI {
+	return NewURI(fmt.Sprintf("https://writing.natwelch.com/post/%s", p.ID))
+}
+
+// Next returns the next post chronologically.
+func (p *Post) Next(ctx context.Context) (*Post, error) {
+	var postID string
+	row := db.QueryRowContext(ctx, "SELECT id FROM posts WHERE draft = false AND date > (SELECT date FROM posts WHERE id = $1) ORDER BY date ASC LIMIT 1", p.ID)
+	err := row.Scan(&postID)
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, nil
+	case err != nil:
+		return nil, err
+	default:
+		return GetPostString(ctx, postID)
+	}
+}
+
+// Prev returns the previous post chronologically.
+func (p *Post) Prev(ctx context.Context) (*Post, error) {
+	var postID string
+	row := db.QueryRowContext(ctx, "SELECT id FROM posts WHERE draft = false AND date < (SELECT date FROM posts WHERE id = $1) ORDER BY date DESC LIMIT 1", p.ID)
+	err := row.Scan(&postID)
+	switch {
+	case err == sql.ErrNoRows:
+		return nil, nil
+	case err != nil:
+		return nil, err
+	default:
+		return GetPostString(ctx, postID)
+	}
 }
 
 // ReadTime calculates the number of seconds it should take to read the post.
@@ -222,9 +286,119 @@ func (p *Post) ReadTime() int32 {
 // graphql.
 func (p *Post) IsLinkable() {}
 
+// Related returns an array of related posts. It is quite slow in comparison to
+// other queries.
+func (p *Post) Related(ctx context.Context, input *Limit) ([]*Post, error) {
+	limit := 3
+	offset := 0
+	if input != nil {
+		i := *input
+		if i.Limit != nil {
+			limit = *i.Limit
+		}
+
+		if i.Offset != nil {
+			offset = *i.Offset
+		}
+	}
+
+	_, err := db.QueryContext(ctx, "SELECT set_limit(0.6)")
+	if err != nil {
+		return nil, err
+	}
+
+	// From https://www.postgresql.org/docs/9.6/pgtrgm.html
+	query := `
+  SELECT SIMILARITY($1, title) AS sim, id
+  FROM posts
+  WHERE id != $2
+    AND title % $1
+    AND draft = false
+  ORDER BY sim DESC
+  LIMIT $3 OFFSET $4`
+
+	rows, err := db.QueryContext(ctx, query, p.Title, p.ID, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	posts := make([]*Post, 0)
+	for rows.Next() {
+		var id string
+		var sim float64
+		err := rows.Scan(&sim, &id)
+		if err != nil {
+			return nil, err
+		}
+		post, err := GetPostString(ctx, id)
+		if err != nil {
+			return nil, err
+		}
+		posts = append(posts, post)
+	}
+
+	if len(posts) < limit {
+		existing := []int64{}
+		for _, p := range posts {
+			existing = append(existing, p.IntID())
+		}
+
+		addPosts, err := GetRandomPosts(ctx, limit-len(posts), existing)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, v := range addPosts {
+			posts = append(posts, v)
+		}
+	}
+
+	return posts, nil
+}
+
+// GetRandomPosts returns a random selection of posts.
+func GetRandomPosts(ctx context.Context, limit int, notIn []int64) ([]*Post, error) {
+	query := `SELECT id, title, content, date, created_at, modified_at, tags, draft
+  FROM posts
+  WHERE draft = false
+    AND id <> ALL($1)
+  ORDER BY random() DESC LIMIT $2`
+
+	rows, err := db.QueryContext(ctx, query, pq.Array(notIn), limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	posts := make([]*Post, 0)
+	for rows.Next() {
+		post := new(Post)
+		err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.Datetime, &post.Created, &post.Modified, pq.Array(&post.Tags), &post.Draft)
+		if err != nil {
+			return nil, err
+		}
+		posts = append(posts, post)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return posts, nil
+
+}
+
 // Posts returns some posts.
-func Posts(ctx context.Context, limit *int, offset *int) ([]*Post, error) {
-	rows, err := db.QueryContext(ctx, "SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE draft = false ORDER BY date DESC LIMIT $1 OFFSET $2", limit, offset)
+func Posts(ctx context.Context, limit int, offset int) ([]*Post, error) {
+	query := `
+SELECT id, title, content, date, created_at, modified_at, tags, draft
+FROM posts
+WHERE draft = false
+  AND date <= NOW()
+ORDER BY date DESC
+LIMIT $1 OFFSET $2
+`
+	rows, err := db.QueryContext(ctx, query, limit, offset)
 	if err != nil {
 		return nil, err
 	}

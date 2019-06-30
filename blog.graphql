@@ -1,0 +1,77 @@
+"""
+Comment is an undefined type reserved for the future.
+"""
+type Comment {
+  id: ID!
+}
+
+"""
+A post is an individual post in the blog.
+"""
+type Post implements Linkable {
+  id: ID!
+  title: String!
+  content: String!
+  summary: String!
+  readtime: Int!
+
+  "datetime is the published time of an article."
+  datetime: Time!
+  created: Time!
+  modified: Time!
+  draft: Boolean!
+  tags: [String!]!
+
+  "links are the links referenced in a post."
+  links: [Link]!
+
+  "uri returns an absolute link to this post."
+  uri: URI!
+
+  next: Post
+  prev: Post
+
+  "A list of related posts. Maximum returned will be 10."
+  related(input: Limit): [Post]!
+}
+
+input EditPost {
+  id: ID
+  content: String
+  title: String
+  datetime: Time
+  draft: Boolean
+}
+
+input Limit {
+  limit: Int
+  offset: Int
+}
+
+extend type Query {
+  "Returns an array of inprogress posts."
+  drafts(input: Limit): [Post]! @hasRole(role: admin)
+
+  "Returns an array of all posts, ordered by reverse chronological order, using provided limit and offset."
+  posts(input: Limit): [Post]!
+
+  "Returns a single post by ID."
+  post(id: ID!): Post
+
+  "Returns post id for the next post chronologically."
+  nextPost(id: ID!): Post
+
+  "Returns post id for the previous post chronologically."
+  prevPost(id: ID!): Post
+
+  "Returns all posts that contain a tag."
+  postsByTag(id: String!): [Post]!
+
+  "Returns all tags used in a post."
+  tags: [String!]!
+}
+
+extend type Mutation {
+  createPost(input: EditPost!): Post! @hasRole(role: admin)
+  editPost(input: EditPost!): Post! @hasRole(role: admin)
+}

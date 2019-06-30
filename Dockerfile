@@ -1,10 +1,16 @@
-FROM golang:1.11
-ENV GO111MODULE=on
+FROM golang:1.12-alpine
+
+ENV GOPROXY="https://proxy.golang.org"
+ENV GO111MODULE="on"
 ENV NAT_ENV="production"
+
 EXPOSE 8080
+
 WORKDIR /go/src/github.com/icco/graphql
+
+RUN apk add --no-cache git
 COPY . .
 
-RUN go build -o /go/bin/server ./server
+RUN go build -v -o /go/bin/server ./server
 
 CMD ["/go/bin/server"]
