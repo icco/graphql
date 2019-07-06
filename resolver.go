@@ -394,9 +394,13 @@ func (r *queryResolver) PostsByTag(ctx context.Context, tag string) ([]*Post, er
 func (r *queryResolver) Counts(ctx context.Context) ([]*Stat, error) {
 	stats := make([]*Stat, 0)
 	for _, table := range []string{
-		"stats",
+		"books",
 		"links",
+		"logs",
+		"photos",
 		"posts",
+		"stats",
+		"tweets",
 	} {
 		stat := new(Stat)
 		stat.Key = table
