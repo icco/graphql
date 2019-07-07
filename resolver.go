@@ -227,6 +227,10 @@ func (r *mutationResolver) InsertLog(ctx context.Context, input NewLog) (*Log, e
 		}
 	}
 
+	if input.Duration != nil {
+		l.Duration = ParseDurationFromString(*input.Duration)
+	}
+
 	err := l.Save(ctx)
 	return l, err
 }
@@ -330,6 +334,12 @@ func (r *queryResolver) Links(ctx context.Context, input *Limit) ([]*Link, error
 	return GetLinks(ctx, limit, offset)
 }
 
+func (r *queryResolver) Books(ctx context.Context, input *Limit) ([]*Book, error) {
+	limit, offset := ParseLimit(input, 10, 0)
+
+	return GetBooks(ctx, limit, offset)
+}
+
 func (r *queryResolver) Link(ctx context.Context, id *string, url *URI) (*Link, error) {
 	if id != nil && url != nil {
 		return nil, fmt.Errorf("do not specify an ID and a URI in input")
@@ -384,9 +394,13 @@ func (r *queryResolver) PostsByTag(ctx context.Context, tag string) ([]*Post, er
 func (r *queryResolver) Counts(ctx context.Context) ([]*Stat, error) {
 	stats := make([]*Stat, 0)
 	for _, table := range []string{
-		"stats",
+		"books",
 		"links",
+		"logs",
+		"photos",
 		"posts",
+		"stats",
+		"tweets",
 	} {
 		stat := new(Stat)
 		stat.Key = table
@@ -450,17 +464,22 @@ func (r *queryResolver) Tags(ctx context.Context) ([]string, error) {
 	return AllTags(ctx)
 }
 
-func (r *queryResolver) Logs(ctx context.Context, uid *string) ([]*Log, error) {
-	var err error
-	u := GetUserFromContext(ctx)
-	if uid != nil {
-		u, err = GetUser(ctx, *uid)
-		if err != nil {
-			return []*Log{}, err
-		}
-	}
+func (r *queryResolver) Log(ctx context.Context, id string) (*Log, error) {
+	return GetLog(ctx, id)
+}
 
-	return UserLogs(ctx, u)
+func (r *queryResolver) Logs(ctx context.Context, input *Limit) ([]*Log, error) {
+	u := GetUserFromContext(ctx)
+	limit, offset := ParseLimit(input, 25, 0)
+
+	return UserLogs(ctx, u, limit, offset)
+}
+
+func (r *queryResolver) Photos(ctx context.Context, input *Limit) ([]*Photo, error) {
+	u := GetUserFromContext(ctx)
+	limit, offset := ParseLimit(input, 25, 0)
+
+	return UserPhotos(ctx, u, limit, offset)
 }
 
 func (r *queryResolver) Time(ctx context.Context) (*time.Time, error) {

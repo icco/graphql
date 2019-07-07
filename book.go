@@ -61,6 +61,36 @@ WHERE books.id = $1;
 }
 
 // URI returns an absolute link to this book.
-func (b *Book) URI() URI {
+func (b *Book) URI() *URI {
 	return NewURI(fmt.Sprintf("https://www.goodreads.com/book/show/%s", b.GoodreadsID))
+}
+
+// GetBooks returns all books from the database.
+func GetBooks(ctx context.Context, limit int, offset int) ([]*Book, error) {
+	rows, err := db.QueryContext(ctx, "SELECT id, title, goodreads_id, created_at, modified_at FROM books LIMIT $1 OFFSET $2", limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	books := make([]*Book, 0)
+	for rows.Next() {
+		book := new(Book)
+		err := rows.Scan(&book.ID, &book.Title, &book.GoodreadsID, &book.Created, &book.Modified)
+		if err != nil {
+			return nil, err
+		}
+
+		if book.Created.IsZero() {
+			book.Created = time.Now()
+		}
+
+		books = append(books, book)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return books, nil
 }

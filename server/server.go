@@ -171,7 +171,11 @@ func main() {
 		Handler:     r,
 		Propagation: &propagation.HTTPFormat{},
 	}
-	if err := view.Register(ochttp.DefaultServerViews...); err != nil {
+	if err := view.Register([]*view.View{
+		ochttp.ServerRequestCountView,
+		ochttp.ServerLatencyView,
+		ochttp.ServerResponseCountByStatusCode,
+	}...); err != nil {
 		log.Fatal("Failed to register ochttp.DefaultServerViews")
 	}
 
@@ -231,7 +235,7 @@ func cronHandler(w http.ResponseWriter, r *http.Request) {
 func internalErrorHandler(w http.ResponseWriter, r *http.Request) {
 
 	err := Renderer.JSON(w, http.StatusInternalServerError, map[string]string{
-		"error": "500: An internal server error occured",
+		"error": "500: An internal server error occurred",
 	})
 	if err != nil {
 		log.WithError(err).Error("could not render json")

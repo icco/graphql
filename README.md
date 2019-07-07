@@ -3,6 +3,7 @@
 A new backend for graphql.natwelch.com.
 
 [![Build Status](https://travis-ci.org/icco/graphql.svg?branch=master)](https://travis-ci.org/icco/graphql) [![Go Report Card](https://goreportcard.com/badge/github.com/icco/graphql)](https://goreportcard.com/report/github.com/icco/graphql)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Ficco%2Fgraphql.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Ficco%2Fgraphql?ref=badge_shield)
 
 Docs: [godoc.org/github.com/icco/graphql](https://godoc.org/github.com/icco/graphql)
 
@@ -47,3 +48,7 @@ We use <https://github.com/99designs/gqlgen> to generate a lot of the files. If 
 ## Documentation
 
 You can explore this api by looking at [schema.graphql]() and reading the descriptions. See <https://facebook.github.io/graphql/June2018/#sec-Descriptions> for an explanation of the description schema.
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Ficco%2Fgraphql.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Ficco%2Fgraphql?ref=badge_large)

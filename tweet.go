@@ -16,7 +16,7 @@ type Tweet struct {
 	Hashtags      []string  `json:"hashtags"`
 	Symbols       []string  `json:"symbols"`
 	UserMentions  []string  `json:"user_mentions"`
-	Urls          []URI     `json:"urls"`
+	Urls          []*URI    `json:"urls"`
 	ScreenName    string    `json:"screen_name"`
 	FavoriteCount int       `json:"favorite_count"`
 	RetweetCount  int       `json:"retweet_count"`
@@ -107,7 +107,7 @@ func GetTweets(ctx context.Context, limit, offset int) ([]*Tweet, error) {
 }
 
 // URI returns a link to this tweet.
-func (t *Tweet) URI() URI {
+func (t *Tweet) URI() *URI {
 	return NewURI(fmt.Sprintf("https://twitter.com/%s/status/%s", t.ScreenName, t.ID))
 }
 
