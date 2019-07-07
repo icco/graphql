@@ -21,7 +21,7 @@ type Searchable interface {
 type Comment struct {
 	ID       string    `json:"id"`
 	Post     *Post     `json:"post"`
-	Author   User      `json:"author"`
+	Author   *User     `json:"author"`
 	Content  string    `json:"content"`
 	Created  time.Time `json:"created"`
 	Modified time.Time `json:"modified"`
