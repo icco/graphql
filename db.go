@@ -209,6 +209,20 @@ var (
       CREATE INDEX title_gin_idx ON posts USING GIN(title gin_trgm_ops);
       `,
 		},
+		{
+			Version:     16,
+			Description: "Add comments table",
+			Script: `
+      CREATE TABLE comments (
+        id TEXT PRIMARY KEY NOT NULL,
+        post_id BIGINT,
+        user_id TEXT,
+        content TEXT,
+        created_at TIMESTAMP WITH TIME ZONE,
+        modified_at TIMESTAMP WITH TIME ZONE
+      );
+      `,
+		},
 	}
 )
 
