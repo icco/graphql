@@ -12,7 +12,12 @@ type Comment struct {
 	Content  string    `json:"content"`
 	Created  time.Time `json:"created"`
 	Modified time.Time `json:"modified"`
-	URI      URI       `json:"uri"`
 }
 
+// IsLinkable tells gqlgen this model has a URI function.
 func (Comment) IsLinkable() {}
+
+// URI returns the URI for this comment.
+func (c *Comment) URI() *URI {
+	return NewURI("https://writing.natwelch.com/comment/" + c.ID)
+}
