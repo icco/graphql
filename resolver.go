@@ -167,12 +167,7 @@ func (r *mutationResolver) EditPost(ctx context.Context, input EditPost) (*Post,
 		return nil, err
 	}
 
-	post, err := GetPostString(ctx, p.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	return post, nil
+	return GetPostString(ctx, p.ID)
 }
 
 func (r *mutationResolver) UpsertLink(ctx context.Context, input NewLink) (*Link, error) {
@@ -194,12 +189,7 @@ func (r *mutationResolver) UpsertLink(ctx context.Context, input NewLink) (*Link
 		return nil, err
 	}
 
-	link, err := GetLinkByURI(ctx, l.URI.String())
-	if err != nil {
-		return nil, err
-	}
-
-	return link, nil
+	return GetLinkByURI(ctx, l.URI.String())
 }
 
 func (r *mutationResolver) UpsertStat(ctx context.Context, input NewStat) (*Stat, error) {
