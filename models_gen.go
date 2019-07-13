@@ -17,9 +17,9 @@ type Searchable interface {
 	IsSearchable()
 }
 
-// Comment is an undefined type reserved for the future.
-type Comment struct {
-	ID string `json:"id"`
+type AddComment struct {
+	Content string `json:"content"`
+	PostID  string `json:"post_id"`
 }
 
 type EditBook struct {

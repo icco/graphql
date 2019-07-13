@@ -15,6 +15,10 @@ resolver:
 models:
   Book:
     model: github.com/icco/graphql.Book
+  Comment:
+    model: github.com/icco/graphql.Comment
+  Duration:
+    model: github.com/icco/graphql.Duration
   Geo:
     model: github.com/icco/graphql.Geo
   Link:
@@ -35,5 +39,3 @@ models:
     model: github.com/icco/graphql.User
   URI:
     model: github.com/icco/graphql.URI
-  Duration:
-    model: github.com/icco/graphql.Duration
