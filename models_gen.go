@@ -17,6 +17,11 @@ type Searchable interface {
 	IsSearchable()
 }
 
+type AddComment struct {
+	Content string `json:"content"`
+	PostID  string `json:"post_id"`
+}
+
 type EditBook struct {
 	ID          *string `json:"id"`
 	Title       *string `json:"title"`

@@ -94,6 +94,7 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
+		AddComment  func(childComplexity int, input AddComment) int
 		CreatePost  func(childComplexity int, input EditPost) int
 		EditPost    func(childComplexity int, input EditPost) int
 		InsertLog   func(childComplexity int, input NewLog) int
@@ -212,6 +213,7 @@ type MutationResolver interface {
 	UpsertLink(ctx context.Context, input NewLink) (*Link, error)
 	UpsertStat(ctx context.Context, input NewStat) (*Stat, error)
 	UpsertTweet(ctx context.Context, input NewTweet) (*Tweet, error)
+	AddComment(ctx context.Context, input AddComment) (*Comment, error)
 	CreatePost(ctx context.Context, input EditPost) (*Post, error)
 	EditPost(ctx context.Context, input EditPost) (*Post, error)
 	InsertLog(ctx context.Context, input NewLog) (*Log, error)
@@ -466,6 +468,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Log.User(childComplexity), true
+
+	case "Mutation.addComment":
+		if e.complexity.Mutation.AddComment == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addComment_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddComment(childComplexity, args["input"].(AddComment)), true
 
 	case "Mutation.createPost":
 		if e.complexity.Mutation.CreatePost == nil {
@@ -1329,6 +1343,11 @@ input Limit {
   offset: Int
 }
 
+input AddComment {
+  content: String!
+  post_id: ID!
+}
+
 extend type Query {
   "Returns an array of inprogress posts."
   drafts(input: Limit): [Post]! @hasRole(role: admin)
@@ -1353,6 +1372,7 @@ extend type Query {
 }
 
 extend type Mutation {
+  addComment(input: AddComment!): Comment! @loggedIn
   createPost(input: EditPost!): Post! @hasRole(role: admin)
   editPost(input: EditPost!): Post! @hasRole(role: admin)
 }
@@ -1644,6 +1664,20 @@ func (ec *executionContext) dir_hasRole_args(ctx context.Context, rawArgs map[st
 		}
 	}
 	args["role"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addComment_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 AddComment
+	if tmp, ok := rawArgs["input"]; ok {
+		arg0, err = ec.unmarshalNAddComment2githubᚗcomᚋiccoᚋgraphqlᚐAddComment(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -3411,6 +3445,63 @@ func (ec *executionContext) _Mutation_upsertTweet(ctx context.Context, field gra
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
 	return ec.marshalNTweet2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐTweet(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_addComment(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addComment_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().AddComment(rctx, args["input"].(AddComment))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			return ec.directives.LoggedIn(ctx, nil, directive0)
+		}
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if data, ok := tmp.(*Comment); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/icco/graphql.Comment`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*Comment)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNComment2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐComment(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createPost(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -7918,6 +8009,30 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputAddComment(ctx context.Context, obj interface{}) (AddComment, error) {
+	var it AddComment
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "content":
+			var err error
+			it.Content, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "post_id":
+			var err error
+			it.PostID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputEditBook(ctx context.Context, obj interface{}) (EditBook, error) {
 	var it EditBook
 	var asMap = obj.(map[string]interface{})
@@ -8584,6 +8699,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "upsertTweet":
 			out.Values[i] = ec._Mutation_upsertTweet(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "addComment":
+			out.Values[i] = ec._Mutation_addComment(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -9659,6 +9779,10 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
+func (ec *executionContext) unmarshalNAddComment2githubᚗcomᚋiccoᚋgraphqlᚐAddComment(ctx context.Context, v interface{}) (AddComment, error) {
+	return ec.unmarshalInputAddComment(ctx, v)
+}
+
 func (ec *executionContext) marshalNBook2githubᚗcomᚋiccoᚋgraphqlᚐBook(ctx context.Context, sel ast.SelectionSet, v Book) graphql.Marshaler {
 	return ec._Book(ctx, sel, &v)
 }
@@ -9722,6 +9846,20 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNComment2githubᚗcomᚋiccoᚋgraphqlᚐComment(ctx context.Context, sel ast.SelectionSet, v Comment) graphql.Marshaler {
+	return ec._Comment(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNComment2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐComment(ctx context.Context, sel ast.SelectionSet, v *Comment) graphql.Marshaler {
+	if v == nil {
+		if !ec.HasError(graphql.GetResolverContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Comment(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNEditBook2githubᚗcomᚋiccoᚋgraphqlᚐEditBook(ctx context.Context, v interface{}) (EditBook, error) {
