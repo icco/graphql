@@ -216,7 +216,7 @@ var (
       CREATE TABLE comments (
         id TEXT PRIMARY KEY NOT NULL,
         post_id BIGINT,
-        user_id TEXT,
+        user_id TEXT NOT NULL,
         content TEXT,
         created_at TIMESTAMP WITH TIME ZONE,
         modified_at TIMESTAMP WITH TIME ZONE
