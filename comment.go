@@ -28,6 +28,35 @@ func (c *Comment) URI() *URI {
 
 func GetComment(ctx context.Context, id string) (*Comment, error) {
 	c := &Comment{}
+	row := db.QueryRowContext(
+		ctx, `
+    SELECT id, post_id, user_id, content, created_at, modified_at
+    FROM comments
+    WHERE id = $1
+    `, id)
+
+	var postID, userID string
+	err := row.Scan(
+		&c.ID,
+		&postID,
+		&userID,
+		&c.Content,
+		&c.Created,
+		&c.Modified,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	c.User, err = GetUser(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Post, err = GetPostString(ctx, postID)
+	if err != nil {
+		return nil, err
+	}
 
 	return c, nil
 }
@@ -44,8 +73,7 @@ func PostComments(ctx context.Context, p *Post, limit int, offset int) ([]*Comme
     WHERE post_id = $1
     ORDER BY created_at ASC
     LIMIT $2 OFFSET $3
-    `,
-		p.ID, limit, offset)
+    `, p.ID, limit, offset)
 	if err != nil {
 		return nil, err
 	}
