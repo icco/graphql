@@ -76,7 +76,13 @@ func GetPost(ctx context.Context, id int64) (*Post, error) {
 
 // AllPosts returns all posts from the database.
 func AllPosts(ctx context.Context, isDraft bool) ([]*Post, error) {
-	rows, err := db.QueryContext(ctx, "SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE draft = $1 ORDER BY date DESC", isDraft)
+	rows, err := db.QueryContext(
+		ctx, `
+    SELECT id, title, content, date, created_at, modified_at, tags, draft
+    FROM posts
+    WHERE draft = $1
+    ORDER BY date DESC
+    `, isDraft)
 	if err != nil {
 		return nil, err
 	}
