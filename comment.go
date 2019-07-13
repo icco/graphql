@@ -26,6 +26,66 @@ func (c *Comment) URI() *URI {
 	return NewURI("https://writing.natwelch.com/comment/" + c.ID)
 }
 
+func GetComment(ctx context.Context, id string) (*Comment, error) {
+	c := &Comment{}
+
+	return c, nil
+}
+
+func PostComments(ctx context.Context, p *Post, limit int, offset int) ([]*Comment, error) {
+	if p == nil {
+		return nil, fmt.Errorf("no post specified")
+	}
+
+	rows, err := db.QueryContext(
+		ctx, `
+    SELECT id, post_id, user_id, content, created_at, modified_at
+    FROM comments
+    WHERE post_id = $1
+    ORDER BY created_at ASC
+    LIMIT $2 OFFSET $3
+    `,
+		p.ID, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	comments := make([]*Comment, 0)
+	for rows.Next() {
+		c := &Comment{}
+		var postID, userID string
+		err := rows.Scan(
+			&c.ID,
+			&postID,
+			&userID,
+			&c.Content,
+			&c.Created,
+			&c.Modified,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		c.User, err = GetUser(ctx, userID)
+		if err != nil {
+			return nil, err
+		}
+
+		c.Post, err = GetPostString(ctx, postID)
+		if err != nil {
+			return nil, err
+		}
+
+		comments = append(comments, c)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return comments, nil
+}
+
 // Save adds the comment to the database and checks that no data is missing.
 func (c *Comment) Save(ctx context.Context) error {
 	if c.ID == "" {
