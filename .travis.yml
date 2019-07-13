@@ -8,6 +8,7 @@ env:
 script:
   - go vet ./...
   - go build .
+  - go run github.com/99designs/gqlgen -v && git diff --name-status --exit-code
 notifications:
   email:
     on_success: change
