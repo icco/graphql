@@ -282,6 +282,25 @@ func (r *mutationResolver) UpsertTweet(ctx context.Context, input NewTweet) (*Tw
 	return t, nil
 }
 
+func (r *mutationResolver) AddComment(ctx context.Context, input AddComment) (*Comment, error) {
+	c := &Comment{}
+	c.Content = input.Content
+	c.User = GetUserFromContext(ctx)
+
+	post, err := GetPostString(ctx, input.PostID)
+	if err != nil {
+		return nil, err
+	}
+	c.Post = post
+
+	err = c.Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return GetComment(ctx, c.ID)
+}
+
 type queryResolver struct{ *Resolver }
 
 func (r *queryResolver) Drafts(ctx context.Context, input *Limit) ([]*Post, error) {
