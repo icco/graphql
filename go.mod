@@ -3,9 +3,9 @@ module github.com/icco/graphql
 go 1.12
 
 require (
-	cloud.google.com/go v0.40.0
+	cloud.google.com/go v0.41.0
 	contrib.go.opencensus.io/exporter/stackdriver v0.12.2
-	github.com/99designs/gqlgen v0.9.0
+	github.com/99designs/gqlgen v0.9.1
 	github.com/99designs/gqlgen-contrib v0.0.0-20190222015228-c654377d611c
 	github.com/GuiaBolso/darwin v0.0.0-20170210191649-86919dfcf808
 	github.com/auth0-community/go-auth0 v1.0.0
@@ -13,7 +13,7 @@ require (
 	github.com/go-chi/cors v1.0.0
 	github.com/google/uuid v1.1.1
 	github.com/gosimple/slug v1.5.0
-	github.com/icco/cacophony v0.0.0-20190208141533-6619033d7424
+	github.com/icco/cacophony v0.0.0-20190621011010-b3699e013072
 	github.com/icco/logrus-stackdriver-formatter v0.3.0
 	github.com/lib/pq v1.1.1
 	github.com/opencensus-integrations/ocsql v0.1.4
