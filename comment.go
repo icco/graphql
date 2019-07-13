@@ -61,19 +61,19 @@ func GetComment(ctx context.Context, id string) (*Comment, error) {
 	return c, nil
 }
 
-func PostComments(ctx context.Context, p *Post, limit int, offset int) ([]*Comment, error) {
-	if p == nil {
+func PostComments(ctx context.Context, p string, limit int, offset int) ([]*Comment, error) {
+	if p == "" {
 		return nil, fmt.Errorf("no post specified")
 	}
 
 	rows, err := db.QueryContext(
 		ctx, `
-    SELECT id, post_id, user_id, content, created_at, modified_at
+    SELECT id, user_id, content, created_at, modified_at
     FROM comments
     WHERE post_id = $1
     ORDER BY created_at ASC
     LIMIT $2 OFFSET $3
-    `, p.ID, limit, offset)
+    `, p, limit, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -82,10 +82,9 @@ func PostComments(ctx context.Context, p *Post, limit int, offset int) ([]*Comme
 	comments := make([]*Comment, 0)
 	for rows.Next() {
 		c := &Comment{}
-		var postID, userID string
+		var userID string
 		err := rows.Scan(
 			&c.ID,
-			&postID,
 			&userID,
 			&c.Content,
 			&c.Created,
@@ -100,7 +99,7 @@ func PostComments(ctx context.Context, p *Post, limit int, offset int) ([]*Comme
 			return nil, err
 		}
 
-		c.Post, err = GetPostString(ctx, postID)
+		c.Post, err = GetPostString(ctx, p)
 		if err != nil {
 			return nil, err
 		}

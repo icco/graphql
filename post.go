@@ -224,6 +224,24 @@ WHERE posts.id = $1;
 	return nil
 }
 
+// Comments returns the comments for a post
+func (p *Post) Comments(ctx context.Context, input *Limit) ([]*Comment, error) {
+	limit := 100
+	offset := 0
+	if input != nil {
+		i := *input
+		if i.Limit != nil {
+			limit = *i.Limit
+		}
+
+		if i.Offset != nil {
+			offset = *i.Offset
+		}
+	}
+
+	return PostComments(ctx, p.ID, limit, offset)
+}
+
 // IntID returns this posts ID as an int.
 func (p *Post) IntID() int64 {
 	i, err := strconv.ParseInt(p.ID, 10, 64)

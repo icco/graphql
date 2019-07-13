@@ -41,6 +41,7 @@ type Post implements Linkable {
 
   "A list of related posts. Maximum returned will be 10."
   related(input: Limit): [Post]!
+  comments(input: Limit): [Comment]!
 }
 
 input EditPost {
