@@ -4,7 +4,7 @@ Comment is a comment on a post.
 type Comment implements Linkable {
   id: ID!
   post: Post
-  author: User!
+  user: User!
   content: String!
   created: Time!
   modified: Time!

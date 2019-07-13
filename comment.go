@@ -1,14 +1,18 @@
 package graphql
 
 import (
+	"context"
+	"fmt"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 // Comment is a comment on a post.
 type Comment struct {
 	ID       string    `json:"id"`
 	Post     *Post     `json:"post"`
-	Author   *User     `json:"author"`
+	User     *User     `json:"author"`
 	Content  string    `json:"content"`
 	Created  time.Time `json:"created"`
 	Modified time.Time `json:"modified"`
