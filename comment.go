@@ -26,6 +26,7 @@ func (c *Comment) URI() *URI {
 	return NewURI("https://writing.natwelch.com/comment/" + c.ID)
 }
 
+// GetComment returns a single comment by ID.
 func GetComment(ctx context.Context, id string) (*Comment, error) {
 	c := &Comment{}
 	row := db.QueryRowContext(
@@ -61,6 +62,7 @@ func GetComment(ctx context.Context, id string) (*Comment, error) {
 	return c, nil
 }
 
+// PostComments returns comments for a post ID.
 func PostComments(ctx context.Context, p string, limit int, offset int) ([]*Comment, error) {
 	if p == "" {
 		return nil, fmt.Errorf("no post specified")
