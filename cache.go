@@ -1,6 +1,7 @@
 package graphql
 
 import (
+	"context"
 	"time"
 )
 
@@ -13,7 +14,7 @@ func NewCache() (*Cache, error) {
 	return &Cache{}, nil
 }
 
-func (c *Cache) Add(ctx context.Context, hash string, query string) error {
+func (c *Cache) Add(ctx context.Context, hash string, query string) {
 	_, err := db.ExecContext(
 		ctx,
 		`
@@ -27,7 +28,9 @@ WHERE cache.key = $1;
 		query,
 		time.Now())
 
-	return err
+	if err != nil {
+		log.WithError(err).Error("could not insert key")
+	}
 }
 
 func (c *Cache) Get(ctx context.Context, hash string) (string, bool) {

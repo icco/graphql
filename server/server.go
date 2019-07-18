@@ -77,7 +77,7 @@ func main() {
 		})
 
 		if err != nil {
-			log.Fatalf("Failed to create the Stackdriver exporter: %v", err)
+			log.WithError(err).Fatal("failed to create the Stackdriver exporter")
 		}
 		defer sd.Flush()
 
@@ -91,7 +91,10 @@ func main() {
 
 	isDev := os.Getenv("NAT_ENV") != "production"
 
-	cache := graphql.NewCache()
+	cache, err := graphql.NewCache()
+	if err != nil {
+		log.WithError(err).Fatal("could not connect to cache")
+	}
 
 	r := chi.NewRouter()
 
