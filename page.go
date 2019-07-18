@@ -24,6 +24,15 @@ type Page struct {
 	Modified time.Time `json:"modified"`
 }
 
+// IsLinkable exists to show that this method implements the Linkable type in
+// graphql.
+func (p *Page) IsLinkable() {}
+
+// URI returns an absolute link to this post.
+func (p *Page) URI() *URI {
+	return NewURI(fmt.Sprintf("https://etu.natwelch.com/page/%s", p.ID))
+}
+
 // Save inserts or updates a page into the database.
 func (p *Page) Save(ctx context.Context) error {
 	if p.ID == "" {
@@ -74,7 +83,7 @@ WHERE pages.id = $1;
 	return nil
 }
 
-// Slugify returns a dash seperated string that doesn't have unicode chars.
+// Slugify returns a dash separated string that doesn't have unicode chars.
 func Slugify(title string) string {
 	return slug.Make(title)
 }

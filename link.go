@@ -86,7 +86,7 @@ func GetLinkByID(ctx context.Context, id string) (*Link, error) {
 }
 
 // GetLinks returns all links from the database.
-func GetLinks(ctx context.Context, limit *int, offset *int) ([]*Link, error) {
+func GetLinks(ctx context.Context, limit int, offset int) ([]*Link, error) {
 	rows, err := db.QueryContext(ctx, "SELECT id, title, uri, description, created, modified_at, tags FROM links ORDER BY created DESC LIMIT $1 OFFSET $2", limit, offset)
 	if err != nil {
 		return nil, err

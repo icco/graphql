@@ -17,7 +17,7 @@ interface Searchable {
 }
 
 interface Linkable {
-  uri: URI!
+  uri: URI
 }
 
 """
@@ -94,6 +94,11 @@ Time is a datetime scalar with timezone.
 scalar Time
 
 """
+Duration is float of seconds that something took.
+"""
+scalar Duration
+
+"""
 A URI is a url or url like thing.
 """
 scalar URI
@@ -134,6 +139,9 @@ input NewTweet {
 The query type, represents all of the entry points into our object graph.
 """
 type Query {
+  "Returns some books."
+  books(input: Limit): [Book]!
+
   "Returns a subset of all links ever, in reverse chronological order, using provided limit and offset."
   links(input: Limit): [Link]!
 
@@ -159,6 +167,9 @@ type Query {
   tweetsByScreenName(screen_name: String!, input: Limit): [Tweet]!
 
   homeTimelineURLs(input: Limit): [TwitterURL]!
+
+  "The current server time."
+  time: Time!
 }
 
 type Mutation {

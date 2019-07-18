@@ -15,12 +15,18 @@ resolver:
 models:
   Book:
     model: github.com/icco/graphql.Book
+  Comment:
+    model: github.com/icco/graphql.Comment
+  Duration:
+    model: github.com/icco/graphql.Duration
   Geo:
     model: github.com/icco/graphql.Geo
   Link:
     model: github.com/icco/graphql.Link
   Log:
     model: github.com/icco/graphql.Log
+  Photo:
+    model: github.com/icco/graphql.Photo
   Post:
     model: github.com/icco/graphql.Post
   Page:

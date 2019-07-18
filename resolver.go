@@ -31,6 +31,25 @@ func GetUserFromContext(ctx context.Context) *User {
 	return u
 }
 
+// ParseLimit turns a limit and applies defaults into a pair of ints.
+func ParseLimit(lim *Limit, defaultLimit, defaultOffset int) (int, int) {
+	limit := defaultLimit
+	offset := defaultOffset
+
+	if lim != nil {
+		i := *lim
+		if i.Limit != nil {
+			limit = *i.Limit
+		}
+
+		if i.Offset != nil {
+			offset = *i.Offset
+		}
+	}
+
+	return limit, offset
+}
+
 // WithUser puts a user in the context.
 func WithUser(ctx context.Context, u *User) context.Context {
 	return context.WithValue(ctx, userCtxKey, u)
@@ -148,12 +167,7 @@ func (r *mutationResolver) EditPost(ctx context.Context, input EditPost) (*Post,
 		return nil, err
 	}
 
-	post, err := GetPostString(ctx, p.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	return post, nil
+	return GetPostString(ctx, p.ID)
 }
 
 func (r *mutationResolver) UpsertLink(ctx context.Context, input NewLink) (*Link, error) {
@@ -175,12 +189,7 @@ func (r *mutationResolver) UpsertLink(ctx context.Context, input NewLink) (*Link
 		return nil, err
 	}
 
-	link, err := GetLinkByURI(ctx, l.URI.String())
-	if err != nil {
-		return nil, err
-	}
-
-	return link, nil
+	return GetLinkByURI(ctx, l.URI.String())
 }
 
 func (r *mutationResolver) UpsertStat(ctx context.Context, input NewStat) (*Stat, error) {
@@ -206,6 +215,10 @@ func (r *mutationResolver) InsertLog(ctx context.Context, input NewLog) (*Log, e
 			Lat:  input.Location.Lat,
 			Long: input.Location.Long,
 		}
+	}
+
+	if input.Duration != nil {
+		l.Duration = ParseDurationFromString(*input.Duration)
 	}
 
 	err := l.Save(ctx)
@@ -269,18 +282,36 @@ func (r *mutationResolver) UpsertTweet(ctx context.Context, input NewTweet) (*Tw
 	return t, nil
 }
 
+func (r *mutationResolver) AddComment(ctx context.Context, input AddComment) (*Comment, error) {
+	c := &Comment{}
+	c.Content = input.Content
+	c.User = GetUserFromContext(ctx)
+
+	post, err := GetPostString(ctx, input.PostID)
+	if err != nil {
+		return nil, err
+	}
+	c.Post = post
+
+	err = c.Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return GetComment(ctx, c.ID)
+}
+
 type queryResolver struct{ *Resolver }
 
 func (r *queryResolver) Drafts(ctx context.Context, input *Limit) ([]*Post, error) {
-	return Drafts(ctx)
+	limit, offset := ParseLimit(input, 10, 0)
+
+	return Drafts(ctx, limit, offset)
 }
 
 func (r *queryResolver) Posts(ctx context.Context, input *Limit) ([]*Post, error) {
-	var limit, offset *int
-	if input != nil {
-		limit = input.Limit
-		offset = input.Offset
-	}
+	limit, offset := ParseLimit(input, 10, 0)
+
 	return Posts(ctx, limit, offset)
 }
 
@@ -307,13 +338,15 @@ func (r *queryResolver) PrevPost(ctx context.Context, id string) (*Post, error) 
 }
 
 func (r *queryResolver) Links(ctx context.Context, input *Limit) ([]*Link, error) {
-	var limit, offset *int
-	if input != nil {
-		limit = input.Limit
-		offset = input.Offset
-	}
+	limit, offset := ParseLimit(input, 10, 0)
 
 	return GetLinks(ctx, limit, offset)
+}
+
+func (r *queryResolver) Books(ctx context.Context, input *Limit) ([]*Book, error) {
+	limit, offset := ParseLimit(input, 10, 0)
+
+	return GetBooks(ctx, limit, offset)
 }
 
 func (r *queryResolver) Link(ctx context.Context, id *string, url *URI) (*Link, error) {
@@ -370,9 +403,13 @@ func (r *queryResolver) PostsByTag(ctx context.Context, tag string) ([]*Post, er
 func (r *queryResolver) Counts(ctx context.Context) ([]*Stat, error) {
 	stats := make([]*Stat, 0)
 	for _, table := range []string{
-		"stats",
+		"books",
 		"links",
+		"logs",
+		"photos",
 		"posts",
+		"stats",
+		"tweets",
 	} {
 		stat := new(Stat)
 		stat.Key = table
@@ -392,11 +429,8 @@ func (r *queryResolver) Whoami(ctx context.Context) (*User, error) {
 }
 
 func (r *queryResolver) Tweets(ctx context.Context, input *Limit) ([]*Tweet, error) {
-	var limit, offset *int
-	if input != nil {
-		limit = input.Limit
-		offset = input.Offset
-	}
+	limit, offset := ParseLimit(input, 10, 0)
+
 	return GetTweets(ctx, limit, offset)
 }
 
@@ -405,22 +439,15 @@ func (r *queryResolver) Tweet(ctx context.Context, id string) (*Tweet, error) {
 }
 
 func (r *queryResolver) TweetsByScreenName(ctx context.Context, screenName string, input *Limit) ([]*Tweet, error) {
-	var limit, offset *int
-	if input != nil {
-		limit = input.Limit
-		offset = input.Offset
-	}
+	limit, offset := ParseLimit(input, 10, 0)
 	return GetTweetsByScreenName(ctx, screenName, limit, offset)
 }
 
 func (r *queryResolver) HomeTimelineURLs(ctx context.Context, input *Limit) ([]*models.SavedURL, error) {
 	urls := []*models.SavedURL{}
-	limit := 100
-	if input != nil {
-		limit = *input.Limit
-	}
+	limit, offset := ParseLimit(input, 100, 0)
 
-	url := fmt.Sprintf("https://cacophony.natwelch.com/?count=%d", limit)
+	url := fmt.Sprintf("https://cacophony.natwelch.com/?count=%d&offset=%d", limit, offset)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return urls, err
@@ -446,17 +473,27 @@ func (r *queryResolver) Tags(ctx context.Context) ([]string, error) {
 	return AllTags(ctx)
 }
 
-func (r *queryResolver) Logs(ctx context.Context, uid *string) ([]*Log, error) {
-	var err error
-	u := GetUserFromContext(ctx)
-	if uid != nil {
-		u, err = GetUser(ctx, *uid)
-		if err != nil {
-			return []*Log{}, err
-		}
-	}
+func (r *queryResolver) Log(ctx context.Context, id string) (*Log, error) {
+	return GetLog(ctx, id)
+}
 
-	return UserLogs(ctx, u)
+func (r *queryResolver) Logs(ctx context.Context, input *Limit) ([]*Log, error) {
+	u := GetUserFromContext(ctx)
+	limit, offset := ParseLimit(input, 25, 0)
+
+	return UserLogs(ctx, u, limit, offset)
+}
+
+func (r *queryResolver) Photos(ctx context.Context, input *Limit) ([]*Photo, error) {
+	u := GetUserFromContext(ctx)
+	limit, offset := ParseLimit(input, 25, 0)
+
+	return UserPhotos(ctx, u, limit, offset)
+}
+
+func (r *queryResolver) Time(ctx context.Context) (*time.Time, error) {
+	now := time.Now()
+	return &now, nil
 }
 
 func (r *queryResolver) GetPageByID(ctx context.Context, id string) (*Page, error) {

@@ -17,9 +17,9 @@ type Searchable interface {
 	IsSearchable()
 }
 
-// Comment is an undefined type reserved for the future.
-type Comment struct {
-	ID string `json:"id"`
+type AddComment struct {
+	Content string `json:"content"`
+	PostID  string `json:"post_id"`
 }
 
 type EditBook struct {
@@ -67,6 +67,7 @@ type NewLog struct {
 	Description *string `json:"description"`
 	Location    *NewGeo `json:"location"`
 	Project     string  `json:"project"`
+	Duration    *string `json:"duration"`
 }
 
 type NewStat struct {
@@ -82,7 +83,7 @@ type NewTweet struct {
 	RetweetCount  int       `json:"retweet_count"`
 	Symbols       []string  `json:"symbols"`
 	Text          string    `json:"text"`
-	Urls          []URI     `json:"urls"`
+	Urls          []*URI    `json:"urls"`
 	ScreenName    string    `json:"screen_name"`
 	UserMentions  []string  `json:"user_mentions"`
 }

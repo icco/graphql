@@ -16,7 +16,7 @@ type Tweet struct {
 	Hashtags      []string  `json:"hashtags"`
 	Symbols       []string  `json:"symbols"`
 	UserMentions  []string  `json:"user_mentions"`
-	Urls          []URI     `json:"urls"`
+	Urls          []*URI    `json:"urls"`
 	ScreenName    string    `json:"screen_name"`
 	FavoriteCount int       `json:"favorite_count"`
 	RetweetCount  int       `json:"retweet_count"`
@@ -59,30 +59,24 @@ func (t *Tweet) IsLinkable() {}
 // GetTweet returns a single tweet by id.
 func GetTweet(ctx context.Context, id string) (*Tweet, error) {
 	var tweet Tweet
+	uris := []string{}
 	row := db.QueryRowContext(ctx, "SELECT id, text, hashtags, symbols, user_mentions, urls, screen_name, favorites, retweets, posted FROM tweets WHERE id = $1", id)
-	err := row.Scan(&tweet.ID, &tweet.Text, pq.Array(&tweet.Hashtags), pq.Array(&tweet.Symbols), pq.Array(&tweet.UserMentions), pq.Array(&tweet.Urls), &tweet.ScreenName, &tweet.FavoriteCount, &tweet.RetweetCount, &tweet.Posted)
+	err := row.Scan(&tweet.ID, &tweet.Text, pq.Array(&tweet.Hashtags), pq.Array(&tweet.Symbols), pq.Array(&tweet.UserMentions), pq.Array(&uris), &tweet.ScreenName, &tweet.FavoriteCount, &tweet.RetweetCount, &tweet.Posted)
 	switch {
 	case err == sql.ErrNoRows:
 		return nil, fmt.Errorf("No tweet %s", id)
 	case err != nil:
 		return nil, fmt.Errorf("Error running get query: %+v", err)
 	default:
+		for _, v := range uris {
+			tweet.Urls = append(tweet.Urls, NewURI(v))
+		}
 		return &tweet, nil
 	}
 }
 
 // GetTweets returns an array of tweets from the database.
-func GetTweets(ctx context.Context, limitIn *int, offsetIn *int) ([]*Tweet, error) {
-	limit := 10
-	if limitIn != nil {
-		limit = *limitIn
-	}
-
-	offset := 0
-	if offsetIn != nil {
-		offset = *offsetIn
-	}
-
+func GetTweets(ctx context.Context, limit, offset int) ([]*Tweet, error) {
 	rows, err := db.QueryContext(ctx, "SELECT id, text, hashtags, symbols, user_mentions, urls, screen_name, favorites, retweets, posted FROM tweets ORDER BY posted DESC LIMIT $1 OFFSET $2", limit, offset)
 	if err != nil {
 		return nil, err
@@ -91,10 +85,15 @@ func GetTweets(ctx context.Context, limitIn *int, offsetIn *int) ([]*Tweet, erro
 
 	tweets := make([]*Tweet, 0)
 	for rows.Next() {
+		uris := []string{}
 		tweet := new(Tweet)
-		err := rows.Scan(&tweet.ID, &tweet.Text, pq.Array(&tweet.Hashtags), pq.Array(&tweet.Symbols), pq.Array(&tweet.UserMentions), pq.Array(&tweet.Urls), &tweet.ScreenName, &tweet.FavoriteCount, &tweet.RetweetCount, &tweet.Posted)
+		err := rows.Scan(&tweet.ID, &tweet.Text, pq.Array(&tweet.Hashtags), pq.Array(&tweet.Symbols), pq.Array(&tweet.UserMentions), pq.Array(&uris), &tweet.ScreenName, &tweet.FavoriteCount, &tweet.RetweetCount, &tweet.Posted)
 		if err != nil {
 			return nil, err
+		}
+
+		for _, v := range uris {
+			tweet.Urls = append(tweet.Urls, NewURI(v))
 		}
 
 		tweets = append(tweets, tweet)
@@ -108,22 +107,12 @@ func GetTweets(ctx context.Context, limitIn *int, offsetIn *int) ([]*Tweet, erro
 }
 
 // URI returns a link to this tweet.
-func (t *Tweet) URI() URI {
-	return URI{fmt.Sprintf("https://twitter.com/%s/status/%s", t.ScreenName, t.ID)}
+func (t *Tweet) URI() *URI {
+	return NewURI(fmt.Sprintf("https://twitter.com/%s/status/%s", t.ScreenName, t.ID))
 }
 
 // GetTweetsByScreenName returns an array of tweets from the database filtered by screenname.
-func GetTweetsByScreenName(ctx context.Context, screenName string, limitIn *int, offsetIn *int) ([]*Tweet, error) {
-	limit := 10
-	if limitIn != nil {
-		limit = *limitIn
-	}
-
-	offset := 0
-	if offsetIn != nil {
-		offset = *offsetIn
-	}
-
+func GetTweetsByScreenName(ctx context.Context, screenName string, limit, offset int) ([]*Tweet, error) {
 	rows, err := db.QueryContext(ctx, "SELECT id, text, hashtags, symbols, user_mentions, urls, screen_name, favorites, retweets, posted FROM tweets WHERE screen_name = $3 ORDER BY posted DESC LIMIT $1 OFFSET $2", limit, offset, screenName)
 	if err != nil {
 		return nil, err
@@ -132,10 +121,15 @@ func GetTweetsByScreenName(ctx context.Context, screenName string, limitIn *int,
 
 	tweets := make([]*Tweet, 0)
 	for rows.Next() {
+		uris := []string{}
 		tweet := new(Tweet)
-		err := rows.Scan(&tweet.ID, &tweet.Text, pq.Array(&tweet.Hashtags), pq.Array(&tweet.Symbols), pq.Array(&tweet.UserMentions), pq.Array(&tweet.Urls), &tweet.ScreenName, &tweet.FavoriteCount, &tweet.RetweetCount, &tweet.Posted)
+		err := rows.Scan(&tweet.ID, &tweet.Text, pq.Array(&tweet.Hashtags), pq.Array(&tweet.Symbols), pq.Array(&tweet.UserMentions), pq.Array(&uris), &tweet.ScreenName, &tweet.FavoriteCount, &tweet.RetweetCount, &tweet.Posted)
 		if err != nil {
 			return nil, err
+		}
+
+		for _, v := range uris {
+			tweet.Urls = append(tweet.Urls, NewURI(v))
 		}
 
 		tweets = append(tweets, tweet)

@@ -187,6 +187,42 @@ var (
       );
       `,
 		},
+		{
+			Version:     13,
+			Description: "Add trgm",
+			Script: `
+      CREATE EXTENSION pg_trgm;
+      SELECT set_limit(0.6);
+      `,
+		},
+		{
+			Version:     14,
+			Description: "Add trgm index",
+			Script: `
+      CREATE INDEX content_gin_idx ON posts USING GIN(content gin_trgm_ops);
+      `,
+		},
+		{
+			Version:     15,
+			Description: "Add second trgm index",
+			Script: `
+      CREATE INDEX title_gin_idx ON posts USING GIN(title gin_trgm_ops);
+      `,
+		},
+		{
+			Version:     16,
+			Description: "Add comments table",
+			Script: `
+      CREATE TABLE comments (
+        id TEXT PRIMARY KEY NOT NULL,
+        post_id BIGINT,
+        user_id TEXT NOT NULL,
+        content TEXT,
+        created_at TIMESTAMP WITH TIME ZONE,
+        modified_at TIMESTAMP WITH TIME ZONE
+      );
+      `,
+		},
 	}
 )
 
