@@ -77,7 +77,7 @@ func main() {
 		})
 
 		if err != nil {
-			log.Fatalf("Failed to create the Stackdriver exporter: %v", err)
+			log.WithError(err).Fatal("failed to create the Stackdriver exporter")
 		}
 		defer sd.Flush()
 
@@ -90,6 +90,11 @@ func main() {
 	}
 
 	isDev := os.Getenv("NAT_ENV") != "production"
+
+	cache, err := graphql.NewCache()
+	if err != nil {
+		log.WithError(err).Fatal("could not connect to cache")
+	}
 
 	r := chi.NewRouter()
 
@@ -162,6 +167,7 @@ func main() {
 			handler.RequestMiddleware(gqlapollotracing.RequestMiddleware()),
 			handler.Tracer(gqlapollotracing.NewTracer()),
 			handler.Tracer(gqlopencensus.New()),
+			handler.EnablePersistedQueryCache(cache),
 		))
 
 		r.Post("/photo/new", photoUploadHandler)
