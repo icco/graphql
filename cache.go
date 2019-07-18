@@ -5,15 +5,16 @@ import (
 	"time"
 )
 
+// Cache is a basic type as defined by gqlgen.
 type Cache struct {
 }
 
-const apqPrefix = "apq:"
-
+// NewCache creates a new cache.
 func NewCache() (*Cache, error) {
 	return &Cache{}, nil
 }
 
+// Add inserts a key value pair into the database.
 func (c *Cache) Add(ctx context.Context, hash string, query string) {
 	_, err := db.ExecContext(
 		ctx,
@@ -33,6 +34,7 @@ WHERE cache.key = $1;
 	}
 }
 
+// Get retrieves a value by a key.
 func (c *Cache) Get(ctx context.Context, hash string) (string, bool) {
 	var value string
 	row := db.QueryRowContext(ctx, "SELECT value FROM cache WHERE key = $1", hash)
