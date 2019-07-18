@@ -223,6 +223,17 @@ var (
       );
       `,
 		},
+		{
+			Version:     17,
+			Description: "Add cache table",
+			Script: `
+      CREATE TABLE cache (
+        key TEXT PRIMARY KEY NOT NULL,
+        value TEXT NOT NULL,
+        modified_at TIMESTAMP WITH TIME ZONE
+      );
+      `,
+		},
 	}
 )
 

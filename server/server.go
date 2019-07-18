@@ -91,6 +91,8 @@ func main() {
 
 	isDev := os.Getenv("NAT_ENV") != "production"
 
+	cache := graphql.NewCache()
+
 	r := chi.NewRouter()
 
 	r.Use(middleware.RequestID)
@@ -162,7 +164,7 @@ func main() {
 			handler.RequestMiddleware(gqlapollotracing.RequestMiddleware()),
 			handler.Tracer(gqlapollotracing.NewTracer()),
 			handler.Tracer(gqlopencensus.New()),
-			handler.AutomaticPersistentQueriesEnabled(true),
+			handler.EnablePersistedQueryCache(cache),
 		))
 
 		r.Post("/photo/new", photoUploadHandler)
