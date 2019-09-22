@@ -309,6 +309,12 @@ func (r *queryResolver) Drafts(ctx context.Context, input *Limit) ([]*Post, erro
 	return Drafts(ctx, limit, offset)
 }
 
+func (r *queryResolver) FuturePosts(ctx context.Context, input *Limit) ([]*Post, error) {
+	limit, offset := ParseLimit(input, 10, 0)
+
+	return FuturePosts(ctx, limit, offset)
+}
+
 func (r *queryResolver) Posts(ctx context.Context, input *Limit) ([]*Post, error) {
 	limit, offset := ParseLimit(input, 10, 0)
 
