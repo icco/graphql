@@ -198,6 +198,7 @@ type ComplexityRoot struct {
 		ModifiedAt func(childComplexity int) int
 		TweetIDs   func(childComplexity int) int
 		Tweets     func(childComplexity int) int
+		URI        func(childComplexity int) int
 	}
 
 	User struct {
@@ -1212,6 +1213,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.TwitterURL.Tweets(childComplexity), true
 
+	case "TwitterURL.uri":
+		if e.complexity.TwitterURL.URI == nil {
+			break
+		}
+
+		return e.complexity.TwitterURL.URI(childComplexity), true
+
 	case "User.apikey":
 		if e.complexity.User.APIKey == nil {
 			break
@@ -1477,12 +1485,13 @@ type Tweet implements Linkable {
   uri: URI!
 }
 
-type TwitterURL {
+type TwitterURL implements Linkable {
   link: URI
   tweetIDs: [ID!]!
   createdAt: Time!
   modifiedAt: Time!
   tweets: [Tweet]!
+  uri: URI!
 }
 
 
@@ -6868,6 +6877,43 @@ func (ec *executionContext) _TwitterURL_tweets(ctx context.Context, field graphq
 	return ec.marshalNTweet2ᚕᚖgithubᚗcomᚋiccoᚋgraphqlᚐTweet(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _TwitterURL_uri(ctx context.Context, field graphql.CollectedField, obj *TwitterURL) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "TwitterURL",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.URI(), nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*URI)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNURI2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *User) (ret graphql.Marshaler) {
 	ctx = ec.Tracer.StartFieldExecution(ctx, field)
 	defer func() {
@@ -8588,6 +8634,8 @@ func (ec *executionContext) _Linkable(ctx context.Context, sel ast.SelectionSet,
 		return ec._Link(ctx, sel, obj)
 	case *Tweet:
 		return ec._Tweet(ctx, sel, obj)
+	case *TwitterURL:
+		return ec._TwitterURL(ctx, sel, obj)
 	case Book:
 		return ec._Book(ctx, sel, &obj)
 	case *Book:
@@ -9648,7 +9696,7 @@ func (ec *executionContext) _Tweet(ctx context.Context, sel ast.SelectionSet, ob
 	return out
 }
 
-var twitterURLImplementors = []string{"TwitterURL"}
+var twitterURLImplementors = []string{"TwitterURL", "Linkable"}
 
 func (ec *executionContext) _TwitterURL(ctx context.Context, sel ast.SelectionSet, obj *TwitterURL) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.RequestContext, sel, twitterURLImplementors)
@@ -9699,6 +9747,11 @@ func (ec *executionContext) _TwitterURL(ctx context.Context, sel ast.SelectionSe
 				}
 				return res
 			})
+		case "uri":
+			out.Values[i] = ec._TwitterURL_uri(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

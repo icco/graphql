@@ -30,6 +30,7 @@ type TwitterURL struct {
 	ModifiedAt time.Time
 }
 
+// Tweets returns an array of tweets.
 func (tu *TwitterURL) Tweets(ctx context.Context) ([]*Tweet, error) {
 	tweets := make([]*Tweet, len(tu.TweetIDs))
 	for i, id := range tu.TweetIDs {
@@ -38,6 +39,15 @@ func (tu *TwitterURL) Tweets(ctx context.Context) ([]*Tweet, error) {
 	}
 
 	return tweets, nil
+}
+
+// IsLinkable exists to show that this method implements the Linkable type in
+// graphql.
+func (tu *TwitterURL) IsLinkable() {}
+
+// URI returns a link to this tweet.
+func (t *TwitterURL) URI() *URI {
+	return NewURI(tu.Link)
 }
 
 // Save inserts or updates a tweet into the database.
