@@ -17,13 +17,14 @@ require (
 	github.com/google/uuid v1.1.1
 	github.com/gorilla/websocket v1.4.1 // indirect
 	github.com/gosimple/slug v1.7.0
-	github.com/icco/cacophony v0.0.0-20190717123152-4a34c7ecc988
 	github.com/icco/logrus-stackdriver-formatter v0.3.0
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/lib/pq v1.2.0
 	github.com/opencensus-integrations/ocsql v0.1.4
 	github.com/paulmach/orb v0.1.4
+	github.com/rainycape/unidecode v0.0.0-20150907023854-cb7f23ec59be // indirect
 	github.com/russross/blackfriday v2.0.0+incompatible
+	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.4.2
 	github.com/unrolled/render v1.0.1
 	github.com/unrolled/secure v1.0.4

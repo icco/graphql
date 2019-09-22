@@ -23,6 +23,34 @@ type Tweet struct {
 	Posted        time.Time `json:"posted"`
 }
 
+// TwitterURL is a representation of data from cacophony.
+type TwitterURL struct {
+	Link       *URI
+	TweetIDs   []string
+	CreatedAt  time.Time
+	ModifiedAt time.Time
+}
+
+// Tweets returns an array of tweets.
+func (tu *TwitterURL) Tweets(ctx context.Context) ([]*Tweet, error) {
+	tweets := make([]*Tweet, len(tu.TweetIDs))
+	for i, id := range tu.TweetIDs {
+		t, _ := GetTweet(ctx, id)
+		tweets[i] = t
+	}
+
+	return tweets, nil
+}
+
+// IsLinkable exists to show that this method implements the Linkable type in
+// graphql.
+func (tu *TwitterURL) IsLinkable() {}
+
+// URI returns a link to this tweet.
+func (tu *TwitterURL) URI() *URI {
+	return tu.Link
+}
+
 // Save inserts or updates a tweet into the database.
 func (t *Tweet) Save(ctx context.Context) error {
 	if _, err := db.ExecContext(

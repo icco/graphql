@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/icco/cacophony/models"
 )
 
 type key int8
@@ -98,11 +97,6 @@ func (r *Resolver) Mutation() MutationResolver {
 // Query returns the resolver for Queries.
 func (r *Resolver) Query() QueryResolver {
 	return &queryResolver{r}
-}
-
-// TwitterURL is a resolver factory to wrap the external twitter url type.
-func (r *Resolver) TwitterURL() TwitterURLResolver {
-	return &twitterURLResolver{r}
 }
 
 type mutationResolver struct{ *Resolver }
@@ -449,8 +443,8 @@ func (r *queryResolver) TweetsByScreenName(ctx context.Context, screenName strin
 	return GetTweetsByScreenName(ctx, screenName, limit, offset)
 }
 
-func (r *queryResolver) HomeTimelineURLs(ctx context.Context, input *Limit) ([]*models.SavedURL, error) {
-	urls := []*models.SavedURL{}
+func (r *queryResolver) HomeTimelineURLs(ctx context.Context, input *Limit) ([]*TwitterURL, error) {
+	urls := []*TwitterURL{}
 	limit, offset := ParseLimit(input, 100, 0)
 
 	url := fmt.Sprintf("https://cacophony.natwelch.com/?count=%d&offset=%d", limit, offset)
@@ -512,20 +506,4 @@ func (r *queryResolver) GetPageBySlug(ctx context.Context, slug string) (*Page, 
 
 func (r *queryResolver) GetPages(ctx context.Context) ([]*Page, error) {
 	return GetPages(ctx)
-}
-
-type twitterURLResolver struct{ *Resolver }
-
-func (r *twitterURLResolver) Link(ctx context.Context, obj *models.SavedURL) (*URI, error) {
-	return nil, fmt.Errorf("not implemented")
-}
-
-func (r *twitterURLResolver) Tweets(ctx context.Context, obj *models.SavedURL) ([]*Tweet, error) {
-	tweets := make([]*Tweet, len(obj.TweetIDs))
-	for i, id := range obj.TweetIDs {
-		t, _ := GetTweet(ctx, id)
-		tweets[i] = t
-	}
-
-	return tweets, nil
 }

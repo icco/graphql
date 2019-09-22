@@ -70,12 +70,13 @@ type Tweet implements Linkable {
   uri: URI!
 }
 
-type TwitterURL {
+type TwitterURL implements Linkable {
   link: URI
   tweetIDs: [ID!]!
   createdAt: Time!
   modifiedAt: Time!
   tweets: [Tweet]!
+  uri: URI!
 }
 
 

@@ -34,7 +34,7 @@ models:
   Tweet:
     model: github.com/icco/graphql.Tweet
   TwitterURL:
-    model: github.com/icco/cacophony/models.SavedURL
+    model: github.com/icco/graphql.TwitterURL
   User:
     model: github.com/icco/graphql.User
   URI:
