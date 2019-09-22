@@ -444,7 +444,7 @@ LIMIT $1 OFFSET $2
 	return posts, nil
 }
 
-// Posts returns some posts that are in the future.
+// FuturePosts returns some posts that are in the future.
 func FuturePosts(ctx context.Context, limit int, offset int) ([]*Post, error) {
 	query := `
 SELECT id, title, content, date, created_at, modified_at, tags, draft
