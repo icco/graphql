@@ -38,6 +38,7 @@ type Config struct {
 type ResolverRoot interface {
 	Mutation() MutationResolver
 	Query() QueryResolver
+	TwitterURL() TwitterURLResolver
 }
 
 type DirectiveRoot struct {
@@ -245,6 +246,9 @@ type QueryResolver interface {
 	GetPageBySlug(ctx context.Context, slug string) (*Page, error)
 	GetPages(ctx context.Context) ([]*Page, error)
 	Photos(ctx context.Context, input *Limit) ([]*Photo, error)
+}
+type TwitterURLResolver interface {
+	Link(ctx context.Context, obj *TwitterURL) (*URI, error)
 }
 
 type executableSchema struct {
@@ -6695,13 +6699,13 @@ func (ec *executionContext) _TwitterURL_link(ctx context.Context, field graphql.
 		Object:   "TwitterURL",
 		Field:    field,
 		Args:     nil,
-		IsMethod: false,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Link, nil
+		return ec.resolvers.TwitterURL().Link(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6840,13 +6844,13 @@ func (ec *executionContext) _TwitterURL_tweets(ctx context.Context, field graphq
 		Object:   "TwitterURL",
 		Field:    field,
 		Args:     nil,
-		IsMethod: false,
+		IsMethod: true,
 	}
 	ctx = graphql.WithResolverContext(ctx, rctx)
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Tweets, nil
+		return obj.Tweets(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -9656,27 +9660,45 @@ func (ec *executionContext) _TwitterURL(ctx context.Context, sel ast.SelectionSe
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("TwitterURL")
 		case "link":
-			out.Values[i] = ec._TwitterURL_link(ctx, field, obj)
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._TwitterURL_link(ctx, field, obj)
+				return res
+			})
 		case "tweetIDs":
 			out.Values[i] = ec._TwitterURL_tweetIDs(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "createdAt":
 			out.Values[i] = ec._TwitterURL_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "modifiedAt":
 			out.Values[i] = ec._TwitterURL_modifiedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "tweets":
-			out.Values[i] = ec._TwitterURL_tweets(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._TwitterURL_tweets(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

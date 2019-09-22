@@ -99,11 +99,6 @@ func (r *Resolver) Query() QueryResolver {
 	return &queryResolver{r}
 }
 
-// TwitterURL is a resolver factory to wrap the external twitter url type.
-func (r *Resolver) TwitterURL() TwitterURLResolver {
-	return &twitterURLResolver{r}
-}
-
 type mutationResolver struct{ *Resolver }
 
 func (r *mutationResolver) CreatePost(ctx context.Context, input EditPost) (*Post, error) {

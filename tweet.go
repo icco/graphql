@@ -31,8 +31,8 @@ type TwitterURL struct {
 }
 
 func (tu *TwitterURL) Tweets(ctx context.Context) ([]*Tweet, error) {
-	tweets := make([]*Tweet, len(obj.TweetIDs))
-	for i, id := range obj.TweetIDs {
+	tweets := make([]*Tweet, len(tu.TweetIDs))
+	for i, id := range tu.TweetIDs {
 		t, _ := GetTweet(ctx, id)
 		tweets[i] = t
 	}

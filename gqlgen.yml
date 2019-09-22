@@ -33,6 +33,8 @@ models:
     model: github.com/icco/graphql.Page
   Tweet:
     model: github.com/icco/graphql.Tweet
+  TwitterURL:
+    model: github.com/icco/graphql.TwitterURL
   User:
     model: github.com/icco/graphql.User
   URI:

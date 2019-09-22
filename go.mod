@@ -4,8 +4,13 @@ go 1.13
 
 require (
 	cloud.google.com/go/storage v1.0.0
+	contrib.go.opencensus.io/exporter/stackdriver v0.12.7
 	github.com/99designs/gqlgen v0.9.3
+	github.com/99designs/gqlgen-contrib v0.0.0-20190913031219-de8886ed1b47
 	github.com/GuiaBolso/darwin v0.0.0-20170210191649-86919dfcf808
+	github.com/auth0-community/go-auth0 v1.0.0
+	github.com/go-chi/chi v3.3.2+incompatible
+	github.com/go-chi/cors v1.0.0
 	github.com/google/uuid v1.1.1
 	github.com/gosimple/slug v1.7.0
 	github.com/icco/logrus-stackdriver-formatter v0.3.0
@@ -16,5 +21,9 @@ require (
 	github.com/russross/blackfriday v2.0.0+incompatible
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.4.2
+	github.com/unrolled/render v1.0.1
+	github.com/unrolled/secure v1.0.4
 	github.com/vektah/gqlparser v1.1.2
+	go.opencensus.io v0.22.1
+	gopkg.in/square/go-jose.v2 v2.3.1
 )
