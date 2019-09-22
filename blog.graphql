@@ -66,6 +66,9 @@ extend type Query {
   "Returns an array of inprogress posts."
   drafts(input: Limit): [Post]! @hasRole(role: admin)
 
+  "Returns an array of unpublished posts."
+  futurePosts(input: Limit): [Post]! @hasRole(role: admin)
+
   "Returns an array of all posts, ordered by reverse chronological order, using provided limit and offset."
   posts(input: Limit): [Post]!
 

@@ -444,6 +444,38 @@ LIMIT $1 OFFSET $2
 	return posts, nil
 }
 
+// Posts returns some posts that are in the future.
+func FuturePosts(ctx context.Context, limit int, offset int) ([]*Post, error) {
+	query := `
+SELECT id, title, content, date, created_at, modified_at, tags, draft
+FROM posts
+WHERE draft = false
+  AND date > NOW()
+ORDER BY date DESC
+LIMIT $1 OFFSET $2
+`
+	rows, err := db.QueryContext(ctx, query, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	posts := make([]*Post, 0)
+	for rows.Next() {
+		post := new(Post)
+		err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.Datetime, &post.Created, &post.Modified, pq.Array(&post.Tags), &post.Draft)
+		if err != nil {
+			return nil, err
+		}
+		posts = append(posts, post)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return posts, nil
+}
+
 // PostsByTag returns all posts with a tag.
 func PostsByTag(ctx context.Context, tag string) ([]*Post, error) {
 	query := "SELECT id, title, content, date, created_at, modified_at, tags, draft FROM posts WHERE $1 = ANY(tags) and draft = false ORDER BY date DESC"

@@ -150,6 +150,7 @@ type ComplexityRoot struct {
 		Books              func(childComplexity int, input *Limit) int
 		Counts             func(childComplexity int) int
 		Drafts             func(childComplexity int, input *Limit) int
+		FuturePosts        func(childComplexity int, input *Limit) int
 		GetPageByID        func(childComplexity int, id string) int
 		GetPageBySlug      func(childComplexity int, slug string) int
 		GetPages           func(childComplexity int) int
@@ -233,6 +234,7 @@ type QueryResolver interface {
 	HomeTimelineURLs(ctx context.Context, input *Limit) ([]*models.SavedURL, error)
 	Time(ctx context.Context) (*time.Time, error)
 	Drafts(ctx context.Context, input *Limit) ([]*Post, error)
+	FuturePosts(ctx context.Context, input *Limit) ([]*Post, error)
 	Posts(ctx context.Context, input *Limit) ([]*Post, error)
 	Post(ctx context.Context, id string) (*Post, error)
 	NextPost(ctx context.Context, id string) (*Post, error)
@@ -843,6 +845,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Drafts(childComplexity, args["input"].(*Limit)), true
 
+	case "Query.futurePosts":
+		if e.complexity.Query.FuturePosts == nil {
+			break
+		}
+
+		args, err := ec.field_Query_futurePosts_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.FuturePosts(childComplexity, args["input"].(*Limit)), true
+
 	case "Query.getPageByID":
 		if e.complexity.Query.GetPageByID == nil {
 			break
@@ -1366,6 +1380,9 @@ extend type Query {
   "Returns an array of inprogress posts."
   drafts(input: Limit): [Post]! @hasRole(role: admin)
 
+  "Returns an array of unpublished posts."
+  futurePosts(input: Limit): [Post]! @hasRole(role: admin)
+
   "Returns an array of all posts, ordered by reverse chronological order, using provided limit and offset."
   posts(input: Limit): [Post]!
 
@@ -1864,6 +1881,20 @@ func (ec *executionContext) field_Query_books_args(ctx context.Context, rawArgs 
 }
 
 func (ec *executionContext) field_Query_drafts_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *Limit
+	if tmp, ok := rawArgs["input"]; ok {
+		arg0, err = ec.unmarshalOLimit2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐLimit(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_futurePosts_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *Limit
@@ -5439,6 +5470,67 @@ func (ec *executionContext) _Query_drafts(ctx context.Context, field graphql.Col
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Query().Drafts(rctx, args["input"].(*Limit))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋiccoᚋgraphqlᚐRole(ctx, "admin")
+			if err != nil {
+				return nil, err
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, err
+		}
+		if data, ok := tmp.([]*Post); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/icco/graphql.Post`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*Post)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNPost2ᚕᚖgithubᚗcomᚋiccoᚋgraphqlᚐPost(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_futurePosts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_futurePosts_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().FuturePosts(rctx, args["input"].(*Limit))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			role, err := ec.unmarshalNRole2githubᚗcomᚋiccoᚋgraphqlᚐRole(ctx, "admin")
@@ -9232,6 +9324,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_drafts(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "futurePosts":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_futurePosts(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
