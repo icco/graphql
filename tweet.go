@@ -23,6 +23,23 @@ type Tweet struct {
 	Posted        time.Time `json:"posted"`
 }
 
+type TwitterURL struct {
+	Link       string
+	TweetIDs   []string
+	CreatedAt  time.Time
+	ModifiedAt time.Time
+}
+
+func (tu *TwitterURL) Tweets(ctx context.Context) ([]*Tweet, error) {
+	tweets := make([]*Tweet, len(obj.TweetIDs))
+	for i, id := range obj.TweetIDs {
+		t, _ := GetTweet(ctx, id)
+		tweets[i] = t
+	}
+
+	return tweets, nil
+}
+
 // Save inserts or updates a tweet into the database.
 func (t *Tweet) Save(ctx context.Context) error {
 	if _, err := db.ExecContext(

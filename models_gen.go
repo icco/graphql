@@ -94,6 +94,14 @@ type Stat struct {
 	Value string `json:"value"`
 }
 
+type TwitterURL struct {
+	Link       *URI      `json:"link"`
+	TweetIDs   []string  `json:"tweetIDs"`
+	CreatedAt  time.Time `json:"createdAt"`
+	ModifiedAt time.Time `json:"modifiedAt"`
+	Tweets     []*Tweet  `json:"tweets"`
+}
+
 type Role string
 
 const (
