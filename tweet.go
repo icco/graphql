@@ -23,8 +23,9 @@ type Tweet struct {
 	Posted        time.Time `json:"posted"`
 }
 
+// TwitterURL is a representation of data from cacophony.
 type TwitterURL struct {
-	Link       string
+	Link       *URI
 	TweetIDs   []string
 	CreatedAt  time.Time
 	ModifiedAt time.Time
@@ -46,8 +47,8 @@ func (tu *TwitterURL) Tweets(ctx context.Context) ([]*Tweet, error) {
 func (tu *TwitterURL) IsLinkable() {}
 
 // URI returns a link to this tweet.
-func (t *TwitterURL) URI() *URI {
-	return NewURI(tu.Link)
+func (tu *TwitterURL) URI() *URI {
+	return tu.Link
 }
 
 // Save inserts or updates a tweet into the database.
