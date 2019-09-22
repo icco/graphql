@@ -431,7 +431,7 @@ ORDER BY date DESC
 	return postQuery(ctx, query, tag)
 }
 
-func postQuery(ctx context.Context, query string, args ...string) ([]*Post, error) {
+func postQuery(ctx context.Context, query string, args ...interface{}) ([]*Post, error) {
 	rows, err := db.QueryContext(ctx, query, args...)
 	if err != nil {
 		return nil, err
