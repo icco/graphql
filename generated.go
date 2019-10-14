@@ -3298,6 +3298,9 @@ func (ec *executionContext) _Mutation_upsertBook(ctx context.Context, field grap
 			if err != nil {
 				return nil, err
 			}
+			if ec.directives.HasRole == nil {
+				return nil, errors.New("directive hasRole is not implemented")
+			}
 			return ec.directives.HasRole(ctx, nil, directive0, role)
 		}
 
@@ -3305,10 +3308,11 @@ func (ec *executionContext) _Mutation_upsertBook(ctx context.Context, field grap
 		if err != nil {
 			return nil, err
 		}
+		if tmp == nil {
+			return nil, nil
+		}
 		if data, ok := tmp.(*Book); ok {
 			return data, nil
-		} else if tmp == nil {
-			return nil, nil
 		}
 		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/icco/graphql.Book`, tmp)
 	})
@@ -3362,6 +3366,9 @@ func (ec *executionContext) _Mutation_upsertLink(ctx context.Context, field grap
 			if err != nil {
 				return nil, err
 			}
+			if ec.directives.HasRole == nil {
+				return nil, errors.New("directive hasRole is not implemented")
+			}
 			return ec.directives.HasRole(ctx, nil, directive0, role)
 		}
 
@@ -3369,10 +3376,11 @@ func (ec *executionContext) _Mutation_upsertLink(ctx context.Context, field grap
 		if err != nil {
 			return nil, err
 		}
+		if tmp == nil {
+			return nil, nil
+		}
 		if data, ok := tmp.(*Link); ok {
 			return data, nil
-		} else if tmp == nil {
-			return nil, nil
 		}
 		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/icco/graphql.Link`, tmp)
 	})
@@ -3426,6 +3434,9 @@ func (ec *executionContext) _Mutation_upsertStat(ctx context.Context, field grap
 			if err != nil {
 				return nil, err
 			}
+			if ec.directives.HasRole == nil {
+				return nil, errors.New("directive hasRole is not implemented")
+			}
 			return ec.directives.HasRole(ctx, nil, directive0, role)
 		}
 
@@ -3433,10 +3444,11 @@ func (ec *executionContext) _Mutation_upsertStat(ctx context.Context, field grap
 		if err != nil {
 			return nil, err
 		}
+		if tmp == nil {
+			return nil, nil
+		}
 		if data, ok := tmp.(*Stat); ok {
 			return data, nil
-		} else if tmp == nil {
-			return nil, nil
 		}
 		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/icco/graphql.Stat`, tmp)
 	})
@@ -3490,6 +3502,9 @@ func (ec *executionContext) _Mutation_upsertTweet(ctx context.Context, field gra
 			if err != nil {
 				return nil, err
 			}
+			if ec.directives.HasRole == nil {
+				return nil, errors.New("directive hasRole is not implemented")
+			}
 			return ec.directives.HasRole(ctx, nil, directive0, role)
 		}
 
@@ -3497,10 +3512,11 @@ func (ec *executionContext) _Mutation_upsertTweet(ctx context.Context, field gra
 		if err != nil {
 			return nil, err
 		}
+		if tmp == nil {
+			return nil, nil
+		}
 		if data, ok := tmp.(*Tweet); ok {
 			return data, nil
-		} else if tmp == nil {
-			return nil, nil
 		}
 		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/icco/graphql.Tweet`, tmp)
 	})
@@ -3550,6 +3566,9 @@ func (ec *executionContext) _Mutation_addComment(ctx context.Context, field grap
 			return ec.resolvers.Mutation().AddComment(rctx, args["input"].(AddComment))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.LoggedIn == nil {
+				return nil, errors.New("directive loggedIn is not implemented")
+			}
 			return ec.directives.LoggedIn(ctx, nil, directive0)
 		}
 
@@ -3557,10 +3576,11 @@ func (ec *executionContext) _Mutation_addComment(ctx context.Context, field grap
 		if err != nil {
 			return nil, err
 		}
+		if tmp == nil {
+			return nil, nil
+		}
 		if data, ok := tmp.(*Comment); ok {
 			return data, nil
-		} else if tmp == nil {
-			return nil, nil
 		}
 		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/icco/graphql.Comment`, tmp)
 	})
@@ -3614,6 +3634,9 @@ func (ec *executionContext) _Mutation_createPost(ctx context.Context, field grap
 			if err != nil {
 				return nil, err
 			}
+			if ec.directives.HasRole == nil {
+				return nil, errors.New("directive hasRole is not implemented")
+			}
 			return ec.directives.HasRole(ctx, nil, directive0, role)
 		}
 
@@ -3621,10 +3644,11 @@ func (ec *executionContext) _Mutation_createPost(ctx context.Context, field grap
 		if err != nil {
 			return nil, err
 		}
+		if tmp == nil {
+			return nil, nil
+		}
 		if data, ok := tmp.(*Post); ok {
 			return data, nil
-		} else if tmp == nil {
-			return nil, nil
 		}
 		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/icco/graphql.Post`, tmp)
 	})
@@ -3678,6 +3702,9 @@ func (ec *executionContext) _Mutation_editPost(ctx context.Context, field graphq
 			if err != nil {
 				return nil, err
 			}
+			if ec.directives.HasRole == nil {
+				return nil, errors.New("directive hasRole is not implemented")
+			}
 			return ec.directives.HasRole(ctx, nil, directive0, role)
 		}
 
@@ -3685,10 +3712,11 @@ func (ec *executionContext) _Mutation_editPost(ctx context.Context, field graphq
 		if err != nil {
 			return nil, err
 		}
+		if tmp == nil {
+			return nil, nil
+		}
 		if data, ok := tmp.(*Post); ok {
 			return data, nil
-		} else if tmp == nil {
-			return nil, nil
 		}
 		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/icco/graphql.Post`, tmp)
 	})
@@ -3738,6 +3766,9 @@ func (ec *executionContext) _Mutation_insertLog(ctx context.Context, field graph
 			return ec.resolvers.Mutation().InsertLog(rctx, args["input"].(NewLog))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.LoggedIn == nil {
+				return nil, errors.New("directive loggedIn is not implemented")
+			}
 			return ec.directives.LoggedIn(ctx, nil, directive0)
 		}
 
@@ -3745,10 +3776,11 @@ func (ec *executionContext) _Mutation_insertLog(ctx context.Context, field graph
 		if err != nil {
 			return nil, err
 		}
+		if tmp == nil {
+			return nil, nil
+		}
 		if data, ok := tmp.(*Log); ok {
 			return data, nil
-		} else if tmp == nil {
-			return nil, nil
 		}
 		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/icco/graphql.Log`, tmp)
 	})
@@ -3795,6 +3827,9 @@ func (ec *executionContext) _Mutation_upsertPage(ctx context.Context, field grap
 			return ec.resolvers.Mutation().UpsertPage(rctx, args["input"].(EditPage))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.LoggedIn == nil {
+				return nil, errors.New("directive loggedIn is not implemented")
+			}
 			return ec.directives.LoggedIn(ctx, nil, directive0)
 		}
 
@@ -3802,10 +3837,11 @@ func (ec *executionContext) _Mutation_upsertPage(ctx context.Context, field grap
 		if err != nil {
 			return nil, err
 		}
+		if tmp == nil {
+			return nil, nil
+		}
 		if data, ok := tmp.(*Page); ok {
 			return data, nil
-		} else if tmp == nil {
-			return nil, nil
 		}
 		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/icco/graphql.Page`, tmp)
 	})
@@ -5505,12 +5541,18 @@ func (ec *executionContext) _Query_drafts(ctx context.Context, field graphql.Col
 			if err != nil {
 				return nil, err
 			}
+			if ec.directives.HasRole == nil {
+				return nil, errors.New("directive hasRole is not implemented")
+			}
 			return ec.directives.HasRole(ctx, nil, directive0, role)
 		}
 
 		tmp, err := directive1(rctx)
 		if err != nil {
 			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
 		}
 		if data, ok := tmp.([]*Post); ok {
 			return data, nil
@@ -5567,12 +5609,18 @@ func (ec *executionContext) _Query_futurePosts(ctx context.Context, field graphq
 			if err != nil {
 				return nil, err
 			}
+			if ec.directives.HasRole == nil {
+				return nil, errors.New("directive hasRole is not implemented")
+			}
 			return ec.directives.HasRole(ctx, nil, directive0, role)
 		}
 
 		tmp, err := directive1(rctx)
 		if err != nil {
 			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
 		}
 		if data, ok := tmp.([]*Post); ok {
 			return data, nil
@@ -5873,12 +5921,18 @@ func (ec *executionContext) _Query_logs(ctx context.Context, field graphql.Colle
 			return ec.resolvers.Query().Logs(rctx, args["input"].(*Limit))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.LoggedIn == nil {
+				return nil, errors.New("directive loggedIn is not implemented")
+			}
 			return ec.directives.LoggedIn(ctx, nil, directive0)
 		}
 
 		tmp, err := directive1(rctx)
 		if err != nil {
 			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
 		}
 		if data, ok := tmp.([]*Log); ok {
 			return data, nil
@@ -5931,6 +5985,9 @@ func (ec *executionContext) _Query_log(ctx context.Context, field graphql.Collec
 			return ec.resolvers.Query().Log(rctx, args["id"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.LoggedIn == nil {
+				return nil, errors.New("directive loggedIn is not implemented")
+			}
 			return ec.directives.LoggedIn(ctx, nil, directive0)
 		}
 
@@ -5938,10 +5995,11 @@ func (ec *executionContext) _Query_log(ctx context.Context, field graphql.Collec
 		if err != nil {
 			return nil, err
 		}
+		if tmp == nil {
+			return nil, nil
+		}
 		if data, ok := tmp.(*Log); ok {
 			return data, nil
-		} else if tmp == nil {
-			return nil, nil
 		}
 		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/icco/graphql.Log`, tmp)
 	})
@@ -6107,12 +6165,18 @@ func (ec *executionContext) _Query_photos(ctx context.Context, field graphql.Col
 			return ec.resolvers.Query().Photos(rctx, args["input"].(*Limit))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.LoggedIn == nil {
+				return nil, errors.New("directive loggedIn is not implemented")
+			}
 			return ec.directives.LoggedIn(ctx, nil, directive0)
 		}
 
 		tmp, err := directive1(rctx)
 		if err != nil {
 			return nil, err
+		}
+		if tmp == nil {
+			return nil, nil
 		}
 		if data, ok := tmp.([]*Photo); ok {
 			return data, nil
@@ -8616,8 +8680,8 @@ func (ec *executionContext) unmarshalInputNewTweet(ctx context.Context, obj inte
 
 // region    ************************** interface.gotpl ***************************
 
-func (ec *executionContext) _Linkable(ctx context.Context, sel ast.SelectionSet, obj *Linkable) graphql.Marshaler {
-	switch obj := (*obj).(type) {
+func (ec *executionContext) _Linkable(ctx context.Context, sel ast.SelectionSet, obj Linkable) graphql.Marshaler {
+	switch obj := (obj).(type) {
 	case nil:
 		return graphql.Null
 	case Comment:
@@ -8647,8 +8711,8 @@ func (ec *executionContext) _Linkable(ctx context.Context, sel ast.SelectionSet,
 	}
 }
 
-func (ec *executionContext) _Searchable(ctx context.Context, sel ast.SelectionSet, obj *Searchable) graphql.Marshaler {
-	switch obj := (*obj).(type) {
+func (ec *executionContext) _Searchable(ctx context.Context, sel ast.SelectionSet, obj Searchable) graphql.Marshaler {
+	switch obj := (obj).(type) {
 	case nil:
 		return graphql.Null
 	default:
