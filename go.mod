@@ -5,12 +5,13 @@ go 1.13
 require (
 	cloud.google.com/go/storage v1.0.0
 	contrib.go.opencensus.io/exporter/stackdriver v0.12.7
-	github.com/99designs/gqlgen v0.9.3
+	github.com/99designs/gqlgen v0.10.1
 	github.com/99designs/gqlgen-contrib v0.0.0-20190913031219-de8886ed1b47
 	github.com/GuiaBolso/darwin v0.0.0-20170210191649-86919dfcf808
 	github.com/agnivade/levenshtein v1.0.2 // indirect
 	github.com/auth0-community/go-auth0 v1.0.0
 	github.com/aws/aws-sdk-go v1.24.3 // indirect
+	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/felixge/httpsnoop v1.0.1 // indirect
 	github.com/go-chi/chi v4.0.2+incompatible
 	github.com/go-chi/cors v1.0.0
@@ -24,10 +25,11 @@ require (
 	github.com/paulmach/orb v0.1.4
 	github.com/rainycape/unidecode v0.0.0-20150907023854-cb7f23ec59be // indirect
 	github.com/russross/blackfriday v2.0.0+incompatible
-	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.4.2
 	github.com/unrolled/render v1.0.1
 	github.com/unrolled/secure v1.0.4
+	github.com/urfave/cli v1.22.1 // indirect
+	github.com/vektah/dataloaden v0.3.0 // indirect
 	github.com/vektah/gqlparser v1.1.2
 	go.opencensus.io v0.22.1
 	golang.org/x/crypto v0.0.0-20190911031432-227b76d455e7 // indirect
@@ -35,10 +37,11 @@ require (
 	golang.org/x/net v0.0.0-20190921015927-1a5e07d1ff72 // indirect
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e // indirect
 	golang.org/x/sys v0.0.0-20190922100055-0a153f010e69 // indirect
-	golang.org/x/tools v0.0.0-20190920225731-5eefd052ad72 // indirect
+	golang.org/x/tools v0.0.0-20191012152004-8de300cfc20a // indirect
 	google.golang.org/api v0.10.0 // indirect
 	google.golang.org/appengine v1.6.3 // indirect
 	google.golang.org/genproto v0.0.0-20190916214212-f660b8655731 // indirect
 	google.golang.org/grpc v1.23.1 // indirect
 	gopkg.in/square/go-jose.v2 v2.3.1
+	gopkg.in/yaml.v2 v2.2.4 // indirect
 )
