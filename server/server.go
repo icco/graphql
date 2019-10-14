@@ -104,16 +104,16 @@ func main() {
 	r.Use(middleware.DefaultCompress)
 	r.Use(sdLogging.LoggingMiddleware(log))
 
-	r.Use(cors.New(cors.Options{
+	crs := cors.New(cors.Options{
 		AllowCredentials:   true,
-		OptionsPassthrough: true,
+		OptionsPassthrough: false,
 		AllowedOrigins:     []string{"*"},
 		AllowedMethods:     []string{"GET", "POST", "OPTIONS"},
 		AllowedHeaders:     []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:     []string{"Link"},
 		MaxAge:             300, // Maximum value not ignored by any of major browsers
-	}).Handler)
-
+	})
+	r.Use(crs.Handler)
 	r.NotFound(notFoundHandler)
 
 	// Stuff that does not ssl redirect
@@ -128,9 +128,6 @@ func main() {
 		}).Handler)
 
 		r.Get("/healthz", healthCheckHandler)
-		r.Options("/photo/new", func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte(""))
-		})
 	})
 
 	// Everything that does SSL only
