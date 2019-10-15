@@ -16,9 +16,9 @@ import (
 	"github.com/99designs/gqlgen/handler"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
-	"github.com/go-chi/cors"
 	"github.com/icco/graphql"
 	sdLogging "github.com/icco/logrus-stackdriver-formatter"
+	"github.com/rs/cors"
 	"github.com/unrolled/render"
 	"github.com/unrolled/secure"
 	"go.opencensus.io/plugin/ochttp"
@@ -104,17 +104,18 @@ func main() {
 	r.Use(middleware.DefaultCompress)
 	r.Use(sdLogging.LoggingMiddleware(log))
 
-	r.Use(cors.New(cors.Options{
+	crs := cors.New(cors.Options{
 		AllowCredentials:   true,
-		OptionsPassthrough: true,
+		OptionsPassthrough: false,
 		AllowedOrigins:     []string{"*"},
 		AllowedMethods:     []string{"GET", "POST", "OPTIONS"},
-		AllowedHeaders:     []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		AllowedHeaders:     []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "x-apollo-tracing"},
 		ExposedHeaders:     []string{"Link"},
 		MaxAge:             300, // Maximum value not ignored by any of major browsers
-	}).Handler)
-
+		Debug:              true,
+	})
 	r.NotFound(notFoundHandler)
+	r.Use(crs.Handler)
 
 	// Stuff that does not ssl redirect
 	r.Group(func(r chi.Router) {
@@ -128,9 +129,6 @@ func main() {
 		}).Handler)
 
 		r.Get("/healthz", healthCheckHandler)
-		r.Options("/photo/new", func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte(""))
-		})
 	})
 
 	// Everything that does SSL only
