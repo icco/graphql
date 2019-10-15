@@ -67,7 +67,12 @@ func (b *Book) URI() *URI {
 
 // GetBooks returns all books from the database.
 func GetBooks(ctx context.Context, limit int, offset int) ([]*Book, error) {
-	rows, err := db.QueryContext(ctx, "SELECT id, title, goodreads_id, created_at, modified_at FROM books LIMIT $1 OFFSET $2", limit, offset)
+	rows, err := db.QueryContext(ctx, `
+SELECT id, title, goodreads_id, created_at, modified_at
+FROM books
+ORDER BY modified_at
+LIMIT $1 OFFSET $2`,
+		limit, offset)
 	if err != nil {
 		return nil, err
 	}
