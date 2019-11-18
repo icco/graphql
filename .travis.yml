@@ -7,7 +7,7 @@ env:
   - GO111MODULE=on
 script:
   - go vet ./...
-  - go build .
+  - go build ./...
   - go run github.com/99designs/gqlgen -v && git diff --name-status --exit-code
 notifications:
   email:
