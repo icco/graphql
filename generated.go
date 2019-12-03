@@ -37,7 +37,6 @@ type Config struct {
 
 type ResolverRoot interface {
 	Mutation() MutationResolver
-	Post() PostResolver
 	Query() QueryResolver
 }
 
@@ -220,9 +219,6 @@ type MutationResolver interface {
 	EditPost(ctx context.Context, input EditPost) (*Post, error)
 	InsertLog(ctx context.Context, input NewLog) (*Log, error)
 	UpsertPage(ctx context.Context, input EditPage) (*Page, error)
-}
-type PostResolver interface {
-	Readtime(ctx context.Context, obj *Post) (int, error)
 }
 type QueryResolver interface {
 	Books(ctx context.Context, input *Limit) ([]*Book, error)
@@ -4624,7 +4620,7 @@ func (ec *executionContext) _Post_readtime(ctx context.Context, field graphql.Co
 	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Post().Readtime(rctx, obj)
+		return obj.Readtime(ctx), nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4636,10 +4632,10 @@ func (ec *executionContext) _Post_readtime(ctx context.Context, field graphql.Co
 		}
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(int32)
 	rctx.Result = res
 	ctx = ec.Tracer.StartFieldChildExecution(ctx)
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return ec.marshalNInt2int32(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Post_datetime(ctx context.Context, field graphql.CollectedField, obj *Post) (ret graphql.Marshaler) {
@@ -10341,6 +10337,20 @@ func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}
 
 func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
 	res := graphql.MarshalInt(v)
+	if res == graphql.Null {
+		if !ec.HasError(graphql.GetResolverContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
+}
+
+func (ec *executionContext) unmarshalNInt2int32(ctx context.Context, v interface{}) (int32, error) {
+	return graphql.UnmarshalInt32(v)
+}
+
+func (ec *executionContext) marshalNInt2int32(ctx context.Context, sel ast.SelectionSet, v int32) graphql.Marshaler {
+	res := graphql.MarshalInt32(v)
 	if res == graphql.Null {
 		if !ec.HasError(graphql.GetResolverContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")

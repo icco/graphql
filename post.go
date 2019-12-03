@@ -20,7 +20,6 @@ type Post struct {
 	ID       string    `json:"id"`
 	Title    string    `json:"title"`
 	Content  string    `json:"content"`
-	Readtime int       `json:"readtime"`
 	Datetime time.Time `json:"datetime"`
 	Created  time.Time `json:"created"`
 	Modified time.Time `json:"modified"`
@@ -298,7 +297,7 @@ func (p *Post) Prev(ctx context.Context) (*Post, error) {
 }
 
 // ReadTime calculates the number of seconds it should take to read the post.
-func (p *Post) ReadTime() int32 {
+func (p *Post) Readtime(_ context.Context) int32 {
 	ReadingSpeed := 265.0
 	words := len(strings.Split(p.Content, " "))
 	seconds := int32(math.Ceil(float64(words) / ReadingSpeed * 60.0))
