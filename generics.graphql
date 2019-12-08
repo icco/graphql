@@ -49,6 +49,7 @@ type User {
   id: ID!
   role: String!
   apikey: String!
+  name: String!
   created: Time!
   modified: Time!
 }
