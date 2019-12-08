@@ -238,7 +238,7 @@ var (
 			Version:     18,
 			Description: "Add name to user",
 			Script: `
-      ALTER TABLE users ADD COLUMN name Text DEFAULT "anonymous";
+      ALTER TABLE users ADD COLUMN name Text DEFAULT 'anonymous';
       `,
 		},
 	}
