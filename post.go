@@ -73,36 +73,6 @@ func GetPost(ctx context.Context, id int64) (*Post, error) {
 	}
 }
 
-// AllPosts returns all posts from the database.
-func AllPosts(ctx context.Context, isDraft bool) ([]*Post, error) {
-	rows, err := db.QueryContext(
-		ctx, `
-    SELECT id, title, content, date, created_at, modified_at, tags, draft
-    FROM posts
-    WHERE draft = $1
-    ORDER BY date DESC
-    `, isDraft)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	posts := make([]*Post, 0)
-	for rows.Next() {
-		post := new(Post)
-		err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.Datetime, &post.Created, &post.Modified, pq.Array(&post.Tags), &post.Draft)
-		if err != nil {
-			return nil, err
-		}
-		posts = append(posts, post)
-	}
-
-	if err = rows.Err(); err != nil {
-		return nil, err
-	}
-	return posts, nil
-}
-
 // AllTags returns all tags used in all posts.
 func AllTags(ctx context.Context) ([]string, error) {
 	rows, err := db.QueryContext(ctx, "SELECT UNNEST(tags) AS tag, COUNT(*) AS cnt FROM posts GROUP BY tag ORDER BY cnt DESC")
@@ -130,8 +100,15 @@ func AllTags(ctx context.Context) ([]string, error) {
 }
 
 // Drafts is a simple wrapper around Posts that does return drafts.
-func Drafts(ctx context.Context, _, _ int) ([]*Post, error) {
-	return AllPosts(ctx, true)
+func Drafts(ctx context.Context, limit, offset int) ([]*Post, error) {
+	query := `
+SELECT id, title, content, date, created_at, modified_at, tags, draft
+FROM posts
+WHERE draft = true
+ORDER BY date DESC
+LIMIT $1 OFFSET $2
+`
+	return postQuery(ctx, query, limit, offset)
 }
 
 var tagAliases = map[string]string{
