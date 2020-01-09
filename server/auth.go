@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/auth0/go-jwt-middleware"
+	jwtmiddleware "github.com/auth0/go-jwt-middleware"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/icco/graphql"
 )
@@ -28,8 +28,30 @@ type JSONWebKeys struct {
 
 // CustomClaims is from https://auth0.com/docs/quickstart/backend/golang
 type CustomClaims struct {
-	Scope string `json:"scope"`
-	jwt.StandardClaims
+	Scope     string   `json:"scope"`
+	Audience  []string `json:"aud,omitempty"`
+	ExpiresAt int64    `json:"exp,omitempty"`
+	Id        string   `json:"jti,omitempty"`
+	IssuedAt  int64    `json:"iat,omitempty"`
+	Issuer    string   `json:"iss,omitempty"`
+	NotBefore int64    `json:"nbf,omitempty"`
+	Subject   string   `json:"sub,omitempty"`
+}
+
+func (c CustomClaims) toStandard() jwt.StandardClaims {
+	return jwt.StandardClaims{
+		Audience:  c.Audience[0],
+		ExpiresAt: c.ExpiresAt,
+		Id:        c.Id,
+		IssuedAt:  c.IssuedAt,
+		Issuer:    c.Issuer,
+		NotBefore: c.NotBefore,
+		Subject:   c.Subject,
+	}
+}
+
+func (c CustomClaims) Valid() error {
+	return c.toStandard().Valid()
 }
 
 // APIKeyMiddleware is an auth middleware. If user is coming in via api key
@@ -101,7 +123,37 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		SigningMethod: jwt.SigningMethodRS256,
 	})
 
-	return jwtMiddleware.Handler(next)
+	return jwtMiddleware.Handler(getUserFromToken(next))
+}
+
+func getUserFromToken(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		tokenString, err := jwtmiddleware.FromAuthHeader(r)
+		if err != nil {
+			log.WithError(err).Error("could not get auth header")
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		claims := &CustomClaims{}
+		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+			cert, err := getPemCert(token)
+			if err != nil {
+				return nil, err
+			}
+			return jwt.ParseRSAPublicKeyFromPEM([]byte(cert))
+		})
+
+		if err != nil {
+			log.WithError(err).Error("could not get claims")
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		log.WithField("token", token).WithField("claims", claims).Debug("the token")
+
+		next.ServeHTTP(w, r)
+	})
 }
 
 func getPemCert(token *jwt.Token) (string, error) {
