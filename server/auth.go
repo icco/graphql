@@ -50,6 +50,7 @@ func (c CustomClaims) toStandard() jwt.StandardClaims {
 	}
 }
 
+// Valid is required for conformance to jwt.Claims.
 func (c CustomClaims) Valid() error {
 	return c.toStandard().Valid()
 }
@@ -151,6 +152,17 @@ func getUserFromToken(next http.Handler) http.Handler {
 		}
 
 		log.WithField("token", token).WithField("claims", claims).Debug("the token")
+
+		if claims.Subject != "" {
+			user, err := graphql.GetUser(r.Context(), claims.Subject)
+			if err != nil {
+				log.WithError(err).WithField("claims", claims).Error("could not get user")
+			} else {
+				// put it in context
+				ctx := graphql.WithUser(r.Context(), user)
+				r = r.WithContext(ctx)
+			}
+		}
 
 		next.ServeHTTP(w, r)
 	})
