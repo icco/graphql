@@ -16,9 +16,9 @@ import (
 	"github.com/99designs/gqlgen/handler"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/cors"
 	"github.com/icco/graphql"
 	sdLogging "github.com/icco/logrus-stackdriver-formatter"
-	"github.com/rs/cors"
 	"github.com/unrolled/render"
 	"github.com/unrolled/secure"
 	"go.opencensus.io/plugin/ochttp"
@@ -112,7 +112,6 @@ func main() {
 		AllowedHeaders:     []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "x-apollo-tracing"},
 		ExposedHeaders:     []string{"Link"},
 		MaxAge:             300, // Maximum value not ignored by any of major browsers
-		Debug:              true,
 	})
 	r.NotFound(notFoundHandler)
 	r.Use(crs.Handler)
