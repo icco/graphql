@@ -31,7 +31,7 @@ type CustomClaims struct {
 	Scope     string   `json:"scope"`
 	Audience  []string `json:"aud,omitempty"`
 	ExpiresAt int64    `json:"exp,omitempty"`
-	Id        string   `json:"jti,omitempty"`
+	ID        string   `json:"jti,omitempty"`
 	IssuedAt  int64    `json:"iat,omitempty"`
 	Issuer    string   `json:"iss,omitempty"`
 	NotBefore int64    `json:"nbf,omitempty"`
@@ -42,7 +42,7 @@ func (c CustomClaims) toStandard() jwt.StandardClaims {
 	return jwt.StandardClaims{
 		Audience:  c.Audience[0],
 		ExpiresAt: c.ExpiresAt,
-		Id:        c.Id,
+		Id:        c.ID,
 		IssuedAt:  c.IssuedAt,
 		Issuer:    c.Issuer,
 		NotBefore: c.NotBefore,
@@ -184,41 +184,16 @@ func getPemCert(token *jwt.Token) (string, error) {
 		return cert, err
 	}
 
-	for k, _ := range jwks.Keys {
-		if token.Header["kid"] == jwks.Keys[k].Kid {
-			cert = "-----BEGIN CERTIFICATE-----\n" + jwks.Keys[k].X5c[0] + "\n-----END CERTIFICATE-----"
+	for _, k := range jwks.Keys {
+		if token.Header["kid"] == k.Kid {
+			cert = fmt.Sprintf("-----BEGIN CERTIFICATE-----\n%s\n-----END CERTIFICATE-----", k.X5c[0])
 		}
 	}
 
 	if cert == "" {
-		err := fmt.Errorf("Unable to find appropriate key.")
+		err := fmt.Errorf("unable to find appropriate key")
 		return cert, err
 	}
 
 	return cert, nil
-}
-
-func checkScope(scope string, tokenString string) bool {
-	token, _ := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
-		cert, err := getPemCert(token)
-		if err != nil {
-			return nil, err
-		}
-		result, _ := jwt.ParseRSAPublicKeyFromPEM([]byte(cert))
-		return result, nil
-	})
-
-	claims, ok := token.Claims.(*CustomClaims)
-
-	hasScope := false
-	if ok && token.Valid {
-		result := strings.Split(claims.Scope, " ")
-		for i := range result {
-			if result[i] == scope {
-				hasScope = true
-			}
-		}
-	}
-
-	return hasScope
 }
