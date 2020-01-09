@@ -146,6 +146,7 @@ func main() {
 
 	r.Group(func(r chi.Router) {
 		r.Use(sslOnly)
+		r.Use(APIKeyMiddleware)
 		r.Use(AuthMiddleware)
 
 		r.Get("/cron", cronHandler)
