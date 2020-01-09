@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"
 	"strings"
 
 	"github.com/auth0/go-jwt-middleware"
@@ -74,24 +73,27 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			aud := "https://natwelch.com"
 			checkAud := token.Claims.(jwt.MapClaims).VerifyAudience(aud, false)
 			if !checkAud {
+				log.Errorf("invalid audence: %q", token)
 				return token, jsonError("Invalid audience.")
 			}
 			// Verify 'iss' claim
 			iss := "https://icco.auth0.com/"
 			checkIss := token.Claims.(jwt.MapClaims).VerifyIssuer(iss, false)
 			if !checkIss {
+				log.Errorf("invalid issuer: %q", token)
 				return token, jsonError("Invalid issuer.")
 			}
 
 			cert, err := getPemCert(token)
 			if err != nil {
 				msg := "cloudn't parse pem cert"
-				log.WithError(err).Error()
+				log.WithError(err).Error(msg)
 				return token, jsonError(msg)
 			}
 
 			data, err := jwt.ParseRSAPublicKeyFromPEM([]byte(cert))
 			if err != nil {
+				log.WithError(err).WithField("cert", cert).Errorf("error parsing cert")
 				return token, jsonError(err.Error())
 			}
 			return data, nil
