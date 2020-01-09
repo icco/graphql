@@ -112,8 +112,9 @@ func main() {
 		AllowedHeaders:     []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "x-apollo-tracing"},
 		ExposedHeaders:     []string{"Link"},
 		MaxAge:             300, // Maximum value not ignored by any of major browsers
-		Debug:              true,
+		Debug:              isDev,
 	})
+	crs.Log = log
 	r.NotFound(notFoundHandler)
 	r.Use(crs.Handler)
 
