@@ -95,14 +95,14 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			aud := "https://natwelch.com"
 			checkAud := token.Claims.(jwt.MapClaims).VerifyAudience(aud, false)
 			if !checkAud {
-				log.Errorf("invalid audence: %q", token)
+				log.Errorf("invalid audence: %q", token.Raw)
 				return token, jsonError("Invalid audience.")
 			}
 			// Verify 'iss' claim
 			iss := "https://icco.auth0.com/"
 			checkIss := token.Claims.(jwt.MapClaims).VerifyIssuer(iss, false)
 			if !checkIss {
-				log.Errorf("invalid issuer: %q", token)
+				log.Errorf("invalid issuer: %q", token.Raw)
 				return token, jsonError("Invalid issuer.")
 			}
 
