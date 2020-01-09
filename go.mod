@@ -11,7 +11,9 @@ require (
 	github.com/GuiaBolso/darwin v0.0.0-20191218124601-fd6d2aa3d244
 	github.com/agnivade/levenshtein v1.0.3 // indirect
 	github.com/auth0-community/go-auth0 v1.0.0
+	github.com/auth0/go-jwt-middleware v0.0.0-20190805220309-36081240882b
 	github.com/aws/aws-sdk-go v1.27.0 // indirect
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/felixge/httpsnoop v1.0.1 // indirect
 	github.com/go-chi/chi v4.0.2+incompatible
 	github.com/golang/groupcache v0.0.0-20191227052852-215e87163ea7 // indirect

@@ -1,8 +1,11 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/auth0/go-jwt-middleware"
 	"github.com/dgrijalva/jwt-go"
@@ -41,7 +44,7 @@ type CustomClaims struct {
 
 // APIKeyMiddleware is an auth middleware. If user is coming in via api key
 // header, use that as your auth.
-func APIKeyMiddleware(next http.handler) http.handler {
+func APIKeyMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// API Key dropout
 		if r.Header.Get("X-API-AUTH") != "" {
@@ -62,30 +65,45 @@ func APIKeyMiddleware(next http.handler) http.handler {
 	})
 }
 
+func jsonError(msg string) error {
+	data, err := json.Marshal(map[string]string{"error": msg})
+	if err != nil {
+		log.WithError(err).Error("could not marshal json")
+	}
+	return fmt.Errorf("%s", data)
+}
+
 // AuthMiddleware parses the incomming authentication header and turns it into
 // an attached user.
-func AuthMiddleware(next http.handler) http.handler {
+func AuthMiddleware(next http.Handler) http.Handler {
 	jwtMiddleware := jwtmiddleware.New(jwtmiddleware.Options{
+		CredentialsOptional: true,
 		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
 			// Verify 'aud' claim
 			aud := "https://natwelch.com"
 			checkAud := token.Claims.(jwt.MapClaims).VerifyAudience(aud, false)
 			if !checkAud {
-				return token, errors.New("Invalid audience.")
+				return token, jsonError("Invalid audience.")
 			}
 			// Verify 'iss' claim
 			iss := "https://natwelch.com/"
 			checkIss := token.Claims.(jwt.MapClaims).VerifyIssuer(iss, false)
 			if !checkIss {
-				return token, errors.New("Invalid issuer.")
+				return token, jsonError("Invalid issuer.")
 			}
 
 			cert, err := getPemCert(token)
 			if err != nil {
-				log.WithError(err).Error("cloudn't parse pem cert")
+				msg := "cloudn't parse pem cert"
+				log.WithError(err).Error()
+				return token, jsonError(msg)
 			}
 
-			return jwt.ParseRSAPublicKeyFromPEM([]byte(cert))
+			data, err := jwt.ParseRSAPublicKeyFromPEM([]byte(cert))
+			if err != nil {
+				return token, jsonError(err.Error())
+			}
+			return data, nil
 		},
 		SigningMethod: jwt.SigningMethodRS256,
 	})
@@ -116,7 +134,7 @@ func getPemCert(token *jwt.Token) (string, error) {
 	}
 
 	if cert == "" {
-		err := errors.New("Unable to find appropriate key.")
+		err := fmt.Errorf("Unable to find appropriate key.")
 		return cert, err
 	}
 
