@@ -12,15 +12,6 @@ import (
 	"github.com/icco/graphql"
 )
 
-var (
-	// AUTH0 holds our Auth0 config constants.
-	AUTH0 = map[string]string{
-		"API-SECRET":   os.Getenv("AUTH0_API_SECRET"),
-		"API-AUDIENCE": os.Getenv("AUTH0_API_AUDIENCE"),
-		"DOMAIN":       os.Getenv("AUTH0_DOMAIN"),
-	}
-)
-
 // Jwks is from https://auth0.com/docs/quickstart/backend/golang
 type Jwks struct {
 	Keys []JSONWebKeys `json:"keys"`
@@ -86,7 +77,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 				return token, jsonError("Invalid audience.")
 			}
 			// Verify 'iss' claim
-			iss := "https://natwelch.com/"
+			iss := "https://icco.auth0.com/"
 			checkIss := token.Claims.(jwt.MapClaims).VerifyIssuer(iss, false)
 			if !checkIss {
 				return token, jsonError("Invalid issuer.")
@@ -113,7 +104,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 
 func getPemCert(token *jwt.Token) (string, error) {
 	cert := ""
-	resp, err := http.Get("https://natwelch.com/.well-known/jwks.json")
+	resp, err := http.Get("https://icco.auth0.com/.well-known/jwks.json")
 
 	if err != nil {
 		return cert, err
