@@ -163,6 +163,7 @@ type ComplexityRoot struct {
 		Posts              func(childComplexity int, input *Limit) int
 		PostsByTag         func(childComplexity int, id string) int
 		PrevPost           func(childComplexity int, id string) int
+		Search             func(childComplexity int, query string, input *Limit) int
 		Stats              func(childComplexity int, count *int) int
 		Tags               func(childComplexity int) int
 		Time               func(childComplexity int) int
@@ -236,6 +237,7 @@ type QueryResolver interface {
 	Drafts(ctx context.Context, input *Limit) ([]*Post, error)
 	FuturePosts(ctx context.Context, input *Limit) ([]*Post, error)
 	Posts(ctx context.Context, input *Limit) ([]*Post, error)
+	Search(ctx context.Context, query string, input *Limit) ([]*Post, error)
 	Post(ctx context.Context, id string) (*Post, error)
 	NextPost(ctx context.Context, id string) (*Post, error)
 	PrevPost(ctx context.Context, id string) (*Post, error)
@@ -1015,6 +1017,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.PrevPost(childComplexity, args["id"].(string)), true
 
+	case "Query.search":
+		if e.complexity.Query.Search == nil {
+			break
+		}
+
+		args, err := ec.field_Query_search_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Search(childComplexity, args["query"].(string), args["input"].(*Limit)), true
+
 	case "Query.stats":
 		if e.complexity.Query.Stats == nil {
 			break
@@ -1394,6 +1408,9 @@ extend type Query {
 
   "Returns an array of all posts, ordered by reverse chronological order, using provided limit and offset."
   posts(input: Limit): [Post]!
+
+  "Returns a selection of posts that match the search."
+  search(query: String!, input: Limit): [Post]!
 
   "Returns a single post by ID."
   post(id: ID!): Post
@@ -2106,6 +2123,28 @@ func (ec *executionContext) field_Query_prevPost_args(ctx context.Context, rawAr
 		}
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_search_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["query"]; ok {
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["query"] = arg0
+	var arg1 *Limit
+	if tmp, ok := rawArgs["input"]; ok {
+		arg1, err = ec.unmarshalOLimit2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐLimit(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
 	return args, nil
 }
 
@@ -5679,6 +5718,50 @@ func (ec *executionContext) _Query_posts(ctx context.Context, field graphql.Coll
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Query().Posts(rctx, args["input"].(*Limit))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !ec.HasError(rctx) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*Post)
+	rctx.Result = res
+	ctx = ec.Tracer.StartFieldChildExecution(ctx)
+	return ec.marshalNPost2ᚕᚖgithubᚗcomᚋiccoᚋgraphqlᚐPost(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_search(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	ctx = ec.Tracer.StartFieldExecution(ctx, field)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+		ec.Tracer.EndFieldExecution(ctx)
+	}()
+	rctx := &graphql.ResolverContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+	ctx = graphql.WithResolverContext(ctx, rctx)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_search_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	rctx.Args = args
+	ctx = ec.Tracer.StartFieldResolverExecution(ctx, rctx)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Search(rctx, args["query"].(string), args["input"].(*Limit))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -9573,6 +9656,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_posts(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "search":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_search(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
