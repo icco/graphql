@@ -10,7 +10,7 @@ SELECT id, title, content, date, created_at, modified_at, tags, draft
 FROM posts
 WHERE id in (
   SELECT id
-  FROM posts, plainto_tsquery('year') query, to_tsvector(title || ' ' || content) textsearch
+  FROM posts, plainto_tsquery($1) query, to_tsvector(title || ' ' || content) textsearch
   WHERE draft = false
     AND date <= NOW()
     AND query @@ textsearch
