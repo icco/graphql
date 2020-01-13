@@ -396,6 +396,12 @@ func (r *queryResolver) Stats(ctx context.Context, count *int) ([]*Stat, error) 
 	return stats, nil
 }
 
+func (r *queryResolver) Search(ctx context.Context, query string, input *Limit) ([]*Post, error) {
+	limit, offset := ParseLimit(input, 10, 0)
+
+	return Search(ctx, query, limit, offset)
+}
+
 func (r *queryResolver) PostsByTag(ctx context.Context, tag string) ([]*Post, error) {
 	return PostsByTag(ctx, tag)
 }
