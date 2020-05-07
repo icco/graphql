@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"net/http"
 	"os"
+	"time"
 
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	"contrib.go.opencensus.io/exporter/stackdriver/monitoredresource"
@@ -13,14 +14,19 @@ import (
 	"github.com/99designs/gqlgen-contrib/gqlapollotracing"
 	"github.com/99designs/gqlgen-contrib/gqlopencensus"
 	gql "github.com/99designs/gqlgen/graphql"
-	"github.com/99designs/gqlgen/handler"
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/handler/extension"
+	"github.com/99designs/gqlgen/graphql/handler/transport"
+	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
+	lru "github.com/hashicorp/golang-lru"
 	"github.com/icco/graphql"
 	sdLogging "github.com/icco/logrus-stackdriver-formatter"
 	"github.com/unrolled/render"
 	"github.com/unrolled/secure"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
@@ -96,6 +102,30 @@ func main() {
 		log.WithError(err).Fatal("could not connect to cache")
 	}
 
+	gh := handler.New(graphql.NewExecutableSchema(graphql.New()))
+
+	gh.AddTransport(transport.Websocket{
+		KeepAlivePingInterval: 10 * time.Second,
+	})
+	gh.AddTransport(transport.Options{})
+	gh.AddTransport(transport.GET{})
+	gh.AddTransport(transport.POST{})
+	gh.AddTransport(transport.MultipartForm{})
+	gh.SetQueryCache(lru.New(1000))
+
+	gh.Use(extension.AutomaticPersistedQuery{
+		Cache: cache,
+	})
+	gh.SetErrorPresenter(func(ctx context.Context, err error) *gqlerror.Error {
+		log.WithError(err).Error("Error seen during graphql")
+		return gqlerror.Errorf("fatal error seen while processing request")
+	})
+
+	handler.RequestMiddleware(GqlLoggingMiddleware)
+	handler.RequestMiddleware(gqlapollotracing.RequestMiddleware())
+	handler.Tracer(gqlapollotracing.NewTracer())
+	handler.Tracer(gqlopencensus.New())
+
 	r := chi.NewRouter()
 
 	r.Use(middleware.RequestID)
@@ -150,7 +180,7 @@ func main() {
 		r.Use(AuthMiddleware)
 
 		r.Get("/cron", cronHandler)
-		r.Handle("/", handler.Playground("graphql", "/graphql"))
+		r.Handle("/", playground.Handler("graphql", "/graphql"))
 		r.Handle("/graphql", handler.GraphQL(
 			graphql.NewExecutableSchema(graphql.New()),
 			handler.RecoverFunc(func(ctx context.Context, intErr interface{}) error {

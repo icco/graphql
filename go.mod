@@ -18,7 +18,7 @@ require (
 	github.com/google/uuid v1.1.1
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/gosimple/slug v1.9.0
-	github.com/hashicorp/golang-lru v0.5.4 // indirect
+	github.com/hashicorp/golang-lru v0.5.4
 	github.com/hellofresh/logging-go v0.4.0 // indirect
 	github.com/icco/logrus-stackdriver-formatter v0.3.0
 	github.com/lib/pq v1.5.1
