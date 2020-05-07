@@ -31,6 +31,7 @@ require (
 	github.com/unrolled/render v1.0.3
 	github.com/unrolled/secure v1.0.7
 	github.com/vektah/gqlparser v1.3.1
+	github.com/vektah/gqlparser/v2 v2.0.1
 	go.opencensus.io v0.22.3
 	golang.org/x/exp v0.0.0-20200331195152-e8c3332aa8e5 // indirect
 	golang.org/x/net v0.0.0-20200506145744-7e3656a0809f // indirect
