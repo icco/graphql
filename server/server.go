@@ -13,12 +13,12 @@ import (
 	gql "github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
+	"github.com/99designs/gqlgen/graphql/handler/lru"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
-	lru "github.com/hashicorp/golang-lru"
 	"github.com/icco/graphql"
 	sdLogging "github.com/icco/logrus-stackdriver-formatter"
 	"github.com/unrolled/render"
@@ -127,7 +127,7 @@ func main() {
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Recoverer)
-	r.Use(middleware.DefaultCompress)
+	r.Use(middleware.Compress(5))
 	r.Use(sdLogging.LoggingMiddleware(log))
 
 	crs := cors.New(cors.Options{
@@ -203,11 +203,10 @@ func GqlLoggingMiddleware(ctx context.Context, next gql.ResponseHandler) *gql.Re
 	// We do this because RequestContext has fields that can't be easily
 	// serialized in json, and we don't care about them.
 	subsetContext := map[string]interface{}{
-		"query":      rctx.RawQuery,
-		"variables":  rctx.Variables,
-		"extensions": rctx.Extensions,
-		"name":       rctx.OperationName,
-		"stats":      rctx.Stats,
+		"query":     rctx.RawQuery,
+		"variables": rctx.Variables,
+		"name":      rctx.OperationName,
+		"stats":     rctx.Stats,
 	}
 
 	log.WithField("gql", subsetContext).Debug("request gql")

@@ -15,7 +15,7 @@ func NewCache() (*Cache, error) {
 }
 
 // Add inserts a key value pair into the database.
-func (c *Cache) Add(ctx context.Context, hash string, query string) {
+func (c *Cache) Add(ctx context.Context, hash string, query interface{}) {
 	_, err := db.ExecContext(
 		ctx,
 		`
@@ -35,7 +35,7 @@ WHERE cache.key = $1;
 }
 
 // Get retrieves a value by a key.
-func (c *Cache) Get(ctx context.Context, hash string) (string, bool) {
+func (c *Cache) Get(ctx context.Context, hash string) (interface{}, bool) {
 	var value string
 	row := db.QueryRowContext(ctx, "SELECT value FROM cache WHERE key = $1", hash)
 	err := row.Scan(&value)
