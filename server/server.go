@@ -10,8 +10,6 @@ import (
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	"contrib.go.opencensus.io/exporter/stackdriver/monitoredresource"
 	"contrib.go.opencensus.io/exporter/stackdriver/propagation"
-	"github.com/99designs/gqlgen-contrib/gqlapollotracing"
-	"github.com/99designs/gqlgen-contrib/gqlopencensus"
 	gql "github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
@@ -120,10 +118,9 @@ func main() {
 		return gqlerror.Errorf("fatal error seen while processing request")
 	})
 
-	handler.RequestMiddleware(GqlLoggingMiddleware)
-	handler.RequestMiddleware(gqlapollotracing.RequestMiddleware())
-	handler.Tracer(gqlapollotracing.NewTracer())
-	handler.Tracer(gqlopencensus.New())
+	gh.AroundResponses(GqlLoggingMiddleware)
+	// TODO: Add this back once gqlgen-contrib supports it.
+	//handler.Tracer(gqlopencensus.New())
 
 	r := chi.NewRouter()
 
@@ -200,8 +197,8 @@ func main() {
 }
 
 // GqlLoggingMiddleware is a middleware for gqlgen that logs all gql requests to debug.
-func GqlLoggingMiddleware(ctx context.Context, next func(ctx context.Context) []byte) []byte {
-	rctx := gql.GetRequestContext(ctx)
+func GqlLoggingMiddleware(ctx context.Context, next gql.ResponseHandler) *gql.Response {
+	rctx := gql.GetOperationContext(ctx)
 
 	// We do this because RequestContext has fields that can't be easily
 	// serialized in json, and we don't care about them.
@@ -209,6 +206,8 @@ func GqlLoggingMiddleware(ctx context.Context, next func(ctx context.Context) []
 		"query":      rctx.RawQuery,
 		"variables":  rctx.Variables,
 		"extensions": rctx.Extensions,
+		"name":       rctx.OperationName,
+		"stats":      rctx.Stats,
 	}
 
 	log.WithField("gql", subsetContext).Debug("request gql")
