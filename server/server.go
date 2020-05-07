@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"html/template"
 	"net/http"
 	"os"
@@ -181,22 +180,7 @@ func main() {
 
 		r.Get("/cron", cronHandler)
 		r.Handle("/", playground.Handler("graphql", "/graphql"))
-		r.Handle("/graphql", handler.GraphQL(
-			graphql.NewExecutableSchema(graphql.New()),
-			handler.RecoverFunc(func(ctx context.Context, intErr interface{}) error {
-				err, ok := intErr.(error)
-				if ok {
-					log.WithError(err).Error("Error seen during graphql")
-				}
-				return errors.New("fatal error seen while processing request")
-			}),
-			handler.CacheSize(512),
-			handler.RequestMiddleware(GqlLoggingMiddleware),
-			handler.RequestMiddleware(gqlapollotracing.RequestMiddleware()),
-			handler.Tracer(gqlapollotracing.NewTracer()),
-			handler.Tracer(gqlopencensus.New()),
-			handler.EnablePersistedQueryCache(cache),
-		))
+		r.Handle("/graphql", gh)
 
 		r.Post("/photo/new", photoUploadHandler)
 	})
