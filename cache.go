@@ -2,6 +2,7 @@ package graphql
 
 import (
 	"context"
+	"encoding/json"
 	"time"
 )
 
@@ -15,8 +16,13 @@ func NewCache() (*Cache, error) {
 }
 
 // Add inserts a key value pair into the database.
-func (c *Cache) Add(ctx context.Context, hash string, query string) {
-	_, err := db.ExecContext(
+func (c *Cache) Add(ctx context.Context, hash string, query interface{}) {
+	blob, err := json.Marshal(query)
+	if err != nil {
+		log.WithError(err).Error("could not marshal query")
+	}
+
+	_, err = db.ExecContext(
 		ctx,
 		`
 INSERT INTO cache(key, value, modified_at)
@@ -26,7 +32,7 @@ SET (value, modified_at) = ($2, $3)
 WHERE cache.key = $1;
 `,
 		hash,
-		query,
+		blob,
 		time.Now())
 
 	if err != nil {
@@ -35,13 +41,17 @@ WHERE cache.key = $1;
 }
 
 // Get retrieves a value by a key.
-func (c *Cache) Get(ctx context.Context, hash string) (string, bool) {
-	var value string
+func (c *Cache) Get(ctx context.Context, hash string) (interface{}, bool) {
+	var value []byte
 	row := db.QueryRowContext(ctx, "SELECT value FROM cache WHERE key = $1", hash)
-	err := row.Scan(&value)
-
-	if err != nil {
+	if err := row.Scan(&value); err != nil {
 		return "", false
 	}
-	return value, true
+
+	var i interface{}
+	if err := json.Unmarshal(value, &i); err != nil {
+		return "", false
+	}
+
+	return i, true
 }

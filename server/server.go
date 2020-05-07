@@ -2,18 +2,20 @@ package main
 
 import (
 	"context"
-	"errors"
 	"html/template"
 	"net/http"
 	"os"
+	"time"
 
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	"contrib.go.opencensus.io/exporter/stackdriver/monitoredresource"
 	"contrib.go.opencensus.io/exporter/stackdriver/propagation"
-	"github.com/99designs/gqlgen-contrib/gqlapollotracing"
-	"github.com/99designs/gqlgen-contrib/gqlopencensus"
 	gql "github.com/99designs/gqlgen/graphql"
-	"github.com/99designs/gqlgen/handler"
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/handler/extension"
+	"github.com/99designs/gqlgen/graphql/handler/lru"
+	"github.com/99designs/gqlgen/graphql/handler/transport"
+	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
@@ -21,6 +23,7 @@ import (
 	sdLogging "github.com/icco/logrus-stackdriver-formatter"
 	"github.com/unrolled/render"
 	"github.com/unrolled/secure"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
@@ -96,12 +99,35 @@ func main() {
 		log.WithError(err).Fatal("could not connect to cache")
 	}
 
+	gh := handler.New(graphql.NewExecutableSchema(graphql.New()))
+
+	gh.AddTransport(transport.Websocket{
+		KeepAlivePingInterval: 10 * time.Second,
+	})
+	gh.AddTransport(transport.Options{})
+	gh.AddTransport(transport.GET{})
+	gh.AddTransport(transport.POST{})
+	gh.AddTransport(transport.MultipartForm{})
+	gh.SetQueryCache(lru.New(1000))
+
+	gh.Use(extension.AutomaticPersistedQuery{
+		Cache: cache,
+	})
+	gh.SetErrorPresenter(func(ctx context.Context, err error) *gqlerror.Error {
+		log.WithError(err).Error("Error seen during graphql")
+		return gqlerror.Errorf("fatal error seen while processing request")
+	})
+
+	gh.AroundResponses(GqlLoggingMiddleware)
+	// TODO: Add this back once gqlgen-contrib supports it.
+	//handler.Tracer(gqlopencensus.New())
+
 	r := chi.NewRouter()
 
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Recoverer)
-	r.Use(middleware.DefaultCompress)
+	r.Use(middleware.Compress(5))
 	r.Use(sdLogging.LoggingMiddleware(log))
 
 	crs := cors.New(cors.Options{
@@ -150,23 +176,8 @@ func main() {
 		r.Use(AuthMiddleware)
 
 		r.Get("/cron", cronHandler)
-		r.Handle("/", handler.Playground("graphql", "/graphql"))
-		r.Handle("/graphql", handler.GraphQL(
-			graphql.NewExecutableSchema(graphql.New()),
-			handler.RecoverFunc(func(ctx context.Context, intErr interface{}) error {
-				err, ok := intErr.(error)
-				if ok {
-					log.WithError(err).Error("Error seen during graphql")
-				}
-				return errors.New("fatal error seen while processing request")
-			}),
-			handler.CacheSize(512),
-			handler.RequestMiddleware(GqlLoggingMiddleware),
-			handler.RequestMiddleware(gqlapollotracing.RequestMiddleware()),
-			handler.Tracer(gqlapollotracing.NewTracer()),
-			handler.Tracer(gqlopencensus.New()),
-			handler.EnablePersistedQueryCache(cache),
-		))
+		r.Handle("/", playground.Handler("graphql", "/graphql"))
+		r.Handle("/graphql", gh)
 
 		r.Post("/photo/new", photoUploadHandler)
 	})
@@ -186,15 +197,16 @@ func main() {
 }
 
 // GqlLoggingMiddleware is a middleware for gqlgen that logs all gql requests to debug.
-func GqlLoggingMiddleware(ctx context.Context, next func(ctx context.Context) []byte) []byte {
-	rctx := gql.GetRequestContext(ctx)
+func GqlLoggingMiddleware(ctx context.Context, next gql.ResponseHandler) *gql.Response {
+	rctx := gql.GetOperationContext(ctx)
 
 	// We do this because RequestContext has fields that can't be easily
 	// serialized in json, and we don't care about them.
 	subsetContext := map[string]interface{}{
-		"query":      rctx.RawQuery,
-		"variables":  rctx.Variables,
-		"extensions": rctx.Extensions,
+		"query":     rctx.RawQuery,
+		"variables": rctx.Variables,
+		"name":      rctx.OperationName,
+		"stats":     rctx.Stats,
 	}
 
 	log.WithField("gql", subsetContext).Debug("request gql")
