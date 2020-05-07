@@ -24,7 +24,7 @@ require (
 	github.com/mitchellh/mapstructure v1.3.0 // indirect
 	github.com/opencensus-integrations/ocsql v0.1.5
 	github.com/paulmach/orb v0.1.6
-	github.com/russross/blackfriday v1.5.2
+	github.com/russross/blackfriday/v2 v2.0.1
 	github.com/sirupsen/logrus v1.6.0
 	github.com/unrolled/render v1.0.3
 	github.com/unrolled/secure v1.0.7
