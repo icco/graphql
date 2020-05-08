@@ -10,8 +10,9 @@ exec:
 model:
   filename: models_gen.go
 resolver:
-  filename: resolver.go
-  type: Resolver
+  layout: follow-schema
+  package: graphql
+  dir: .
 models:
   Book:
     model: github.com/icco/graphql.Book
