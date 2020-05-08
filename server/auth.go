@@ -121,6 +121,14 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			return data, nil
 		},
 		SigningMethod: jwt.SigningMethodRS256,
+		ErrorHandler: func(w http.ResponseWriter, r *http.Request, err string) {
+			log.Errorf("error with auth: %q", err)
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			w.Header().Set("X-Content-Type-Options", "nosniff")
+			w.WriteHeader(http.StatusBadRequest)
+			fmt.Fprintf(w, `{"error": "%s"}`, err)
+			return
+		},
 	})
 
 	return jwtMiddleware.Handler(getUserFromToken(next))
