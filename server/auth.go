@@ -145,7 +145,7 @@ func getUserFromToken(next http.Handler) http.Handler {
 		})
 
 		if err != nil {
-			log.WithError(err).Error("could not get claims")
+			log.WithError(err).Debug("could not get claims")
 			next.ServeHTTP(w, r)
 			return
 		}
