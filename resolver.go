@@ -51,9 +51,6 @@ func WithUser(ctx context.Context, u *User) context.Context {
 // Resolver is the type that gqlgen expects to exist
 type Resolver struct{}
 
-type mutationResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }
-
 // New returns a Config that has all of the proper settings for this graphql
 // server.
 func New() Config {
@@ -84,14 +81,4 @@ func New() Config {
 	}
 
 	return c
-}
-
-// Mutation returns the resolver for Mutations.
-func (r *Resolver) Mutation() MutationResolver {
-	return &mutationResolver{r}
-}
-
-// Query returns the resolver for Queries.
-func (r *Resolver) Query() QueryResolver {
-	return &queryResolver{r}
 }
