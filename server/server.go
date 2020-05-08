@@ -113,6 +113,7 @@ func main() {
 	gh.Use(extension.AutomaticPersistedQuery{
 		Cache: cache,
 	})
+	gh.Use(extension.Introspection{})
 	gh.SetErrorPresenter(func(ctx context.Context, err error) *gqlerror.Error {
 		log.WithError(err).Error("Error seen during graphql")
 		return gqlerror.Errorf("fatal error seen while processing request")
