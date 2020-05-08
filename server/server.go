@@ -101,19 +101,17 @@ func main() {
 
 	gh := handler.New(graphql.NewExecutableSchema(graphql.New()))
 
-	gh.AddTransport(transport.Websocket{
-		KeepAlivePingInterval: 10 * time.Second,
-	})
+	gh.AddTransport(transport.Websocket{KeepAlivePingInterval: 10 * time.Second})
 	gh.AddTransport(transport.Options{})
 	gh.AddTransport(transport.GET{})
 	gh.AddTransport(transport.POST{})
 	gh.AddTransport(transport.MultipartForm{})
+
 	gh.SetQueryCache(lru.New(1000))
 
-	gh.Use(extension.AutomaticPersistedQuery{
-		Cache: cache,
-	})
+	gh.Use(extension.AutomaticPersistedQuery{Cache: cache})
 	gh.Use(extension.Introspection{})
+
 	gh.SetErrorPresenter(func(ctx context.Context, err error) *gqlerror.Error {
 		log.WithError(err).Error("Error seen during graphql")
 		return gqlerror.Errorf("fatal error seen while processing request")
