@@ -120,7 +120,7 @@ func (r *queryResolver) PrevPost(ctx context.Context, id string) (*Post, error) 
 }
 
 func (r *queryResolver) PostsByTag(ctx context.Context, id string) ([]*Post, error) {
-	return PostsByTag(ctx, tag)
+	return PostsByTag(ctx, id)
 }
 
 func (r *queryResolver) Tags(ctx context.Context) ([]string, error) {
