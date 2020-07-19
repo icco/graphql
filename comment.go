@@ -41,11 +41,11 @@ func AllComments(ctx context.Context, limit int, offset int) ([]*Comment, error)
 	defer rows.Close()
 
 	comments := make([]*Comment, 0)
-	var userID string
-	var p int64
 	for rows.Next() {
 		c := &Comment{}
 		var userID string
+		var p int64
+
 		err := rows.Scan(
 			&c.ID,
 			&userID,
@@ -63,7 +63,7 @@ func AllComments(ctx context.Context, limit int, offset int) ([]*Comment, error)
 			return nil, err
 		}
 
-		c.Post, err = GetPostString(ctx, p)
+		c.Post, err = GetPost(ctx, p)
 		if err != nil {
 			return nil, err
 		}
