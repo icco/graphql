@@ -72,6 +72,9 @@ extend type Query {
   "Returns an array of all posts, ordered by reverse chronological order, using provided limit and offset."
   posts(input: Limit): [Post]!
 
+  "Returns most recent comments for all published posts."
+  comments(input: Limit): [Comment]!
+
   "Returns a selection of posts that match the search."
   search(query: String!, input: Limit): [Post]!
 
