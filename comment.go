@@ -26,6 +26,58 @@ func (c *Comment) URI() *URI {
 	return NewURI("https://writing.natwelch.com/comment/" + c.ID)
 }
 
+// AllComments returns all comments orderd by time.
+func AllComments(ctx context.Context, limit int, offset int) ([]*Comment, error) {
+	rows, err := db.QueryContext(
+		ctx, `
+    SELECT id, user_id, post_id, content, created_at, modified_at
+    FROM comments
+    ORDER BY created_at DESC
+    LIMIT $1 OFFSET $2
+    `, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	comments := make([]*Comment, 0)
+	var userID string
+	var p int64
+	for rows.Next() {
+		c := &Comment{}
+		var userID string
+		err := rows.Scan(
+			&c.ID,
+			&userID,
+			&p,
+			&c.Content,
+			&c.Created,
+			&c.Modified,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		c.User, err = GetUser(ctx, userID)
+		if err != nil {
+			return nil, err
+		}
+
+		c.Post, err = GetPostString(ctx, p)
+		if err != nil {
+			return nil, err
+		}
+
+		comments = append(comments, c)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return comments, nil
+
+}
+
 // GetComment returns a single comment by ID.
 func GetComment(ctx context.Context, id string) (*Comment, error) {
 	c := &Comment{}
