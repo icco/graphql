@@ -92,7 +92,9 @@ func (r *queryResolver) Posts(ctx context.Context, input *Limit) ([]*Post, error
 }
 
 func (r *queryResolver) Comments(ctx context.Context, input *Limit) ([]*Comment, error) {
-	panic(fmt.Errorf("not implemented"))
+	limit, offset := ParseLimit(input, 10, 0)
+
+	return AllComments(ctx, limit, offset)
 }
 
 func (r *queryResolver) Search(ctx context.Context, query string, input *Limit) ([]*Post, error) {
