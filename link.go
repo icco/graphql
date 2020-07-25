@@ -64,7 +64,7 @@ func GetLinkByURI(ctx context.Context, uri string) (*Link, error) {
 	case err == sql.ErrNoRows:
 		return nil, fmt.Errorf("No link %s", uri)
 	case err != nil:
-		return nil, fmt.Errorf("Error running get query: %+v", err)
+		return nil, fmt.Errorf("error with get: %w", err)
 	default:
 		return &link, nil
 	}
@@ -79,7 +79,7 @@ func GetLinkByID(ctx context.Context, id string) (*Link, error) {
 	case err == sql.ErrNoRows:
 		return nil, fmt.Errorf("No link %s", id)
 	case err != nil:
-		return nil, fmt.Errorf("Error running get query: %+v", err)
+		return nil, fmt.Errorf("error with get: %w", err)
 	default:
 		return &link, nil
 	}

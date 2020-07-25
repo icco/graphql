@@ -94,7 +94,7 @@ func GetTweet(ctx context.Context, id string) (*Tweet, error) {
 	case err == sql.ErrNoRows:
 		return nil, fmt.Errorf("No tweet %s", id)
 	case err != nil:
-		return nil, fmt.Errorf("Error running get query: %+v", err)
+		return nil, fmt.Errorf("error with get: %w", err)
 	default:
 		for _, v := range uris {
 			tweet.Urls = append(tweet.Urls, NewURI(v))

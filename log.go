@@ -177,7 +177,7 @@ func GetLog(ctx context.Context, id string) (*Log, error) {
 	case err == sql.ErrNoRows:
 		return nil, nil
 	case err != nil:
-		return nil, fmt.Errorf("Error running get query: %+v", err)
+		return nil, fmt.Errorf("error with get: %w", err)
 	default:
 		l.Location = GeoFromOrb(&p)
 		return l, nil

@@ -99,7 +99,7 @@ func GetPageByID(ctx context.Context, id string) (*Page, error) {
 	case err == sql.ErrNoRows:
 		return nil, fmt.Errorf("No post with id")
 	case err != nil:
-		return nil, fmt.Errorf("Error running get query: %+v", err)
+		return nil, fmt.Errorf("error with get: %w", err)
 	default:
 		u, err := GetUser(ctx, userID)
 		if err != nil {
@@ -124,7 +124,7 @@ func GetPageBySlug(ctx context.Context, slug string) (*Page, error) {
 	case err == sql.ErrNoRows:
 		return nil, fmt.Errorf("No post with slug")
 	case err != nil:
-		return nil, fmt.Errorf("Error running get query: %+v", err)
+		return nil, fmt.Errorf("error with get: %w", err)
 	default:
 		u, err := GetUser(ctx, userID)
 		if err != nil {

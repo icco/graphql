@@ -56,7 +56,7 @@ func GetUser(ctx context.Context, id string) (*User, error) {
 		user.Modified = time.Now()
 		return &user, (&user).Save(ctx)
 	case err != nil:
-		return nil, fmt.Errorf("Error running get query: %+v", err)
+		return nil, fmt.Errorf("error with get: %w", err)
 	default:
 		return &user, (&user).Save(ctx)
 	}
@@ -68,7 +68,7 @@ func GetUserByAPIKey(ctx context.Context, apikey string) (*User, error) {
 	row := db.QueryRowContext(ctx, "SELECT id, role, apikey, name, created_at, modified_at FROM users WHERE apikey = $1", apikey)
 	err := row.Scan(&user.ID, &user.Role, &user.APIKey, &user.Name, &user.Created, &user.Modified)
 	if err != nil {
-		return nil, fmt.Errorf("Error running get query: %+v", err)
+		return nil, fmt.Errorf("error with get: %w", err)
 	}
 
 	return &user, (&user).Save(ctx)

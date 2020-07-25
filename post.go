@@ -67,7 +67,7 @@ func GetPost(ctx context.Context, id int64) (*Post, error) {
 	case err == sql.ErrNoRows:
 		return nil, nil
 	case err != nil:
-		return nil, fmt.Errorf("Error running get query: %+v", err)
+		return nil, fmt.Errorf("error with get: %w", err)
 	default:
 		return &post, nil
 	}
