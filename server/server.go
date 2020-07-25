@@ -113,7 +113,11 @@ func main() {
 	gh.Use(extension.Introspection{})
 
 	gh.SetErrorPresenter(func(ctx context.Context, err error) *gqlerror.Error {
-		log.WithError(err).Error("Error seen during graphql")
+		log.WithError(err).Error("graphql request error")
+		if err.Error() == "forbidden" {
+			return gqlerror.Errorf("forbidden: not a valid user")
+		}
+
 		return gqlerror.Errorf("fatal error seen while processing request")
 	})
 
@@ -231,7 +235,7 @@ func cronHandler(w http.ResponseWriter, r *http.Request) {
 				for _, p := range posts {
 					err = p.Save(ctx)
 					if err != nil {
-						log.WithError(err).Printf("Error saving post")
+						log.WithError(err).Errorf("error saving post")
 					}
 				}
 			}
