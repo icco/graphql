@@ -58,6 +58,7 @@ func (l *Log) Save(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	log.WithField("location", loc).WithField("log", l).Debug("got location")
 
 	if l.User.Empty() {
 		return fmt.Errorf("no user specified")
@@ -80,8 +81,9 @@ WHERE logs.id = $1;
 		l.Project,
 		l.User.ID,
 		l.Created,
-		l.Modified); err != nil {
-		return err
+		l.Modified,
+	); err != nil {
+		return fmt.Errorf("upsert log: %w", err)
 	}
 
 	return nil

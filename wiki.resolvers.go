@@ -32,8 +32,11 @@ func (r *mutationResolver) InsertLog(ctx context.Context, input NewLog) (*Log, e
 		l.Duration = ParseDurationFromString(*input.Duration)
 	}
 
-	err := l.Save(ctx)
-	return l, err
+	if err := l.Save(ctx); err != nil {
+		return nil, err
+	}
+
+	return l, nil
 }
 
 func (r *mutationResolver) UpsertPage(ctx context.Context, input EditPage) (*Page, error) {

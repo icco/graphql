@@ -39,6 +39,7 @@ func GeoScanner(g interface{}) *wkb.GeometryScanner {
 
 // GeoConvertValue is used for marshaling data to a database.
 func GeoConvertValue(v interface{}) (driver.Value, error) {
+	log.Debugf("geo convert: %T", v)
 	g, ok := v.(*Geo)
 	if !ok {
 		return driver.Value(nil), fmt.Errorf("is not a Geo")
@@ -47,6 +48,7 @@ func GeoConvertValue(v interface{}) (driver.Value, error) {
 	if g == nil {
 		return driver.Value(nil), nil
 	}
+	log.WithField("geo", g).WithField("orb", g.ToOrb()).Debug("got geo")
 
 	return wkb.Value(g.ToOrb()), nil
 }
