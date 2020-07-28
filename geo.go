@@ -16,12 +16,13 @@ type Geo struct {
 
 // ToOrb translates a Geo point into one that has lots of useful functions on
 // it.
-func (g *Geo) ToOrb() *orb.Point {
-	return &orb.Point{g.Long, g.Lat}
+func (g *Geo) ToOrb() orb.Point {
+	return orb.Point{g.Long, g.Lat}
 }
 
 // GeoFromOrb creates a Geo from github.com/paulmach/orb.Point.
 func GeoFromOrb(p *orb.Point) *Geo {
+	log.WithField("orb", p).Debug("orb to geo")
 	if p == nil {
 		return nil
 	}
