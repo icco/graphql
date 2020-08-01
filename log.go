@@ -58,7 +58,6 @@ func (l *Log) Save(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	log.WithField("location", loc).WithField("log", l).Debug("got location")
 
 	if l.User.Empty() {
 		return fmt.Errorf("no user specified")

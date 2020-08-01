@@ -55,7 +55,7 @@ func GeoConvertValue(v interface{}) (driver.Value, error) {
 		logrus.Fields{
 			"geo": g,
 			"orb": g.ToOrb(),
-			"wkb": wkb.Value(g.ToOrb()),
+			"wkb": fmt.Sprintf("%b", wkb.Value(g.ToOrb())),
 		}).Debug("got geo")
 
 	return wkb.Value(g.ToOrb()), nil
