@@ -23,6 +23,17 @@ This repo requires Go 1.11 to be installed.
  3. `env $(cat .env) go run -v ./server` to start the server.
  4. Visit <http://localhost:8080/> which has a default graphql client.
 
+### Example Env
+
+```
+DATABASE_URL=postgres://localhost/writing?sslmode=disable&binary_parameters=yes
+SESSION_SECRET="random string"
+OAUTH2_CLIENTID=something.apps.googleusercontent.com
+OAUTH2_SECRET=1234567890
+OAUTH2_REDIRECT=http://localhost:8080/callback
+PORT=9393
+```
+
 ### Auth
 
 This uses Auth0 to generate logins. To save yourself setting up the Auth0, you can generate an API key for testing by creating a user. To create a user for testing, run the following insert SQL:
