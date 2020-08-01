@@ -6,6 +6,7 @@ import (
 
 	"github.com/paulmach/orb"
 	"github.com/paulmach/orb/encoding/wkb"
+	"github.com/sirupsen/logrus"
 )
 
 // Geo is a simple type for wrapping a point. Units are in Degrees.
@@ -47,9 +48,15 @@ func GeoConvertValue(v interface{}) (driver.Value, error) {
 	}
 
 	if g == nil {
+		log.WithField("geo", g).Debug("geo is nil")
 		return driver.Value(nil), nil
 	}
-	log.WithField("geo", g).WithField("orb", g.ToOrb()).Debug("got geo")
+	log.WithFields(
+		logrus.Fields{
+			"geo": g,
+			"orb": g.ToOrb(),
+			"wkb": wkb.Value(g.ToOrb()),
+		}).Debug("got geo")
 
 	return wkb.Value(g.ToOrb()), nil
 }
