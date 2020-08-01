@@ -3,14 +3,14 @@ module github.com/icco/graphql
 go 1.14
 
 require (
-	cloud.google.com/go v0.61.0 // indirect
+	cloud.google.com/go v0.62.0 // indirect
 	cloud.google.com/go/storage v1.10.0
 	contrib.go.opencensus.io/exporter/stackdriver v0.13.2
 	github.com/99designs/gqlgen v0.11.3
 	github.com/GuiaBolso/darwin v0.0.0-20191218124601-fd6d2aa3d244
 	github.com/agnivade/levenshtein v1.1.0 // indirect
 	github.com/auth0/go-jwt-middleware v0.0.0-20200507191422-d30d7b9ece63
-	github.com/aws/aws-sdk-go v1.33.13 // indirect
+	github.com/aws/aws-sdk-go v1.33.17 // indirect
 	github.com/census-instrumentation/opencensus-proto v0.3.0 // indirect
 	github.com/codegangsta/negroni v1.0.0 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
@@ -34,10 +34,10 @@ require (
 	github.com/vektah/gqlparser/v2 v2.0.1
 	go.opencensus.io v0.22.4
 	golang.org/x/net v0.0.0-20200707034311-ab3426394381 // indirect
-	golang.org/x/sys v0.0.0-20200727154430-2d971f7391a4 // indirect
+	golang.org/x/sys v0.0.0-20200728102440-3e129f6d46b1 // indirect
 	golang.org/x/text v0.3.3 // indirect
-	golang.org/x/tools v0.0.0-20200727233628-55644ead90ce // indirect
+	golang.org/x/tools v0.0.0-20200731060945-b5fad4ed8dd6 // indirect
 	google.golang.org/api v0.29.0 // indirect
-	google.golang.org/genproto v0.0.0-20200728010541-3dc8dca74b7b // indirect
-	google.golang.org/grpc v1.30.0 // indirect
+	google.golang.org/genproto v0.0.0-20200731012542-8145dea6a485 // indirect
+	google.golang.org/grpc v1.31.0 // indirect
 )
