@@ -241,6 +241,11 @@ var (
       ALTER TABLE users ADD COLUMN name Text DEFAULT 'anonymous';
       `,
 		},
+		{
+			Version:     19,
+			Description: "add serial to tweets",
+			Script:      `ALTER TABLE tweets ADD COLUMN internal_id BIGSERIAL NOT NULL`,
+		},
 	}
 )
 
