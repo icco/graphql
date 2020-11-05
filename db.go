@@ -244,7 +244,7 @@ var (
 		{
 			Version:     19,
 			Description: "add serial to tweets",
-			Script:      `ALTER TABLE tweets ADD COLUMN internal_id BIGSERIAL NOT NULL`,
+			Script:      `ALTER TABLE tweets ADD COLUMN IF NOT EXISTS internal_id BIGSERIAL NOT NULL`,
 		},
 	}
 )
