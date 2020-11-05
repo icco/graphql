@@ -145,17 +145,23 @@ func (r *queryResolver) Counts(ctx context.Context) ([]*Stat, error) {
 		"photos",
 		"posts",
 		"stats",
-		"tweets",
 	} {
 		stat := new(Stat)
 		stat.Key = table
-		err := db.QueryRowContext(ctx, fmt.Sprintf("SELECT count(*) FROM %s", table)).Scan(&stat.Value)
-		if err != nil {
+		if err := db.QueryRowContext(ctx, fmt.Sprintf("SELECT count(*) FROM %s", table)).Scan(&stat.Value); err != nil {
 			return stats, err
 		}
 
 		stats = append(stats, stat)
 	}
+
+	stat := new(Stat)
+	stat.Key = "tweets"
+	if err := db.QueryRowContext(ctx, "SELECT MAX(internal_id) FROM tweets").Scan(&stat.Value); err != nil {
+		return stats, err
+	}
+
+	stats = append(stats, stat)
 
 	return stats, nil
 }
