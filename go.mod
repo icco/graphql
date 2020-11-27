@@ -7,24 +7,22 @@ require (
 	cloud.google.com/go/storage v1.12.0
 	contrib.go.opencensus.io/exporter/stackdriver v0.13.4
 	github.com/99designs/gqlgen v0.13.0
+	github.com/DATA-DOG/go-sqlmock v1.5.0 // indirect
 	github.com/GuiaBolso/darwin v0.0.0-20191218124601-fd6d2aa3d244
 	github.com/agnivade/levenshtein v1.1.0 // indirect
 	github.com/auth0/go-jwt-middleware v0.0.0-20201030150249-d783b5c46b39
 	github.com/aws/aws-sdk-go v1.35.35 // indirect
 	github.com/census-instrumentation/opencensus-proto v0.3.0 // indirect
-	github.com/codegangsta/negroni v1.0.0 // indirect
+	github.com/cznic/ql v1.2.0 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/cors v1.1.1
-	github.com/go-sql-driver/mysql v1.5.0 // indirect
 	github.com/google/go-cmp v0.5.4 // indirect
 	github.com/google/uuid v1.1.2
-	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/gosimple/slug v1.9.0
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hellofresh/logging-go v0.4.0 // indirect
 	github.com/icco/logrus-stackdriver-formatter v0.3.0
-	github.com/konsorten/go-windows-terminal-sequences v1.0.3 // indirect
 	github.com/lib/pq v1.8.0
 	github.com/mitchellh/mapstructure v1.4.0 // indirect
 	github.com/opencensus-integrations/ocsql v0.1.6
