@@ -3,6 +3,7 @@ package graphql
 import (
 	"context"
 	"fmt"
+	"time"
 )
 
 func (s *Stat) Save(ctx context.Context) error {
