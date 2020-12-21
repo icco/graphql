@@ -71,8 +71,8 @@ type NewLog struct {
 }
 
 type NewStat struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
+	Key   string  `json:"key"`
+	Value float64 `json:"value"`
 }
 
 type NewTweet struct {
@@ -90,8 +90,9 @@ type NewTweet struct {
 
 // A stat is a key value pair of two interesting strings.
 type Stat struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
+	Key      string    `json:"key"`
+	Value    string    `json:"value"`
+	Modified time.Time `json:"modified"`
 }
 
 type Role string

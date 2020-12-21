@@ -114,17 +114,16 @@ func (r *queryResolver) Stats(ctx context.Context, count *int) ([]*Stat, error) 
 		}
 	}
 
-	rows, err := db.QueryContext(ctx, "SELECT key, value FROM stats ORDER BY modified_at DESC LIMIT $1", limit)
+	rows, err := db.QueryContext(ctx, "SELECT key, value, modified_at FROM stats ORDER BY modified_at DESC LIMIT $1", limit)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	stats := make([]*Stat, 0)
+	var stats []*Stat
 	for rows.Next() {
 		stat := new(Stat)
-		err := rows.Scan(&stat.Key, &stat.Value)
-		if err != nil {
+		if err := rows.Scan(&stat.Key, &stat.Value, &stat.Modified); err != nil {
 			return nil, err
 		}
 		stats = append(stats, stat)

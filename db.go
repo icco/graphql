@@ -246,6 +246,11 @@ var (
 			Description: "add serial to tweets",
 			Script:      `ALTER TABLE tweets ADD COLUMN IF NOT EXISTS internal_id BIGSERIAL NOT NULL`,
 		},
+		{
+			Version:     20,
+			Description: "alter stats value",
+			Script:      `ALTER TABLE stats ALTER COLUMN value TYPE float`,
+		},
 	}
 )
 
