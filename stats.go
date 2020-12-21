@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// Save upserts a stat.
 func (s *Stat) Save(ctx context.Context) error {
 	if s.Key == "" {
 		return fmt.Errorf("Empty key not allowed")
@@ -32,6 +33,7 @@ WHERE stats.key = $1;
 	return nil
 }
 
+// GetStats returns the limit of the most recently updated stats.
 func GetStats(ctx context.Context, limit int) ([]*Stat, error) {
 	rows, err := db.QueryContext(ctx, "SELECT key, value, modified_at FROM stats ORDER BY modified_at DESC LIMIT $1", limit)
 	if err != nil {
