@@ -52,7 +52,16 @@ func (r *mutationResolver) UpsertLink(ctx context.Context, input NewLink) (*Link
 }
 
 func (r *mutationResolver) UpsertStat(ctx context.Context, input NewStat) (*Stat, error) {
-	return nil, fmt.Errorf("not implemented")
+	s := &Stat{
+		Key:   input.Key,
+		Value: input.Value,
+	}
+
+	if err := s.Save(ctx); err != nil {
+		return nil, err
+	}
+
+	return s, nil
 }
 
 func (r *mutationResolver) UpsertTweet(ctx context.Context, input NewTweet) (*Tweet, error) {
@@ -114,25 +123,7 @@ func (r *queryResolver) Stats(ctx context.Context, count *int) ([]*Stat, error) 
 		}
 	}
 
-	rows, err := db.QueryContext(ctx, "SELECT key, value, modified_at FROM stats ORDER BY modified_at DESC LIMIT $1", limit)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var stats []*Stat
-	for rows.Next() {
-		stat := new(Stat)
-		if err := rows.Scan(&stat.Key, &stat.Value, &stat.Modified); err != nil {
-			return nil, err
-		}
-		stats = append(stats, stat)
-	}
-
-	if err = rows.Err(); err != nil {
-		return nil, err
-	}
-	return stats, nil
+	return GetStats(ctx, limit)
 }
 
 func (r *queryResolver) Counts(ctx context.Context) ([]*Stat, error) {
