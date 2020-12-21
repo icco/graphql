@@ -24,7 +24,8 @@ WHERE stats.key = $1;
 `,
 		s.Key,
 		s.Value,
-		s.Modified); err != nil {
+		s.Modified,
+	); err != nil {
 		return err
 	}
 
