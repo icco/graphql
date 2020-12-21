@@ -1501,7 +1501,7 @@ A stat is a key value pair of two interesting strings.
 """
 type Stat {
   key: String!
-  value: String!
+  value: Float!
   modified: Time!
 }
 
@@ -6359,9 +6359,9 @@ func (ec *executionContext) _Stat_value(ctx context.Context, field graphql.Colle
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(float64)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Stat_modified(ctx context.Context, field graphql.CollectedField, obj *Stat) (ret graphql.Marshaler) {
