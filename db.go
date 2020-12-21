@@ -249,7 +249,7 @@ var (
 		{
 			Version:     20,
 			Description: "alter stats value",
-			Script:      `ALTER TABLE stats ALTER COLUMN value TYPE float`,
+			Script:      `ALTER TABLE stats ALTER COLUMN value TYPE float USING (value::float)`,
 		},
 	}
 )
