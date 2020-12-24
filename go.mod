@@ -11,7 +11,7 @@ require (
 	github.com/GuiaBolso/darwin v0.0.0-20191218124601-fd6d2aa3d244
 	github.com/agnivade/levenshtein v1.1.0 // indirect
 	github.com/auth0/go-jwt-middleware v0.0.0-20201030150249-d783b5c46b39
-	github.com/aws/aws-sdk-go v1.36.12 // indirect
+	github.com/aws/aws-sdk-go v1.36.15 // indirect
 	github.com/census-instrumentation/opencensus-proto v0.3.0 // indirect
 	github.com/cznic/ql v1.2.0 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
@@ -32,9 +32,9 @@ require (
 	github.com/unrolled/secure v1.0.8
 	github.com/vektah/gqlparser/v2 v2.1.0
 	go.opencensus.io v0.22.5
-	golang.org/x/net v0.0.0-20201216054612-986b41b23924 // indirect
+	golang.org/x/net v0.0.0-20201224014010-6772e930b67b // indirect
 	golang.org/x/sync v0.0.0-20201207232520-09787c993a3a // indirect
-	golang.org/x/sys v0.0.0-20201221093633-bc327ba9c2f0 // indirect
-	golang.org/x/tools v0.0.0-20201218024724-ae774e9781d2 // indirect
+	golang.org/x/sys v0.0.0-20201223074533-0d417f636930 // indirect
+	golang.org/x/tools v0.0.0-20201224003254-57089f8fd729 // indirect
 	google.golang.org/genproto v0.0.0-20201214200347-8c77b98c765d // indirect
 )
