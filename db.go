@@ -260,9 +260,9 @@ var (
         id SERIAL PRIMARY KEY,
         key TEXT,
         value FLOAT,
-        when TIMESTAMP WITH TIME ZONE,
+        inserted_at TIMESTAMP WITH TIME ZONE
       );
-      CREATE INDEX stats_key_when_idx ON stats (key, when DESC);
+      CREATE INDEX stats_key_inserted_at_idx ON stats (key, inserted_at DESC);
       `,
 		},
 	}

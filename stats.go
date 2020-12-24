@@ -16,7 +16,7 @@ func (s *Stat) Save(ctx context.Context) error {
 
 	if _, err := db.ExecContext(
 		ctx,
-		`INSERT INTO stats(key, value, when) VALUES ($1, $2, $3)`,
+		`INSERT INTO stats(key, value, inserted_at) VALUES ($1, $2, $3)`,
 		s.Key,
 		s.Value,
 		s.When,
@@ -31,9 +31,9 @@ func (s *Stat) Save(ctx context.Context) error {
 func GetStats(ctx context.Context, limit int) ([]*Stat, error) {
 	rows, err := db.QueryContext(
 		ctx,
-		`SELECT DISTINCT ON (key) key, value, when
+		`SELECT DISTINCT ON (key) key, value, inserted_at
     FROM stats
-    ORDER by key, when DESC
+    ORDER by key, inserted_at DESC
     LIMIT $1`,
 		limit)
 	if err != nil {
@@ -60,10 +60,10 @@ func GetStats(ctx context.Context, limit int) ([]*Stat, error) {
 func GetStat(ctx context.Context, key string, limit int, offset int) ([]*Stat, error) {
 	rows, err := db.QueryContext(
 		ctx,
-		`SELECT key, value, when
+		`SELECT key, value, inserted_at
     FROM stats
     WHERE key = $1
-    ORDER by when DESC
+    ORDER by inserted_at DESC
     LIMIT $2 OFFSET $3`,
 		key,
 		limit,
