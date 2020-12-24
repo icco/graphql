@@ -126,6 +126,11 @@ func (r *queryResolver) Stats(ctx context.Context, count *int) ([]*Stat, error) 
 	return GetStats(ctx, limit)
 }
 
+func (r *queryResolver) Stat(ctx context.Context, key string, input *Limit) ([]*Stat, error) {
+	limit, offset := ParseLimit(input, 10, 0)
+	return GetStat(ctx, key, limit, offset)
+}
+
 func (r *queryResolver) Counts(ctx context.Context) ([]*Stat, error) {
 	stats := make([]*Stat, 0)
 	for _, table := range []string{

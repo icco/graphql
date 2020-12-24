@@ -164,6 +164,7 @@ type ComplexityRoot struct {
 		PostsByTag         func(childComplexity int, id string) int
 		PrevPost           func(childComplexity int, id string) int
 		Search             func(childComplexity int, query string, input *Limit) int
+		Stat               func(childComplexity int, key string, input *Limit) int
 		Stats              func(childComplexity int, count *int) int
 		Tags               func(childComplexity int) int
 		Time               func(childComplexity int) int
@@ -174,9 +175,9 @@ type ComplexityRoot struct {
 	}
 
 	Stat struct {
-		Key      func(childComplexity int) int
-		Modified func(childComplexity int) int
-		Value    func(childComplexity int) int
+		Key   func(childComplexity int) int
+		Value func(childComplexity int) int
+		When  func(childComplexity int) int
 	}
 
 	Tweet struct {
@@ -228,6 +229,7 @@ type QueryResolver interface {
 	Links(ctx context.Context, input *Limit) ([]*Link, error)
 	Link(ctx context.Context, id *string, url *URI) (*Link, error)
 	Stats(ctx context.Context, count *int) ([]*Stat, error)
+	Stat(ctx context.Context, key string, input *Limit) ([]*Stat, error)
 	Counts(ctx context.Context) ([]*Stat, error)
 	Whoami(ctx context.Context) (*User, error)
 	Tweets(ctx context.Context, input *Limit) ([]*Tweet, error)
@@ -1043,6 +1045,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Search(childComplexity, args["query"].(string), args["input"].(*Limit)), true
 
+	case "Query.stat":
+		if e.complexity.Query.Stat == nil {
+			break
+		}
+
+		args, err := ec.field_Query_stat_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Stat(childComplexity, args["key"].(string), args["input"].(*Limit)), true
+
 	case "Query.stats":
 		if e.complexity.Query.Stats == nil {
 			break
@@ -1119,19 +1133,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Stat.Key(childComplexity), true
 
-	case "Stat.modified":
-		if e.complexity.Stat.Modified == nil {
-			break
-		}
-
-		return e.complexity.Stat.Modified(childComplexity), true
-
 	case "Stat.value":
 		if e.complexity.Stat.Value == nil {
 			break
 		}
 
 		return e.complexity.Stat.Value(childComplexity), true
+
+	case "Stat.when":
+		if e.complexity.Stat.When == nil {
+			break
+		}
+
+		return e.complexity.Stat.When(childComplexity), true
 
 	case "Tweet.favorite_count":
 		if e.complexity.Tweet.FavoriteCount == nil {
@@ -1502,7 +1516,7 @@ A stat is a key value pair of two interesting strings.
 type Stat {
   key: String!
   value: Float!
-  modified: Time!
+  when: Time!
 }
 
 """
@@ -1615,6 +1629,9 @@ type Query {
 
   "Returns a number of stats, ordered by most recently updated."
   stats(count: Int): [Stat]!
+
+  "stat returns the history of a stat."
+  stat(key: String!, input: Limit): [Stat]!
 
   "Returns counts of entries in the database."
   counts: [Stat]!
@@ -2211,6 +2228,30 @@ func (ec *executionContext) field_Query_search_args(ctx context.Context, rawArgs
 		}
 	}
 	args["query"] = arg0
+	var arg1 *Limit
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalOLimit2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐLimit(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_stat_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["key"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("key"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["key"] = arg0
 	var arg1 *Limit
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
@@ -5208,6 +5249,48 @@ func (ec *executionContext) _Query_stats(ctx context.Context, field graphql.Coll
 	return ec.marshalNStat2ᚕᚖgithubᚗcomᚋiccoᚋgraphqlᚐStat(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_stat(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_stat_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Stat(rctx, args["key"].(string), args["input"].(*Limit))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*Stat)
+	fc.Result = res
+	return ec.marshalNStat2ᚕᚖgithubᚗcomᚋiccoᚋgraphqlᚐStat(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_counts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -6364,7 +6447,7 @@ func (ec *executionContext) _Stat_value(ctx context.Context, field graphql.Colle
 	return ec.marshalNFloat2float64(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Stat_modified(ctx context.Context, field graphql.CollectedField, obj *Stat) (ret graphql.Marshaler) {
+func (ec *executionContext) _Stat_when(ctx context.Context, field graphql.CollectedField, obj *Stat) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -6382,7 +6465,7 @@ func (ec *executionContext) _Stat_modified(ctx context.Context, field graphql.Co
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Modified, nil
+		return obj.When, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -9458,6 +9541,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "stat":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_stat(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "counts":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -9792,8 +9889,8 @@ func (ec *executionContext) _Stat(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "modified":
-			out.Values[i] = ec._Stat_modified(ctx, field, obj)
+		case "when":
+			out.Values[i] = ec._Stat_when(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

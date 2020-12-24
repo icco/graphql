@@ -251,6 +251,20 @@ var (
 			Description: "alter stats value",
 			Script:      `ALTER TABLE stats ALTER COLUMN value TYPE float USING (value::float)`,
 		},
+		{
+			Version:     21,
+			Description: "new stats table",
+			Script: `
+      DROP TABLE stats;
+      CREATE TABLE stats (
+        id SERIAL PRIMARY KEY,
+        key TEXT,
+        value FLOAT,
+        when TIMESTAMP WITH TIME ZONE,
+      );
+      CREATE INDEX stats_key_when_idx ON stats (key, when DESC);
+      `,
+		},
 	}
 )
 
