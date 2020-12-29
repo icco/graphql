@@ -132,7 +132,7 @@ func (r *queryResolver) Stat(ctx context.Context, key string, input *Limit) ([]*
 }
 
 func (r *queryResolver) Counts(ctx context.Context) ([]*Stat, error) {
-	stats := make([]*Stat, 0)
+	var stats []*Stat
 	for _, table := range []string{
 		"books",
 		"links",
