@@ -265,6 +265,11 @@ var (
       CREATE INDEX stats_key_inserted_at_idx ON stats (key, inserted_at DESC);
       `,
 		},
+		{
+			Version:     22,
+			Description: "add serial index to tweets",
+			Script:      `CREATE INDEX ON tweets (internal_id);`,
+		},
 	}
 )
 
