@@ -21,6 +21,7 @@ require (
 	github.com/gosimple/slug v1.9.0
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hellofresh/logging-go v0.4.0 // indirect
+	github.com/icco/graphql/time v0.0.0-20201230025846-489f5fcb5176
 	github.com/icco/logrus-stackdriver-formatter v0.3.0
 	github.com/lib/pq v1.9.0
 	github.com/mitchellh/mapstructure v1.4.0 // indirect

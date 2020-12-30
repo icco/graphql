@@ -29,11 +29,8 @@ type EditBook struct {
 }
 
 type EditPage struct {
-	ID       *string `json:"id"`
-	Slug     *string `json:"slug"`
-	Content  string  `json:"content"`
-	Title    string  `json:"title"`
-	Category *string `json:"category"`
+	Slug    string `json:"slug"`
+	Content string `json:"content"`
 }
 
 type EditPost struct {
@@ -60,14 +57,6 @@ type NewLink struct {
 	Description string     `json:"description"`
 	Tags        []string   `json:"tags"`
 	Created     *time.Time `json:"created"`
-}
-
-type NewLog struct {
-	Code        string  `json:"code"`
-	Description *string `json:"description"`
-	Location    *NewGeo `json:"location"`
-	Project     string  `json:"project"`
-	Duration    *string `json:"duration"`
 }
 
 type NewStat struct {

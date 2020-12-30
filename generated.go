@@ -78,23 +78,10 @@ type ComplexityRoot struct {
 		URI         func(childComplexity int) int
 	}
 
-	Log struct {
-		Code        func(childComplexity int) int
-		Datetime    func(childComplexity int) int
-		Description func(childComplexity int) int
-		Duration    func(childComplexity int) int
-		ID          func(childComplexity int) int
-		Location    func(childComplexity int) int
-		Project     func(childComplexity int) int
-		URI         func(childComplexity int) int
-		User        func(childComplexity int) int
-	}
-
 	Mutation struct {
 		AddComment  func(childComplexity int, input AddComment) int
 		CreatePost  func(childComplexity int, input EditPost) int
 		EditPost    func(childComplexity int, input EditPost) int
-		InsertLog   func(childComplexity int, input NewLog) int
 		UpsertBook  func(childComplexity int, input EditBook) int
 		UpsertLink  func(childComplexity int, input NewLink) int
 		UpsertPage  func(childComplexity int, input EditPage) int
@@ -103,14 +90,10 @@ type ComplexityRoot struct {
 	}
 
 	Page struct {
-		Category func(childComplexity int) int
 		Content  func(childComplexity int) int
 		Created  func(childComplexity int) int
-		ID       func(childComplexity int) int
 		Modified func(childComplexity int) int
 		Slug     func(childComplexity int) int
-		Tags     func(childComplexity int) int
-		Title    func(childComplexity int) int
 		URI      func(childComplexity int) int
 		User     func(childComplexity int) int
 	}
@@ -149,14 +132,11 @@ type ComplexityRoot struct {
 		Counts             func(childComplexity int) int
 		Drafts             func(childComplexity int, input *Limit) int
 		FuturePosts        func(childComplexity int, input *Limit) int
-		GetPageByID        func(childComplexity int, id string) int
 		GetPageBySlug      func(childComplexity int, slug string) int
-		GetPages           func(childComplexity int) int
+		GetPages           func(childComplexity int, input *Limit) int
 		HomeTimelineURLs   func(childComplexity int, input *Limit) int
 		Link               func(childComplexity int, id *string, url *URI) int
 		Links              func(childComplexity int, input *Limit) int
-		Log                func(childComplexity int, id string) int
-		Logs               func(childComplexity int, input *Limit) int
 		NextPost           func(childComplexity int, id string) int
 		Photos             func(childComplexity int, input *Limit) int
 		Post               func(childComplexity int, id string) int
@@ -221,7 +201,6 @@ type MutationResolver interface {
 	AddComment(ctx context.Context, input AddComment) (*Comment, error)
 	CreatePost(ctx context.Context, input EditPost) (*Post, error)
 	EditPost(ctx context.Context, input EditPost) (*Post, error)
-	InsertLog(ctx context.Context, input NewLog) (*Log, error)
 	UpsertPage(ctx context.Context, input EditPage) (*Page, error)
 }
 type QueryResolver interface {
@@ -247,11 +226,8 @@ type QueryResolver interface {
 	PrevPost(ctx context.Context, id string) (*Post, error)
 	PostsByTag(ctx context.Context, id string) ([]*Post, error)
 	Tags(ctx context.Context) ([]string, error)
-	Logs(ctx context.Context, input *Limit) ([]*Log, error)
-	Log(ctx context.Context, id string) (*Log, error)
-	GetPageByID(ctx context.Context, id string) (*Page, error)
 	GetPageBySlug(ctx context.Context, slug string) (*Page, error)
-	GetPages(ctx context.Context) ([]*Page, error)
+	GetPages(ctx context.Context, input *Limit) ([]*Page, error)
 	Photos(ctx context.Context, input *Limit) ([]*Photo, error)
 }
 
@@ -410,69 +386,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Link.URI(childComplexity), true
 
-	case "Log.code":
-		if e.complexity.Log.Code == nil {
-			break
-		}
-
-		return e.complexity.Log.Code(childComplexity), true
-
-	case "Log.datetime":
-		if e.complexity.Log.Datetime == nil {
-			break
-		}
-
-		return e.complexity.Log.Datetime(childComplexity), true
-
-	case "Log.description":
-		if e.complexity.Log.Description == nil {
-			break
-		}
-
-		return e.complexity.Log.Description(childComplexity), true
-
-	case "Log.duration":
-		if e.complexity.Log.Duration == nil {
-			break
-		}
-
-		return e.complexity.Log.Duration(childComplexity), true
-
-	case "Log.id":
-		if e.complexity.Log.ID == nil {
-			break
-		}
-
-		return e.complexity.Log.ID(childComplexity), true
-
-	case "Log.location":
-		if e.complexity.Log.Location == nil {
-			break
-		}
-
-		return e.complexity.Log.Location(childComplexity), true
-
-	case "Log.project":
-		if e.complexity.Log.Project == nil {
-			break
-		}
-
-		return e.complexity.Log.Project(childComplexity), true
-
-	case "Log.uri":
-		if e.complexity.Log.URI == nil {
-			break
-		}
-
-		return e.complexity.Log.URI(childComplexity), true
-
-	case "Log.user":
-		if e.complexity.Log.User == nil {
-			break
-		}
-
-		return e.complexity.Log.User(childComplexity), true
-
 	case "Mutation.addComment":
 		if e.complexity.Mutation.AddComment == nil {
 			break
@@ -508,18 +421,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.EditPost(childComplexity, args["input"].(EditPost)), true
-
-	case "Mutation.insertLog":
-		if e.complexity.Mutation.InsertLog == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_insertLog_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.InsertLog(childComplexity, args["input"].(NewLog)), true
 
 	case "Mutation.upsertBook":
 		if e.complexity.Mutation.UpsertBook == nil {
@@ -581,13 +482,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpsertTweet(childComplexity, args["input"].(NewTweet)), true
 
-	case "Page.category":
-		if e.complexity.Page.Category == nil {
-			break
-		}
-
-		return e.complexity.Page.Category(childComplexity), true
-
 	case "Page.content":
 		if e.complexity.Page.Content == nil {
 			break
@@ -602,13 +496,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Page.Created(childComplexity), true
 
-	case "Page.id":
-		if e.complexity.Page.ID == nil {
-			break
-		}
-
-		return e.complexity.Page.ID(childComplexity), true
-
 	case "Page.modified":
 		if e.complexity.Page.Modified == nil {
 			break
@@ -622,20 +509,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Page.Slug(childComplexity), true
-
-	case "Page.tags":
-		if e.complexity.Page.Tags == nil {
-			break
-		}
-
-		return e.complexity.Page.Tags(childComplexity), true
-
-	case "Page.title":
-		if e.complexity.Page.Title == nil {
-			break
-		}
-
-		return e.complexity.Page.Title(childComplexity), true
 
 	case "Page.uri":
 		if e.complexity.Page.URI == nil {
@@ -870,18 +743,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.FuturePosts(childComplexity, args["input"].(*Limit)), true
 
-	case "Query.getPageByID":
-		if e.complexity.Query.GetPageByID == nil {
-			break
-		}
-
-		args, err := ec.field_Query_getPageByID_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetPageByID(childComplexity, args["id"].(string)), true
-
 	case "Query.getPageBySlug":
 		if e.complexity.Query.GetPageBySlug == nil {
 			break
@@ -899,7 +760,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.GetPages(childComplexity), true
+		args, err := ec.field_Query_getPages_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetPages(childComplexity, args["input"].(*Limit)), true
 
 	case "Query.homeTimelineURLs":
 		if e.complexity.Query.HomeTimelineURLs == nil {
@@ -936,30 +802,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Links(childComplexity, args["input"].(*Limit)), true
-
-	case "Query.log":
-		if e.complexity.Query.Log == nil {
-			break
-		}
-
-		args, err := ec.field_Query_log_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.Log(childComplexity, args["id"].(string)), true
-
-	case "Query.logs":
-		if e.complexity.Query.Logs == nil {
-			break
-		}
-
-		args, err := ec.field_Query_logs_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.Logs(childComplexity, args["input"].(*Limit)), true
 
 	case "Query.nextPost":
 		if e.complexity.Query.NextPost == nil {
@@ -1662,21 +1504,6 @@ type Mutation {
 }
 `, BuiltIn: false},
 	{Name: "wiki.graphql", Input: `"""
-A Log is a journal entry by an individual.
-"""
-type Log implements Linkable {
-  id: ID!
-  code: String!
-  datetime: Time!
-  description: String!
-  location: Geo
-  project: String!
-  user: User!
-  duration: Duration
-  uri: URI!
-}
-
-"""
 Geo is a simple type for wrapping a point.
 """
 type Geo {
@@ -1688,12 +1515,8 @@ type Geo {
 Page is a wiki page.
 """
 type Page implements Linkable {
-  id: ID!
-  slug: String!
-  title: String!
+  slug: ID!
   content: String!
-  category: String!
-  tags: [String!]!
   user: User!
   created: Time!
   modified: Time!
@@ -1710,19 +1533,8 @@ type Photo implements Linkable {
 }
 
 input EditPage {
-  id: ID
-  slug: String
+  slug: ID!
   content: String!
-  title: String!
-  category: String
-}
-
-input NewLog {
-  code: String!
-  description: String
-  location: NewGeo
-  project: String!
-  duration: String
 }
 
 input NewGeo {
@@ -1731,22 +1543,14 @@ input NewGeo {
 }
 
 extend type Query {
-  "Returns all Logs for your user."
-  logs(input: Limit): [Log]! @loggedIn
-
-  "Returns a log based on an ID."
-  log(id: ID!): Log @loggedIn
-
-  getPageByID(id: ID!): Page
-  getPageBySlug(slug: ID!): Page
-  getPages: [Page]!
+  getPageBySlug(slug: ID!): Page @loggedIn
+  getPages(input: Limit): [Page]! @loggedIn
 
   "Returns all photos for your user."
   photos(input: Limit): [Photo]! @loggedIn
 }
 
 extend type Mutation {
-  insertLog(input: NewLog!): Log @loggedIn
   upsertPage(input: EditPage!): Page! @loggedIn
 }
 `, BuiltIn: false},
@@ -1809,21 +1613,6 @@ func (ec *executionContext) field_Mutation_editPost_args(ctx context.Context, ra
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNEditPost2githubᚗcomᚋiccoᚋgraphqlᚐEditPost(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_insertLog_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 NewLog
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNNewLog2githubᚗcomᚋiccoᚋgraphqlᚐNewLog(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2012,21 +1801,6 @@ func (ec *executionContext) field_Query_futurePosts_args(ctx context.Context, ra
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_getPageByID_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Query_getPageBySlug_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -2039,6 +1813,21 @@ func (ec *executionContext) field_Query_getPageBySlug_args(ctx context.Context, 
 		}
 	}
 	args["slug"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getPages_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *Limit
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOLimit2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐLimit(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -2082,36 +1871,6 @@ func (ec *executionContext) field_Query_link_args(ctx context.Context, rawArgs m
 }
 
 func (ec *executionContext) field_Query_links_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 *Limit
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOLimit2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐLimit(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_log_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_logs_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *Limit
@@ -3068,315 +2827,6 @@ func (ec *executionContext) _Link_modified(ctx context.Context, field graphql.Co
 	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Log_id(ctx context.Context, field graphql.CollectedField, obj *Log) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Log",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Log_code(ctx context.Context, field graphql.CollectedField, obj *Log) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Log",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Code, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Log_datetime(ctx context.Context, field graphql.CollectedField, obj *Log) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Log",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Datetime, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(time.Time)
-	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Log_description(ctx context.Context, field graphql.CollectedField, obj *Log) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Log",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Description, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Log_location(ctx context.Context, field graphql.CollectedField, obj *Log) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Log",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Location, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*Geo)
-	fc.Result = res
-	return ec.marshalOGeo2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐGeo(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Log_project(ctx context.Context, field graphql.CollectedField, obj *Log) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Log",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Project, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Log_user(ctx context.Context, field graphql.CollectedField, obj *Log) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Log",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.User, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(User)
-	fc.Result = res
-	return ec.marshalNUser2githubᚗcomᚋiccoᚋgraphqlᚐUser(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Log_duration(ctx context.Context, field graphql.CollectedField, obj *Log) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Log",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Duration, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(Duration)
-	fc.Result = res
-	return ec.marshalODuration2githubᚗcomᚋiccoᚋgraphqlᚐDuration(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Log_uri(ctx context.Context, field graphql.CollectedField, obj *Log) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Log",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.URI(), nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*URI)
-	fc.Result = res
-	return ec.marshalNURI2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Mutation_upsertBook(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -3835,65 +3285,6 @@ func (ec *executionContext) _Mutation_editPost(ctx context.Context, field graphq
 	return ec.marshalNPost2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐPost(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_insertLog(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_insertLog_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().InsertLog(rctx, args["input"].(NewLog))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.LoggedIn == nil {
-				return nil, errors.New("directive loggedIn is not implemented")
-			}
-			return ec.directives.LoggedIn(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*Log); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/icco/graphql.Log`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*Log)
-	fc.Result = res
-	return ec.marshalOLog2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐLog(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Mutation_upsertPage(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -3956,41 +3347,6 @@ func (ec *executionContext) _Mutation_upsertPage(ctx context.Context, field grap
 	return ec.marshalNPage2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐPage(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Page_id(ctx context.Context, field graphql.CollectedField, obj *Page) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Page",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Page_slug(ctx context.Context, field graphql.CollectedField, obj *Page) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -4023,42 +3379,7 @@ func (ec *executionContext) _Page_slug(ctx context.Context, field graphql.Collec
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Page_title(ctx context.Context, field graphql.CollectedField, obj *Page) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Page",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Title, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Page_content(ctx context.Context, field graphql.CollectedField, obj *Page) (ret graphql.Marshaler) {
@@ -4094,76 +3415,6 @@ func (ec *executionContext) _Page_content(ctx context.Context, field graphql.Col
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Page_category(ctx context.Context, field graphql.CollectedField, obj *Page) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Page",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Category, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Page_tags(ctx context.Context, field graphql.CollectedField, obj *Page) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Page",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Tags, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]string)
-	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Page_user(ctx context.Context, field graphql.CollectedField, obj *Page) (ret graphql.Marshaler) {
@@ -6010,166 +5261,6 @@ func (ec *executionContext) _Query_tags(ctx context.Context, field graphql.Colle
 	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_logs(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_logs_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().Logs(rctx, args["input"].(*Limit))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.LoggedIn == nil {
-				return nil, errors.New("directive loggedIn is not implemented")
-			}
-			return ec.directives.LoggedIn(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.([]*Log); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/icco/graphql.Log`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*Log)
-	fc.Result = res
-	return ec.marshalNLog2ᚕᚖgithubᚗcomᚋiccoᚋgraphqlᚐLog(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_log(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_log_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().Log(rctx, args["id"].(string))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.LoggedIn == nil {
-				return nil, errors.New("directive loggedIn is not implemented")
-			}
-			return ec.directives.LoggedIn(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*Log); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/icco/graphql.Log`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*Log)
-	fc.Result = res
-	return ec.marshalOLog2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐLog(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_getPageByID(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_getPageByID_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetPageByID(rctx, args["id"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*Page)
-	fc.Result = res
-	return ec.marshalOPage2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐPage(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Query_getPageBySlug(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -6194,8 +5285,28 @@ func (ec *executionContext) _Query_getPageBySlug(ctx context.Context, field grap
 	}
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetPageBySlug(rctx, args["slug"].(string))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetPageBySlug(rctx, args["slug"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.LoggedIn == nil {
+				return nil, errors.New("directive loggedIn is not implemented")
+			}
+			return ec.directives.LoggedIn(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*Page); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/icco/graphql.Page`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6225,9 +5336,36 @@ func (ec *executionContext) _Query_getPages(ctx context.Context, field graphql.C
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_getPages_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetPages(rctx)
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetPages(rctx, args["input"].(*Limit))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.LoggedIn == nil {
+				return nil, errors.New("directive loggedIn is not implemented")
+			}
+			return ec.directives.LoggedIn(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*Page); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/icco/graphql.Page`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -8441,19 +7579,11 @@ func (ec *executionContext) unmarshalInputEditPage(ctx context.Context, obj inte
 
 	for k, v := range asMap {
 		switch k {
-		case "id":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			it.ID, err = ec.unmarshalOID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "slug":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slug"))
-			it.Slug, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			it.Slug, err = ec.unmarshalNID2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8462,22 +7592,6 @@ func (ec *executionContext) unmarshalInputEditPage(ctx context.Context, obj inte
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("content"))
 			it.Content, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "title":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
-			it.Title, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "category":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("category"))
-			it.Category, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8638,58 +7752,6 @@ func (ec *executionContext) unmarshalInputNewLink(ctx context.Context, obj inter
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("created"))
 			it.Created, err = ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputNewLog(ctx context.Context, obj interface{}) (NewLog, error) {
-	var it NewLog
-	var asMap = obj.(map[string]interface{})
-
-	for k, v := range asMap {
-		switch k {
-		case "code":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("code"))
-			it.Code, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "description":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
-			it.Description, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "location":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("location"))
-			it.Location, err = ec.unmarshalONewGeo2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐNewGeo(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "project":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("project"))
-			it.Project, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "duration":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("duration"))
-			it.Duration, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8861,11 +7923,6 @@ func (ec *executionContext) _Linkable(ctx context.Context, sel ast.SelectionSet,
 			return graphql.Null
 		}
 		return ec._Book(ctx, sel, obj)
-	case *Log:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._Log(ctx, sel, obj)
 	case *Page:
 		if obj == nil {
 			return graphql.Null
@@ -9079,67 +8136,6 @@ func (ec *executionContext) _Link(ctx context.Context, sel ast.SelectionSet, obj
 	return out
 }
 
-var logImplementors = []string{"Log", "Linkable"}
-
-func (ec *executionContext) _Log(ctx context.Context, sel ast.SelectionSet, obj *Log) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, logImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Log")
-		case "id":
-			out.Values[i] = ec._Log_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "code":
-			out.Values[i] = ec._Log_code(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "datetime":
-			out.Values[i] = ec._Log_datetime(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "description":
-			out.Values[i] = ec._Log_description(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "location":
-			out.Values[i] = ec._Log_location(ctx, field, obj)
-		case "project":
-			out.Values[i] = ec._Log_project(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "user":
-			out.Values[i] = ec._Log_user(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "duration":
-			out.Values[i] = ec._Log_duration(ctx, field, obj)
-		case "uri":
-			out.Values[i] = ec._Log_uri(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var mutationImplementors = []string{"Mutation"}
 
 func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -9190,8 +8186,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "insertLog":
-			out.Values[i] = ec._Mutation_insertLog(ctx, field)
 		case "upsertPage":
 			out.Values[i] = ec._Mutation_upsertPage(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -9219,33 +8213,13 @@ func (ec *executionContext) _Page(ctx context.Context, sel ast.SelectionSet, obj
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Page")
-		case "id":
-			out.Values[i] = ec._Page_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "slug":
 			out.Values[i] = ec._Page_slug(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "title":
-			out.Values[i] = ec._Page_title(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "content":
 			out.Values[i] = ec._Page_content(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "category":
-			out.Values[i] = ec._Page_category(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "tags":
-			out.Values[i] = ec._Page_tags(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -9776,42 +8750,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
-				return res
-			})
-		case "logs":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_logs(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
-		case "log":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_log(ctx, field)
-				return res
-			})
-		case "getPageByID":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getPageByID(ctx, field)
 				return res
 			})
 		case "getPageBySlug":
@@ -10615,50 +9553,8 @@ func (ec *executionContext) marshalNLink2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐLink
 	return ec._Link(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNLog2ᚕᚖgithubᚗcomᚋiccoᚋgraphqlᚐLog(ctx context.Context, sel ast.SelectionSet, v []*Log) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOLog2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐLog(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-	return ret
-}
-
 func (ec *executionContext) unmarshalNNewLink2githubᚗcomᚋiccoᚋgraphqlᚐNewLink(ctx context.Context, v interface{}) (NewLink, error) {
 	res, err := ec.unmarshalInputNewLink(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNNewLog2githubᚗcomᚋiccoᚋgraphqlᚐNewLog(ctx context.Context, v interface{}) (NewLog, error) {
-	res, err := ec.unmarshalInputNewLog(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -11378,23 +10274,6 @@ func (ec *executionContext) marshalOComment2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐC
 	return ec._Comment(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalODuration2githubᚗcomᚋiccoᚋgraphqlᚐDuration(ctx context.Context, v interface{}) (Duration, error) {
-	var res Duration
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalODuration2githubᚗcomᚋiccoᚋgraphqlᚐDuration(ctx context.Context, sel ast.SelectionSet, v Duration) graphql.Marshaler {
-	return v
-}
-
-func (ec *executionContext) marshalOGeo2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐGeo(ctx context.Context, sel ast.SelectionSet, v *Geo) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Geo(ctx, sel, v)
-}
-
 func (ec *executionContext) unmarshalOID2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
 	if v == nil {
 		return nil, nil
@@ -11438,21 +10317,6 @@ func (ec *executionContext) marshalOLink2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐLink
 		return graphql.Null
 	}
 	return ec._Link(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOLog2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐLog(ctx context.Context, sel ast.SelectionSet, v *Log) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Log(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalONewGeo2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐNewGeo(ctx context.Context, v interface{}) (*NewGeo, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputNewGeo(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalOPage2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐPage(ctx context.Context, sel ast.SelectionSet, v *Page) graphql.Marshaler {

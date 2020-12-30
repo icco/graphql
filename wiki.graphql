@@ -1,19 +1,4 @@
 """
-A Log is a journal entry by an individual.
-"""
-type Log implements Linkable {
-  id: ID!
-  code: String!
-  datetime: Time!
-  description: String!
-  location: Geo
-  project: String!
-  user: User!
-  duration: Duration
-  uri: URI!
-}
-
-"""
 Geo is a simple type for wrapping a point.
 """
 type Geo {
@@ -25,12 +10,8 @@ type Geo {
 Page is a wiki page.
 """
 type Page implements Linkable {
-  id: ID!
-  slug: String!
-  title: String!
+  slug: ID!
   content: String!
-  category: String!
-  tags: [String!]!
   user: User!
   created: Time!
   modified: Time!
@@ -47,19 +28,8 @@ type Photo implements Linkable {
 }
 
 input EditPage {
-  id: ID
-  slug: String
+  slug: ID!
   content: String!
-  title: String!
-  category: String
-}
-
-input NewLog {
-  code: String!
-  description: String
-  location: NewGeo
-  project: String!
-  duration: String
 }
 
 input NewGeo {
@@ -68,21 +38,13 @@ input NewGeo {
 }
 
 extend type Query {
-  "Returns all Logs for your user."
-  logs(input: Limit): [Log]! @loggedIn
-
-  "Returns a log based on an ID."
-  log(id: ID!): Log @loggedIn
-
-  getPageByID(id: ID!): Page
-  getPageBySlug(slug: ID!): Page
-  getPages: [Page]!
+  getPageBySlug(slug: ID!): Page @loggedIn
+  getPages(input: Limit): [Page]! @loggedIn
 
   "Returns all photos for your user."
   photos(input: Limit): [Photo]! @loggedIn
 }
 
 extend type Mutation {
-  insertLog(input: NewLog!): Log @loggedIn
   upsertPage(input: EditPage!): Page! @loggedIn
 }

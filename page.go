@@ -6,20 +6,15 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/google/uuid"
-	"github.com/gosimple/slug"
-	"github.com/lib/pq"
+	"github.com/icco/graphql/time/hexdate"
+	"github.com/icco/graphql/time/neralie"
 )
 
 // Page is a wiki page.
 type Page struct {
-	ID       string    `json:"id"`
 	Slug     string    `json:"slug"`
-	Title    string    `json:"title"`
 	Content  string    `json:"content"`
-	Category string    `json:"category"`
-	Tags     []string  `json:"tags"`
-	User     User      `json:"user"`
+	User     *User     `json:"user"`
 	Created  time.Time `json:"created"`
 	Modified time.Time `json:"modified"`
 }
@@ -30,28 +25,14 @@ func (p *Page) IsLinkable() {}
 
 // URI returns an absolute link to this post.
 func (p *Page) URI() *URI {
-	return NewURI(fmt.Sprintf("https://etu.natwelch.com/page/%s", p.ID))
+	return NewURI(fmt.Sprintf("https://etu.natwelch.com/page/%s", p.Slug))
 }
 
 // Save inserts or updates a page into the database.
 func (p *Page) Save(ctx context.Context) error {
-	if p.ID == "" {
-		uuid, err := uuid.NewRandom()
-		if err != nil {
-			return err
-		}
-		p.ID = uuid.String()
-	}
-
 	if p.Slug == "" {
-		p.Slug = Slugify(p.Title)
+		p.Slug = fmt.Sprintf("%s/%s", hexdate.Now().String, neralie.Now().String())
 	}
-
-	tags, err := ParseTags(p.Content)
-	if err != nil {
-		return err
-	}
-	p.Tags = tags
 
 	if p.Created.IsZero() {
 		p.Created = time.Now()
@@ -62,18 +43,14 @@ func (p *Page) Save(ctx context.Context) error {
 	if _, err := db.ExecContext(
 		ctx,
 		`
-INSERT INTO pages(id, slug, title, content, category, tags, user_id, created_at, modified_at)
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-ON CONFLICT (id) DO UPDATE
-SET (slug, title, content, category, tags, user_id, created_at, modified_at) = ($2, $3, $4, $5, $6, $7, $8, $9)
-WHERE pages.id = $1;
+INSERT INTO pages(slug, content, user_id, created_at, modified_at)
+VALUES ($1, $2, $3, $4, $5)
+ON CONFLICT (slug, user_id) DO UPDATE
+SET (content, modified_at) = ($2, $5)
+WHERE pages.slug = $1 AND pages.user_id = $3;
 `,
-		p.ID,
 		p.Slug,
-		p.Title,
 		p.Content,
-		p.Category,
-		pq.Array(p.Tags),
 		p.User.ID,
 		p.Created,
 		p.Modified); err != nil {
@@ -83,46 +60,26 @@ WHERE pages.id = $1;
 	return nil
 }
 
-// Slugify returns a dash separated string that doesn't have unicode chars.
-func Slugify(title string) string {
-	return slug.Make(title)
-}
-
-// GetPageByID gets a page by ID from the database.
-func GetPageByID(ctx context.Context, id string) (*Page, error) {
-	var p Page
-	var userID string
-
-	row := db.QueryRowContext(ctx, "SELECT id, slug, title, content, category, tags, user_id, created_at, modified_at FROM pages WHERE id = $1", id)
-	err := row.Scan(&p.ID, &p.Slug, &p.Title, &p.Content, &p.Category, pq.Array(&p.Tags), &userID, &p.Created, &p.Modified)
-	switch {
-	case err == sql.ErrNoRows:
-		return nil, fmt.Errorf("No post with id")
-	case err != nil:
-		return nil, fmt.Errorf("error with get: %w", err)
-	default:
-		u, err := GetUser(ctx, userID)
-		if err != nil {
-			return nil, err
-		}
-
-		if u != nil {
-			p.User = *u
-		}
-		return &p, nil
-	}
-}
-
 // GetPageBySlug gets a page by ID from the database.
-func GetPageBySlug(ctx context.Context, slug string) (*Page, error) {
+func GetPageBySlug(ctx context.Context, u *User, slug string) (*Page, error) {
 	var p Page
 	var userID string
 
-	row := db.QueryRowContext(ctx, "SELECT id, slug, title, content, category, tags, user_id, created_at, modified_at FROM pages WHERE slug = $1", slug)
-	err := row.Scan(&p.ID, &p.Slug, &p.Title, &p.Content, &p.Category, pq.Array(&p.Tags), &userID, &p.Created, &p.Modified)
+	row := db.QueryRowContext(ctx,
+		`SELECT slug, content, user_id, created_at, modified_at
+     FROM pages
+     WHERE slug = $1 AND user_id = $2`,
+		slug,
+		u.ID)
+	err := row.Scan(&p.Slug, &p.Content, &userID, &p.Created, &p.Modified)
 	switch {
 	case err == sql.ErrNoRows:
-		return nil, fmt.Errorf("No post with slug")
+		u, err := GetUser(ctx, userID)
+		if err != nil {
+			return nil, err
+		}
+
+		return &Page{User: u, Content: "Empty!", Slug: slug}, nil
 	case err != nil:
 		return nil, fmt.Errorf("error with get: %w", err)
 	default:
@@ -132,25 +89,33 @@ func GetPageBySlug(ctx context.Context, slug string) (*Page, error) {
 		}
 
 		if u != nil {
-			p.User = *u
+			p.User = u
 		}
 		return &p, nil
 	}
 }
 
 // GetPages returns an array of all pages that exist.
-func GetPages(ctx context.Context) ([]*Page, error) {
-	rows, err := db.QueryContext(ctx, "SELECT id, slug, title, content, category, tags, user_id, created_at, modified_at FROM pages ORDER BY modified_at DESC")
+func GetPages(ctx context.Context, u *User, limit int, offset int) ([]*Page, error) {
+	rows, err := db.QueryContext(ctx,
+		`SELECT slug, content, user_id, created_at, modified_at
+    FROM pages
+    WHERE user_id = $1
+    ORDER BY modified_at DESC
+    LIMIT $2 OFFSET $3`,
+		u.ID,
+		limit,
+		offset)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	pages := make([]*Page, 0)
+	var pages []*Page
 	for rows.Next() {
 		var p Page
 		var userID string
-		err := rows.Scan(&p.ID, &p.Slug, &p.Title, &p.Content, &p.Category, pq.Array(&p.Tags), &userID, &p.Created, &p.Modified)
+		err := rows.Scan(&p.Slug, &p.Content, &userID, &p.Created, &p.Modified)
 		if err != nil {
 			return nil, err
 		}
@@ -161,14 +126,15 @@ func GetPages(ctx context.Context) ([]*Page, error) {
 		}
 
 		if u != nil {
-			p.User = *u
+			p.User = u
 		}
 
 		pages = append(pages, &p)
 	}
 
-	if err = rows.Err(); err != nil {
+	if err := rows.Err(); err != nil {
 		return nil, err
 	}
+
 	return pages, nil
 }
