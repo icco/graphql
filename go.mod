@@ -20,7 +20,6 @@ require (
 	github.com/google/uuid v1.1.2
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hellofresh/logging-go v0.4.0 // indirect
-	github.com/icco/graphql/time v0.0.0-20201230045031-4c9970c30cc8
 	github.com/icco/logrus-stackdriver-formatter v0.3.0
 	github.com/lib/pq v1.9.0
 	github.com/mitchellh/mapstructure v1.4.0 // indirect
