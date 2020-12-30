@@ -283,13 +283,13 @@ var (
         user_id TEXT NOT NULL,
         created_at TIMESTAMP WITH TIME ZONE,
         modified_at TIMESTAMP WITH TIME ZONE
-      );;
+      );
       `,
 		},
 		{
 			Version:     24,
 			Description: "unique constraint for pages",
-			Script:      `ALTER TABLE pages ADD UNIQUE (slug, user_id)`,
+			Script:      `ALTER TABLE pages ADD UNIQUE (slug, user_id);`,
 		},
 	}
 )
