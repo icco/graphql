@@ -136,10 +136,9 @@ func (r *queryResolver) Counts(ctx context.Context) ([]*Stat, error) {
 	for _, table := range []string{
 		"books",
 		"links",
-		"logs",
+		"pages",
 		"photos",
 		"posts",
-		"stats",
 	} {
 		stat := new(Stat)
 		stat.Key = table
@@ -149,14 +148,6 @@ func (r *queryResolver) Counts(ctx context.Context) ([]*Stat, error) {
 
 		stats = append(stats, stat)
 	}
-
-	stat := new(Stat)
-	stat.Key = "tweets"
-	if err := db.QueryRowContext(ctx, "SELECT MAX(internal_id) FROM tweets").Scan(&stat.Value); err != nil {
-		return stats, err
-	}
-
-	stats = append(stats, stat)
 
 	return stats, nil
 }
