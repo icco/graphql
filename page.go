@@ -31,7 +31,7 @@ func (p *Page) URI() *URI {
 // Save inserts or updates a page into the database.
 func (p *Page) Save(ctx context.Context) error {
 	if p.Slug == "" {
-		p.Slug = fmt.Sprintf("%s/%s", hexdate.Now().String, neralie.Now().String())
+		p.Slug = fmt.Sprintf("%s/%s", hexdate.Now().String(), neralie.Now().String())
 	}
 
 	if p.Created.IsZero() {

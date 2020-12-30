@@ -14,6 +14,7 @@ func (r *mutationResolver) UpsertPage(ctx context.Context, input EditPage) (*Pag
 		return nil, err
 	}
 
+	p.User = u
 	p.Content = input.Content
 
 	if err := p.Save(ctx); err != nil {
