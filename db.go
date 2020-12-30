@@ -270,6 +270,22 @@ var (
 			Description: "add serial index to tweets",
 			Script:      `CREATE INDEX ON tweets (internal_id);`,
 		},
+		{
+			Version:     23,
+			Description: "new page table",
+			Script: `
+      DROP TABLE logs;
+      DROP TABLE pages;
+      CREATE TABLE pages (
+        id SERIAL PRIMARY KEY,
+        slug TEXT NOT NULL,
+        content TEXT,
+        user_id TEXT NOT NULL,
+        created_at TIMESTAMP WITH TIME ZONE,
+        modified_at TIMESTAMP WITH TIME ZONE
+      );
+      `,
+		},
 	}
 )
 
