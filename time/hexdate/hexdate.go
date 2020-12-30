@@ -5,17 +5,18 @@ import (
 	"time"
 )
 
-const Root = time.Date(1988, time.February, 22, 0, 0, 0, 0, time.UTC)
+var Root = time.Date(1988, time.February, 22, 0, 0, 0, 0, time.UTC)
 
-type Date string
+type Date struct {
+	Days int64
+}
 
 func Now() *Date {
 	delta := time.Since(Root)
-	days := delta.Hours() / 24
 
-	return &Date{fmt.Sprintf("%X", days)}
+	return &Date{Days: int64(delta.Hours()) / 24}
 }
 
 func (d *Date) String() string {
-	return string(d)
+	return fmt.Sprintf("%X", d.Days)
 }
