@@ -14,7 +14,7 @@ func Now() *Time {
 	return FromTime(time.Now())
 }
 
-func FromTime(t *time.Time) *Time {
+func FromTime(t time.Time) *Time {
 	utc := t.UTC()
 	secToday := utc.Hour()*60*60 + utc.Minute()*60 + utc.Second()
 	root := secToday / 86400
