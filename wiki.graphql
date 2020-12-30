@@ -16,6 +16,12 @@ type Page implements Linkable {
   created: Time!
   modified: Time!
   uri: URI!
+  meta: [Meta]!
+}
+
+type Meta {
+  key: String!
+  record: String!
 }
 
 type Photo implements Linkable {
@@ -30,11 +36,6 @@ type Photo implements Linkable {
 input EditPage {
   slug: ID!
   content: String!
-}
-
-input NewGeo {
-  lat: Float!
-  long: Float!
 }
 
 extend type Query {

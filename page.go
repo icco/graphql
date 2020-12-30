@@ -15,16 +15,17 @@ import (
 
 // Page is a wiki page.
 type Page struct {
-	Slug     string    `json:"slug"`
-	Content  string    `json:"content"`
-	User     *User     `json:"user"`
-	Created  time.Time `json:"created"`
-	Modified time.Time `json:"modified"`
-	Meta     *PageMeta `json:"meta"`
+	Slug     string      `json:"slug"`
+	Content  string      `json:"content"`
+	User     *User       `json:"user"`
+	Created  time.Time   `json:"created"`
+	Modified time.Time   `json:"modified"`
+	Meta     []*PageMeta `json:"meta"`
 }
 
 type PageMeta struct {
-	Name string `json:"name,omitempty"`
+	Key    string `json:"key"`
+	Record string `json:"record"`
 }
 
 func (a PageMeta) Value() (driver.Value, error) {
