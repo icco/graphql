@@ -11,8 +11,12 @@ type Time struct {
 }
 
 func Now() *Time {
-	now := time.Now().UTC()
-	secToday := now.Hour()*60*60 + now.Minute()*60 + now.Second()
+	return FromTime(time.Now())
+}
+
+func FromTime(t *time.Time) *Time {
+	utc := t.UTC()
+	secToday := utc.Hour()*60*60 + utc.Minute()*60 + utc.Second()
 	root := secToday / 86400
 	return &Time{
 		Beat:  root / 1000,
