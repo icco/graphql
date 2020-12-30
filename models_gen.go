@@ -46,11 +46,6 @@ type Limit struct {
 	Offset *int `json:"offset"`
 }
 
-type NewGeo struct {
-	Lat  float64 `json:"lat"`
-	Long float64 `json:"long"`
-}
-
 type NewLink struct {
 	Title       string     `json:"title"`
 	URI         URI        `json:"uri"`
