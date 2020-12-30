@@ -291,6 +291,11 @@ var (
 			Description: "unique constraint for pages",
 			Script:      `ALTER TABLE pages ADD UNIQUE (slug, user_id);`,
 		},
+		{
+			Version:     25,
+			Description: "add meta to pages",
+			Script:      `ALTER TABLE pages ADD COLUMN meta JSONB;`,
+		},
 	}
 )
 
