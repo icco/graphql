@@ -83,6 +83,10 @@ type ComplexityRoot struct {
 		Record func(childComplexity int) int
 	}
 
+	MetaGrouping struct {
+		Records func(childComplexity int) int
+	}
+
 	Mutation struct {
 		AddComment  func(childComplexity int, input AddComment) int
 		CreatePost  func(childComplexity int, input EditPost) int
@@ -405,6 +409,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Meta.Record(childComplexity), true
+
+	case "MetaGrouping.records":
+		if e.complexity.MetaGrouping.Records == nil {
+			break
+		}
+
+		return e.complexity.MetaGrouping.Records(childComplexity), true
 
 	case "Mutation.addComment":
 		if e.complexity.Mutation.AddComment == nil {
@@ -1548,12 +1559,16 @@ type Page implements Linkable {
   created: Time!
   modified: Time!
   uri: URI!
-  meta: [Meta]!
+  meta: MetaGrouping
 }
 
 type Meta {
   key: String!
   record: String!
+}
+
+type MetaGrouping {
+  records: [Meta]!
 }
 
 type Photo implements Linkable {
@@ -2925,6 +2940,41 @@ func (ec *executionContext) _Meta_record(ctx context.Context, field graphql.Coll
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _MetaGrouping_records(ctx context.Context, field graphql.CollectedField, obj *PageMetaGrouping) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "MetaGrouping",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Records, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*PageMeta)
+	fc.Result = res
+	return ec.marshalNMeta2ᚕᚖgithubᚗcomᚋiccoᚋgraphqlᚐPageMeta(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_upsertBook(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -3680,14 +3730,11 @@ func (ec *executionContext) _Page_meta(ctx context.Context, field graphql.Collec
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.([]*PageMeta)
+	res := resTmp.(*PageMetaGrouping)
 	fc.Result = res
-	return ec.marshalNMeta2ᚕᚖgithubᚗcomᚋiccoᚋgraphqlᚐPageMeta(ctx, field.Selections, res)
+	return ec.marshalOMetaGrouping2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐPageMetaGrouping(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Photo_id(ctx context.Context, field graphql.CollectedField, obj *Photo) (ret graphql.Marshaler) {
@@ -8273,6 +8320,33 @@ func (ec *executionContext) _Meta(ctx context.Context, sel ast.SelectionSet, obj
 	return out
 }
 
+var metaGroupingImplementors = []string{"MetaGrouping"}
+
+func (ec *executionContext) _MetaGrouping(ctx context.Context, sel ast.SelectionSet, obj *PageMetaGrouping) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, metaGroupingImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("MetaGrouping")
+		case "records":
+			out.Values[i] = ec._MetaGrouping_records(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var mutationImplementors = []string{"Mutation"}
 
 func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -8382,9 +8456,6 @@ func (ec *executionContext) _Page(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "meta":
 			out.Values[i] = ec._Page_meta(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -10499,6 +10570,13 @@ func (ec *executionContext) marshalOMeta2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐPage
 		return graphql.Null
 	}
 	return ec._Meta(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOMetaGrouping2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐPageMetaGrouping(ctx context.Context, sel ast.SelectionSet, v *PageMetaGrouping) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._MetaGrouping(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOPage2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐPage(ctx context.Context, sel ast.SelectionSet, v *Page) graphql.Marshaler {

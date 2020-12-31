@@ -16,12 +16,16 @@ type Page implements Linkable {
   created: Time!
   modified: Time!
   uri: URI!
-  meta: [Meta]!
+  meta: MetaGrouping
 }
 
 type Meta {
   key: String!
   record: String!
+}
+
+type MetaGrouping {
+  records: [Meta]!
 }
 
 type Photo implements Linkable {

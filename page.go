@@ -14,12 +14,12 @@ import (
 
 // Page is a wiki page.
 type Page struct {
-	Slug     string      `json:"slug"`
-	Content  string      `json:"content"`
-	User     *User       `json:"user"`
-	Created  time.Time   `json:"created"`
-	Modified time.Time   `json:"modified"`
-	Meta     []*PageMeta `json:"meta"`
+	Slug     string            `json:"slug"`
+	Content  string            `json:"content"`
+	User     *User             `json:"user"`
+	Created  time.Time         `json:"created"`
+	Modified time.Time         `json:"modified"`
+	Meta     *PageMetaGrouping `json:"meta"`
 }
 
 type PageMeta struct {
@@ -27,13 +27,15 @@ type PageMeta struct {
 	Record string `json:"record"`
 }
 
-type PageMetaArray []*PageMeta
+type PageMetaGrouping struct {
+	Records []*PageMeta `json:"records"`
+}
 
-func (a PageMetaArray) Value() (driver.Value, error) {
+func (a PageMetaGrouping) Value() (driver.Value, error) {
 	return json.Marshal(a)
 }
 
-func (a *PageMetaArray) Scan(value interface{}) error {
+func (a *PageMetaGrouping) Scan(value interface{}) error {
 	b, ok := value.([]byte)
 	if !ok {
 		return fmt.Errorf("type assertion to []byte failed")
@@ -76,6 +78,10 @@ func (p *Page) Save(ctx context.Context) error {
 
 	p.Modified = time.Now()
 
+	if p.Meta == nil {
+		p.Meta = &PageMetaGrouping{}
+	}
+
 	if _, err := db.ExecContext(
 		ctx,
 		`
@@ -90,7 +96,7 @@ WHERE pages.slug = $1 AND pages.user_id = $3;
 		p.User.ID,
 		p.Created,
 		p.Modified,
-		PageMetaArray(p.Meta)); err != nil {
+		p.Meta); err != nil {
 		return err
 	}
 
@@ -101,7 +107,6 @@ WHERE pages.slug = $1 AND pages.user_id = $3;
 func GetPageBySlug(ctx context.Context, u *User, slug string) (*Page, error) {
 	var p Page
 	var userID string
-	var pm PageMetaArray
 
 	row := db.QueryRowContext(ctx,
 		`SELECT slug, content, meta, user_id, created_at, modified_at
@@ -109,7 +114,7 @@ func GetPageBySlug(ctx context.Context, u *User, slug string) (*Page, error) {
      WHERE slug = $1 AND user_id = $2`,
 		slug,
 		u.ID)
-	err := row.Scan(&p.Slug, &p.Content, &pm, &userID, &p.Created, &p.Modified)
+	err := row.Scan(&p.Slug, &p.Content, &p.Meta, &userID, &p.Created, &p.Modified)
 	switch {
 	case err == sql.ErrNoRows:
 		u, err := GetUser(ctx, userID)
@@ -129,7 +134,7 @@ func GetPageBySlug(ctx context.Context, u *User, slug string) (*Page, error) {
 		if u != nil {
 			p.User = u
 		}
-		p.Meta = pm
+
 		return &p, nil
 	}
 }
@@ -153,9 +158,8 @@ func GetPages(ctx context.Context, u *User, limit int, offset int) ([]*Page, err
 	var pages []*Page
 	for rows.Next() {
 		var p Page
-		var pm PageMetaArray
 		var userID string
-		err := rows.Scan(&p.Slug, &p.Content, &pm, &userID, &p.Created, &p.Modified)
+		err := rows.Scan(&p.Slug, &p.Content, &p.Meta, &userID, &p.Created, &p.Modified)
 		if err != nil {
 			return nil, err
 		}
@@ -168,7 +172,6 @@ func GetPages(ctx context.Context, u *User, limit int, offset int) ([]*Page, err
 		if u != nil {
 			p.User = u
 		}
-		p.Meta = pm
 
 		pages = append(pages, &p)
 	}
