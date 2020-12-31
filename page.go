@@ -27,6 +27,21 @@ type PageMeta struct {
 	Record string `json:"record"`
 }
 
+type PageMetaArray []*PageMeta
+
+func (a PageMetaArray) Value() (driver.Value, error) {
+	return json.Marshal(a)
+}
+
+func (a *PageMetaArray) Scan(value interface{}) error {
+	b, ok := value.([]byte)
+	if !ok {
+		return fmt.Errorf("type assertion to []byte failed")
+	}
+
+	return json.Unmarshal(b, &a)
+}
+
 func (a PageMeta) Value() (driver.Value, error) {
 	return json.Marshal(a)
 }
@@ -86,6 +101,7 @@ WHERE pages.slug = $1 AND pages.user_id = $3;
 func GetPageBySlug(ctx context.Context, u *User, slug string) (*Page, error) {
 	var p Page
 	var userID string
+	var pm PageMetaArray
 
 	row := db.QueryRowContext(ctx,
 		`SELECT slug, content, meta, user_id, created_at, modified_at
@@ -93,7 +109,7 @@ func GetPageBySlug(ctx context.Context, u *User, slug string) (*Page, error) {
      WHERE slug = $1 AND user_id = $2`,
 		slug,
 		u.ID)
-	err := row.Scan(&p.Slug, &p.Content, &p.Meta, &userID, &p.Created, &p.Modified)
+	err := row.Scan(&p.Slug, &p.Content, &pm, &userID, &p.Created, &p.Modified)
 	switch {
 	case err == sql.ErrNoRows:
 		u, err := GetUser(ctx, userID)
@@ -113,6 +129,7 @@ func GetPageBySlug(ctx context.Context, u *User, slug string) (*Page, error) {
 		if u != nil {
 			p.User = u
 		}
+		p.Meta = pm
 		return &p, nil
 	}
 }
@@ -136,8 +153,9 @@ func GetPages(ctx context.Context, u *User, limit int, offset int) ([]*Page, err
 	var pages []*Page
 	for rows.Next() {
 		var p Page
+		var pm PageMetaArray
 		var userID string
-		err := rows.Scan(&p.Slug, &p.Content, &p.Meta, &userID, &p.Created, &p.Modified)
+		err := rows.Scan(&p.Slug, &p.Content, &pm, &userID, &p.Created, &p.Modified)
 		if err != nil {
 			return nil, err
 		}
@@ -150,6 +168,7 @@ func GetPages(ctx context.Context, u *User, limit int, offset int) ([]*Page, err
 		if u != nil {
 			p.User = u
 		}
+		p.Meta = pm
 
 		pages = append(pages, &p)
 	}
