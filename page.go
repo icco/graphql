@@ -102,7 +102,7 @@ func GetPageBySlug(ctx context.Context, u *User, slug string) (*Page, error) {
 			return nil, err
 		}
 
-		return &Page{User: u, Content: "Empty!", Slug: slug}, nil
+		return &Page{User: u, Content: "", Slug: slug}, nil
 	case err != nil:
 		return nil, fmt.Errorf("error with get: %w", err)
 	default:
