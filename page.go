@@ -80,9 +80,9 @@ func (p *Page) Save(ctx context.Context) error {
 		ctx,
 		`
 INSERT INTO pages(slug, content, user_id, created_at, modified_at, meta)
-VALUES ($1, $2, $3, $4, $5, $6)
+VALUES ($1, $2, $3, $4, $5, $6::JSONB)
 ON CONFLICT (slug, user_id) DO UPDATE
-SET (content, modified_at, meta) = ($2, $5, $6)
+SET (content, modified_at, meta) = ($2, $5, $6::JSONB)
 WHERE pages.slug = $1 AND pages.user_id = $3;
 `,
 		p.Slug,
