@@ -138,12 +138,12 @@ type ComplexityRoot struct {
 		Counts             func(childComplexity int) int
 		Drafts             func(childComplexity int, input *Limit) int
 		FuturePosts        func(childComplexity int, input *Limit) int
-		GetPageBySlug      func(childComplexity int, slug string) int
-		GetPages           func(childComplexity int, input *Limit) int
 		HomeTimelineURLs   func(childComplexity int, input *Limit) int
 		Link               func(childComplexity int, id *string, url *URI) int
 		Links              func(childComplexity int, input *Limit) int
 		NextPost           func(childComplexity int, id string) int
+		Page               func(childComplexity int, slug string) int
+		Pages              func(childComplexity int, input *Limit) int
 		Photos             func(childComplexity int, input *Limit) int
 		Post               func(childComplexity int, id string) int
 		Posts              func(childComplexity int, input *Limit) int
@@ -232,8 +232,8 @@ type QueryResolver interface {
 	PrevPost(ctx context.Context, id string) (*Post, error)
 	PostsByTag(ctx context.Context, id string) ([]*Post, error)
 	Tags(ctx context.Context) ([]string, error)
-	GetPageBySlug(ctx context.Context, slug string) (*Page, error)
-	GetPages(ctx context.Context, input *Limit) ([]*Page, error)
+	Page(ctx context.Context, slug string) (*Page, error)
+	Pages(ctx context.Context, input *Limit) ([]*Page, error)
 	Photos(ctx context.Context, input *Limit) ([]*Photo, error)
 }
 
@@ -770,30 +770,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.FuturePosts(childComplexity, args["input"].(*Limit)), true
 
-	case "Query.getPageBySlug":
-		if e.complexity.Query.GetPageBySlug == nil {
-			break
-		}
-
-		args, err := ec.field_Query_getPageBySlug_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetPageBySlug(childComplexity, args["slug"].(string)), true
-
-	case "Query.getPages":
-		if e.complexity.Query.GetPages == nil {
-			break
-		}
-
-		args, err := ec.field_Query_getPages_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetPages(childComplexity, args["input"].(*Limit)), true
-
 	case "Query.homeTimelineURLs":
 		if e.complexity.Query.HomeTimelineURLs == nil {
 			break
@@ -841,6 +817,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.NextPost(childComplexity, args["id"].(string)), true
+
+	case "Query.page":
+		if e.complexity.Query.Page == nil {
+			break
+		}
+
+		args, err := ec.field_Query_page_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Page(childComplexity, args["slug"].(string)), true
+
+	case "Query.pages":
+		if e.complexity.Query.Pages == nil {
+			break
+		}
+
+		args, err := ec.field_Query_pages_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Pages(childComplexity, args["input"].(*Limit)), true
 
 	case "Query.photos":
 		if e.complexity.Query.Photos == nil {
@@ -1571,8 +1571,8 @@ input EditPage {
 }
 
 extend type Query {
-  getPageBySlug(slug: ID!): Page @loggedIn
-  getPages(input: Limit): [Page]! @loggedIn
+  page(slug: ID!): Page @loggedIn
+  pages(input: Limit): [Page]! @loggedIn
 
   "Returns all photos for your user."
   photos(input: Limit): [Photo]! @loggedIn
@@ -1829,36 +1829,6 @@ func (ec *executionContext) field_Query_futurePosts_args(ctx context.Context, ra
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_getPageBySlug_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["slug"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slug"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["slug"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_getPages_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 *Limit
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOLimit2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐLimit(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Query_homeTimelineURLs_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -1925,6 +1895,36 @@ func (ec *executionContext) field_Query_nextPost_args(ctx context.Context, rawAr
 		}
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_page_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["slug"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slug"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["slug"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_pages_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *Limit
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOLimit2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐLimit(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -5394,7 +5394,7 @@ func (ec *executionContext) _Query_tags(ctx context.Context, field graphql.Colle
 	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_getPageBySlug(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_page(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5411,7 +5411,7 @@ func (ec *executionContext) _Query_getPageBySlug(ctx context.Context, field grap
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_getPageBySlug_args(ctx, rawArgs)
+	args, err := ec.field_Query_page_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -5420,7 +5420,7 @@ func (ec *executionContext) _Query_getPageBySlug(ctx context.Context, field grap
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetPageBySlug(rctx, args["slug"].(string))
+			return ec.resolvers.Query().Page(rctx, args["slug"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.LoggedIn == nil {
@@ -5453,7 +5453,7 @@ func (ec *executionContext) _Query_getPageBySlug(ctx context.Context, field grap
 	return ec.marshalOPage2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐPage(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_getPages(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_pages(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5470,7 +5470,7 @@ func (ec *executionContext) _Query_getPages(ctx context.Context, field graphql.C
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_getPages_args(ctx, rawArgs)
+	args, err := ec.field_Query_pages_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -5479,7 +5479,7 @@ func (ec *executionContext) _Query_getPages(ctx context.Context, field graphql.C
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetPages(rctx, args["input"].(*Limit))
+			return ec.resolvers.Query().Pages(rctx, args["input"].(*Limit))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.LoggedIn == nil {
@@ -8894,7 +8894,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
-		case "getPageBySlug":
+		case "page":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -8902,10 +8902,10 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getPageBySlug(ctx, field)
+				res = ec._Query_page(ctx, field)
 				return res
 			})
-		case "getPages":
+		case "pages":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -8913,7 +8913,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getPages(ctx, field)
+				res = ec._Query_pages(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

@@ -39,8 +39,8 @@ input EditPage {
 }
 
 extend type Query {
-  getPageBySlug(slug: ID!): Page @loggedIn
-  getPages(input: Limit): [Page]! @loggedIn
+  page(slug: ID!): Page @loggedIn
+  pages(input: Limit): [Page]! @loggedIn
 
   "Returns all photos for your user."
   photos(input: Limit): [Photo]! @loggedIn
