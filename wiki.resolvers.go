@@ -24,13 +24,6 @@ func (r *mutationResolver) UpsertPage(ctx context.Context, input EditPage) (*Pag
 	return p, nil
 }
 
-func (r *queryResolver) Photos(ctx context.Context, input *Limit) ([]*Photo, error) {
-	u := GetUserFromContext(ctx)
-	limit, offset := ParseLimit(input, 25, 0)
-
-	return UserPhotos(ctx, u, limit, offset)
-}
-
 func (r *queryResolver) Page(ctx context.Context, slug string) (*Page, error) {
 	u := GetUserFromContext(ctx)
 	return GetPageBySlug(ctx, u, slug)
@@ -41,4 +34,11 @@ func (r *queryResolver) Pages(ctx context.Context, input *Limit) ([]*Page, error
 	limit, offset := ParseLimit(input, 25, 0)
 
 	return GetPages(ctx, u, limit, offset)
+}
+
+func (r *queryResolver) Photos(ctx context.Context, input *Limit) ([]*Photo, error) {
+	u := GetUserFromContext(ctx)
+	limit, offset := ParseLimit(input, 25, 0)
+
+	return UserPhotos(ctx, u, limit, offset)
 }
