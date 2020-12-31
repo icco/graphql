@@ -304,6 +304,13 @@ var (
       ALTER TABLE pages ALTER COLUMN meta SET NOT NULL;
       `,
 		},
+		{
+			Version:     27,
+			Description: "new jsonb org",
+			Script: `
+      ALTER TABLE pages ALTER COLUMN meta SET DEFAULT '{}'::jsonb;
+      `,
+		},
 	}
 )
 
