@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"contrib.go.opencensus.io/exporter/stackdriver"
@@ -114,11 +115,11 @@ func main() {
 
 	gh.SetErrorPresenter(func(ctx context.Context, err error) *gqlerror.Error {
 		log.WithError(err).Error("graphql request error")
-		if err.Error() == "forbidden" {
+		if strings.Contains(err.Error(), "forbidden") {
 			return gqlerror.Errorf("forbidden: not a valid user")
 		}
 
-		return gqlerror.Errorf("fatal error seen while processing request")
+		return gqlerror.Errorf("error seen while processing request")
 	})
 
 	gh.AroundResponses(GqlLoggingMiddleware)
