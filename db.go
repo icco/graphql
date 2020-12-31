@@ -296,6 +296,14 @@ var (
 			Description: "add meta to pages",
 			Script:      `ALTER TABLE pages ADD COLUMN meta JSONB;`,
 		},
+		{
+			Version:     26,
+			Description: "no empty jsonb",
+			Script: `
+      ALTER TABLE pages ALTER COLUMN meta SET DEFAULT '[]'::jsonb;
+      ALTER TABLE pages ALTER COLUMN meta SET NOT NULL;
+      `,
+		},
 	}
 )
 

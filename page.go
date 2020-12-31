@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"time"
 
@@ -35,7 +34,7 @@ func (a PageMeta) Value() (driver.Value, error) {
 func (a *PageMeta) Scan(value interface{}) error {
 	b, ok := value.([]byte)
 	if !ok {
-		return errors.New("type assertion to []byte failed")
+		return fmt.Errorf("type assertion to []byte failed")
 	}
 
 	return json.Unmarshal(b, &a)
