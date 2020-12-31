@@ -90,7 +90,7 @@ WHERE pages.slug = $1 AND pages.user_id = $3;
 		p.User.ID,
 		p.Created,
 		p.Modified,
-		p.Meta); err != nil {
+		PageMetaArray(p.Meta)); err != nil {
 		return err
 	}
 
