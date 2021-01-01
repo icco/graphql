@@ -44,6 +44,27 @@ func (a *PageMetaGrouping) Scan(value interface{}) error {
 	return json.Unmarshal(b, &a)
 }
 
+func (a *PageMetaGrouping) Set(key, value string) {
+	for _, r := range a.Records {
+		if r.Key == key {
+			r.Record = value
+			return
+		}
+	}
+
+	a.Records = append(a.Records, &PageMeta{Key: key, Record: value})
+}
+
+func (a *PageMetaGrouping) Get(key string) string {
+	for _, r := range a.Records {
+		if r.Key == key {
+			return r.Record
+		}
+	}
+
+	return ""
+}
+
 func (a PageMeta) Value() (driver.Value, error) {
 	return json.Marshal(a)
 }
