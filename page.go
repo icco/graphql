@@ -44,6 +44,24 @@ func (a *PageMetaGrouping) Scan(value interface{}) error {
 	return json.Unmarshal(b, &a)
 }
 
+func (a *PageMetaGrouping) ToMap() map[string]string {
+	ret := map[string]string{}
+	for _, r := range a.Records {
+		ret[r.Key] = r.Record
+	}
+
+	return ret
+}
+
+func MetaFromMap(in map[string]string) *PageMetaGrouping {
+	ret := &PageMetaGrouping{}
+	for k, v := range in {
+		ret.Records = append(ret.Records, &PageMeta{Key: k, Record: v})
+	}
+
+	return ret
+}
+
 func (a *PageMetaGrouping) Set(key, value string) {
 	for _, r := range a.Records {
 		if r.Key == key {
