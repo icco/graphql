@@ -16,6 +16,9 @@ func (r *mutationResolver) UpsertPage(ctx context.Context, input EditPage) (*Pag
 
 	p.User = u
 	p.Content = input.Content
+	p.Meta = &PageMetaGrouping{
+		Records: input.Meta,
+	}
 
 	if err := p.Save(ctx); err != nil {
 		return nil, err

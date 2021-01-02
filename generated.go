@@ -1583,6 +1583,12 @@ type Photo implements Linkable {
 input EditPage {
   slug: ID!
   content: String!
+  meta: [InputMeta]!
+}
+
+input InputMeta {
+  key: String!
+  record: String!
 }
 
 extend type Query {
@@ -7775,6 +7781,14 @@ func (ec *executionContext) unmarshalInputEditPage(ctx context.Context, obj inte
 			if err != nil {
 				return it, err
 			}
+		case "meta":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("meta"))
+			it.Meta, err = ec.unmarshalNInputMeta2ᚕᚖgithubᚗcomᚋiccoᚋgraphqlᚐPageMeta(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -7824,6 +7838,34 @@ func (ec *executionContext) unmarshalInputEditPost(ctx context.Context, obj inte
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("draft"))
 			it.Draft, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputInputMeta(ctx context.Context, obj interface{}) (PageMeta, error) {
+	var it PageMeta
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "key":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("key"))
+			it.Key, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "record":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("record"))
+			it.Record, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -9685,6 +9727,27 @@ func (ec *executionContext) marshalNID2ᚕstringᚄ(ctx context.Context, sel ast
 	return ret
 }
 
+func (ec *executionContext) unmarshalNInputMeta2ᚕᚖgithubᚗcomᚋiccoᚋgraphqlᚐPageMeta(ctx context.Context, v interface{}) ([]*PageMeta, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*PageMeta, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalOInputMeta2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐPageMeta(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
 func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
 	res, err := graphql.UnmarshalInt(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -10533,6 +10596,14 @@ func (ec *executionContext) marshalOID2ᚖstring(ctx context.Context, sel ast.Se
 		return graphql.Null
 	}
 	return graphql.MarshalID(*v)
+}
+
+func (ec *executionContext) unmarshalOInputMeta2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐPageMeta(ctx context.Context, v interface{}) (*PageMeta, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputInputMeta(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {

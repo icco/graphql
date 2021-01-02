@@ -29,8 +29,9 @@ type EditBook struct {
 }
 
 type EditPage struct {
-	Slug    string `json:"slug"`
-	Content string `json:"content"`
+	Slug    string      `json:"slug"`
+	Content string      `json:"content"`
+	Meta    []*PageMeta `json:"meta"`
 }
 
 type EditPost struct {

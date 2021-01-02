@@ -28,6 +28,8 @@ models:
     model: github.com/icco/graphql.Log
   Meta:
     model: github.com/icco/graphql.PageMeta
+  InputMeta:
+    model: github.com/icco/graphql.PageMeta
   MetaGrouping:
     model: github.com/icco/graphql.PageMetaGrouping
   Photo:

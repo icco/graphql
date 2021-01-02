@@ -40,6 +40,12 @@ type Photo implements Linkable {
 input EditPage {
   slug: ID!
   content: String!
+  meta: [InputMeta]!
+}
+
+input InputMeta {
+  key: String!
+  record: String!
 }
 
 extend type Query {
