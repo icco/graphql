@@ -167,6 +167,7 @@ func GetPageBySlug(ctx context.Context, u *User, slug string) (*Page, error) {
 			Slug:     slug,
 			Created:  time.Now(),
 			Modified: time.Now(),
+			Meta:     &PageMetaGrouping{},
 		}, nil
 	case err != nil:
 		return nil, fmt.Errorf("error with get: %w", err)
