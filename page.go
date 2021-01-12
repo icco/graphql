@@ -6,6 +6,7 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/icco/graphql/time/hexdate"
@@ -56,7 +57,7 @@ func (a *PageMetaGrouping) ToMap() map[string]string {
 func MetaFromMap(in map[string]string) *PageMetaGrouping {
 	ret := &PageMetaGrouping{}
 	for k, v := range in {
-		ret.Records = append(ret.Records, &PageMeta{Key: k, Record: v})
+		ret.Set(k, v)
 	}
 
 	return ret
@@ -64,6 +65,8 @@ func MetaFromMap(in map[string]string) *PageMetaGrouping {
 
 func (a *PageMetaGrouping) Set(key, value string) {
 	for _, r := range a.Records {
+		r.Key = strings.ToLower(r.Key)
+		key = strings.ToLower(key)
 		if r.Key == key {
 			r.Record = value
 			return
@@ -75,6 +78,8 @@ func (a *PageMetaGrouping) Set(key, value string) {
 
 func (a *PageMetaGrouping) Get(key string) string {
 	for _, r := range a.Records {
+		r.Key = strings.ToLower(r.Key)
+		key = strings.ToLower(key)
 		if r.Key == key {
 			return r.Record
 		}
