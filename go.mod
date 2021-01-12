@@ -3,21 +3,21 @@ module github.com/icco/graphql
 go 1.15
 
 require (
-	cloud.google.com/go v0.74.0 // indirect
+	cloud.google.com/go v0.75.0 // indirect
 	cloud.google.com/go/storage v1.12.0
 	contrib.go.opencensus.io/exporter/stackdriver v0.13.4
 	github.com/99designs/gqlgen v0.13.0
 	github.com/DATA-DOG/go-sqlmock v1.5.0 // indirect
 	github.com/GuiaBolso/darwin v0.0.0-20191218124601-fd6d2aa3d244
 	github.com/agnivade/levenshtein v1.1.0 // indirect
-	github.com/auth0/go-jwt-middleware v0.0.0-20201030150249-d783b5c46b39
-	github.com/aws/aws-sdk-go v1.36.18 // indirect
+	github.com/auth0/go-jwt-middleware v1.0.0
+	github.com/aws/aws-sdk-go v1.36.24 // indirect
 	github.com/census-instrumentation/opencensus-proto v0.3.0 // indirect
 	github.com/cznic/ql v1.2.0 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/cors v1.1.1
-	github.com/google/uuid v1.1.3
+	github.com/google/uuid v1.1.4
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hellofresh/logging-go v0.4.0 // indirect
 	github.com/icco/logrus-stackdriver-formatter v0.3.0
@@ -31,9 +31,10 @@ require (
 	github.com/unrolled/secure v1.0.8
 	github.com/vektah/gqlparser/v2 v2.1.0
 	go.opencensus.io v0.22.5
-	golang.org/x/net v0.0.0-20201224014010-6772e930b67b // indirect
 	golang.org/x/sync v0.0.0-20201207232520-09787c993a3a // indirect
-	golang.org/x/sys v0.0.0-20201223074533-0d417f636930 // indirect
-	golang.org/x/tools v0.0.0-20201230224404-63754364767c // indirect
-	google.golang.org/genproto v0.0.0-20201214200347-8c77b98c765d // indirect
+	golang.org/x/sys v0.0.0-20210112091331-59c308dcf3cc // indirect
+	golang.org/x/text v0.3.5 // indirect
+	golang.org/x/tools v0.0.0-20210111221946-d33bae441459 // indirect
+	google.golang.org/genproto v0.0.0-20210111234610-22ae2b108f89 // indirect
+	google.golang.org/grpc v1.34.1 // indirect
 )
