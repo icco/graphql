@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	jwtmiddleware "github.com/auth0/go-jwt-middleware"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/form3tech-oss/jwt-go"
 	"github.com/icco/graphql"
 )
 
@@ -39,7 +39,7 @@ type CustomClaims struct {
 
 func (c CustomClaims) toStandard() jwt.StandardClaims {
 	return jwt.StandardClaims{
-		Audience:  c.Audience[0],
+		Audience:  c.Audience,
 		ExpiresAt: c.ExpiresAt,
 		Id:        c.ID,
 		IssuedAt:  c.IssuedAt,
