@@ -133,7 +133,7 @@ INSERT INTO pages(slug, content, user_id, created_at, modified_at, meta)
 VALUES ($1, $2, $3, $4, $5, $6::JSONB)
 ON CONFLICT (slug, user_id) DO UPDATE
 SET (content, modified_at, meta) = ($2, $5, $6::JSONB)
-WHERE pages.slug = $1 AND pages.user_id = $3;
+WHERE pages.slug ILIKE $1 AND pages.user_id = $3;
 `,
 		p.Slug,
 		p.Content,
@@ -155,7 +155,7 @@ func GetPageBySlug(ctx context.Context, u *User, slug string) (*Page, error) {
 	row := db.QueryRowContext(ctx,
 		`SELECT slug, content, meta, user_id, created_at, modified_at
      FROM pages
-     WHERE slug = $1 AND user_id = $2`,
+     WHERE slug ILIKE $1 AND user_id = $2`,
 		slug,
 		u.ID)
 	err := row.Scan(&p.Slug, &p.Content, &p.Meta, &userID, &p.Created, &p.Modified)
