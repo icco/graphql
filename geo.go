@@ -6,7 +6,6 @@ import (
 
 	"github.com/paulmach/orb"
 	"github.com/paulmach/orb/encoding/wkb"
-	"github.com/sirupsen/logrus"
 )
 
 // Geo is a simple type for wrapping a point. Units are in Degrees.
@@ -23,7 +22,6 @@ func (g *Geo) ToOrb() orb.Point {
 
 // GeoFromOrb creates a Geo from github.com/paulmach/orb.Point.
 func GeoFromOrb(p *orb.Point) *Geo {
-	log.WithField("orb", p).Debug("orb to geo")
 	if p == nil {
 		return nil
 	}
@@ -41,22 +39,14 @@ func GeoScanner(g interface{}) *wkb.GeometryScanner {
 
 // GeoConvertValue is used for marshaling data to a database.
 func GeoConvertValue(v interface{}) (driver.Value, error) {
-	log.Debugf("geo convert: %T", v)
 	g, ok := v.(*Geo)
 	if !ok {
 		return driver.Value(nil), fmt.Errorf("is not a Geo")
 	}
 
 	if g == nil {
-		log.WithField("geo", g).Debug("geo is nil")
 		return driver.Value(nil), nil
 	}
-	log.WithFields(
-		logrus.Fields{
-			"geo": g,
-			"orb": g.ToOrb(),
-			"wkb": fmt.Sprintf("%b", wkb.Value(g.ToOrb())),
-		}).Debug("got geo")
 
 	return wkb.Value(g.ToOrb()), nil
 }

@@ -9,6 +9,7 @@ import (
 
 	"cloud.google.com/go/storage"
 	"github.com/google/uuid"
+	"go.uber.org/zap"
 )
 
 const (
@@ -123,7 +124,7 @@ func (p *Photo) Path() string {
 	if len(exts) > 0 && err == nil {
 		ext = exts[0]
 	} else {
-		log.WithError(err).Warn("couldn't get an extension")
+		log.Warnw("couldn't get an extension", zap.Error(err))
 	}
 
 	return fmt.Sprintf("photos/%d/%s%s", p.Year, p.ID, ext)

@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 // Cache is a basic type as defined by gqlgen.
@@ -19,7 +21,7 @@ func NewCache() (*Cache, error) {
 func (c *Cache) Add(ctx context.Context, hash string, query interface{}) {
 	blob, err := json.Marshal(query)
 	if err != nil {
-		log.WithError(err).Error("could not marshal query")
+		log.Errorw("could not marshal query", zap.Error(err))
 	}
 
 	_, err = db.ExecContext(
@@ -36,7 +38,7 @@ WHERE cache.key = $1;
 		time.Now())
 
 	if err != nil {
-		log.WithError(err).Error("could not insert key")
+		log.Errorw("could not insert key", zap.Error(err))
 	}
 }
 

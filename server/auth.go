@@ -8,6 +8,7 @@ import (
 	jwtmiddleware "github.com/auth0/go-jwt-middleware"
 	"github.com/form3tech-oss/jwt-go"
 	"github.com/icco/graphql"
+	"go.uber.org/zap"
 )
 
 // Jwks is from https://auth0.com/docs/quickstart/backend/golang
@@ -63,7 +64,7 @@ func APIKeyMiddleware(next http.Handler) http.Handler {
 			apikey := r.Header.Get("X-API-AUTH")
 			user, err := graphql.GetUserByAPIKey(r.Context(), apikey)
 			if err != nil {
-				log.WithError(err).Error("could not get user by apikey")
+				log.Errorw("could not get user by apikey", zap.Error(err))
 				http.Error(w, `{"error": "could not get a user with that API key"}`, http.StatusBadRequest)
 				return
 			}
@@ -80,7 +81,7 @@ func APIKeyMiddleware(next http.Handler) http.Handler {
 func jsonError(msg string) error {
 	data, err := json.Marshal(map[string]string{"error": msg})
 	if err != nil {
-		log.WithError(err).Error("could not marshal json")
+		log.Errorw("could not marshal json", zap.Error(err))
 	}
 	return fmt.Errorf("%s", data)
 }
@@ -95,34 +96,34 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			aud := "https://natwelch.com"
 			checkAud := token.Claims.(jwt.MapClaims).VerifyAudience(aud, false)
 			if !checkAud {
-				log.Errorf("invalid audence: %q", token.Raw)
+				log.Errorw("invalid audence", "aud", token.Raw)
 				return token, jsonError("Invalid audience.")
 			}
 			// Verify 'iss' claim
 			iss := "https://icco.auth0.com/"
 			checkIss := token.Claims.(jwt.MapClaims).VerifyIssuer(iss, false)
 			if !checkIss {
-				log.Errorf("invalid issuer: %q", token.Raw)
+				log.Errorw("invalid issuer", "iss", token.Raw)
 				return token, jsonError("Invalid issuer.")
 			}
 
 			cert, err := getPemCert(token)
 			if err != nil {
 				msg := "cloudn't parse pem cert"
-				log.WithError(err).Error(msg)
+				log.Errorw(msg, zap.Error(err))
 				return token, jsonError(msg)
 			}
 
 			data, err := jwt.ParseRSAPublicKeyFromPEM([]byte(cert))
 			if err != nil {
-				log.WithError(err).WithField("cert", cert).Errorf("error parsing cert")
+				log.Errorw("error parsing cert", zap.Error(err), "cert", cert)
 				return token, jsonError(err.Error())
 			}
 			return data, nil
 		},
 		SigningMethod: jwt.SigningMethodRS256,
 		ErrorHandler: func(w http.ResponseWriter, r *http.Request, err string) {
-			log.Errorf("error with auth: %q", err)
+			log.Errorw("error with auth", zap.Error(fmt.Errorf(err)))
 			w.Header().Set("Content-Type", "application/json; charset=utf-8")
 			w.Header().Set("X-Content-Type-Options", "nosniff")
 			w.WriteHeader(http.StatusBadRequest)
@@ -138,7 +139,7 @@ func getUserFromToken(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		tokenString, err := jwtmiddleware.FromAuthHeader(r)
 		if err != nil {
-			log.WithError(err).Error("could not get auth header")
+			log.Errorw("could not get auth header", zap.Error(err))
 			next.ServeHTTP(w, r)
 			return
 		}
@@ -153,17 +154,17 @@ func getUserFromToken(next http.Handler) http.Handler {
 		})
 
 		if err != nil {
-			log.WithError(err).Debug("could not get claims")
+			log.Debugw("could not get claims", zap.Error(err))
 			next.ServeHTTP(w, r)
 			return
 		}
 
-		log.WithField("token", token).WithField("claims", claims).Debug("the token")
+		log.Debugw("the token", "token", token, "claims", claims)
 
 		if claims.Subject != "" {
 			user, err := graphql.GetUser(r.Context(), claims.Subject)
 			if err != nil {
-				log.WithError(err).WithField("claims", claims).Error("could not get user")
+				log.Errorw("could not get user", "claims", claims, zap.Error(err))
 			} else {
 				// put it in context
 				ctx := graphql.WithUser(r.Context(), user)

@@ -2,10 +2,9 @@
 
 A new backend for graphql.natwelch.com.
 
-[![Build Status](https://travis-ci.org/icco/graphql.svg?branch=master)](https://travis-ci.org/icco/graphql) [![Go Report Card](https://goreportcard.com/badge/github.com/icco/graphql)](https://goreportcard.com/report/github.com/icco/graphql)
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Ficco%2Fgraphql.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Ficco%2Fgraphql?ref=badge_shield)
-
-Docs: [godoc.org/github.com/icco/graphql](https://godoc.org/github.com/icco/graphql)
+[![Build Status](https://travis-ci.org/icco/graphql.svg?branch=master)](https://travis-ci.org/icco/graphql)
+[![Go Report Card](https://goreportcard.com/badge/github.com/icco/graphql)](https://goreportcard.com/report/github.com/icco/graphql)
+[![Go Reference](https://pkg.go.dev/badge/github.com/icco/graphql.svg)](https://pkg.go.dev/github.com/icco/graphql)
 
 The next iteration in Nat's content management system. Previous versions include:
 
