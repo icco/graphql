@@ -134,7 +134,7 @@ func main() {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Compress(5))
-	r.Use(logging.Middleware(log, graphql.AppName))
+	r.Use(logging.Middleware(log.Desugar(), graphql.AppName))
 
 	crs := cors.New(cors.Options{
 		AllowCredentials:   true,
@@ -238,7 +238,7 @@ func cronHandler(w http.ResponseWriter, r *http.Request) {
 				for _, p := range posts {
 					err = p.Save(ctx)
 					if err != nil {
-						log.WithError(err).Errorf("error saving post")
+						log.Errorw("error saving post", zap.Error(err))
 					}
 				}
 			}

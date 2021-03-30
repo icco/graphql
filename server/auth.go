@@ -123,7 +123,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		},
 		SigningMethod: jwt.SigningMethodRS256,
 		ErrorHandler: func(w http.ResponseWriter, r *http.Request, err string) {
-			log.Errorw("error with auth", zap.Error(err))
+			log.Errorw("error with auth", zap.Error(fmt.Errorf(err)))
 			w.Header().Set("Content-Type", "application/json; charset=utf-8")
 			w.Header().Set("X-Content-Type-Options", "nosniff")
 			w.WriteHeader(http.StatusBadRequest)
