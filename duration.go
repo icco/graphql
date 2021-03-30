@@ -6,6 +6,8 @@ import (
 	"io"
 	"strconv"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 // Duration is a float64 representation of a Duration.
@@ -28,7 +30,7 @@ func NewDuration(raw float64) Duration {
 func ParseDurationFromString(dur string) Duration {
 	i, err := time.ParseDuration(dur)
 	if err != nil {
-		log.WithError(err).Error("could not parse duration")
+		log.Errorw("could not parse duration", zap.Error(err))
 		return NewDuration(0)
 	}
 
