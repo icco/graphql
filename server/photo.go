@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/icco/graphql"
+	"go.uber.org/zap"
 )
 
 func photoUploadHandler(w http.ResponseWriter, r *http.Request) {
@@ -14,7 +15,7 @@ func photoUploadHandler(w http.ResponseWriter, r *http.Request) {
 			"error": "403: you must be logged in",
 		})
 		if err != nil {
-			log.WithError(err).Error("could not render json")
+			log.Errorw("could not render json", zap.Error(err))
 		}
 		return
 	}
@@ -25,17 +26,15 @@ func photoUploadHandler(w http.ResponseWriter, r *http.Request) {
 			"error": "400: you must send a file",
 		})
 		if err != nil {
-			log.WithError(err).Error("could not render json")
+			log.Errorw("could not render json", zap.Error(err))
 		}
 		return
 	} else if err != nil {
-		log.WithError(err).Error("error reading file upload")
+		log.Errorw("error reading file upload", zap.Error(err))
 		internalErrorHandler(w, r)
 		return
 	}
 	defer file.Close()
-
-	log.WithField("file_header", header).Debug("received file")
 
 	p := &graphql.Photo{
 		ContentType: header.Header.Get("Content-Type"),
@@ -44,7 +43,7 @@ func photoUploadHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = p.Upload(ctx, file)
 	if err != nil {
-		log.WithError(err).Error("could not save image")
+		log.Error("could not save image", zap.Error(err))
 		internalErrorHandler(w, r)
 		return
 	}
@@ -55,6 +54,6 @@ func photoUploadHandler(w http.ResponseWriter, r *http.Request) {
 		"file":   f.String(),
 	})
 	if err != nil {
-		log.WithError(err).Error("could not render json")
+		log.Error("could not render json", zap.Error(err))
 	}
 }

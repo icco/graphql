@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"html/template"
 	"net/http"
 	"os"
@@ -21,13 +22,14 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
 	"github.com/icco/graphql"
-	sdLogging "github.com/icco/logrus-stackdriver-formatter"
+	"github.com/icco/gutil/logging"
 	"github.com/unrolled/render"
 	"github.com/unrolled/secure"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
+	"go.uber.org/zap"
 )
 
 var (
@@ -49,39 +51,39 @@ var (
 
 	dbURL = os.Getenv("DATABASE_URL")
 
-	log = graphql.InitLogging()
+	log          = logging.Must(logging.NewLogger(graphql.AppName))
+	GCPProjectID = "icco-cloud"
 )
 
 func main() {
 	if dbURL == "" {
-		log.Fatalf("DATABASE_URL is empty!")
+		log.Fatal("DATABASE_URL is empty!")
 	}
 
-	_, err := graphql.InitDB(dbURL)
-	if err != nil {
-		log.Fatalf("Init DB: %+v", err)
+	if _, err := graphql.InitDB(dbURL); err != nil {
+		log.Fatalw("Init DB", zap.Error(err))
 	}
 
 	port := "8080"
 	if fromEnv := os.Getenv("PORT"); fromEnv != "" {
 		port = fromEnv
 	}
-	log.Printf("Starting up on http://localhost:%s", port)
+	log.Infow("Starting up", "host", fmt.Sprintf("http://localhost:%s", port))
 
 	if os.Getenv("ENABLE_STACKDRIVER") != "" {
 		labels := &stackdriver.Labels{}
-		labels.Set("app", "graphql", "The name of the current app.")
+		labels.Set("app", graphql.AppName, "The name of the current app.")
 		sd, err := stackdriver.NewExporter(stackdriver.Options{
-			ProjectID:               "icco-cloud",
+			ProjectID:               GCPProjectID,
 			MonitoredResource:       monitoredresource.Autodetect(),
 			DefaultMonitoringLabels: labels,
 			OnError: func(err error) {
-				log.WithError(err).Error("couldn't upload to stackdriver")
+				log.Errorw("couldn't upload to stackdriver", zap.Error(err))
 			},
 		})
 
 		if err != nil {
-			log.WithError(err).Fatal("failed to create the Stackdriver exporter")
+			log.Fatalw("failed to create the Stackdriver exporter", zap.Error(err))
 		}
 		defer sd.Flush()
 
@@ -97,11 +99,10 @@ func main() {
 
 	cache, err := graphql.NewCache()
 	if err != nil {
-		log.WithError(err).Fatal("could not connect to cache")
+		log.Fatalw("could not connect to cache", zap.Error(err))
 	}
 
 	gh := handler.New(graphql.NewExecutableSchema(graphql.New()))
-
 	gh.AddTransport(transport.Websocket{KeepAlivePingInterval: 10 * time.Second})
 	gh.AddTransport(transport.Options{})
 	gh.AddTransport(transport.GET{})
@@ -114,7 +115,7 @@ func main() {
 	gh.Use(extension.Introspection{})
 
 	gh.SetErrorPresenter(func(ctx context.Context, err error) *gqlerror.Error {
-		log.WithError(err).Error("graphql request error")
+		log.Errorw("graphql request error", zap.Error(err))
 		if strings.Contains(err.Error(), "forbidden") {
 			return gqlerror.Errorf("forbidden: not a valid user")
 		}
@@ -132,7 +133,7 @@ func main() {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Compress(5))
-	r.Use(sdLogging.LoggingMiddleware(log))
+	r.Use(logging.Middleware(log, graphql.AppName))
 
 	crs := cors.New(cors.Options{
 		AllowCredentials:   true,
@@ -213,7 +214,7 @@ func GqlLoggingMiddleware(ctx context.Context, next gql.ResponseHandler) *gql.Re
 		"stats":     rctx.Stats,
 	}
 
-	log.WithField("gql", subsetContext).Debug("request gql")
+	log.Debugw("request gql", "gql", subsetContext)
 
 	return next(ctx)
 }
@@ -247,7 +248,7 @@ func cronHandler(w http.ResponseWriter, r *http.Request) {
 		"cron": "ok",
 	})
 	if err != nil {
-		log.WithError(err).Error("could not render json")
+		log.Errorw("could not render json", zap.Error(err))
 	}
 }
 
@@ -257,7 +258,7 @@ func internalErrorHandler(w http.ResponseWriter, r *http.Request) {
 		"error": "500: An internal server error occurred",
 	})
 	if err != nil {
-		log.WithError(err).Error("could not render json")
+		log.Errorw("could not render json", zap.Error(err))
 	}
 }
 
@@ -266,6 +267,6 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 		"error": "404: This page could not be found",
 	})
 	if err != nil {
-		log.WithError(err).Error("could not render json")
+		log.Errorw("could not render json", zap.Error(err))
 	}
 }
