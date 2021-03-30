@@ -50,8 +50,9 @@ var (
 	})
 
 	dbURL = os.Getenv("DATABASE_URL")
+	log   = logging.Must(logging.NewLogger(graphql.AppName))
 
-	log          = logging.Must(logging.NewLogger(graphql.AppName))
+	// GCPProjectID is the project ID where we should send errors.
 	GCPProjectID = "icco-cloud"
 )
 
