@@ -21,7 +21,7 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/uuid v1.2.0
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
-	github.com/icco/gutil v0.0.0-20210403015147-9324102e0f6c
+	github.com/icco/gutil v0.0.0-20210403015724-09144c640035
 	github.com/lib/pq v1.10.0
 	github.com/mitchellh/mapstructure v1.4.1 // indirect
 	github.com/opencensus-integrations/ocsql v0.1.7

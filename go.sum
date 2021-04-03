@@ -214,8 +214,8 @@ github.com/hashicorp/golang-lru v0.5.4 h1:YDjusn29QI/Das2iO9M0BHnIbxPeyuCHsjMW+l
 github.com/hashicorp/golang-lru v0.5.4/go.mod h1:iADmTwqILo4mZ8BN3D2Q6+9jd8WM5uGBxy+E8yxSoD4=
 github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
 github.com/ianlancetaylor/demangle v0.0.0-20200824232613-28f6c0f3b639/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
-github.com/icco/gutil v0.0.0-20210403015147-9324102e0f6c h1:4wcEgPK2Ztot7wnKgViJvuM+KKXRVHHkDSzg+eGS3Ow=
-github.com/icco/gutil v0.0.0-20210403015147-9324102e0f6c/go.mod h1:WXLPJHxzGxWyYWq+dA1f5FjsjtLlD6KYmgP5bSZ9Rgw=
+github.com/icco/gutil v0.0.0-20210403015724-09144c640035 h1:Uc4Ha8F90qBv6jS3+bTWgHPCRvOgNRNt3Ep+CrGUAi0=
+github.com/icco/gutil v0.0.0-20210403015724-09144c640035/go.mod h1:WXLPJHxzGxWyYWq+dA1f5FjsjtLlD6KYmgP5bSZ9Rgw=
 github.com/icco/zapdriver v1.4.0 h1:ACpofOtnSJT9eywNOoTuEhzo7YtFUGCc4xBXYFWYMkI=
 github.com/icco/zapdriver v1.4.0/go.mod h1:M9vTLsSlL3ciV1RK6uK9O/0zAdqNNIZ3n74qdCHvAl8=
 github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af/go.mod h1:Nht3zPeWKUH0NzdCt2Blrr5ys8VGpn0CEB0cQHVjt7k=
