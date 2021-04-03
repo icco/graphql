@@ -3,7 +3,7 @@ module github.com/icco/graphql
 go 1.15
 
 require (
-	cloud.google.com/go v0.80.0 // indirect
+	cloud.google.com/go v0.81.0 // indirect
 	cloud.google.com/go/storage v1.14.0
 	contrib.go.opencensus.io/exporter/stackdriver v0.13.5
 	github.com/99designs/gqlgen v0.13.0
@@ -11,16 +11,17 @@ require (
 	github.com/GuiaBolso/darwin v0.0.0-20191218124601-fd6d2aa3d244
 	github.com/agnivade/levenshtein v1.1.0 // indirect
 	github.com/auth0/go-jwt-middleware v1.0.0
-	github.com/aws/aws-sdk-go v1.38.8 // indirect
+	github.com/aws/aws-sdk-go v1.38.12 // indirect
 	github.com/census-instrumentation/opencensus-proto v0.3.0 // indirect
 	github.com/cznic/ql v1.2.0 // indirect
 	github.com/form3tech-oss/jwt-go v3.2.2+incompatible
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/cors v1.2.0
+	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/uuid v1.2.0
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
-	github.com/icco/gutil v0.0.0-20210330123749-c2691754e306
+	github.com/icco/gutil v0.0.0-20210403015147-9324102e0f6c
 	github.com/lib/pq v1.10.0
 	github.com/mitchellh/mapstructure v1.4.1 // indirect
 	github.com/opencensus-integrations/ocsql v0.1.7
@@ -32,9 +33,8 @@ require (
 	go.opencensus.io v0.23.0
 	go.uber.org/zap v1.16.0
 	golang.org/x/mod v0.4.2 // indirect
-	golang.org/x/net v0.0.0-20210330075724-22f4162a9025 // indirect
-	golang.org/x/oauth2 v0.0.0-20210323180902-22b0adad7558 // indirect
-	golang.org/x/sys v0.0.0-20210326220804-49726bf1d181 // indirect
-	google.golang.org/api v0.43.0 // indirect
-	google.golang.org/genproto v0.0.0-20210329143202-679c6ae281ee // indirect
+	golang.org/x/net v0.0.0-20210331212208-0fccb6fa2b5c // indirect
+	golang.org/x/oauth2 v0.0.0-20210402161424-2e8d93401602 // indirect
+	golang.org/x/sys v0.0.0-20210402192133-700132347e07 // indirect
+	golang.org/x/text v0.3.6 // indirect
 )

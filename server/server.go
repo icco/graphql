@@ -134,7 +134,7 @@ func main() {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Compress(5))
-	// r.Use(logging.Middleware(log.Desugar(), graphql.AppName))
+	r.Use(logging.Middleware(log.Desugar(), graphql.AppName))
 
 	crs := cors.New(cors.Options{
 		AllowCredentials:   true,
