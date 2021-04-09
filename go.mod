@@ -10,7 +10,7 @@ require (
 	github.com/GuiaBolso/darwin v0.0.0-20191218124601-fd6d2aa3d244
 	github.com/agnivade/levenshtein v1.1.0 // indirect
 	github.com/auth0/go-jwt-middleware v1.0.0
-	github.com/aws/aws-sdk-go v1.38.15 // indirect
+	github.com/aws/aws-sdk-go v1.38.16 // indirect
 	github.com/census-instrumentation/opencensus-proto v0.3.0 // indirect
 	github.com/cznic/ql v1.2.0 // indirect
 	github.com/form3tech-oss/jwt-go v3.2.2+incompatible
