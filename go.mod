@@ -5,10 +5,9 @@ go 1.15
 require (
 	cloud.google.com/go/storage v1.14.0
 	contrib.go.opencensus.io/exporter/stackdriver v0.13.5
-	github.com/99designs/gqlgen v0.13.0
+	github.com/99designs/gqlgen v0.13.1-0.20210415065809-5ad012e3d7be
 	github.com/DATA-DOG/go-sqlmock v1.5.0 // indirect
 	github.com/GuiaBolso/darwin v0.0.0-20191218124601-fd6d2aa3d244
-	github.com/agnivade/levenshtein v1.1.0 // indirect
 	github.com/auth0/go-jwt-middleware v1.0.0
 	github.com/aws/aws-sdk-go v1.38.21 // indirect
 	github.com/census-instrumentation/opencensus-proto v0.3.0 // indirect
