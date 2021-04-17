@@ -14,6 +14,7 @@ import (
 	"contrib.go.opencensus.io/exporter/stackdriver/propagation"
 	gql "github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/handler/apollotracing"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/lru"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
@@ -112,6 +113,7 @@ func main() {
 
 	gh.SetQueryCache(lru.New(1000))
 
+	gh.Use(apollotracing.Tracer{})
 	gh.Use(extension.AutomaticPersistedQuery{Cache: cache})
 	gh.Use(extension.Introspection{})
 
@@ -136,14 +138,9 @@ func main() {
 	})
 
 	gh.AroundResponses(GqlLoggingMiddleware)
-	// TODO: Add this back once gqlgen-contrib supports it.
-	//handler.Tracer(gqlopencensus.New())
 
 	r := chi.NewRouter()
-
-	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
-	r.Use(middleware.Recoverer)
 	r.Use(middleware.Compress(5))
 	r.Use(logging.Middleware(log.Desugar(), GCPProjectID))
 
