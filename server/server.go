@@ -115,13 +115,24 @@ func main() {
 	gh.Use(extension.AutomaticPersistedQuery{Cache: cache})
 	gh.Use(extension.Introspection{})
 
-	gh.SetErrorPresenter(func(ctx context.Context, err error) *gqlerror.Error {
-		log.Errorw("graphql request error", zap.Error(err))
-		if strings.Contains(err.Error(), "forbidden") {
+	gh.SetErrorPresenter(func(ctx context.Context, e error) *gqlerror.Error {
+		err := gql.DefaultErrorPresenter(ctx, e)
+
+		log.Warnw("graphql request error", zap.Error(e))
+		if strings.Contains(e.Error(), "forbidden") {
 			return gqlerror.Errorf("forbidden: not a valid user")
 		}
 
-		return gqlerror.Errorf("error seen while processing request")
+		return err
+	})
+	gh.SetRecoverFunc(func(ctx context.Context, err interface{}) error {
+		if e, ok := err.(error); !ok {
+			log.Errorw("graphql fatal request error", "error", err)
+		} else {
+			log.Errorw("graphql fatal request error", zap.Error(e))
+		}
+
+		return fmt.Errorf("Internal server error!")
 	})
 
 	gh.AroundResponses(GqlLoggingMiddleware)
