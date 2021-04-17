@@ -18,3 +18,4 @@
 writing-be
 .env
 vendor
+dev.env
