@@ -6,8 +6,13 @@ go:
 env:
   - GO111MODULE=on
 script:
+  - go test -v -cover ./...
   - go vet ./...
-  - go build ./...
+  - go get -v -u -d golang.org/x/lint/golint
+  - go run golang.org/x/lint/golint -set_exit_status ./...
+  - go get -v -u -d github.com/fzipp/gocyclo/cmd/gocyclo
+  - go run github.com/fzipp/gocyclo/cmd/gocyclo -avg .
+  - go get github/99designs/gqlgen/cmd
   - "go run github.com/99designs/gqlgen --verbose generate && git diff --name-status --exit-code *.go **/*.go"
 notifications:
   email:
