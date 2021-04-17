@@ -189,7 +189,6 @@ func main() {
 		r.Use(APIKeyMiddleware)
 		r.Use(AuthMiddleware)
 
-		r.Get("/cron", cronHandler)
 		r.Handle("/", playground.Handler("graphql", "/graphql"))
 		r.Handle("/graphql", gh)
 
@@ -232,33 +231,6 @@ func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	Renderer.JSON(w, http.StatusOK, map[string]string{
 		"healthy": "true",
 	})
-}
-
-func cronHandler(w http.ResponseWriter, r *http.Request) {
-	go func(ctx context.Context) {
-		var posts []*graphql.Post
-		var err error
-		perPage := 10
-
-		for i := 0; err == nil || len(posts) > 0; i += perPage {
-			posts, err = graphql.Posts(ctx, perPage, i)
-			if err == nil {
-				for _, p := range posts {
-					err = p.Save(ctx)
-					if err != nil {
-						log.Errorw("error saving post", zap.Error(err))
-					}
-				}
-			}
-		}
-	}(context.Background())
-
-	err := Renderer.JSON(w, http.StatusOK, map[string]string{
-		"cron": "ok",
-	})
-	if err != nil {
-		log.Errorw("could not render json", zap.Error(err))
-	}
 }
 
 func internalErrorHandler(w http.ResponseWriter, r *http.Request) {
