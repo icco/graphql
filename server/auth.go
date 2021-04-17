@@ -153,8 +153,9 @@ func getUserFromToken(next http.Handler) http.Handler {
 			return jwt.ParseRSAPublicKeyFromPEM([]byte(cert))
 		})
 
+		// No claims, that's cool.
 		if err != nil {
-			log.Debugw("could not get claims", zap.Error(err))
+			// log.Debugw("could not get claims", zap.Error(err))
 			next.ServeHTTP(w, r)
 			return
 		}
