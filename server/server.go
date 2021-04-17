@@ -9,9 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"contrib.go.opencensus.io/exporter/stackdriver"
-	"contrib.go.opencensus.io/exporter/stackdriver/monitoredresource"
-	"contrib.go.opencensus.io/exporter/stackdriver/propagation"
 	gql "github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/apollotracing"
@@ -27,9 +24,6 @@ import (
 	"github.com/unrolled/render"
 	"github.com/unrolled/secure"
 	"github.com/vektah/gqlparser/v2/gqlerror"
-	"go.opencensus.io/plugin/ochttp"
-	"go.opencensus.io/stats/view"
-	"go.opencensus.io/trace"
 	"go.uber.org/zap"
 )
 
@@ -71,31 +65,6 @@ func main() {
 		port = fromEnv
 	}
 	log.Infow("Starting up", "host", fmt.Sprintf("http://localhost:%s", port))
-
-	if os.Getenv("ENABLE_STACKDRIVER") != "" {
-		labels := &stackdriver.Labels{}
-		labels.Set("app", graphql.AppName, "The name of the current app.")
-		sd, err := stackdriver.NewExporter(stackdriver.Options{
-			ProjectID:               GCPProjectID,
-			MonitoredResource:       monitoredresource.Autodetect(),
-			DefaultMonitoringLabels: labels,
-			OnError: func(err error) {
-				log.Errorw("couldn't upload to stackdriver", zap.Error(err))
-			},
-		})
-
-		if err != nil {
-			log.Fatalw("failed to create the Stackdriver exporter", zap.Error(err))
-		}
-		defer sd.Flush()
-
-		view.RegisterExporter(sd)
-		trace.RegisterExporter(sd)
-		trace.ApplyConfig(trace.Config{
-			DefaultSampler: trace.ProbabilitySampler(0.1),
-		})
-
-	}
 
 	isDev := os.Getenv("NAT_ENV") != "production"
 
@@ -195,18 +164,7 @@ func main() {
 		r.Post("/photo/new", photoUploadHandler)
 	})
 
-	h := &ochttp.Handler{
-		Handler:     r,
-		Propagation: &propagation.HTTPFormat{},
-	}
-	if err := view.Register([]*view.View{
-		ochttp.ServerRequestCountView,
-		ochttp.ServerResponseCountByStatusCode,
-	}...); err != nil {
-		log.Fatal("Failed to register ochttp.DefaultServerViews")
-	}
-
-	log.Fatal(http.ListenAndServe(":"+port, h))
+	log.Fatal(http.ListenAndServe(":"+port, r))
 }
 
 // GqlLoggingMiddleware is a middleware for gqlgen that logs all gql requests to debug.
