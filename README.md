@@ -58,7 +58,3 @@ We use <https://github.com/99designs/gqlgen> to generate a lot of the files. If 
 ## Documentation
 
 You can explore this api by looking at [schema.graphql]() and reading the descriptions. See <https://facebook.github.io/graphql/June2018/#sec-Descriptions> for an explanation of the description schema.
-
-
-## License
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Ficco%2Fgraphql.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Ficco%2Fgraphql?ref=badge_large)
