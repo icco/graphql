@@ -321,7 +321,7 @@ func InitDB(dataSourceName string) (*sql.DB, error) {
 	// Connect to Database
 	wrappedDriver, err := ocsql.Register(dbDriver, ocsql.WithAllTraceOptions())
 	if err != nil {
-		return nil, fmt.Errorf("Failed to register the ocsql driver: %v", err)
+		return nil, fmt.Errorf("failed to register the ocsql driver: %v", err)
 	}
 
 	db, _ = sql.Open(wrappedDriver, dataSourceName)

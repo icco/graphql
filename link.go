@@ -62,7 +62,7 @@ func GetLinkByURI(ctx context.Context, uri string) (*Link, error) {
 	err := row.Scan(&link.ID, &link.Title, &link.URI, &link.Description, &link.Created, &link.Modified, pq.Array(&link.Tags))
 	switch {
 	case err == sql.ErrNoRows:
-		return nil, fmt.Errorf("No link %s", uri)
+		return nil, fmt.Errorf("no link %q", uri)
 	case err != nil:
 		return nil, fmt.Errorf("error with get: %w", err)
 	default:
@@ -77,7 +77,7 @@ func GetLinkByID(ctx context.Context, id string) (*Link, error) {
 	err := row.Scan(&link.ID, &link.Title, &link.URI, &link.Description, &link.Created, &link.Modified, pq.Array(&link.Tags))
 	switch {
 	case err == sql.ErrNoRows:
-		return nil, fmt.Errorf("No link %s", id)
+		return nil, fmt.Errorf("no link %q", id)
 	case err != nil:
 		return nil, fmt.Errorf("error with get: %w", err)
 	default:
