@@ -12,7 +12,6 @@ The next iteration in Nat's content management system. Previous versions include
  * [pseudoweb.net](http://github.com/icco/pseudoweb)
  * [natnatnat](http://github.com/icco/natnatnat)
 
-
 ## Install
 
 This repo requires Go 1.11 to be installed.
@@ -53,8 +52,10 @@ And then set that as the value of the `X-API-AUTH` on all of your requests to gr
 
 This site is hosted at <https://graphql.natwelch.com>. It runs out of a docker container on Google Kubernetes. It has a postgres backend. This started as a rewrite of a previous project, natnatnat. Its [readme](https://github.com/icco/natnatnat/blob/master/README.md) walks through a lot of the previous inspiration.
 
-We use <https://github.com/99designs/gqlgen> to generate a lot of the files. If you modify [schema.graphql](), please run `go run ./scripts/gqlgen.go -v` to update things.
+We use <https://github.com/99designs/gqlgen> to generate a lot of the files.
 
 ## Documentation
 
-You can explore this api by looking at [schema.graphql]() and reading the descriptions. See <https://facebook.github.io/graphql/June2018/#sec-Descriptions> for an explanation of the description schema.
+ - For schema docs, https://graphql.natwelch.com.
+ - For `*.graphql` files. See <https://facebook.github.io/graphql/June2018/#sec-Descriptions> for an explanation of the description schema.
+ - For Go, see https://godoc.org/github.com/icco/graphql
