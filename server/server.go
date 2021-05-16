@@ -103,7 +103,7 @@ func main() {
 			log.Errorw("graphql fatal request error", zap.Error(e))
 		}
 
-		return fmt.Errorf("Internal server error!")
+		return fmt.Errorf("internal server error")
 	})
 
 	gh.AroundResponses(GqlLoggingMiddleware)

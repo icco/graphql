@@ -128,7 +128,6 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			w.Header().Set("X-Content-Type-Options", "nosniff")
 			w.WriteHeader(http.StatusBadRequest)
 			fmt.Fprintf(w, `{"error": "%s"}`, err)
-			return
 		},
 	})
 
