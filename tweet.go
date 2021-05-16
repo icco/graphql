@@ -92,7 +92,7 @@ func GetTweet(ctx context.Context, id string) (*Tweet, error) {
 	err := row.Scan(&tweet.ID, &tweet.Text, pq.Array(&tweet.Hashtags), pq.Array(&tweet.Symbols), pq.Array(&tweet.UserMentions), pq.Array(&uris), &tweet.ScreenName, &tweet.FavoriteCount, &tweet.RetweetCount, &tweet.Posted)
 	switch {
 	case err == sql.ErrNoRows:
-		return nil, fmt.Errorf("No tweet %s", id)
+		return nil, fmt.Errorf("no tweet %s", id)
 	case err != nil:
 		return nil, fmt.Errorf("error with get: %w", err)
 	default:

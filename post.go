@@ -47,7 +47,7 @@ func GetPostString(ctx context.Context, id string) (*Post, error) {
 	}
 
 	if !match {
-		return nil, fmt.Errorf("No post with id %s", id)
+		return nil, fmt.Errorf("no post with id %s", id)
 	}
 
 	i, err := strconv.ParseInt(id, 10, 64)
@@ -349,9 +349,7 @@ func (p *Post) Related(ctx context.Context, input *Limit) ([]*Post, error) {
 			return nil, err
 		}
 
-		for _, v := range addPosts {
-			posts = append(posts, v)
-		}
+		posts = append(posts, addPosts...)
 	}
 
 	return posts, nil
