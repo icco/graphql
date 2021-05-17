@@ -15,7 +15,7 @@ require (
 	github.com/google/uuid v1.2.0
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/icco/gutil v0.0.0-20210424022412-a2a8a04ef1f6
-	github.com/lib/pq v1.10.1
+	github.com/lib/pq v1.10.2
 	github.com/mitchellh/mapstructure v1.4.1 // indirect
 	github.com/opencensus-integrations/ocsql v0.1.7
 	github.com/paulmach/orb v0.2.1
