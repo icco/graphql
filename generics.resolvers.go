@@ -172,29 +172,30 @@ func (r *queryResolver) TweetsByScreenName(ctx context.Context, screenName strin
 }
 
 func (r *queryResolver) HomeTimelineURLs(ctx context.Context, input *Limit) ([]*TwitterURL, error) {
-	urls := []*TwitterURL{}
 	limit, offset := ParseLimit(input, 100, 0)
-
 	url := fmt.Sprintf("https://cacophony.natwelch.com/?count=%d&offset=%d", limit, offset)
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
-		return urls, err
+		return nil, err
 	}
 
-	req = req.WithContext(ctx)
 	client := http.DefaultClient
 	res, err := client.Do(req)
 	if err != nil {
-		return urls, err
+		return nil, fmt.Errorf("could not get from cacophony: %w", err)
 	}
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return urls, err
+		return nil, fmt.Errorf("could not read cacophony body: %w", err)
 	}
 
-	err = json.Unmarshal(body, &urls)
-	return urls, err
+	var urls []*TwitterURL
+	if err := json.Unmarshal(body, &urls); err != nil {
+		return nil, err
+	}
+
+	return urls, nil
 }
 
 func (r *queryResolver) Time(ctx context.Context) (*time.Time, error) {
