@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/icco/graphql/time/hexdate"
-	"github.com/icco/graphql/time/neralie"
+	"github.com/icco/gutil/time/hexdate"
+	"github.com/icco/gutil/time/neralie"
 )
 
 // Page is a wiki page.
