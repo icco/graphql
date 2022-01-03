@@ -147,12 +147,22 @@ func GetTweetsByScreenName(ctx context.Context, screenName string, limit, offset
 	}
 	defer rows.Close()
 
-	tweets := make([]*Tweet, 0)
+	var tweets []*Tweet
 	for rows.Next() {
-		uris := []string{}
+		var uris []string
 		tweet := new(Tweet)
-		err := rows.Scan(&tweet.ID, &tweet.Text, pq.Array(&tweet.Hashtags), pq.Array(&tweet.Symbols), pq.Array(&tweet.UserMentions), pq.Array(&uris), &tweet.ScreenName, &tweet.FavoriteCount, &tweet.RetweetCount, &tweet.Posted)
-		if err != nil {
+		if err := rows.Scan(
+			&tweet.ID,
+			&tweet.Text,
+			pq.Array(&tweet.Hashtags),
+			pq.Array(&tweet.Symbols),
+			pq.Array(&tweet.UserMentions),
+			pq.Array(&uris),
+			&tweet.ScreenName,
+			&tweet.FavoriteCount,
+			&tweet.RetweetCount,
+			&tweet.Posted,
+		); err != nil {
 			return nil, err
 		}
 
