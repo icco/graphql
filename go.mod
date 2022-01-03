@@ -11,7 +11,7 @@ require (
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/go-chi/cors v1.2.0
 	github.com/google/uuid v1.3.0
-	github.com/icco/gutil v0.0.0-20211212224553-1d468206bb48
+	github.com/icco/gutil v0.0.0-20220103033153-df48b5793850
 	github.com/lib/pq v1.10.4
 	github.com/opencensus-integrations/ocsql v0.1.7
 	github.com/paulmach/orb v0.4.0
