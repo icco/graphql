@@ -55,7 +55,7 @@ type Photo implements Linkable {
 input NewLog {
   code: String!
   description: String
-  location: NewGeo
+  location: InputGeo
   project: String!
   duration: String
 }
@@ -71,6 +71,10 @@ input InputMeta {
   record: String!
 }
 
+input InputGeo {
+  lat: Float!
+  long: Float!
+}
 
 extend type Query {
   page(slug: ID!): Page @loggedIn
