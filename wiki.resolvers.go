@@ -5,7 +5,12 @@ package graphql
 
 import (
 	"context"
+	"fmt"
 )
+
+func (r *mutationResolver) InsertLog(ctx context.Context, input NewLog) (*Log, error) {
+	panic(fmt.Errorf("not implemented"))
+}
 
 func (r *mutationResolver) UpsertPage(ctx context.Context, input EditPage) (*Page, error) {
 	u := GetUserFromContext(ctx)
@@ -37,6 +42,14 @@ func (r *queryResolver) Pages(ctx context.Context, input *Limit) ([]*Page, error
 	limit, offset := ParseLimit(input, 25, 0)
 
 	return GetPages(ctx, u, limit, offset)
+}
+
+func (r *queryResolver) Logs(ctx context.Context, input *Limit) ([]*Log, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) Log(ctx context.Context, id string) (*Log, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *queryResolver) Photos(ctx context.Context, input *Limit) ([]*Photo, error) {

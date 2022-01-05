@@ -42,6 +42,11 @@ type EditPost struct {
 	Draft    *bool      `json:"draft"`
 }
 
+type InputGeo struct {
+	Lat  float64 `json:"lat"`
+	Long float64 `json:"long"`
+}
+
 type Limit struct {
 	Limit  *int `json:"limit"`
 	Offset *int `json:"offset"`
@@ -53,6 +58,14 @@ type NewLink struct {
 	Description string     `json:"description"`
 	Tags        []string   `json:"tags"`
 	Created     *time.Time `json:"created"`
+}
+
+type NewLog struct {
+	Code        string    `json:"code"`
+	Description *string   `json:"description"`
+	Location    *InputGeo `json:"location"`
+	Project     string    `json:"project"`
+	Duration    *string   `json:"duration"`
 }
 
 type NewStat struct {
