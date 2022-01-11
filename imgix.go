@@ -12,6 +12,10 @@ import (
 // GenerateSocialImage creates a static image URL for a post.
 func GenerateSocialImage(ctx context.Context, title string, when time.Time) (*URI, error) {
 	ixToken := os.Getenv("IX_TOKEN")
+	if ixToken == "" {
+		return nil, fmt.Errorf("IX_TOKEN is empty")
+	}
+
 	ub := ix.NewURLBuilder("icco.imgix.net", ix.WithToken(ixToken))
 	urlString := ub.CreateURL("/canvas.png", []ix.IxParam{
 		ix.Param("bg", "eeeceb"),
@@ -36,5 +40,5 @@ func GenerateSocialImage(ctx context.Context, title string, when time.Time) (*UR
 		ix.Param("mark-w", "200"),
 	}...)
 
-	return NewURI(urlString)
+	return NewURI(urlString), nil
 }
