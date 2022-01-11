@@ -9,7 +9,7 @@ import (
 func TestGenerateSocialImage(t *testing.T) {
 	ctx := context.TODO()
 
-	u, err := GenerateSocialImage(ctx, "Test", time.Now())
+	u, err := GenerateSocialImage(ctx, "This is a Test Post", time.Now())
 	if err != nil {
 		t.Error(err)
 	}
