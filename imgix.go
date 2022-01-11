@@ -1,9 +1,12 @@
 package graphql
 
 import (
-	"github.com/imgix/imgix-go/v2"
+	"os"
+
+	ix "github.com/imgix/imgix-go/v2"
 )
 
 func GenerateSocialImage() {
-	ub := ix.NewURLBuilder("test.imgix.net")
+	ixToken := os.Getenv("IX_TOKEN")
+	ix.NewURLBuilder("demo.imgix.net", ix.WithToken(ixToken), ix.WithLibParam(false))
 }
