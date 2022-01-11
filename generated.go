@@ -37,7 +37,6 @@ type Config struct {
 
 type ResolverRoot interface {
 	Mutation() MutationResolver
-	Post() PostResolver
 	Query() QueryResolver
 }
 
@@ -214,9 +213,6 @@ type MutationResolver interface {
 	CreatePost(ctx context.Context, input EditPost) (*Post, error)
 	EditPost(ctx context.Context, input EditPost) (*Post, error)
 	UpsertPage(ctx context.Context, input EditPage) (*Page, error)
-}
-type PostResolver interface {
-	SocialImage(ctx context.Context, obj *Post) (*URI, error)
 }
 type QueryResolver interface {
 	Books(ctx context.Context, input *Limit) ([]*Book, error)
@@ -4153,13 +4149,13 @@ func (ec *executionContext) _Post_social_image(ctx context.Context, field graphq
 		Field:      field,
 		Args:       nil,
 		IsMethod:   true,
-		IsResolver: true,
+		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Post().SocialImage(rctx, obj)
+		return obj.SocialImage(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
