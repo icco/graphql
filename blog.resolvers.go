@@ -73,6 +73,10 @@ func (r *mutationResolver) EditPost(ctx context.Context, input EditPost) (*Post,
 	return GetPostString(ctx, p.ID)
 }
 
+func (r *postResolver) SocialImage(ctx context.Context, obj *Post) (*URI, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 func (r *queryResolver) Drafts(ctx context.Context, input *Limit) ([]*Post, error) {
 	limit, offset := ParseLimit(input, 10, 0)
 
@@ -132,3 +136,8 @@ func (r *queryResolver) PostsByTag(ctx context.Context, id string) ([]*Post, err
 func (r *queryResolver) Tags(ctx context.Context) ([]string, error) {
 	return AllTags(ctx)
 }
+
+// Post returns PostResolver implementation.
+func (r *Resolver) Post() PostResolver { return &postResolver{r} }
+
+type postResolver struct{ *Resolver }

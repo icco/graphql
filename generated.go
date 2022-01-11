@@ -37,6 +37,7 @@ type Config struct {
 
 type ResolverRoot interface {
 	Mutation() MutationResolver
+	Post() PostResolver
 	Query() QueryResolver
 }
 
@@ -118,22 +119,23 @@ type ComplexityRoot struct {
 	}
 
 	Post struct {
-		Comments func(childComplexity int, input *Limit) int
-		Content  func(childComplexity int) int
-		Created  func(childComplexity int) int
-		Datetime func(childComplexity int) int
-		Draft    func(childComplexity int) int
-		ID       func(childComplexity int) int
-		Links    func(childComplexity int) int
-		Modified func(childComplexity int) int
-		Next     func(childComplexity int) int
-		Prev     func(childComplexity int) int
-		Readtime func(childComplexity int) int
-		Related  func(childComplexity int, input *Limit) int
-		Summary  func(childComplexity int) int
-		Tags     func(childComplexity int) int
-		Title    func(childComplexity int) int
-		URI      func(childComplexity int) int
+		Comments    func(childComplexity int, input *Limit) int
+		Content     func(childComplexity int) int
+		Created     func(childComplexity int) int
+		Datetime    func(childComplexity int) int
+		Draft       func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Links       func(childComplexity int) int
+		Modified    func(childComplexity int) int
+		Next        func(childComplexity int) int
+		Prev        func(childComplexity int) int
+		Readtime    func(childComplexity int) int
+		Related     func(childComplexity int, input *Limit) int
+		SocialImage func(childComplexity int) int
+		Summary     func(childComplexity int) int
+		Tags        func(childComplexity int) int
+		Title       func(childComplexity int) int
+		URI         func(childComplexity int) int
 	}
 
 	Query struct {
@@ -212,6 +214,9 @@ type MutationResolver interface {
 	CreatePost(ctx context.Context, input EditPost) (*Post, error)
 	EditPost(ctx context.Context, input EditPost) (*Post, error)
 	UpsertPage(ctx context.Context, input EditPage) (*Page, error)
+}
+type PostResolver interface {
+	SocialImage(ctx context.Context, obj *Post) (*URI, error)
 }
 type QueryResolver interface {
 	Books(ctx context.Context, input *Limit) ([]*Book, error)
@@ -697,6 +702,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Post.Related(childComplexity, args["input"].(*Limit)), true
+
+	case "Post.social_image":
+		if e.complexity.Post.SocialImage == nil {
+			break
+		}
+
+		return e.complexity.Post.SocialImage(childComplexity), true
 
 	case "Post.summary":
 		if e.complexity.Post.Summary == nil {
@@ -1276,6 +1288,7 @@ type Post implements Linkable {
   content: String!
   summary: String!
   readtime: Int!
+  social_image: URI!
 
   "datetime is the published time of an article."
   datetime: Time!
@@ -1373,7 +1386,7 @@ interface Searchable {
 }
 
 interface Linkable {
-  uri: URI
+  uri: URI!
 }
 
 """
@@ -4126,6 +4139,41 @@ func (ec *executionContext) _Post_readtime(ctx context.Context, field graphql.Co
 	res := resTmp.(int32)
 	fc.Result = res
 	return ec.marshalNInt2int32(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Post_social_image(ctx context.Context, field graphql.CollectedField, obj *Post) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Post",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Post().SocialImage(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*URI)
+	fc.Result = res
+	return ec.marshalNURI2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Post_datetime(ctx context.Context, field graphql.CollectedField, obj *Post) (ret graphql.Marshaler) {
@@ -8663,6 +8711,20 @@ func (ec *executionContext) _Post(ctx context.Context, sel ast.SelectionSet, obj
 					}
 				}()
 				res = ec._Post_readtime(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "social_image":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Post_social_image(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

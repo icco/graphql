@@ -17,8 +17,7 @@ interface Searchable {
 }
 
 interface Linkable {
-  uri: URI
-  social_image: URI
+  uri: URI!
 }
 
 """

@@ -228,6 +228,10 @@ func (p *Post) IntID() int64 {
 	return i
 }
 
+func (p *Post) SocialImage(ctx context.Context) (*URI, error) {
+	return nil, fmt.Errorf("not implemented")
+}
+
 // Summary returns the first sentence of a post.
 func (p *Post) Summary() string {
 	return SummarizeText(p.Content)
