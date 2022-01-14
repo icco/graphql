@@ -21,6 +21,7 @@ import (
 	"github.com/go-chi/cors"
 	"github.com/icco/graphql"
 	"github.com/icco/gutil/logging"
+	"github.com/icco/gutil/otel"
 	"github.com/unrolled/render"
 	"github.com/unrolled/secure"
 	"github.com/vektah/gqlparser/v2/gqlerror"
@@ -52,6 +53,11 @@ var (
 )
 
 func main() {
+	ctx := context.Background()
+	if err := otel.Init(ctx, log, GCPProjectID, graphql.Service); err != nil {
+		log.Errorw("could not init opentelemetry", zap.Error(err))
+	}
+
 	if dbURL == "" {
 		log.Fatal("DATABASE_URL is empty!")
 	}
@@ -109,6 +115,7 @@ func main() {
 	gh.AroundResponses(GqlLoggingMiddleware)
 
 	r := chi.NewRouter()
+	r.Use(otel.Middleware)
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Compress(5))
 	r.Use(logging.Middleware(log.Desugar(), GCPProjectID))
