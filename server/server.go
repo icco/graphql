@@ -54,7 +54,7 @@ var (
 
 func main() {
 	ctx := context.Background()
-	if err := otel.Init(ctx, log, GCPProjectID, graphql.Service); err != nil {
+	if err := otel.Init(ctx, log, GCPProjectID, graphql.AppName); err != nil {
 		log.Errorw("could not init opentelemetry", zap.Error(err))
 	}
 
