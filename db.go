@@ -3,10 +3,9 @@ package graphql
 import (
 	"context"
 	"database/sql"
-	"fmt"
 
 	"github.com/GuiaBolso/darwin"
-	"github.com/opencensus-integrations/ocsql"
+	"github.com/icco/gutil/otel"
 
 	// Needed to talk to postgres
 	_ "github.com/lib/pq"
