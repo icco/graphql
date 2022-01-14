@@ -74,6 +74,8 @@ github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v1.0.1
 github.com/GuiaBolso/darwin v0.0.0-20191218124601-fd6d2aa3d244 h1:dqzm54OhCqY8RinR/cx+Ppb0y56Ds5I3wwWhx4XybDg=
 github.com/GuiaBolso/darwin v0.0.0-20191218124601-fd6d2aa3d244/go.mod h1:3sqgkckuISJ5rs1EpOp6vCvwOUKe/z9vPmyuIlq8Q/A=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
+github.com/XSAM/otelsql v0.10.0 h1:y8o7q4NaZEV0dBiUC7TuNTHNKyDaX3Z4anntNu7dfYw=
+github.com/XSAM/otelsql v0.10.0/go.mod h1:7n9dZASOnVJncMmBPQjL5OdjQosb5gryCgsgNISnJVo=
 github.com/agnivade/levenshtein v1.0.1/go.mod h1:CURSv5d9Uaml+FovSIICkLbAUZ9S4RqaHDIsdSBg7lM=
 github.com/agnivade/levenshtein v1.1.0/go.mod h1:veldBMzWxcCG2ZvUTKD2kJNRdCk5hVbJomOvKkmgYbo=
 github.com/agnivade/levenshtein v1.1.1 h1:QY8M92nrzkmr798gCo3kmMyqXFzdQVpxLlGPRBij0P8=
@@ -264,8 +266,8 @@ github.com/hashicorp/golang-lru v0.5.4 h1:YDjusn29QI/Das2iO9M0BHnIbxPeyuCHsjMW+l
 github.com/hashicorp/golang-lru v0.5.4/go.mod h1:iADmTwqILo4mZ8BN3D2Q6+9jd8WM5uGBxy+E8yxSoD4=
 github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
 github.com/ianlancetaylor/demangle v0.0.0-20200824232613-28f6c0f3b639/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
-github.com/icco/gutil v0.0.0-20220114023342-a7824029aba7 h1:lPrT8WAxSZ1D17RyFC/v5iChFBtZPfmqSmlKq5Z3JCE=
-github.com/icco/gutil v0.0.0-20220114023342-a7824029aba7/go.mod h1:odjMIY6NEVYQImGSouWSkU29aefwyvG/4gLata/wdNs=
+github.com/icco/gutil v0.0.0-20220114032627-9cf9b0686f51 h1:0RTFJTI30USJQpkcnIl2wgaepBjWValT97uSooSfC64=
+github.com/icco/gutil v0.0.0-20220114032627-9cf9b0686f51/go.mod h1:ePC2MbKMN+d4MRj4NKDqEtdqaTMApJJShxYQRgoUk6I=
 github.com/icco/zapdriver v1.4.0 h1:ACpofOtnSJT9eywNOoTuEhzo7YtFUGCc4xBXYFWYMkI=
 github.com/icco/zapdriver v1.4.0/go.mod h1:M9vTLsSlL3ciV1RK6uK9O/0zAdqNNIZ3n74qdCHvAl8=
 github.com/imgix/imgix-go/v2 v2.0.3 h1:Y4JIVkLyc2k1N92wile0u3Tx/wQpPsHmWnSYtegteHY=

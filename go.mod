@@ -11,7 +11,7 @@ require (
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/go-chi/cors v1.2.0
 	github.com/google/uuid v1.3.0
-	github.com/icco/gutil v0.0.0-20220114023342-a7824029aba7
+	github.com/icco/gutil v0.0.0-20220114032627-9cf9b0686f51
 	github.com/imgix/imgix-go/v2 v2.0.3
 	github.com/lib/pq v1.10.4
 	github.com/paulmach/orb v0.4.0
@@ -31,6 +31,7 @@ require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v1.0.0-RC1.0.20220111155622-771af0772772 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v1.0.1-0.20220111155622-771af0772772 // indirect
+	github.com/XSAM/otelsql v0.10.0 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/cznic/ql v1.2.0 // indirect
 	github.com/felixge/httpsnoop v1.0.2 // indirect
