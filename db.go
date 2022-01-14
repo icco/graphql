@@ -319,10 +319,11 @@ func InitDB(dataSourceName string) (*sql.DB, error) {
 		return nil, err
 	}
 
-	db, err = sql.Open(driverName, dataSourceName)
+	database, err := sql.Open(driverName, dataSourceName)
 	if err != nil {
 		return nil, err
 	}
+	db = database
 
 	if err := db.PingContext(context.Background()); err != nil {
 		return nil, err
