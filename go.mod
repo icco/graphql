@@ -11,7 +11,7 @@ require (
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/go-chi/cors v1.2.0
 	github.com/google/uuid v1.3.0
-	github.com/icco/gutil v0.0.0-20220115012634-f4c905407630
+	github.com/icco/gutil v0.0.0-20220115163816-b7b82159b0b6
 	github.com/imgix/imgix-go/v2 v2.0.3
 	github.com/lib/pq v1.10.4
 	github.com/paulmach/orb v0.4.0
