@@ -159,8 +159,6 @@ github.com/go-chi/cors v1.2.0/go.mod h1:sSbTewc+6wYHBBCW7ytsFSn836hqM7JxpglAy2Vz
 github.com/go-gl/glfw v0.0.0-20190409004039-e6da0acd62b1/go.mod h1:vR7hzQXu2zJy9AVAgeJqvqgH9Q5CA+iKCZ2gyEVpxRU=
 github.com/go-gl/glfw/v3.3/glfw v0.0.0-20191125211704-12ad95a8df72/go.mod h1:tQ2UAYgL5IevRw8kRxooKSPJfGvJ9fJQFa0TUsXzTg8=
 github.com/go-gl/glfw/v3.3/glfw v0.0.0-20200222043503-6f7a984d4dc4/go.mod h1:tQ2UAYgL5IevRw8kRxooKSPJfGvJ9fJQFa0TUsXzTg8=
-github.com/go-http-utils/fresh v0.0.0-20161124030543-7231e26a4b27/go.mod h1:AYvN8omj7nKLmbcXS2dyABYU6JB1Lz1bHmkkq1kf4I4=
-github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a/go.mod h1:I79BieaU4fxrw4LMXby6q5OS9XnoR9UIKLOzDFjUmuw=
 github.com/go-logr/logr v1.2.0/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
 github.com/go-logr/logr v1.2.1/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
 github.com/go-logr/logr v1.2.2 h1:ahHml/yUpnlb96Rp8HCvtYVPY8ZYpxq3g7UYchIYwbs=
@@ -265,8 +263,6 @@ github.com/hashicorp/golang-lru v0.5.4 h1:YDjusn29QI/Das2iO9M0BHnIbxPeyuCHsjMW+l
 github.com/hashicorp/golang-lru v0.5.4/go.mod h1:iADmTwqILo4mZ8BN3D2Q6+9jd8WM5uGBxy+E8yxSoD4=
 github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
 github.com/ianlancetaylor/demangle v0.0.0-20200824232613-28f6c0f3b639/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
-github.com/icco/gutil v0.0.0-20220115012634-f4c905407630 h1:a5O6H6+/gsdLvGFug8qEEn9rDsdqOleie/BIoT0WDHA=
-github.com/icco/gutil v0.0.0-20220115012634-f4c905407630/go.mod h1:UiXotcDkvn8rsWcm0RuvAGdpJrKBNhM11dQoMBoJmmk=
 github.com/icco/gutil v0.0.0-20220115163816-b7b82159b0b6 h1:90PoKzDTjCyV8Xpqq+nkWvnw9qrra61BcMCS/hbfXx4=
 github.com/icco/gutil v0.0.0-20220115163816-b7b82159b0b6/go.mod h1:UiXotcDkvn8rsWcm0RuvAGdpJrKBNhM11dQoMBoJmmk=
 github.com/icco/zapdriver v1.4.0 h1:ACpofOtnSJT9eywNOoTuEhzo7YtFUGCc4xBXYFWYMkI=
