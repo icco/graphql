@@ -28,10 +28,12 @@ require (
 	cloud.google.com/go/iam v0.1.1 // indirect
 	cloud.google.com/go/monitoring v1.2.0 // indirect
 	cloud.google.com/go/trace v1.0.0 // indirect
+	github.com/DATA-DOG/go-sqlmock v1.5.0 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.26.0 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v1.3.0 // indirect
 	github.com/XSAM/otelsql v0.10.0 // indirect
 	github.com/agnivade/levenshtein v1.1.0 // indirect
+	github.com/cznic/ql v1.2.0 // indirect
 	github.com/felixge/httpsnoop v1.0.2 // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/go-logr/logr v1.2.2 // indirect
