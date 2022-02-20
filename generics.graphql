@@ -17,7 +17,7 @@ interface Searchable {
 }
 
 interface Linkable {
-  uri: URI
+  uri: URI!
 }
 
 """

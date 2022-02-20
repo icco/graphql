@@ -3,10 +3,9 @@ package graphql
 import (
 	"context"
 	"database/sql"
-	"fmt"
 
 	"github.com/GuiaBolso/darwin"
-	"github.com/opencensus-integrations/ocsql"
+	"github.com/icco/gutil/otel"
 
 	// Needed to talk to postgres
 	_ "github.com/lib/pq"
@@ -14,7 +13,6 @@ import (
 
 var (
 	db         *sql.DB
-	dbDriver   = "postgres"
 	migrations = []darwin.Migration{
 		{
 			Version:     1,
@@ -316,26 +314,27 @@ var (
 
 // InitDB creates a package global db connection from a database string.
 func InitDB(dataSourceName string) (*sql.DB, error) {
-	var err error
-
-	// Connect to Database
-	wrappedDriver, err := ocsql.Register(dbDriver, ocsql.WithAllTraceOptions())
+	driverName, err := otel.InitPostgres()
 	if err != nil {
-		return nil, fmt.Errorf("failed to register the ocsql driver: %v", err)
+		return nil, err
 	}
 
-	db, _ = sql.Open(wrappedDriver, dataSourceName)
-	if err = db.PingContext(context.Background()); err != nil {
+	database, err := sql.Open(driverName, dataSourceName)
+	if err != nil {
+		return nil, err
+	}
+	db = database
+
+	if err := db.PingContext(context.Background()); err != nil {
 		return nil, err
 	}
 
 	// Migrate
 	driver := darwin.NewGenericDriver(db, darwin.PostgresDialect{})
 	d := darwin.New(driver, migrations, nil)
-	err = d.Migrate()
-	if err != nil {
+	if err := d.Migrate(); err != nil {
 		return nil, err
 	}
 
-	return db, err
+	return db, nil
 }

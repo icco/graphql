@@ -22,6 +22,7 @@ type Post implements Linkable {
   content: String!
   summary: String!
   readtime: Int!
+  social_image: URI!
 
   "datetime is the published time of an article."
   datetime: Time!
