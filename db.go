@@ -309,6 +309,23 @@ var (
       ALTER TABLE pages ALTER COLUMN meta SET DEFAULT '{}'::jsonb;
       `,
 		},
+		{
+			Version:     28,
+			Description: "New logs table",
+			Script: `
+      CREATE TABLE logs(
+        id text PRIMARY KEY NOT NULL,
+        description TEXT,
+        project TEXT,
+        sector TEXT,
+        user_id TEXT,
+        started TIMESTAMP WITH TIME ZONE,
+        stopped TIMESTAMP WITH TIME ZONE,
+        created_at TIMESTAMP WITH TIME ZONE,
+        modified_at TIMESTAMP WITH TIME ZONE
+      );
+      `,
+		},
 	}
 )
 
