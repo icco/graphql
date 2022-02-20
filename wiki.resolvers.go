@@ -8,10 +8,6 @@ import (
 	"fmt"
 )
 
-func (r *logResolver) Sector(ctx context.Context, obj *Log) (WorkSector, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-
 func (r *mutationResolver) InsertLog(ctx context.Context, input NewLog) (*Log, error) {
 	l := &Log{
 		Project: input.Project,
