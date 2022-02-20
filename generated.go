@@ -36,6 +36,7 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	Log() LogResolver
 	Mutation() MutationResolver
 	Query() QueryResolver
 }
@@ -79,13 +80,15 @@ type ComplexityRoot struct {
 	}
 
 	Log struct {
-		Code        func(childComplexity int) int
-		Datetime    func(childComplexity int) int
+		Created     func(childComplexity int) int
 		Description func(childComplexity int) int
 		Duration    func(childComplexity int) int
 		ID          func(childComplexity int) int
-		Location    func(childComplexity int) int
+		Modified    func(childComplexity int) int
 		Project     func(childComplexity int) int
+		Sector      func(childComplexity int) int
+		Started     func(childComplexity int) int
+		Stopped     func(childComplexity int) int
 		URI         func(childComplexity int) int
 		User        func(childComplexity int) int
 	}
@@ -219,6 +222,9 @@ type ComplexityRoot struct {
 	}
 }
 
+type LogResolver interface {
+	Sector(ctx context.Context, obj *Log) (WorkSector, error)
+}
 type MutationResolver interface {
 	UpsertBook(ctx context.Context, input EditBook) (*Book, error)
 	UpsertLink(ctx context.Context, input NewLink) (*Link, error)
@@ -415,19 +421,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Link.URI(childComplexity), true
 
-	case "Log.code":
-		if e.complexity.Log.Code == nil {
+	case "Log.created":
+		if e.complexity.Log.Created == nil {
 			break
 		}
 
-		return e.complexity.Log.Code(childComplexity), true
-
-	case "Log.datetime":
-		if e.complexity.Log.Datetime == nil {
-			break
-		}
-
-		return e.complexity.Log.Datetime(childComplexity), true
+		return e.complexity.Log.Created(childComplexity), true
 
 	case "Log.description":
 		if e.complexity.Log.Description == nil {
@@ -450,12 +449,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Log.ID(childComplexity), true
 
-	case "Log.location":
-		if e.complexity.Log.Location == nil {
+	case "Log.modified":
+		if e.complexity.Log.Modified == nil {
 			break
 		}
 
-		return e.complexity.Log.Location(childComplexity), true
+		return e.complexity.Log.Modified(childComplexity), true
 
 	case "Log.project":
 		if e.complexity.Log.Project == nil {
@@ -463,6 +462,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Log.Project(childComplexity), true
+
+	case "Log.sector":
+		if e.complexity.Log.Sector == nil {
+			break
+		}
+
+		return e.complexity.Log.Sector(childComplexity), true
+
+	case "Log.started":
+		if e.complexity.Log.Started == nil {
+			break
+		}
+
+		return e.complexity.Log.Started(childComplexity), true
+
+	case "Log.stopped":
+		if e.complexity.Log.Stopped == nil {
+			break
+		}
+
+		return e.complexity.Log.Stopped(childComplexity), true
 
 	case "Log.uri":
 		if e.complexity.Log.URI == nil {
@@ -1672,14 +1692,16 @@ A Log is a journal entry by an individual.
 """
 type Log implements Linkable {
   id: ID!
-  code: String!
-  datetime: Time!
   description: String!
-  location: Geo
   project: String!
   user: User!
   duration: Duration
   uri: URI!
+  sector: WorkSector!
+  started: Time!
+  stopped: Time!
+  created: Time!
+  modified: Time!
 }
 
 """
@@ -1721,12 +1743,19 @@ type Photo implements Linkable {
   uri: URI!
 }
 
+enum WorkSector {
+  CODE
+  WRITING
+  AUDIO
+  RESEARCH
+}
+
 input NewLog {
-  code: String!
+  sector: WorkSector!
   description: String
-  location: InputGeo
   project: String!
-  duration: String
+  started: Time!
+  stopped: Time!
 }
 
 input EditPage {
@@ -3117,76 +3146,6 @@ func (ec *executionContext) _Log_id(ctx context.Context, field graphql.Collected
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Log_code(ctx context.Context, field graphql.CollectedField, obj *Log) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Log",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Code, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Log_datetime(ctx context.Context, field graphql.CollectedField, obj *Log) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Log",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Datetime, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(time.Time)
-	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Log_description(ctx context.Context, field graphql.CollectedField, obj *Log) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -3220,38 +3179,6 @@ func (ec *executionContext) _Log_description(ctx context.Context, field graphql.
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Log_location(ctx context.Context, field graphql.CollectedField, obj *Log) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Log",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Location, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*Geo)
-	fc.Result = res
-	return ec.marshalOGeo2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐGeo(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Log_project(ctx context.Context, field graphql.CollectedField, obj *Log) (ret graphql.Marshaler) {
@@ -3335,14 +3262,14 @@ func (ec *executionContext) _Log_duration(ctx context.Context, field graphql.Col
 		Object:     "Log",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
+		IsMethod:   true,
 		IsResolver: false,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Duration, nil
+		return obj.Duration()
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3389,6 +3316,181 @@ func (ec *executionContext) _Log_uri(ctx context.Context, field graphql.Collecte
 	res := resTmp.(*URI)
 	fc.Result = res
 	return ec.marshalNURI2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐURI(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Log_sector(ctx context.Context, field graphql.CollectedField, obj *Log) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Log",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Log().Sector(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(WorkSector)
+	fc.Result = res
+	return ec.marshalNWorkSector2githubᚗcomᚋiccoᚋgraphqlᚐWorkSector(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Log_started(ctx context.Context, field graphql.CollectedField, obj *Log) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Log",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Started, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Log_stopped(ctx context.Context, field graphql.CollectedField, obj *Log) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Log",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Stopped, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Log_created(ctx context.Context, field graphql.CollectedField, obj *Log) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Log",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Created, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Log_modified(ctx context.Context, field graphql.CollectedField, obj *Log) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Log",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Modified, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Meta_key(ctx context.Context, field graphql.CollectedField, obj *PageMeta) (ret graphql.Marshaler) {
@@ -8781,11 +8883,11 @@ func (ec *executionContext) unmarshalInputNewLog(ctx context.Context, obj interf
 
 	for k, v := range asMap {
 		switch k {
-		case "code":
+		case "sector":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("code"))
-			it.Code, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sector"))
+			it.Sector, err = ec.unmarshalNWorkSector2githubᚗcomᚋiccoᚋgraphqlᚐWorkSector(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8797,14 +8899,6 @@ func (ec *executionContext) unmarshalInputNewLog(ctx context.Context, obj interf
 			if err != nil {
 				return it, err
 			}
-		case "location":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("location"))
-			it.Location, err = ec.unmarshalOInputGeo2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐInputGeo(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "project":
 			var err error
 
@@ -8813,11 +8907,19 @@ func (ec *executionContext) unmarshalInputNewLog(ctx context.Context, obj interf
 			if err != nil {
 				return it, err
 			}
-		case "duration":
+		case "started":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("duration"))
-			it.Duration, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("started"))
+			it.Started, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "stopped":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stopped"))
+			it.Stopped, err = ec.unmarshalNTime2timeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -9313,7 +9415,6 @@ var logImplementors = []string{"Log", "Linkable"}
 
 func (ec *executionContext) _Log(ctx context.Context, sel ast.SelectionSet, obj *Log) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, logImplementors)
-
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
 	for i, field := range fields {
@@ -9321,43 +9422,121 @@ func (ec *executionContext) _Log(ctx context.Context, sel ast.SelectionSet, obj 
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Log")
 		case "id":
-			out.Values[i] = ec._Log_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Log_id(ctx, field, obj)
 			}
-		case "code":
-			out.Values[i] = ec._Log_code(ctx, field, obj)
+
+			out.Values[i] = innerFunc(ctx)
+
 			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "datetime":
-			out.Values[i] = ec._Log_datetime(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "description":
-			out.Values[i] = ec._Log_description(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Log_description(ctx, field, obj)
 			}
-		case "location":
-			out.Values[i] = ec._Log_location(ctx, field, obj)
-		case "project":
-			out.Values[i] = ec._Log_project(ctx, field, obj)
+
+			out.Values[i] = innerFunc(ctx)
+
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "project":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Log_project(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "user":
-			out.Values[i] = ec._Log_user(ctx, field, obj)
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Log_user(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "duration":
-			out.Values[i] = ec._Log_duration(ctx, field, obj)
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Log_duration(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
 		case "uri":
-			out.Values[i] = ec._Log_uri(ctx, field, obj)
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Log_uri(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "sector":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Log_sector(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		case "started":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Log_started(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "stopped":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Log_stopped(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "created":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Log_created(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "modified":
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Log_modified(ctx, field, obj)
+			}
+
+			out.Values[i] = innerFunc(ctx)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -9532,7 +9711,12 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 				invalids++
 			}
 		case "insertLog":
-			out.Values[i] = ec._Mutation_insertLog(ctx, field)
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_insertLog(ctx, field)
+			}
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, innerFunc)
+
 		case "upsertPage":
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_upsertPage(ctx, field)
@@ -10520,7 +10704,8 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			})
 		case "logs":
 			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -10531,10 +10716,19 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					atomic.AddUint32(&invalids, 1)
 				}
 				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
 			})
 		case "log":
 			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
@@ -10542,6 +10736,14 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}()
 				res = ec._Query_log(ctx, field)
 				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
 			})
 		case "photos":
 			field := field
@@ -12196,6 +12398,16 @@ func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐUser
 	return ec._User(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNWorkSector2githubᚗcomᚋiccoᚋgraphqlᚐWorkSector(ctx context.Context, v interface{}) (WorkSector, error) {
+	var res WorkSector
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNWorkSector2githubᚗcomᚋiccoᚋgraphqlᚐWorkSector(ctx context.Context, sel ast.SelectionSet, v WorkSector) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
 	return ec.___Directive(ctx, sel, &v)
 }
@@ -12499,13 +12711,6 @@ func (ec *executionContext) marshalODuration2githubᚗcomᚋiccoᚋgraphqlᚐDur
 	return v
 }
 
-func (ec *executionContext) marshalOGeo2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐGeo(ctx context.Context, sel ast.SelectionSet, v *Geo) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Geo(ctx, sel, v)
-}
-
 func (ec *executionContext) unmarshalOID2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
 	if v == nil {
 		return nil, nil
@@ -12520,14 +12725,6 @@ func (ec *executionContext) marshalOID2ᚖstring(ctx context.Context, sel ast.Se
 	}
 	res := graphql.MarshalID(*v)
 	return res
-}
-
-func (ec *executionContext) unmarshalOInputGeo2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐInputGeo(ctx context.Context, v interface{}) (*InputGeo, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputInputGeo(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOInputMeta2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐPageMeta(ctx context.Context, v interface{}) (*PageMeta, error) {

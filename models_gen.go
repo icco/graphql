@@ -61,11 +61,11 @@ type NewLink struct {
 }
 
 type NewLog struct {
-	Code        string    `json:"code"`
-	Description *string   `json:"description"`
-	Location    *InputGeo `json:"location"`
-	Project     string    `json:"project"`
-	Duration    *string   `json:"duration"`
+	Sector      WorkSector `json:"sector"`
+	Description *string    `json:"description"`
+	Project     string     `json:"project"`
+	Started     time.Time  `json:"started"`
+	Stopped     time.Time  `json:"stopped"`
 }
 
 type NewStat struct {
@@ -131,5 +131,50 @@ func (e *Role) UnmarshalGQL(v interface{}) error {
 }
 
 func (e Role) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type WorkSector string
+
+const (
+	WorkSectorCode     WorkSector = "CODE"
+	WorkSectorWriting  WorkSector = "WRITING"
+	WorkSectorAudio    WorkSector = "AUDIO"
+	WorkSectorResearch WorkSector = "RESEARCH"
+)
+
+var AllWorkSector = []WorkSector{
+	WorkSectorCode,
+	WorkSectorWriting,
+	WorkSectorAudio,
+	WorkSectorResearch,
+}
+
+func (e WorkSector) IsValid() bool {
+	switch e {
+	case WorkSectorCode, WorkSectorWriting, WorkSectorAudio, WorkSectorResearch:
+		return true
+	}
+	return false
+}
+
+func (e WorkSector) String() string {
+	return string(e)
+}
+
+func (e *WorkSector) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = WorkSector(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid WorkSector", str)
+	}
+	return nil
+}
+
+func (e WorkSector) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }

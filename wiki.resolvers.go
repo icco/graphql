@@ -8,6 +8,10 @@ import (
 	"fmt"
 )
 
+func (r *logResolver) Sector(ctx context.Context, obj *Log) (WorkSector, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 func (r *mutationResolver) InsertLog(ctx context.Context, input NewLog) (*Log, error) {
 	l := &Log{}
 	l.Code = input.Code
@@ -86,3 +90,8 @@ func (r *queryResolver) Photos(ctx context.Context, input *Limit) ([]*Photo, err
 
 	return UserPhotos(ctx, u, limit, offset)
 }
+
+// Log returns LogResolver implementation.
+func (r *Resolver) Log() LogResolver { return &logResolver{r} }
+
+type logResolver struct{ *Resolver }

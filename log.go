@@ -33,7 +33,7 @@ func (l *Log) URI() *URI {
 }
 
 func (l *Log) Duration() (Duration, error) {
-	return l.Stopped.Sub(l.Started)
+	return l.Stopped.Sub(l.Started), nil
 }
 
 // Save inserts or updates a log into the database.
@@ -46,8 +46,12 @@ func (l *Log) Save(ctx context.Context) error {
 		l.ID = uuid.String()
 	}
 
-	if l.Datetime.IsZero() {
-		l.Datetime = time.Now()
+	if l.Started.IsZero() {
+		return fmt.Errorf("started cannot be nil")
+	}
+
+	if l.Stopped.IsZero() {
+		return fmt.Errorf("stopped cannot be nil")
 	}
 
 	if l.Created.IsZero() {
@@ -56,11 +60,6 @@ func (l *Log) Save(ctx context.Context) error {
 
 	l.Modified = time.Now()
 
-	loc, err := GeoConvertValue(l.Location)
-	if err != nil {
-		return err
-	}
-
 	if l.User.Empty() {
 		return fmt.Errorf("no user specified")
 	}
@@ -68,18 +67,18 @@ func (l *Log) Save(ctx context.Context) error {
 	if _, err := db.ExecContext(
 		ctx,
 		`
-INSERT INTO logs(id, code, datetime, description, location, project, user_id, created_at, modified_at)
+INSERT INTO logs(id, description, project, sector, started, stopped, user_id, created_at, modified_at)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 ON CONFLICT (id) DO UPDATE
-SET (code, datetime, description, location, project, user_id, created_at, modified_at) = ($2, $3, $4, $5, $6, $7, $8, $9)
+SET (description, project, sector, started, stopped, user_id, modified_at) = ($2, $3, $4, $5, $6, $7, $9)
 WHERE logs.id = $1;
 `,
 		l.ID,
-		l.Code,
-		l.Datetime,
 		l.Description,
-		loc,
 		l.Project,
+		l.Sector,
+		l.Started,
+		l.Stopped,
 		l.User.ID,
 		l.Created,
 		l.Modified,
