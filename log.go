@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/paulmach/orb"
 )
 
 // A Log is a journal entry by an individual.
@@ -34,7 +33,7 @@ func (l *Log) URI() *URI {
 }
 
 func (l *Log) Duration() (Duration, error) {
-	return l.Stopped.Sub(l.Started), nil
+	return ParseDurationFromDuration(l.Stopped.Sub(l.Started)), nil
 }
 
 // Save inserts or updates a log into the database.
@@ -127,8 +126,6 @@ func UserLogs(ctx context.Context, u *User, limit int, offset int) ([]*Log, erro
 	logs := make([]*Log, 0)
 	for rows.Next() {
 		l := &Log{}
-		var p orb.Point
-
 		if err := rows.Scan(
 			&l.ID,
 			&l.Description,
@@ -155,8 +152,6 @@ func UserLogs(ctx context.Context, u *User, limit int, offset int) ([]*Log, erro
 // GetLog gets a single Log by ID.
 func GetLog(ctx context.Context, id string) (*Log, error) {
 	l := &Log{}
-	var p orb.Point
-
 	row := db.QueryRowContext(ctx, `
   SELECT id, description, project, sector, started, stopped, user_id, created_at, modified_at
   FROM logs
@@ -179,7 +174,6 @@ func GetLog(ctx context.Context, id string) (*Log, error) {
 	case err != nil:
 		return nil, fmt.Errorf("error with get: %w", err)
 	default:
-		l.Location = GeoFromOrb(&p)
 		return l, nil
 	}
 }
