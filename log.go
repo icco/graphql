@@ -13,13 +13,14 @@ import (
 // A Log is a journal entry by an individual.
 type Log struct {
 	ID          string    `json:"id"`
+	Sector      string    `json:"sector"`
 	Description string    `json:"description"`
 	Project     string    `json:"project"`
 	User        User      `json:"user"`
 	Started     time.Time `json:"started"`
 	Stopped     time.Time `json:"stopped"`
-	Created     time.Time
-	Modified    time.Time
+	Created     time.Time `json:"created"`
+	Modified    time.Time `json:"modified"`
 }
 
 // IsLinkable exists to show that this method implements the Linkable type in
@@ -111,7 +112,7 @@ func UserLogs(ctx context.Context, u *User, limit int, offset int) ([]*Log, erro
 
 	rows, err := db.QueryContext(
 		ctx, `
-    SELECT id, code, datetime, description, ST_AsBinary(location), project, user_id, created_at, modified_at
+    SELECT id, description, project, sector, started, stopped, user_id, created_at, modified_at
     FROM logs
     WHERE user_id = $1
     ORDER BY datetime DESC
@@ -128,22 +129,19 @@ func UserLogs(ctx context.Context, u *User, limit int, offset int) ([]*Log, erro
 		l := &Log{}
 		var p orb.Point
 
-		err := rows.Scan(
+		if err := rows.Scan(
 			&l.ID,
-			&l.Code,
-			&l.Datetime,
 			&l.Description,
-			GeoScanner(&p),
 			&l.Project,
+			&l.Sector,
+			&l.Started,
+			&l.Stopped,
 			&l.User.ID,
 			&l.Created,
 			&l.Modified,
-		)
-		if err != nil {
+		); err != nil {
 			return nil, err
 		}
-
-		l.Location = GeoFromOrb(&p)
 
 		logs = append(logs, l)
 	}
@@ -160,17 +158,17 @@ func GetLog(ctx context.Context, id string) (*Log, error) {
 	var p orb.Point
 
 	row := db.QueryRowContext(ctx, `
-  SELECT id, code, datetime, description, ST_AsBinary(location), project, user_id, created_at, modified_at
+  SELECT id, description, project, sector, started, stopped, user_id, created_at, modified_at
   FROM logs
   WHERE id = $1
   `, id)
 	err := row.Scan(
 		&l.ID,
-		&l.Code,
-		&l.Datetime,
 		&l.Description,
-		GeoScanner(&p),
 		&l.Project,
+		&l.Sector,
+		&l.Started,
+		&l.Stopped,
 		&l.User.ID,
 		&l.Created,
 		&l.Modified,
