@@ -13,9 +13,12 @@ func (r *logResolver) Sector(ctx context.Context, obj *Log) (WorkSector, error) 
 }
 
 func (r *mutationResolver) InsertLog(ctx context.Context, input NewLog) (*Log, error) {
-	l := &Log{}
-	l.Code = input.Code
-	l.Project = input.Project
+	l := &Log{
+		Project: input.Project,
+		Started: input.Started,
+		Stopped: input.Stopped,
+		Sector:  input.Sector,
+	}
 
 	u := GetUserFromContext(ctx)
 	if u != nil {
@@ -24,17 +27,6 @@ func (r *mutationResolver) InsertLog(ctx context.Context, input NewLog) (*Log, e
 
 	if input.Description != nil {
 		l.Description = *input.Description
-	}
-
-	if input.Location != nil {
-		l.Location = &Geo{
-			Lat:  input.Location.Lat,
-			Long: input.Location.Long,
-		}
-	}
-
-	if input.Duration != nil {
-		l.Duration = ParseDurationFromString(*input.Duration)
 	}
 
 	if err := l.Save(ctx); err != nil {
@@ -89,19 +81,4 @@ func (r *queryResolver) Photos(ctx context.Context, input *Limit) ([]*Photo, err
 	limit, offset := ParseLimit(input, 25, 0)
 
 	return UserPhotos(ctx, u, limit, offset)
-}
-
-// Log returns LogResolver implementation.
-func (r *Resolver) Log() LogResolver { return &logResolver{r} }
-
-type logResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//    it when you're done.
-//  - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *logResolver) Duration(ctx context.Context, obj *Log) (*Duration, error) {
-	panic(fmt.Errorf("not implemented"))
 }
