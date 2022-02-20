@@ -1,4 +1,21 @@
 """
+A Log is a journal entry by an individual.
+"""
+type Log implements Linkable {
+  id: ID!
+  description: String!
+  project: String!
+  user: User!
+  duration: Duration
+  uri: URI!
+  sector: WorkSector!
+  started: Time!
+  stopped: Time!
+  created: Time!
+  modified: Time!
+}
+
+"""
 Geo is a simple type for wrapping a point.
 """
 type Geo {
@@ -37,6 +54,21 @@ type Photo implements Linkable {
   uri: URI!
 }
 
+enum WorkSector {
+  CODE
+  WRITING
+  AUDIO
+  RESEARCH
+}
+
+input NewLog {
+  sector: WorkSector!
+  description: String
+  project: String!
+  started: Time!
+  stopped: Time!
+}
+
 input EditPage {
   slug: ID!
   content: String!
@@ -48,14 +80,26 @@ input InputMeta {
   record: String!
 }
 
+input InputGeo {
+  lat: Float!
+  long: Float!
+}
+
 extend type Query {
   page(slug: ID!): Page @loggedIn
   pages(input: Limit): [Page]! @loggedIn
+
+  "Returns all Logs for your user."
+  logs(input: Limit): [Log]! @loggedIn
+
+  "Returns a log based on an ID."
+  log(id: ID!): Log @loggedIn
 
   "Returns all photos for your user."
   photos(input: Limit): [Photo]! @loggedIn
 }
 
 extend type Mutation {
+  insertLog(input: NewLog!): Log @loggedIn
   upsertPage(input: EditPage!): Page! @loggedIn
 }

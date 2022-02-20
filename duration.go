@@ -10,7 +10,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// Duration is a float64 representation of a Duration.
+// Duration is a float64 representation of a Duration in seconds.
 type Duration struct {
 	raw float64
 }
@@ -35,6 +35,12 @@ func ParseDurationFromString(dur string) Duration {
 	}
 
 	return NewDuration(i.Seconds())
+}
+
+// ParseDurationFromDuration takes a stdlib Duration and turns it into our
+// duration.
+func ParseDurationFromDuration(dur time.Duration) Duration {
+	return NewDuration(dur.Seconds())
 }
 
 // float64 returns the value
