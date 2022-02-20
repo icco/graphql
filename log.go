@@ -13,13 +13,11 @@ import (
 // A Log is a journal entry by an individual.
 type Log struct {
 	ID          string    `json:"id"`
-	Code        string    `json:"code"`
-	Datetime    time.Time `json:"datetime"`
 	Description string    `json:"description"`
-	Location    *Geo      `json:"location"`
 	Project     string    `json:"project"`
 	User        User      `json:"user"`
-	Duration    Duration  `json:"duration"`
+	Started     time.Time `json:"started"`
+	Stopped     time.Time `json:"stopped"`
 	Created     time.Time
 	Modified    time.Time
 }
@@ -32,6 +30,10 @@ func (l *Log) IsLinkable() {}
 func (l *Log) URI() *URI {
 	url := fmt.Sprintf("https://etu.natwelch.com/log/%s", l.ID)
 	return NewURI(url)
+}
+
+func (l *Log) Duration() (Duration, error) {
+	return l.Stopped.Sub(l.Started)
 }
 
 // Save inserts or updates a log into the database.

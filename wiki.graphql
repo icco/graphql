@@ -3,14 +3,16 @@ A Log is a journal entry by an individual.
 """
 type Log implements Linkable {
   id: ID!
-  code: String!
-  datetime: Time!
   description: String!
-  location: Geo
   project: String!
   user: User!
   duration: Duration
   uri: URI!
+  sector: WorkSector!
+  started: Time!
+  stopped: Time!
+  created: Time!
+  modified: Time!
 }
 
 """
@@ -52,12 +54,19 @@ type Photo implements Linkable {
   uri: URI!
 }
 
+enum WorkSector {
+  CODE
+  WRITING
+  AUDIO
+  RESEARCH
+}
+
 input NewLog {
-  code: String!
+  sector: WorkSector!
   description: String
-  location: InputGeo
   project: String!
-  duration: String
+  started: Time!
+  stopped: Time!
 }
 
 input EditPage {
