@@ -32,38 +32,6 @@ func (r *mutationResolver) InsertLog(ctx context.Context, input NewLog) (*Log, e
 	return l, nil
 }
 
-func (r *mutationResolver) UpsertPage(ctx context.Context, input EditPage) (*Page, error) {
-	u := GetUserFromContext(ctx)
-	p, err := GetPageBySlug(ctx, u, input.Slug)
-	if err != nil {
-		return nil, err
-	}
-
-	p.User = u
-	p.Content = input.Content
-	p.Meta = &PageMetaGrouping{
-		Records: input.Meta,
-	}
-
-	if err := p.Save(ctx); err != nil {
-		return nil, err
-	}
-
-	return p, nil
-}
-
-func (r *queryResolver) Page(ctx context.Context, slug string) (*Page, error) {
-	u := GetUserFromContext(ctx)
-	return GetPageBySlug(ctx, u, slug)
-}
-
-func (r *queryResolver) Pages(ctx context.Context, input *Limit) ([]*Page, error) {
-	u := GetUserFromContext(ctx)
-	limit, offset := ParseLimit(input, 25, 0)
-
-	return GetPages(ctx, u, limit, offset)
-}
-
 func (r *queryResolver) Logs(ctx context.Context, input *Limit) ([]*Log, error) {
 	panic(fmt.Errorf("not implemented"))
 }
