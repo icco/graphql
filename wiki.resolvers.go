@@ -5,7 +5,6 @@ package graphql
 
 import (
 	"context"
-	"fmt"
 )
 
 func (r *mutationResolver) InsertLog(ctx context.Context, input NewLog) (*Log, error) {
@@ -33,11 +32,14 @@ func (r *mutationResolver) InsertLog(ctx context.Context, input NewLog) (*Log, e
 }
 
 func (r *queryResolver) Logs(ctx context.Context, input *Limit) ([]*Log, error) {
-	panic(fmt.Errorf("not implemented"))
+	u := GetUserFromContext(ctx)
+	limit, offset := ParseLimit(input, 25, 0)
+
+	return UserLogs(ctx, u, limit, offset)
 }
 
 func (r *queryResolver) Log(ctx context.Context, id string) (*Log, error) {
-	panic(fmt.Errorf("not implemented"))
+	return GetLog(ctx, id)
 }
 
 func (r *queryResolver) Photos(ctx context.Context, input *Limit) ([]*Photo, error) {
