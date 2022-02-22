@@ -23,15 +23,6 @@ type Geo {
   long: Float!
 }
 
-type Meta {
-  key: String!
-  record: String!
-}
-
-type MetaGrouping {
-  records: [Meta]!
-}
-
 type Photo implements Linkable {
   id: ID!
   year: Int!
@@ -54,11 +45,6 @@ input NewLog {
   project: String!
   started: Time!
   stopped: Time!
-}
-
-input InputMeta {
-  key: String!
-  record: String!
 }
 
 input InputGeo {
