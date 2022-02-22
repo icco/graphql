@@ -23,19 +23,6 @@ type Geo {
   long: Float!
 }
 
-"""
-Page is a wiki page.
-"""
-type Page implements Linkable {
-  slug: ID!
-  content: String!
-  user: User!
-  created: Time!
-  modified: Time!
-  uri: URI!
-  meta: MetaGrouping
-}
-
 type Meta {
   key: String!
   record: String!
@@ -69,12 +56,6 @@ input NewLog {
   stopped: Time!
 }
 
-input EditPage {
-  slug: ID!
-  content: String!
-  meta: [InputMeta]!
-}
-
 input InputMeta {
   key: String!
   record: String!
@@ -86,9 +67,6 @@ input InputGeo {
 }
 
 extend type Query {
-  page(slug: ID!): Page @loggedIn
-  pages(input: Limit): [Page]! @loggedIn
-
   "Returns all Logs for your user."
   logs(input: Limit): [Log]! @loggedIn
 
@@ -101,5 +79,4 @@ extend type Query {
 
 extend type Mutation {
   insertLog(input: NewLog!): Log @loggedIn
-  upsertPage(input: EditPage!): Page! @loggedIn
 }
