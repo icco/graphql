@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/microcosm-cc/bluemonday"
 	"github.com/russross/blackfriday/v2"
 )
 
@@ -22,8 +23,9 @@ func Markdown(str string) template.HTML {
 	inc = twitterHandleToMarkdown(inc)
 	inc = hashTagsToMarkdown(inc)
 	s := blackfriday.Run(inc)
-	// TODO: https://github.com/microcosm-cc/bluemonday
-	return template.HTML(s)
+
+	p := bluemonday.UGCPolicy()
+	return template.HTML(p.SanitizeBytes(s))
 }
 
 // SummarizeText takes a chunk of markdown and just returns the first paragraph.
