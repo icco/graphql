@@ -326,6 +326,11 @@ var (
       );
       `,
 		},
+		{
+			Version:     29,
+			Description: "Cleanup pages",
+			Script:      `DROP TABLE IF EXISTS pages;`,
+		},
 	}
 )
 

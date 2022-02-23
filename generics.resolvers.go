@@ -136,7 +136,7 @@ func (r *queryResolver) Counts(ctx context.Context) ([]*Stat, error) {
 	for _, table := range []string{
 		"books",
 		"links",
-		"pages",
+		"logs",
 		"photos",
 		"posts",
 	} {

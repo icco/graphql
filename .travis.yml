@@ -10,10 +10,8 @@ script:
   - go vet ./...
   - go install honnef.co/go/tools/cmd/staticcheck@latest
   - staticcheck -go 1.17 ./...
-  - go get -v -u -d github.com/fzipp/gocyclo/cmd/gocyclo
-  - go run github.com/fzipp/gocyclo/cmd/gocyclo -avg .
-  - go get github.com/99designs/gqlgen/cmd
-  - "go run github.com/99designs/gqlgen --verbose generate && git diff --name-status --exit-code *.go **/*.go"
+  - go install github.com/99designs/gqlgen@latest
+  - "gqlgen --verbose generate && git diff --name-status --exit-code *.go **/*.go"
 notifications:
   email:
     on_success: change

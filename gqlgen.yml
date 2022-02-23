@@ -26,18 +26,10 @@ models:
     model: github.com/icco/graphql.Link
   Log:
     model: github.com/icco/graphql.Log
-  Meta:
-    model: github.com/icco/graphql.PageMeta
-  InputMeta:
-    model: github.com/icco/graphql.PageMeta
-  MetaGrouping:
-    model: github.com/icco/graphql.PageMetaGrouping
   Photo:
     model: github.com/icco/graphql.Photo
   Post:
     model: github.com/icco/graphql.Post
-  Page:
-    model: github.com/icco/graphql.Page
   Tweet:
     model: github.com/icco/graphql.Tweet
   TwitterURL:
