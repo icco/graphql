@@ -33,7 +33,7 @@ func SummarizeText(str string) string {
 }
 
 func twitterHandleToMarkdown(in []byte) []byte {
-	return TwitterHandleRegex.ReplaceAll(in, []byte("$1[@$2](http://twitter.com/$2)"))
+	return TwitterHandleRegex.ReplaceAll(in, []byte("$1[@$2](https://twitter.com/$2)"))
 }
 
 func hashTagsToMarkdown(in []byte) []byte {
