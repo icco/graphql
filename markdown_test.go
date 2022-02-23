@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestMarkdown(*testing.T) {
+func TestMarkdown(t *testing.T) {
 	tests := map[string]struct {
 		test     string
 		contains string
@@ -20,7 +20,7 @@ func TestMarkdown(*testing.T) {
 		tc := tc // capture range variable
 		t.Run(i, func(t *testing.T) {
 			t.Parallel()
-			if got := Markdown(tc.test); !strings.Contains(got, tc.contains) {
+			if got := Markdown(tc.test); !strings.Contains(string(got), tc.contains) {
 				t.Errorf("expected Markdown(%q) to contain %q. got %q", tc.test, tc.contains, got)
 			}
 		})
