@@ -11,8 +11,20 @@ func TestMarkdown(t *testing.T) {
 		contains string
 	}{
 		"twitter": {
-			test:     "@icco",
+			test:     " @icco",
 			contains: "https://twitter.com/icco",
+		},
+		"list": {
+			test: `
+ - a
+ - b
+ - c
+      `,
+			contains: "li",
+		},
+		"hashtag": {
+			test:     ` #happy`,
+			contains: `/tags/happy`,
 		},
 	}
 
