@@ -14,6 +14,7 @@ require (
 	github.com/icco/gutil v0.0.0-20220221170217-9aa326c389ec
 	github.com/imgix/imgix-go/v2 v2.0.3
 	github.com/lib/pq v1.10.4
+	github.com/microcosm-cc/bluemonday v1.0.18
 	github.com/paulmach/orb v0.4.0
 	github.com/russross/blackfriday/v2 v2.1.0
 	github.com/unrolled/render v1.4.1
@@ -47,7 +48,6 @@ require (
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/icco/zapdriver v1.4.0 // indirect
-	github.com/microcosm-cc/bluemonday v1.0.18 // indirect
 	github.com/mitchellh/mapstructure v1.4.3 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.29.0 // indirect
@@ -55,8 +55,8 @@ require (
 	go.opentelemetry.io/otel/internal/metric v0.27.0 // indirect
 	go.opentelemetry.io/otel/metric v0.27.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.4.1 // indirect
-	go.opentelemetry.io/otel/sdk/export/metric v0.26.0 // indirect
-	go.opentelemetry.io/otel/sdk/metric v0.26.0 // indirect
+	go.opentelemetry.io/otel/sdk/export/metric v0.27.0 // indirect
+	go.opentelemetry.io/otel/sdk/metric v0.27.0 // indirect
 	go.opentelemetry.io/otel/trace v1.4.1 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.7.0 // indirect
