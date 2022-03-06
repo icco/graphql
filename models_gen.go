@@ -55,11 +55,11 @@ type NewLink struct {
 }
 
 type NewLog struct {
-	Sector      WorkSector `json:"sector"`
-	Description *string    `json:"description"`
-	Project     string     `json:"project"`
-	Started     time.Time  `json:"started"`
-	Stopped     time.Time  `json:"stopped"`
+	Sector      Sector    `json:"sector"`
+	Description *string   `json:"description"`
+	Project     string    `json:"project"`
+	Started     time.Time `json:"started"`
+	Stopped     time.Time `json:"stopped"`
 }
 
 type NewStat struct {
@@ -128,47 +128,51 @@ func (e Role) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
-type WorkSector string
+type Sector string
 
 const (
-	WorkSectorCode     WorkSector = "CODE"
-	WorkSectorWriting  WorkSector = "WRITING"
-	WorkSectorAudio    WorkSector = "AUDIO"
-	WorkSectorResearch WorkSector = "RESEARCH"
+	SectorCode     Sector = "CODE"
+	SectorWriting  Sector = "WRITING"
+	SectorAudio    Sector = "AUDIO"
+	SectorResearch Sector = "RESEARCH"
+	SectorSocial   Sector = "SOCIAL"
+	SectorPersonal Sector = "PERSONAL"
 )
 
-var AllWorkSector = []WorkSector{
-	WorkSectorCode,
-	WorkSectorWriting,
-	WorkSectorAudio,
-	WorkSectorResearch,
+var AllSector = []Sector{
+	SectorCode,
+	SectorWriting,
+	SectorAudio,
+	SectorResearch,
+	SectorSocial,
+	SectorPersonal,
 }
 
-func (e WorkSector) IsValid() bool {
+func (e Sector) IsValid() bool {
 	switch e {
-	case WorkSectorCode, WorkSectorWriting, WorkSectorAudio, WorkSectorResearch:
+	case SectorCode, SectorWriting, SectorAudio, SectorResearch, SectorSocial, SectorPersonal:
 		return true
 	}
 	return false
 }
 
-func (e WorkSector) String() string {
+func (e Sector) String() string {
 	return string(e)
 }
 
-func (e *WorkSector) UnmarshalGQL(v interface{}) error {
+func (e *Sector) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
 	}
 
-	*e = WorkSector(str)
+	*e = Sector(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid WorkSector", str)
+		return fmt.Errorf("%s is not a valid Sector", str)
 	}
 	return nil
 }
 
-func (e WorkSector) MarshalGQL(w io.Writer) {
+func (e Sector) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }

@@ -1562,7 +1562,7 @@ type Log implements Linkable {
   user: User!
   duration: Duration
   uri: URI!
-  sector: WorkSector!
+  sector: Sector!
   started: Time!
   stopped: Time!
   created: Time!
@@ -1586,15 +1586,17 @@ type Photo implements Linkable {
   uri: URI!
 }
 
-enum WorkSector {
+enum Sector {
   CODE
   WRITING
   AUDIO
   RESEARCH
+  SOCIAL
+  PERSONAL
 }
 
 input NewLog {
-  sector: WorkSector!
+  sector: Sector!
   description: String
   project: String!
   started: Time!
@@ -3131,9 +3133,9 @@ func (ec *executionContext) _Log_sector(ctx context.Context, field graphql.Colle
 		}
 		return graphql.Null
 	}
-	res := resTmp.(WorkSector)
+	res := resTmp.(Sector)
 	fc.Result = res
-	return ec.marshalNWorkSector2githubᚗcomᚋiccoᚋgraphqlᚐWorkSector(ctx, field.Selections, res)
+	return ec.marshalNSector2githubᚗcomᚋiccoᚋgraphqlᚐSector(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Log_started(ctx context.Context, field graphql.CollectedField, obj *Log) (ret graphql.Marshaler) {
@@ -8070,7 +8072,7 @@ func (ec *executionContext) unmarshalInputNewLog(ctx context.Context, obj interf
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sector"))
-			it.Sector, err = ec.unmarshalNWorkSector2githubᚗcomᚋiccoᚋgraphqlᚐWorkSector(ctx, v)
+			it.Sector, err = ec.unmarshalNSector2githubᚗcomᚋiccoᚋgraphqlᚐSector(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -10944,6 +10946,16 @@ func (ec *executionContext) marshalNRole2githubᚗcomᚋiccoᚋgraphqlᚐRole(ct
 	return v
 }
 
+func (ec *executionContext) unmarshalNSector2githubᚗcomᚋiccoᚋgraphqlᚐSector(ctx context.Context, v interface{}) (Sector, error) {
+	var res Sector
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNSector2githubᚗcomᚋiccoᚋgraphqlᚐSector(ctx context.Context, sel ast.SelectionSet, v Sector) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) marshalNStat2githubᚗcomᚋiccoᚋgraphqlᚐStat(ctx context.Context, sel ast.SelectionSet, v Stat) graphql.Marshaler {
 	return ec._Stat(ctx, sel, &v)
 }
@@ -11239,16 +11251,6 @@ func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋiccoᚋgraphqlᚐUser
 		return graphql.Null
 	}
 	return ec._User(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNWorkSector2githubᚗcomᚋiccoᚋgraphqlᚐWorkSector(ctx context.Context, v interface{}) (WorkSector, error) {
-	var res WorkSector
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNWorkSector2githubᚗcomᚋiccoᚋgraphqlᚐWorkSector(ctx context.Context, sel ast.SelectionSet, v WorkSector) graphql.Marshaler {
-	return v
 }
 
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {

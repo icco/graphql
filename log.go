@@ -11,15 +11,15 @@ import (
 
 // A Log is a journal entry by an individual.
 type Log struct {
-	ID          string     `json:"id"`
-	Sector      WorkSector `json:"sector"`
-	Description string     `json:"description"`
-	Project     string     `json:"project"`
-	User        User       `json:"user"`
-	Started     time.Time  `json:"started"`
-	Stopped     time.Time  `json:"stopped"`
-	Created     time.Time  `json:"created"`
-	Modified    time.Time  `json:"modified"`
+	ID          string    `json:"id"`
+	Sector      Sector    `json:"sector"`
+	Description string    `json:"description"`
+	Project     string    `json:"project"`
+	User        User      `json:"user"`
+	Started     time.Time `json:"started"`
+	Stopped     time.Time `json:"stopped"`
+	Created     time.Time `json:"created"`
+	Modified    time.Time `json:"modified"`
 }
 
 // IsLinkable exists to show that this method implements the Linkable type in

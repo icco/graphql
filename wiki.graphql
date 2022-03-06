@@ -8,7 +8,7 @@ type Log implements Linkable {
   user: User!
   duration: Duration
   uri: URI!
-  sector: WorkSector!
+  sector: Sector!
   started: Time!
   stopped: Time!
   created: Time!
@@ -32,15 +32,17 @@ type Photo implements Linkable {
   uri: URI!
 }
 
-enum WorkSector {
+enum Sector {
   CODE
   WRITING
   AUDIO
   RESEARCH
+  SOCIAL
+  PERSONAL
 }
 
 input NewLog {
-  sector: WorkSector!
+  sector: Sector!
   description: String
   project: String!
   started: Time!
