@@ -7,7 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"time"
 )
@@ -185,7 +185,7 @@ func (r *queryResolver) HomeTimelineURLs(ctx context.Context, input *Limit) ([]*
 		return nil, fmt.Errorf("could not get from cacophony: %w", err)
 	}
 
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, fmt.Errorf("could not read cacophony body: %w", err)
 	}
