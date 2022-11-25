@@ -2,14 +2,14 @@
 language: go
 sudo: false
 go:
-  - "1.17"
+  - "1.19"
 env:
   - GO111MODULE=on
 script:
   - go test -v -cover ./...
   - go vet ./...
   - go install honnef.co/go/tools/cmd/staticcheck@latest
-  - staticcheck -go 1.17 ./...
+  - staticcheck -go 1.19 ./...
   - go install github.com/99designs/gqlgen@latest
   - "gqlgen --verbose generate && git diff --name-status --exit-code *.go **/*.go"
 notifications:
