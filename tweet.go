@@ -51,6 +51,10 @@ func (tu *TwitterURL) URI() *URI {
 	return tu.Link
 }
 
+func (tu *TwitterURL) GetURI() URI {
+	return *tu.URI()
+}
+
 // Save inserts or updates a tweet into the database.
 func (t *Tweet) Save(ctx context.Context) error {
 	if _, err := db.ExecContext(
@@ -137,6 +141,10 @@ func GetTweets(ctx context.Context, limit, offset int) ([]*Tweet, error) {
 // URI returns a link to this tweet.
 func (t *Tweet) URI() *URI {
 	return NewURI(fmt.Sprintf("https://twitter.com/%s/status/%s", t.ScreenName, t.ID))
+}
+
+func (t *Tweet) GetURI() URI {
+	return *t.URI()
 }
 
 // GetTweetsByScreenName returns an array of tweets from the database filtered by screenname.

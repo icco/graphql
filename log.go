@@ -32,6 +32,10 @@ func (l *Log) URI() *URI {
 	return NewURI(url)
 }
 
+func (l *Log) GetURI() URI {
+	return *l.URI()
+}
+
 func (l *Log) Duration() (Duration, error) {
 	return ParseDurationFromDuration(l.Stopped.Sub(l.Started)), nil
 }

@@ -247,6 +247,10 @@ func (p *Post) URI() *URI {
 	return NewURI(fmt.Sprintf("https://writing.natwelch.com/post/%s", p.ID))
 }
 
+func (p *Post) GetURI() URI {
+	return *p.URI()
+}
+
 // Next returns the next post chronologically.
 func (p *Post) Next(ctx context.Context) (*Post, error) {
 	var postID string

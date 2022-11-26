@@ -7,6 +7,7 @@ import (
 	"context"
 )
 
+// InsertLog is the resolver for the insertLog field.
 func (r *mutationResolver) InsertLog(ctx context.Context, input NewLog) (*Log, error) {
 	l := &Log{
 		Project: input.Project,
@@ -31,6 +32,7 @@ func (r *mutationResolver) InsertLog(ctx context.Context, input NewLog) (*Log, e
 	return l, nil
 }
 
+// Logs is the resolver for the logs field.
 func (r *queryResolver) Logs(ctx context.Context, input *Limit) ([]*Log, error) {
 	u := GetUserFromContext(ctx)
 	limit, offset := ParseLimit(input, 25, 0)
@@ -38,10 +40,12 @@ func (r *queryResolver) Logs(ctx context.Context, input *Limit) ([]*Log, error) 
 	return UserLogs(ctx, u, limit, offset)
 }
 
+// Log is the resolver for the log field.
 func (r *queryResolver) Log(ctx context.Context, id string) (*Log, error) {
 	return GetLog(ctx, id)
 }
 
+// Photos is the resolver for the photos field.
 func (r *queryResolver) Photos(ctx context.Context, input *Limit) ([]*Photo, error) {
 	u := GetUserFromContext(ctx)
 	limit, offset := ParseLimit(input, 25, 0)
