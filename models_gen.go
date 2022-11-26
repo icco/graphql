@@ -11,10 +11,12 @@ import (
 
 type Linkable interface {
 	IsLinkable()
+	GetURI() URI
 }
 
 type Searchable interface {
 	IsSearchable()
+	GetSummary() string
 }
 
 type AddComment struct {

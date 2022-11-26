@@ -8,6 +8,7 @@ import (
 	"fmt"
 )
 
+// AddComment is the resolver for the addComment field.
 func (r *mutationResolver) AddComment(ctx context.Context, input AddComment) (*Comment, error) {
 	c := &Comment{}
 	c.Content = input.Content
@@ -27,10 +28,12 @@ func (r *mutationResolver) AddComment(ctx context.Context, input AddComment) (*C
 	return GetComment(ctx, c.ID)
 }
 
+// CreatePost is the resolver for the createPost field.
 func (r *mutationResolver) CreatePost(ctx context.Context, input EditPost) (*Post, error) {
 	return r.EditPost(ctx, input)
 }
 
+// EditPost is the resolver for the editPost field.
 func (r *mutationResolver) EditPost(ctx context.Context, input EditPost) (*Post, error) {
 	var err error
 	p := &Post{}
@@ -73,40 +76,47 @@ func (r *mutationResolver) EditPost(ctx context.Context, input EditPost) (*Post,
 	return GetPostString(ctx, p.ID)
 }
 
+// Drafts is the resolver for the drafts field.
 func (r *queryResolver) Drafts(ctx context.Context, input *Limit) ([]*Post, error) {
 	limit, offset := ParseLimit(input, 10, 0)
 
 	return Drafts(ctx, limit, offset)
 }
 
+// FuturePosts is the resolver for the futurePosts field.
 func (r *queryResolver) FuturePosts(ctx context.Context, input *Limit) ([]*Post, error) {
 	limit, offset := ParseLimit(input, 10, 0)
 
 	return FuturePosts(ctx, limit, offset)
 }
 
+// Posts is the resolver for the posts field.
 func (r *queryResolver) Posts(ctx context.Context, input *Limit) ([]*Post, error) {
 	limit, offset := ParseLimit(input, 10, 0)
 
 	return Posts(ctx, limit, offset)
 }
 
+// Comments is the resolver for the comments field.
 func (r *queryResolver) Comments(ctx context.Context, input *Limit) ([]*Comment, error) {
 	limit, offset := ParseLimit(input, 10, 0)
 
 	return AllComments(ctx, limit, offset)
 }
 
+// Search is the resolver for the search field.
 func (r *queryResolver) Search(ctx context.Context, query string, input *Limit) ([]*Post, error) {
 	limit, offset := ParseLimit(input, 10, 0)
 
 	return Search(ctx, query, limit, offset)
 }
 
+// Post is the resolver for the post field.
 func (r *queryResolver) Post(ctx context.Context, id string) (*Post, error) {
 	return GetPostString(ctx, id)
 }
 
+// NextPost is the resolver for the nextPost field.
 func (r *queryResolver) NextPost(ctx context.Context, id string) (*Post, error) {
 	p, err := GetPostString(ctx, id)
 	if err != nil {
@@ -116,6 +126,7 @@ func (r *queryResolver) NextPost(ctx context.Context, id string) (*Post, error) 
 	return p.Next(ctx)
 }
 
+// PrevPost is the resolver for the prevPost field.
 func (r *queryResolver) PrevPost(ctx context.Context, id string) (*Post, error) {
 	p, err := GetPostString(ctx, id)
 	if err != nil {
@@ -125,10 +136,12 @@ func (r *queryResolver) PrevPost(ctx context.Context, id string) (*Post, error) 
 	return p.Prev(ctx)
 }
 
+// PostsByTag is the resolver for the postsByTag field.
 func (r *queryResolver) PostsByTag(ctx context.Context, id string) ([]*Post, error) {
 	return PostsByTag(ctx, id)
 }
 
+// Tags is the resolver for the tags field.
 func (r *queryResolver) Tags(ctx context.Context) ([]string, error) {
 	return AllTags(ctx)
 }

@@ -21,6 +21,10 @@ type Link struct {
 	Modified    time.Time `json:"modified"`
 }
 
+func (l *Link) GetURI() URI {
+	return l.URI
+}
+
 // Save inserts or updates a link into the database.
 func (l *Link) Save(ctx context.Context) error {
 	if l.Created.IsZero() {

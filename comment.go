@@ -26,6 +26,10 @@ func (c *Comment) URI() *URI {
 	return NewURI("https://writing.natwelch.com/comment/" + c.ID)
 }
 
+func (c *Comment) GetURI() URI {
+	return *c.URI()
+}
+
 // AllComments returns all comments orderd by time.
 func AllComments(ctx context.Context, limit int, offset int) ([]*Comment, error) {
 	rows, err := db.QueryContext(

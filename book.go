@@ -65,6 +65,10 @@ func (b *Book) URI() *URI {
 	return NewURI(fmt.Sprintf("https://www.goodreads.com/book/show/%s", b.GoodreadsID))
 }
 
+func (b *Book) GetURI() URI {
+	return *b.URI()
+}
+
 // GetBooks returns all books from the database.
 func GetBooks(ctx context.Context, limit int, offset int) ([]*Book, error) {
 	rows, err := db.QueryContext(ctx, `

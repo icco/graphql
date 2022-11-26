@@ -135,6 +135,10 @@ func (p *Photo) URI() *URI {
 	return NewURI(fmt.Sprintf("https://icco.imgix.net/%s", p.Path()))
 }
 
+func (p *Photo) GetURI() URI {
+	return *p.URI()
+}
+
 // UserPhotos gets all photos for a User.
 func UserPhotos(ctx context.Context, u *User, limit int, offset int) ([]*Photo, error) {
 	if u == nil {
