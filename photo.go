@@ -42,8 +42,7 @@ func (p *Photo) IsLinkable() {}
 // Upload save the photo to GCS, and also makes sure the record is saved to the
 // database.
 func (p *Photo) Upload(ctx context.Context, f io.Reader) error {
-	err := p.Save(ctx)
-	if err != nil {
+	if err := p.Save(ctx); err != nil {
 		return err
 	}
 
@@ -64,8 +63,7 @@ func (p *Photo) Upload(ctx context.Context, f io.Reader) error {
 	//uploader.CRC32C = crc32.Checksum(file, crc32.MakeTable(crc32.Castagnoli))
 	//uploader.SendCRC32C = true
 
-	_, err = io.Copy(uploader, f)
-	if err != nil {
+	if _, err := io.Copy(uploader, f); err != nil {
 		return err
 	}
 
