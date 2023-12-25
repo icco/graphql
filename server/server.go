@@ -52,7 +52,6 @@ var (
 )
 
 func main() {
-	ctx := context.Background()
 	if dbURL == "" {
 		log.Fatal("DATABASE_URL is empty!")
 	}
