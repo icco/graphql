@@ -25,17 +25,17 @@ type AddComment struct {
 }
 
 type EditBook struct {
-	ID          *string `json:"id"`
-	Title       *string `json:"title"`
+	ID          *string `json:"id,omitempty"`
+	Title       *string `json:"title,omitempty"`
 	GoodreadsID string  `json:"goodreads_id"`
 }
 
 type EditPost struct {
-	ID       *string    `json:"id"`
-	Content  *string    `json:"content"`
-	Title    *string    `json:"title"`
-	Datetime *time.Time `json:"datetime"`
-	Draft    *bool      `json:"draft"`
+	ID       *string    `json:"id,omitempty"`
+	Content  *string    `json:"content,omitempty"`
+	Title    *string    `json:"title,omitempty"`
+	Datetime *time.Time `json:"datetime,omitempty"`
+	Draft    *bool      `json:"draft,omitempty"`
 }
 
 type InputGeo struct {
@@ -44,8 +44,8 @@ type InputGeo struct {
 }
 
 type Limit struct {
-	Limit  *int `json:"limit"`
-	Offset *int `json:"offset"`
+	Limit  *int `json:"limit,omitempty"`
+	Offset *int `json:"offset,omitempty"`
 }
 
 type NewLink struct {
@@ -53,12 +53,12 @@ type NewLink struct {
 	URI         URI        `json:"uri"`
 	Description string     `json:"description"`
 	Tags        []string   `json:"tags"`
-	Created     *time.Time `json:"created"`
+	Created     *time.Time `json:"created,omitempty"`
 }
 
 type NewLog struct {
 	Sector      Sector    `json:"sector"`
-	Description *string   `json:"description"`
+	Description *string   `json:"description,omitempty"`
 	Project     string    `json:"project"`
 	Started     time.Time `json:"started"`
 	Stopped     time.Time `json:"stopped"`
@@ -71,15 +71,15 @@ type NewStat struct {
 
 type NewTweet struct {
 	FavoriteCount int       `json:"favorite_count"`
-	Hashtags      []string  `json:"hashtags"`
+	Hashtags      []string  `json:"hashtags,omitempty"`
 	ID            string    `json:"id"`
 	Posted        time.Time `json:"posted"`
 	RetweetCount  int       `json:"retweet_count"`
-	Symbols       []string  `json:"symbols"`
+	Symbols       []string  `json:"symbols,omitempty"`
 	Text          string    `json:"text"`
-	Urls          []*URI    `json:"urls"`
+	Urls          []*URI    `json:"urls,omitempty"`
 	ScreenName    string    `json:"screen_name"`
-	UserMentions  []string  `json:"user_mentions"`
+	UserMentions  []string  `json:"user_mentions,omitempty"`
 }
 
 // A stat is a key value pair of two interesting strings.
