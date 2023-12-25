@@ -5,7 +5,6 @@ import (
 	"database/sql"
 
 	"github.com/GuiaBolso/darwin"
-	"github.com/icco/gutil/otel"
 
 	// Needed to talk to postgres
 	_ "github.com/lib/pq"
@@ -336,12 +335,7 @@ var (
 
 // InitDB creates a package global db connection from a database string.
 func InitDB(dataSourceName string) (*sql.DB, error) {
-	driverName, err := otel.InitPostgres()
-	if err != nil {
-		return nil, err
-	}
-
-	database, err := sql.Open(driverName, dataSourceName)
+	database, err := sql.Open("postgres", dataSourceName)
 	if err != nil {
 		return nil, err
 	}
