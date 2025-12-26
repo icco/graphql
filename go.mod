@@ -19,7 +19,7 @@ require (
 	github.com/russross/blackfriday/v2 v2.1.0
 	github.com/unrolled/render v1.6.1
 	github.com/unrolled/secure v1.13.0
-	github.com/vektah/gqlparser/v2 v2.5.10
+	github.com/vektah/gqlparser/v2 v2.5.15
 	go.uber.org/zap v1.26.0
 )
 
