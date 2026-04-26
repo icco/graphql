@@ -23,6 +23,7 @@ import (
 	"github.com/icco/gutil/logging"
 	"github.com/unrolled/render"
 	"github.com/unrolled/secure"
+	"github.com/vektah/gqlparser/v2/ast"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 	"go.uber.org/zap"
 )
@@ -80,7 +81,7 @@ func main() {
 	gh.AddTransport(transport.POST{})
 	gh.AddTransport(transport.MultipartForm{})
 
-	gh.SetQueryCache(lru.New(1000))
+	gh.SetQueryCache(lru.New[*ast.QueryDocument](1000))
 
 	gh.Use(apollotracing.Tracer{})
 	gh.Use(extension.AutomaticPersistedQuery{Cache: cache})
@@ -111,7 +112,7 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Compress(5))
-	r.Use(logging.Middleware(log.Desugar(), GCPProjectID))
+	r.Use(logging.Middleware(log.Desugar()))
 
 	crs := cors.New(cors.Options{
 		AllowCredentials:   true,

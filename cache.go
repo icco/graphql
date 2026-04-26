@@ -18,7 +18,7 @@ func NewCache() (*Cache, error) {
 }
 
 // Add inserts a key value pair into the database.
-func (c *Cache) Add(ctx context.Context, hash string, query interface{}) {
+func (c *Cache) Add(ctx context.Context, hash string, query string) {
 	blob, err := json.Marshal(query)
 	if err != nil {
 		log.Errorw("could not marshal query", zap.Error(err))
@@ -43,17 +43,17 @@ WHERE cache.key = $1;
 }
 
 // Get retrieves a value by a key.
-func (c *Cache) Get(ctx context.Context, hash string) (interface{}, bool) {
+func (c *Cache) Get(ctx context.Context, hash string) (string, bool) {
 	var value []byte
 	row := db.QueryRowContext(ctx, "SELECT value FROM cache WHERE key = $1", hash)
 	if err := row.Scan(&value); err != nil {
 		return "", false
 	}
 
-	var i interface{}
-	if err := json.Unmarshal(value, &i); err != nil {
+	var s string
+	if err := json.Unmarshal(value, &s); err != nil {
 		return "", false
 	}
 
-	return i, true
+	return s, true
 }

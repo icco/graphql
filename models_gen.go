@@ -3,6 +3,7 @@
 package graphql
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"strconv"
@@ -48,6 +49,9 @@ type Limit struct {
 	Offset *int `json:"offset,omitempty"`
 }
 
+type Mutation struct {
+}
+
 type NewLink struct {
 	Title       string     `json:"title"`
 	URI         URI        `json:"uri"`
@@ -82,6 +86,10 @@ type NewTweet struct {
 	UserMentions  []string  `json:"user_mentions,omitempty"`
 }
 
+// The query type, represents all of the entry points into our object graph.
+type Query struct {
+}
+
 // A stat is a key value pair of two interesting strings.
 type Stat struct {
 	Key   string    `json:"key"`
@@ -113,7 +121,7 @@ func (e Role) String() string {
 	return string(e)
 }
 
-func (e *Role) UnmarshalGQL(v interface{}) error {
+func (e *Role) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -128,6 +136,20 @@ func (e *Role) UnmarshalGQL(v interface{}) error {
 
 func (e Role) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *Role) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e Role) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type Sector string
@@ -162,7 +184,7 @@ func (e Sector) String() string {
 	return string(e)
 }
 
-func (e *Sector) UnmarshalGQL(v interface{}) error {
+func (e *Sector) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -177,4 +199,18 @@ func (e *Sector) UnmarshalGQL(v interface{}) error {
 
 func (e Sector) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *Sector) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e Sector) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
