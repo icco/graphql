@@ -130,7 +130,7 @@ func (p *Photo) Path() string {
 
 // URI returns the URI for this photo.
 func (p *Photo) URI() *URI {
-	return NewURI(fmt.Sprintf("https://icco.imgix.net/%s", p.Path()))
+	return NewURI(fmt.Sprintf("https://images.natwelch.com/%s", p.Path()))
 }
 
 func (p *Photo) GetURI() URI {
