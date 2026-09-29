@@ -1,4 +1,4 @@
-module github.com/icco/graphql
+module go.icco.me/graphql
 
 go 1.25.0
 

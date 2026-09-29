@@ -15,26 +15,26 @@ resolver:
   dir: .
 models:
   Book:
-    model: github.com/icco/graphql.Book
+    model: go.icco.me/graphql.Book
   Comment:
-    model: github.com/icco/graphql.Comment
+    model: go.icco.me/graphql.Comment
   Duration:
-    model: github.com/icco/graphql.Duration
+    model: go.icco.me/graphql.Duration
   Geo:
-    model: github.com/icco/graphql.Geo
+    model: go.icco.me/graphql.Geo
   Link:
-    model: github.com/icco/graphql.Link
+    model: go.icco.me/graphql.Link
   Log:
-    model: github.com/icco/graphql.Log
+    model: go.icco.me/graphql.Log
   Photo:
-    model: github.com/icco/graphql.Photo
+    model: go.icco.me/graphql.Photo
   Post:
-    model: github.com/icco/graphql.Post
+    model: go.icco.me/graphql.Post
   Tweet:
-    model: github.com/icco/graphql.Tweet
+    model: go.icco.me/graphql.Tweet
   TwitterURL:
-    model: github.com/icco/graphql.TwitterURL
+    model: go.icco.me/graphql.TwitterURL
   User:
-    model: github.com/icco/graphql.User
+    model: go.icco.me/graphql.User
   URI:
-    model: github.com/icco/graphql.URI
+    model: go.icco.me/graphql.URI

@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/icco/graphql"
+	"go.icco.me/graphql"
 	"go.uber.org/zap"
 )
 
