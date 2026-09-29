@@ -4,7 +4,7 @@ A new backend for graphql.natwelch.com.
 
 [![Build Status](https://travis-ci.org/icco/graphql.svg?branch=main)](https://travis-ci.org/icco/graphql)
 [![Go Report Card](https://goreportcard.com/badge/github.com/icco/graphql)](https://goreportcard.com/report/github.com/icco/graphql)
-[![Go Reference](https://pkg.go.dev/badge/github.com/icco/graphql.svg)](https://pkg.go.dev/github.com/icco/graphql)
+[![Go Reference](https://pkg.go.dev/badge/go.icco.me/graphql.svg)](https://pkg.go.dev/go.icco.me/graphql)
 
 The next iteration in Nat's content management system. Previous versions include:
 
@@ -58,4 +58,4 @@ We use <https://github.com/99designs/gqlgen> to generate a lot of the files.
 
  - For schema docs, https://graphql.natwelch.com.
  - For `*.graphql` files. See <https://facebook.github.io/graphql/June2018/#sec-Descriptions> for an explanation of the description schema.
- - For Go, see https://godoc.org/github.com/icco/graphql
+ - For Go, see https://pkg.go.dev/go.icco.me/graphql

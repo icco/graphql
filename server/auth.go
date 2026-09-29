@@ -7,7 +7,7 @@ import (
 
 	jwtmiddleware "github.com/auth0/go-jwt-middleware"
 	"github.com/form3tech-oss/jwt-go"
-	"github.com/icco/graphql"
+	"go.icco.me/graphql"
 	"go.uber.org/zap"
 )
 
