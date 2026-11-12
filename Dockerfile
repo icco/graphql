@@ -1,4 +1,4 @@
-FROM golang:1.21-alpine
+FROM golang:1.27-alpine
 
 ENV GOPROXY="https://proxy.golang.org"
 ENV GO111MODULE="on"
